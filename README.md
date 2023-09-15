@@ -1,2 +1,2 @@
 # nControl
- Gaming Assistant
+ Gaming Toolset
