@@ -13,11 +13,7 @@ GuiOperationsTab(&ui,&cfg)
 	ui.MainGuiTabs.UseTab("Sys")
 	ui.MainGui.SetFont("s14","Calibri Thin")
 
-<<<<<<< HEAD
 	ui.OpsDockButton := ui.MainGui.AddPicture("x3 y34 w27 h27 section Background" cfg.ThemeButtonReadyColor,"./Img/button_dockLeft_ready.png")
-=======
-	ui.OpsDockButton := ui.MainGui.AddPicture("x5 y34 w27 h27 section Background" cfg.ThemeButtonReadyColor,"./Img/button_dockLeft_ready.png")
->>>>>>> 169606a70753258dc2f103a2ec48e6d3aac9edc4
 	ui.OpsDockButton.OnEvent("Click",ToggleAfkDock)
 	ui.OpsDockButton.ToolTip := "Dock AFK Panel"
 	
@@ -29,11 +25,7 @@ GuiOperationsTab(&ui,&cfg)
 	ui.OpsAfkButton.OnEvent("Click",ToggleAFK)
 	ui.OpsAfkButton.ToolTip := "Toggle AFK"
 	
-<<<<<<< HEAD
 	ui.OpsAntiIdleButton := ui.MainGui.AddPicture("x+1 ys+0 w30 h27 Background" cfg.ThemeButtonReadyColor,"./Img/button_antiIdle_ready.png")
-=======
-	ui.OpsAntiIdleButton := ui.MainGui.AddPicture("x+2 ys+0 w27 h27 Background" cfg.ThemeButtonReadyColor,"./Img/button_antiIdle_ready.png")
->>>>>>> 169606a70753258dc2f103a2ec48e6d3aac9edc4
 	ui.OpsAntiIdleButton.OnEvent("Click",ToggleAntiIdle)
 	ui.OpsAntiIdleButton.ToolTip := "Toggle Anti-Idle"
 
@@ -47,11 +39,7 @@ GuiOperationsTab(&ui,&cfg)
 	ui.OpsClock.ToolTip := "Left Click Starts/Stops Timer. `nRight Click Resets Timer. `nDouble-Click to Return to Time Mode."
 	
 
-<<<<<<< HEAD
 	ui.RefreshWindowHandlesButton := ui.MainGui.AddPicture("x+1 ys section w28 h28 Background" cfg.ThemeFont1Color, "./Img/button_refresh.png")	
-=======
-	ui.RefreshWindowHandlesButton := ui.MainGui.AddPicture("x+2 ys section w28 h28 Background" cfg.ThemeFont1Color, "./Img/button_refresh.png")	
->>>>>>> 169606a70753258dc2f103a2ec48e6d3aac9edc4
 	ui.RefreshWindowHandlesButton.OnEvent("Click",RefreshWinHwnd)
 	ui.RefreshWindowHandlesButton.ToolTip := "If enabled,  `"Current Game`" will automatically set`n itself to top entry in the Games List that is currently running."
 	
@@ -73,80 +61,45 @@ GuiOperationsTab(&ui,&cfg)
 
 
 	ui.MainGui.SetFont("s10 c" cfg.ThemeFont1Color,"Calibri")	
-<<<<<<< HEAD
 	ui.GameWindowsListBox := ui.MainGui.AddListBox("x5 y+1 w355 r10 section Background" cfg.ThemeConsoleBgColor " -E0x200 multi",cfg.GameWindowsList)
-=======
-	ui.GameWindowsListBox := ui.MainGui.AddListBox("x5 y+3 w355 r10 section Background" cfg.ThemeConsoleBgColor " -E0x200 multi",cfg.GameWindowsList)
->>>>>>> 169606a70753258dc2f103a2ec48e6d3aac9edc4
 	ui.GameWindowsListBox.ToolTip := "List of available game windows in session"
 	
 
 	ui.MainGui.SetFont("s15 c" cfg.ThemeFont1Color,"Calibri")
-<<<<<<< HEAD
 	ui.Win1Hwnd := ui.MainGui.AddText("ys+60 x+5 section Right w102 h30 Background" cfg.ThemeDisabledColor,"")
 	ui.Win1HwndPadding := ui.MainGui.AddText("ys+0 x+0 section w5 h30 Background" cfg.ThemeDisabledColor,"")
 	ui.Win1Hwnd.Text := ""
 	ui.Win1Hwnd.ToolTip := "Window ID for Game Window 1"	
 
 	ui.Game1StatusIcon := ui.MainGui.AddPicture("x+0 ys-2 w30 h30 Background" cfg.ThemeButtonReadyColor,"./Img/button_ready.png")
-=======
-	ui.Win1HwndPadding := ui.MainGui.AddText("ys+57 x+5 section w10 h30 Background" cfg.ThemeDisabledColor,"")
-	ui.Win1Hwnd := ui.MainGui.AddText("ys+0 x+0 section w95 h30 Background" cfg.ThemeDisabledColor,"")
-	ui.Win1Hwnd.Text := ""
-	ui.Win1Hwnd.ToolTip := "Window ID for Game Window 1"	
-
-	ui.Game1StatusIcon := ui.MainGui.AddPicture("x+0 ys+0 w30 h30 Background" cfg.ThemeButtonDisabledColor,"./Img/button_ready.png")
->>>>>>> 169606a70753258dc2f103a2ec48e6d3aac9edc4
 	ui.Game1StatusIcon.OnEvent("Click",ToggleGame1Status)
 	ui.Game1StatusIcon.ToolTip := "Toggle to have this window ignored by nControl"
 	
 	ui.MainGui.SetFont("s15 c" cfg.ThemeFont1Color,"Calibri")
-<<<<<<< HEAD
 	ui.Win2Hwnd := ui.MainGui.AddText("xs-100 y+2 section Right w100 h30 Background" cfg.ThemeDisabledColor,"")
 	ui.Win2HwndPadding := ui.MainGui.AddText("x+0 ys+0 section w5 h28 Background" cfg.ThemeDisabledColor,"")
 	ui.Win2Hwnd.Text := ""
 	ui.Win2Hwnd.ToolTip := "Window ID for Game Window 2"
 
 	ui.Game2StatusIcon := ui.MainGui.AddPicture("x+0 ys-1 section w30 h30 Background" cfg.ThemeButtonReadyColor,"./Img/button_ready.png")
-=======
-	ui.Win2HwndPadding := ui.MainGui.AddText("xs-10 y+2 section w10 h30 Background" cfg.ThemeDisabledColor,"")
-	ui.Win2Hwnd := ui.MainGui.AddText("ys+0 x+0 w95 h27 Background" cfg.ThemeDisabledColor,"")
-	ui.Win2Hwnd.Text := ""
-	ui.Win2Hwnd.ToolTip := "Window ID for Game Window 2"
-
-	ui.Game2StatusIcon := ui.MainGui.AddPicture("x+0 ys-1 section w30 h30 Background" cfg.ThemeButtonDisabledColor,"./Img/button_ready.png")
->>>>>>> 169606a70753258dc2f103a2ec48e6d3aac9edc4
 	ui.Game2StatusIcon.OnEvent("Click",ToggleGame2Status)
 	ui.Game2StatusIcon.ToolTip := "Toggle to have this window ignored by nControl"
 
 
 	
-<<<<<<< HEAD
 	ui.ButtonDebug := ui.MainGui.AddPicture("xs-107 y+0 w138 h32 section Background" cfg.ThemeButtonReadyColor,"./Img/button_viewlog_down.png")
-=======
-	ui.ButtonDebug := ui.MainGui.AddPicture("xs-105 y+0 w133 h30 section Background" cfg.ThemeButtonReadyColor,"./Img/button_viewlog_down.png")
->>>>>>> 169606a70753258dc2f103a2ec48e6d3aac9edc4
 	ui.ButtonDebug.OnEvent("Click",ToggleDebug)	
 
 	
 	; ui.MainGui.SetFont("s14 c" cfg.ThemeFont1Color,"Calibri Thin")
 	; ui.MainGui.AddText("x+10 ys+2","View Log")
 	
-<<<<<<< HEAD
 	drawOutlineMainGui(0,32,501,30,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,2)		;Ops Toolbar Outline
 	;drawOutlineMainGui(0,58, 360,153,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,2)		;Ops GameWindowBox Outline
 	drawOutlineMainGui(118,33,154,29,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,2)	;Ops Clock Outline
 	drawOutlineMainGui(363,120,140,62,cfg.ThemeBorderLightColor,cfg.ThemeBorderLightColor,2)	;Ops Window Status Icons Outline
 	drawOutlineMainGui(363,150,140,2,cfg.ThemeBorderLightColor,cfg.ThemeBorderLightColor,2)		;Ops Window Handle Divider Outline
 	drawOutlineMainGui(360,180,143,34,cfg.ThemeBorderLightColor,cfg.ThemeBorderLightColor,2)	;Ops Log Viewer Button Outline
-=======
-	drawOutlineMainGui(2,28,501,34,cfg.Theme3dBorderShadowColor,cfg.Theme3dBorderLightColor,1)		;Ops Toolbar Outline
-	drawOutlineMainGui(4,63,358,151,cfg.Theme3dBorderShadowColor,cfg.Theme3dBorderLightColor,2)		;Ops GameWindowBox Outline
-	drawOutlineMainGui(118,33,154,29,cfg.Theme3dBorderShadowColor,cfg.Theme3dBorderLightColor,2)	;Ops Clock Outline
-	drawOutlineMainGui(363,120,138,62,cfg.Theme3dBorderLightColor,cfg.Theme3dBorderLightColor,2)	;Ops Window Status Icons Outline
-	drawOutlineMainGui(363,150,138,2,cfg.Theme3dBorderShadowColor,cfg.Theme3dBorderLightColor,2)		;Ops Window Handle Divider Outline
-	drawOutlineMainGui(363,182,138,33,cfg.Theme3dBorderShadowColor,cfg.Theme3dBorderLightColor,2)	;Ops Log Viewer Button Outline
->>>>>>> 169606a70753258dc2f103a2ec48e6d3aac9edc4
 
 	ui.GameDDL.Choose(1)
 
@@ -158,11 +111,7 @@ GuiOperationsTab(&ui,&cfg)
 	ui.StopwatchTime := "00:00 "
 	ui.StopwatchState := "Stopped"
 	
-<<<<<<< HEAD
 	ui.buttonSwapHwnd := ui.MainGui.AddPicture("x364 y123 w19 h56 BackgroundTrans","./Img/button_swapHwnd_disabled.png")
-=======
-	ui.buttonSwapHwnd := ui.MainGui.AddPicture("x363 y122 w19 h58 BackgroundTrans","./Img/button_swapHwnd_disabled.png")
->>>>>>> 169606a70753258dc2f103a2ec48e6d3aac9edc4
 	ui.buttonSwapHwnd.OnEvent("Click",ToggleHwndSwap)
 	ui.buttonSwapHwnd.ToolTip := "Swap Windows"
 
@@ -379,11 +328,7 @@ RefreshWinHwnd(*)
 
 		} else {
 			ui.Game%WinNumber%StatusIcon.Value := "./Img/button_ready.png"
-<<<<<<< HEAD
 			ui.Game%WinNumber%StatusIcon.Opt("Background" cfg.ThemeButtonReadyColor)
-=======
-			ui.Game%WinNumber%StatusIcon.Opt("Background" cfg.ThemeButtonDisabledColor)
->>>>>>> 169606a70753258dc2f103a2ec48e6d3aac9edc4
 			ui.Win%WinNumber%HwndPadding.Opt("Background" cfg.ThemeDisabledColor)
 			ui.Win%WinNumber%Hwnd.Opt("+Disabled Background" cfg.ThemeDisabledColor)
 			ui.Win%WinNumber%ClassDDL.Opt("+Disabled")	
@@ -395,11 +340,7 @@ RefreshWinHwnd(*)
 	ui.buttonSwapHwnd.Value := cfg.HwndSwapEnabled ? "./Img/button_swapHwnd_enabled.png" : "./Img/button_swapHwnd_disabled.png"
 	ui.buttonSwapHwnd.Redraw()
 	ui.MainGuiTabs.UseTab("Sys")
-<<<<<<< HEAD
 	drawOutlineMainGui(4,63,358,151,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,2)		;Ops GameWindowBox Outline	
-=======
-	drawOutlineMainGui(4,63,358,151,cfg.Theme3dBorderShadowColor,cfg.Theme3dBorderLightColor,2)		;Ops GameWindowBox Outline	
->>>>>>> 169606a70753258dc2f103a2ec48e6d3aac9edc4
 }
 
 AddGame(*)
@@ -416,11 +357,7 @@ AddGame(*)
 	cfg.NewGameOkButton := ui.NewGameGui.AddPicture("x+-7 ys w60 h34","./Img/button_add.png")
 	cfg.NewGameOkButton.OnEvent("Click",AddGameProfile)
 	ui.NewGameGui.Show("w260 h110 NoActivate")
-<<<<<<< HEAD
 	drawOutlineNewGameGui(5,5,250,100,cfg.ThemeBorderLightColor,cfg.ThemeBorderDarkColor,2)
-=======
-	drawOutlineNewGameGui(5,5,250,100,cfg.Theme3dBorderLightColor,cfg.Theme3dBorderShadowColor,2)
->>>>>>> 169606a70753258dc2f103a2ec48e6d3aac9edc4
 }
 
 AddGameProfile(*)
