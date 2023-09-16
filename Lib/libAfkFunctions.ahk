@@ -38,12 +38,12 @@ ToggleAutoClicker(*) {
 	
 	While (ui.AutoClickerEnabled)
 	{
-		if !(A_TimeIdlePhysical > 1500 and A_TimeIdleMouse > 1500)
+		if !(A_TimeIdlePhysical > 1500 && A_TimeIdleMouse > 1500)
 		{
 			Send("{LButton}")
-			Sleep(cfg.AutoClickerSpeed)
-		} 	
+			Sleep(cfg.AutoClickerSpeed*7.8125)
 	}
+		} 	
 	ui.buttonAutoClicker.Opt("Background" cfg.ThemeButtonReadyColor)
 	ui.buttonAutoClicker.Value := "./Img/button_autoClicker_ready.png"
 }

@@ -27,11 +27,7 @@ GuiDockTab(&ui)
 	ui.nControlMonitorText.OnEvent("Click", SetMonitorButtonPush)
 	ui.nControlMonitorText.ToolTip := "Monitor currently selected to display docked apps while gaming"
 	
-<<<<<<< HEAD
 	drawOutlineMainGui(150,39,30,25,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,2)
-=======
-	drawOutlineMainGui(150,39,30,25,cfg.Theme3dBorderShadowColor,cfg.Theme3dBorderLightColor,2)
->>>>>>> 169606a70753258dc2f103a2ec48e6d3aac9edc4
 	ui.MainGui.SetFont("s14 c" cfg.ThemeFont2Color, "Calibri Bold")
 	ui.nControlMonitorUpdatedText := ui.MainGui.AddText("ys+2 w130","")
 	
@@ -43,20 +39,12 @@ GuiDockTab(&ui)
 	ui.MainGui.AddText("ys-2","Dock App")
 	ui.MainGui.SetFont("s12 c" cfg.ThemeFont1Color, "Calibri")
 	ui.app2filename := ui.MainGui.AddText("x152 ys+0 w195 h20 Background" cfg.ThemeEditboxColor,"")
-<<<<<<< HEAD
 	drawOutlineMainGui(150,87,200,25,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,2)
-=======
-	drawOutlineMainGui(150,87,200,25,cfg.Theme3dBorderShadowColor,cfg.Theme3dBorderLightColor,2)
->>>>>>> 169606a70753258dc2f103a2ec48e6d3aac9edc4
 	ui.MainGui.SetFont("s12 c" cfg.ThemeFont2Color,"Calibri")
 	ui.MainGui.AddText("xs+3 y+5 w100 section","Path")
 	ui.MainGui.SetFont("s10 c" cfg.ThemeFont1Color, "Calibri")
 	ui.app2path := ui.MainGui.AddText("x59 ys+1 w288 h20 Background" cfg.ThemeEditboxColor,"")
-<<<<<<< HEAD
 	drawOutlineMainGui(57,115,293,25,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,2)
-=======
-	drawOutlineMainGui(57,115,293,25,cfg.Theme3dBorderShadowColor,cfg.Theme3dBorderLightColor,2)
->>>>>>> 169606a70753258dc2f103a2ec48e6d3aac9edc4
 
 	ui.MainGui.SetFont("s14 c" cfg.ThemeFont2Color,"Calibri")
 	ui.SetWorkFileButton := ui.MainGui.AddPicture("x20 y+5 w60 h20 section", "./Img/Button_Select.png")
@@ -66,20 +54,12 @@ GuiDockTab(&ui)
 	ui.MainGui.AddText("ys-2","Dock App")
 	ui.MainGui.SetFont("s12 c" cfg.ThemeFont1Color, "Calibri")
 	ui.app1filename := ui.MainGui.AddText("x152 ys+0 w195 h20 Background" cfg.ThemeEditboxColor,"")
-<<<<<<< HEAD
 	drawOutlineMainGui(150,143,200,25,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,2)
-=======
-	drawOutlineMainGui(150,143,200,25,cfg.Theme3dBorderShadowColor,cfg.Theme3dBorderLightColor,2)
->>>>>>> 169606a70753258dc2f103a2ec48e6d3aac9edc4
 	ui.MainGui.SetFont("s12 c" cfg.ThemeFont2Color,"Calibri")
 	ui.MainGui.AddText("xs+3 y+5 w100 section","Path")
 	ui.MainGui.SetFont("s10 c" cfg.ThemeFont1Color, "Calibri")
 	ui.app1path := ui.MainGui.AddText("x59 ys+1 w288 h20 Background" cfg.ThemeEditboxColor,"")
-<<<<<<< HEAD
 	drawOutlineMainGui(57,170,293,25,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,2)
-=======
-	drawOutlineMainGui(57,170,293,25,cfg.Theme3dBorderShadowColor,cfg.Theme3dBorderLightColor,2)
->>>>>>> 169606a70753258dc2f103a2ec48e6d3aac9edc4
 	; ui.button_app1select := ui.MainGui.AddPicture("ys w60 h25","./Img/button_select.png")
 	; ui.button_app1select.OnEvent("Click",app1browse)
 	; ui.button_app1select.ToolTip := "Browse for file"

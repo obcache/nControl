@@ -16,7 +16,7 @@ if (InStr(A_LineFile,A_ScriptFullPath))
 	RobloxLauncher()
 }	
 
-!^\::
+!^f::
 {
 DialogBox("AutoFire: On")
 SetTimer(DialogBoxClose,1000)

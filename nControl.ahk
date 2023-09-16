@@ -1,9 +1,5 @@
 ;@Ahk2Exe-SetName nControl
-<<<<<<< HEAD
-;@Ahk2Exe-SetVersion 1.1.1.6-alpha
-=======
-;@Ahk2Exe-SetVersion 1.1.1.3-beta
->>>>>>> 169606a70753258dc2f103a2ec48e6d3aac9edc4
+;@Ahk2Exe-SetVersion 1.1.3.1-beta
 ;@Ahk2Exe-ExeName E:\Desktop\nControl.exe
 
 #Requires AutoHotkey v2.0
@@ -24,7 +20,8 @@ InstallDir := A_MyDocuments "\nControl"
 ConfigFileName := "nControl.ini"
 ui.AntiIdle_enabled := false
 cfg.afk_enabled := false
-cfg.debugEnabled := false
+
+
 PreAutoExec(InstallDir,ConfigFileName)
 
 ErrorLevel 		:= 0 
@@ -36,7 +33,6 @@ workApp		:= Object()
 cfg.file := "./" ConfigFileName
 ui.pinned := 0
 ui.hidden := 0
-<<<<<<< HEAD
 
 ui.hwndAfkGui := ""
 ui.AfkHeight := 170
@@ -45,16 +41,6 @@ ui.AfkHeight := 170
 ; cfg.ThemeBorderLightColor := "555555"
 ; cfg.ThemeBright1Color := "00FFFF"
 ; cfg.ThemeBright2Color := "FF00FF"
-=======
-ui.hwndMainGui := ""
-ui.hwndAfkGui := ""
-ui.AfkHeight := 170
-
-; cfg.Theme3dBorderShadowColor := "212121"
-; cfg.Theme3dBorderLightColor := "555555"
-; cfg.ThemeBrightBorderTopColor := "00FFFF"
-; cfg.ThemeBrightBorderBottomColor := "FF00FF"
->>>>>>> 169606a70753258dc2f103a2ec48e6d3aac9edc4
 ; cfg.ThemeBackgroundColor := "363636"
 ; cfg.ThemeFont1Color := "00FFFF"
 ; cfg.ThemeFont2Color := "FF00FF"
@@ -96,7 +82,7 @@ debugLog("Interface Initialized")
 OnExit(ExitFunc)
 
 ;debugLog("Console Initialized")
-if (cfg.debugEnabled == true)
+if (cfg.consoleEnabled == true)
 {
 	ToggleDebug()
 }

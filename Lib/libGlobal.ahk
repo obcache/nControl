@@ -107,16 +107,6 @@ PreAutoExec(InstallDir,ConfigFileName)
 			FileInstall("./nControl.ini",InstallDir "./nControl.ini",1)	
 			FileInstall("./Img/button_ready.png",InstallDir "/Img/button_ready.png",1)
 			FileInstall("./Img/button_on.png",InstallDir "/Img/button_on.png",1)
-<<<<<<< HEAD
-=======
-			FileInstall("./Img/pin_down.png",InstallDir "/Img/pin_down.png",1)
-			FileInstall("./Img/pin_up.png",InstallDir "/Img/pin_up.png",1)
-			FileInstall("./Img/up_up.png",InstallDir "/Img/up_up.png",1)
-			FileInstall("./Img/up_down.png",InstallDir "/Img/up_down.png",1)
-			FileInstall("./Img/down_up.png",InstallDir "/Img/down_up.png",1)
-			FileInstall("./Img/down_down.png",InstallDir "/Img/down_down.png",1)
-			FileInstall("./Img/close_up.png",InstallDir "/Img/close_up.png",1)
->>>>>>> 169606a70753258dc2f103a2ec48e6d3aac9edc4
 			FileInstall("./Img/button_plus.png",InstallDir "/Img/button_plus.png",1)
 			FileInstall("./Img/button_power.png",InstallDir "/Img/button_power.png",1)
 			FileInstall("./Img/button_minus.png",InstallDir "/Img/button_minus.png",1)
@@ -127,24 +117,10 @@ PreAutoExec(InstallDir,ConfigFileName)
 			FileInstall("./Img/button_set.png",InstallDir "/Img/button_set.png",1)
 			FileInstall("./Img/button_add.png",InstallDir "/Img/button_add.png",1)
 			FileInstall("./Img/button_remove.png",InstallDir "/Img/button_remove.png",1)
-<<<<<<< HEAD
-=======
-			FileInstall("./Img/cc_close.png",InstallDir "/Img/cc_close.png",true)
-			FileInstall("./Img/down3.png",InstallDir "/Img/down3.png",true)
-			FileInstall("./Img/button_stop.png",InstallDir "/Img/button_stop.png",true)
-			FileInstall("./Img/button_start.png",InstallDir "/Img/button_start.png",true)
-			FileInstall("./Img/button_started.png",InstallDir "/Img/button_started.png",true)
-			FileInstall("./Img/button_repeat.png",InstallDir "/Img/button_repeat.png",true)
-			FileInstall("./Img/button_repeating.png",InstallDir "/Img/button_repeating.png",true)
->>>>>>> 169606a70753258dc2f103a2ec48e6d3aac9edc4
 			FileInstall("./Img/attack_icon.png",InstallDir "/Img/attack_icon.png",true)
 			FileInstall("./Img/sleep_icon.png",InstallDir "/Img/sleep_icon.png",true)
 			FileInstall("./Img/arrow_left.png",InstallDir "/Img/arrow_left.png",true)
 			FileInstall("./Img/arrow_right.png",InstallDir "/Img/arrow_right.png",true)
-<<<<<<< HEAD
-=======
-			FileInstall("./Img/button_popout.png",InstallDir "/Img/button_popout.png",true)
->>>>>>> 169606a70753258dc2f103a2ec48e6d3aac9edc4
 			FileInstall("./Img/button_execute.png",InstallDir "/Img/button_execute.png",true)
 			FileInstall("./Img/status_stopped.png",InstallDir "/Img/status_stopped.png",true)
 			FileInstall("./Img/status_running.png",InstallDir "/Img/status_running.png",true)
@@ -195,6 +171,7 @@ PreAutoExec(InstallDir,ConfigFileName)
 			FileInstall("./Img/button_swapHwnd_enabled.png",InstallDir "/Img/button_swapHwnd_enabled.png",1)
 			FileInstall("./Img/button_swapHwnd_disabled.png",InstallDir "/Img/button_swapHwnd_disabled.png",1)
 			FileInstall("./Img/button_autoClicker_on.png",InstallDir "/Img/button_autoClicker_on.png",1)
+			FileInstall("./Img/help.png",InstallDir "/Img/help.png",1)
 			FileInstall("./lib/ColorChooser.exe",InstallDir "./lib/ColorChooser.exe",1)
 
 
@@ -238,15 +215,17 @@ CfgLoad(&cfg, &ui)
 	ui.AutoFire1Enabled		:= false
 	ui.AutoFire2Enabled		:= false
 	ui.AutoClickerEnabled 	:= false
+	ui.previousTab			:= "Sys"
+	ui.activeTab			:= "Sys"
 	ui.LastWindowHwnd		:= 0
 	ui.ColorChanged := false
 	
 	cfg.InstallDir			:= IniRead(cfg.file,"System","InstallDir", A_MyDocuments "\nControl")
 	cfg.MainScriptName		:= IniRead(cfg.file,"System","MainScriptName", "nControl")
 	cfg.MainScriptName		:= IniRead(cfg.file,"System","ScriptName","nControl")
-	cfg.LogPanelEnabled		:= IniRead(cfg.file,"System","LogPanelEnabled",true)
+	cfg.debugEnabled		:= IniRead(cfg.file,"System","debugEnabled",false)
 	
-	cfg.debugEnabled		:= IniRead(cfg.file,"System","DebugEnabled",true)
+	cfg.consoleEnabled		:= IniRead(cfg.file,"System","consoleEnabled",true)
 	cfg.ToolTipsEnabled 	:= IniRead(cfg.file,"System","ToolTipsEnabled",true)
 	cfg.AlwaysOnTopEnabled	:= IniRead(cfg.file,"Interface","AlwaysOnTopEnabled",true)
 	cfg.AnimationsEnabled	:= IniRead(cfg.file,"Interface","AnimationsEnabled",true)
@@ -254,9 +233,9 @@ CfgLoad(&cfg, &ui)
 	cfg.GuiX 				:= IniRead(cfg.file,"Interface","GuiX",200)
 	cfg.GuiY 				:= IniRead(cfg.file,"Interface","GuiY",200)
 	MonitorGet(MonitorGetPrimary(),&L,&T,&R,&B)
-	if (cfg.GuiX > L-600)
+	if (cfg.GuiX < L)
 		cfg.GuiX := 200
-	if (cfg.GuiY > B-500)
+	if (cfg.GuiY > B)
 		cfg.GuiY := 200
 	cfg.AfkX				:= IniRead(cfg.file,"Interface","AfkX",cfg.GuiX+10)
 	cfg.AfkY				:= IniRead(cfg.file,"Interface","AfkY",cfg.GuiY+35)
@@ -300,17 +279,10 @@ CfgLoad(&cfg, &ui)
 
 	cfg.Theme							:= IniRead(cfg.file,"Interface","Theme","Modern Class")
 	cfg.ThemeList						:= StrSplit(IniRead(cfg.file,"Interface","ThemeList","Modern Class,Cold Steel,Militarized,Custom"),",")
-<<<<<<< HEAD
 	cfg.ThemeBright2Color	:= IniRead(cfg.file,cfg.Theme,"ThemeBright2Color","C0C0C0")
 	cfg.ThemeBright1Color		:= IniRead(cfg.file,cfg.Theme,"ThemeBright1Color","FFFFFF")
 	cfg.ThemeBorderLightColor			:= IniRead(cfg.file,cfg.Theme,"ThemeBorderLightColor","888888")
 	cfg.ThemeBorderDarkColor		:= IniRead(cfg.file,cfg.Theme,"ThemeBorderDarkColor","333333")
-=======
-	cfg.ThemeBrightBorderBottomColor	:= IniRead(cfg.file,cfg.Theme,"ThemeBrightBorderBottomColor","C0C0C0")
-	cfg.ThemeBrightBorderTopColor		:= IniRead(cfg.file,cfg.Theme,"ThemeBrightBorderTopColor","FFFFFF")
-	cfg.Theme3dBorderLightColor			:= IniRead(cfg.file,cfg.Theme,"Theme3dBorderLightColor","888888")
-	cfg.Theme3dBorderShadowColor		:= IniRead(cfg.file,cfg.Theme,"Theme3dBorderShadowColor","333333")
->>>>>>> 169606a70753258dc2f103a2ec48e6d3aac9edc4
 	cfg.ThemeBackgroundColor			:= IniRead(cfg.file,cfg.Theme,"ThemeBackgroundColor","414141")
 	cfg.ThemeFont1Color					:= IniRead(cfg.file,cfg.Theme,"ThemeFont1Color","1FFFF")
 	cfg.ThemeFont2Color					:= IniRead(cfg.file,cfg.Theme,"ThemeFont2Color","FBD58E")
@@ -318,15 +290,9 @@ CfgLoad(&cfg, &ui)
 	cfg.ThemeConsoleBg2Color			:= IniRead(cfg.file,cfg.Theme,"ThemeConsoleBg2Color","804001")
 	cfg.ThemeEditboxColor				:= IniRead(cfg.file,cfg.Theme,"ThemeEditboxColor","292929")
 	cfg.ThemeDisabledColor				:= IniRead(cfg.file,cfg.Theme,"ThemeDisabledColor","212121")
-<<<<<<< HEAD
 	cfg.ThemeButtonAlertColor		:= IniRead(cfg.file,cfg.Theme,"ThemeButtonAlertColor","3C3C3C")
 	cfg.ThemeButtonOnColor				:= IniRead(cfg.file,cfg.Theme,"ThemeButtonOnColor","FF01FF")
 	cfg.ThemeButtonReadyColor			:= IniRead(cfg.file,cfg.Theme,"ThemeButtonReadyColor","1FFFF0")
-=======
-	cfg.ThemeButtonDisabledColor		:= IniRead(cfg.file,cfg.Theme,"ThemeButtonDisabledColor","3C3C3C")
-	cfg.ThemeButtonOnColor				:= IniRead(cfg.file,cfg.Theme,"ThemeButtonOnColor","FF01FF")
-	cfg.ThemeButtonReadyColor			:= IniRead(cfg.file,cfg.Theme,"ThemeButtonReadyColor","1FFFF")
->>>>>>> 169606a70753258dc2f103a2ec48e6d3aac9edc4
 }
 
 
@@ -377,17 +343,10 @@ WriteConfig()
 	IniWrite(ui.ThemeDDL.Text,cfg.file,"Interface","Theme")
 	
 	if (ui.ThemeDDL.Text == "Custom") {
-<<<<<<< HEAD
 		IniWrite(cfg.ThemeBorderLightColor,cfg.file,"Custom","ThemeBorderLightColor")
 		IniWrite(cfg.ThemeBorderDarkColor,cfg.file,"Custom","ThemeBorderDarkColor")
 		IniWrite(cfg.ThemeBright1Color,cfg.file,"Custom","ThemeBright1Color")
 		IniWrite(cfg.ThemeBright2Color,cfg.file,"Custom","ThemeBright2Color")
-=======
-		IniWrite(cfg.Theme3dBorderLightColor,cfg.file,"Custom","Theme3dBorderLightColor")
-		IniWrite(cfg.Theme3dBorderShadowColor,cfg.file,"Custom","Theme3dBorderShadowColor")
-		IniWrite(cfg.ThemeBrightBorderTopColor,cfg.file,"Custom","ThemeBrightBorderTopColor")
-		IniWrite(cfg.ThemeBrightBorderBottomColor,cfg.file,"Custom","ThemeBrightBorderBottomColor")
->>>>>>> 169606a70753258dc2f103a2ec48e6d3aac9edc4
 		IniWrite(cfg.ThemeBackgroundColor,cfg.file,"Custom","ThemeBackgroundColor")
 		IniWrite(cfg.ThemeFont1Color,cfg.file,"Custom","ThemeFont1Color")
 		IniWrite(cfg.ThemeFont2Color,cfg.file,"Custom","ThemeFont2Color")
@@ -397,11 +356,7 @@ WriteConfig()
 		IniWrite(cfg.ThemeDisabledColor,cfg.file,"Custom","ThemeDisabledColor")
 		IniWrite(cfg.ThemeButtonOnColor,cfg.file,"Custom","ThemeButtonOnColor")
 		IniWrite(cfg.ThemeButtonReadyColor,cfg.file,"Custom","ThemeButtonReadyColor")
-<<<<<<< HEAD
 		IniWrite(cfg.ThemeButtonAlertColor,cfg.file,"Custom","ThemeButtonAlertColor")
-=======
-		IniWrite(cfg.ThemeButtonDisabledColor,cfg.file,"Custom","ThemeButtonDisabledColor")
->>>>>>> 169606a70753258dc2f103a2ec48e6d3aac9edc4
 	}
 	
 	ui.MainGui.GetPos(&GuiX,&GuiY,,)
@@ -422,8 +377,8 @@ WriteConfig()
 	IniWrite(cfg.AfkY,cfg.file,"Interface","AfkY")
 	IniWrite(cfg.AfkSnapEnabled,cfg.file,"Interface","AfkSnapEnabled")
 	IniWrite(cfg.GuiSnapEnabled,cfg.file,"Interface","GuiSnapEnabled")
-	IniWrite(cfg.debugEnabled,cfg.file,"System","DebugEnabled")
-	IniWrite(cfg.LogPanelEnabled,cfg.file,"System","LogPanelEnabled")
+	IniWrite(cfg.consoleEnabled,cfg.file,"System","consoleEnabled")
+	IniWrite(cfg.debugEnabled,cfg.file,"System","debugEnabled")
 	IniWrite(cfg.ToolTipsEnabled,cfg.file,"System","ToolTipsEnabled")
 	IniWrite(cfg.AlwaysOnTopEnabled,cfg.file,"Interface","AlwaysOnTopEnabled")
 	IniWrite(cfg.AnimationsEnabled,cfg.file,"Interface","AnimationsEnabled")
@@ -439,7 +394,8 @@ WriteConfig()
 	{
 		DirCreate("./Logs")
 	}
-	FileAppend(ui.gvConsole.Value,"./Logs/gvLog_" A_YYYY A_MM A_DD A_Hour A_Min A_Sec ".txt")
+	if (cfg.debugEnabled)
+		FileAppend(ui.gvConsole.Value,"./Logs/gvLog_" A_YYYY A_MM A_DD A_Hour A_Min A_Sec ".txt")
 	ui.MainGui.Destroy()
 	BlockInput("Off")
 }
@@ -491,11 +447,7 @@ DialogBox(DialogText, DialogTitle := "")
 	ui.dialogBoxGui.Opt("-Caption -Border +AlwaysOnTop +Owner" ui.MainGui.Hwnd)
 	ui.dialogBoxGui.SetFont("s16 c" cfg.ThemeFont2Color, "Calibri Bold")
 	ui.dialogBoxText := ui.dialogBoxGui.AddText("y6 w300 r4 +Center section","")
-<<<<<<< HEAD
 	drawOutlineDialogBoxGui(5,5,330,125,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,2)
-=======
-	drawOutlineDialogBoxGui(5,5,330,125,cfg.Theme3dBorderShadowColor,cfg.Theme3dBorderLightColor,2)
->>>>>>> 169606a70753258dc2f103a2ec48e6d3aac9edc4
 
 	ui.dialogBoxGui.Title := DialogTitle
 	WinSetTransparent(0,ui.dialogBoxGui)
@@ -538,20 +490,18 @@ NotifyOSD(NotifyMsg,Duration := 10)
 	ui.notifyGui			:= Gui()
 	ui.notifyGui.Title 	:= "Notify"
 
-	ui.notifyGui.Opt("+AlwaysOnTop -Caption +ToolWindow")  ; +ToolWindow avoids a taskbar button and an alt-tab menu item.
-	ui.notifyGui.BackColor := cfg.ThemeBackgroundColor  ; Can be any RGB color (it will be made transparent below).
+	ui.notifyGui.Opt("+AlwaysOnTop -Caption +ToolWindow Owner" ui.MainGui.Hwnd)  ; +ToolWindow avoids a taskbar button and an alt-tab menu item.
+	ui.notifyGui.BackColor := cfg.ThemeConsoleBg2Color  ; Can be any RGB color (it will be made transparent below).
 	ui.notifyGui.SetFont("s16")  ; Set a large font size (32-point).
-	ui.notifyGui.AddText("c" cfg.ThemeFont1Color " BackgroundTrans",NotifyMsg)  ; XX & YY serve to 00auto-size the window.
+	ui.notifyGui.AddText("c" cfg.ThemeFont2Color " BackgroundTrans",NotifyMsg)  ; XX & YY serve to 00auto-size the window.
 	WinSetTransparent(0,ui.notifyGui)
-	ui.notifyGui.Show("x100 y" A_ScreenHeight-450 " NoActivate")  ; NoActivate avoids deactivating the currently active window.
+	ui.notifyGui.Show("NoActivate")  ; NoActivate avoids deactivating the currently active window.
 	ui.notifyGui.GetPos(&x,&y,&w,&h)
-<<<<<<< HEAD
-	drawOutlineNotifyGui(x+2,y+2,w-4,h-6,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,2)
-	drawOutlineNotifyGui(x+5,y+5,w-10,h-10,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,2)
-=======
-	drawOutlineNotifyGui(x+2,y+2,w-4,h-6,cfg.Theme3dBorderShadowColor,cfg.Theme3dBorderLightColor,2)
-	drawOutlineNotifyGui(x+5,y+5,w-10,h-10,cfg.Theme3dBorderShadowColor,cfg.Theme3dBorderLightColor,2)
->>>>>>> 169606a70753258dc2f103a2ec48e6d3aac9edc4
+	
+	ui.MainGui.GetPos(&GuiX,&GuiY,&GuiW,&GuiH)
+	ui.notifyGui.Show("x" (GuiX+(GuiW/2)-(w/2)) " y" GuiY+((GuiH/2)-(h/2)))
+	drawOutlineNotifyGui(0,0,w,h,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,3)
+	drawOutlineNotifyGui(5,5,w-10,h-10,cfg.ThemeBright1Color,cfg.ThemeBright2Color,2)
 	Transparent := 250
 	WinSetTransparent(Transparent,ui.notifyGui)
 	Sleep(500)
@@ -581,6 +531,8 @@ ResetWindowPosition(*)
 
 ExitFunc(ExitReason,ExitCode)	
 {
+	try
+		ui.helpGui.Destroy()
 	debugLog("Exit Command Received")
 	ui.MainGui.Opt("-AlwaysOnTop")
 
