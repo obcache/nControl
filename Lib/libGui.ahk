@@ -45,7 +45,11 @@ InitGui(&cfg, &ui)
 	ui.MainGui.MarginX := 0
 	ui.MainGui.MarginY := 0
 	ui.MainGui.SetFont("s13 c" cfg.ThemeFont1Color,"Calibri")
+<<<<<<< HEAD
 	ui.MainGuiTabs := ui.MainGui.AddTab3("x0 y0 w505 h214 Buttons +Redraw Background" cfg.ThemeBackgroundColor " -E0x200", ["Sys","AFK","Bindings","Dock","Setup","Audio"])
+=======
+	ui.MainGuiTabs := ui.MainGui.AddTab3("x0 y0 w505 h214 Buttons +Redraw Background" cfg.ThemeBackgroundColor " -E0x200", ["Sys","AFK","Keymaps","Dock","Setup","Audio"])
+>>>>>>> 6369ce33ca03d30e8dec681be47725668dede52c
 	ui.MainGuiTabs.OnEvent("Change",TabsChanged)
 	ui.MainGuiTabs.Choose("AFK")
 	
@@ -337,7 +341,11 @@ ToggleAfkDock(*)
 		BlockInput(True)
 		ShowGui()
 		BlockInput(False)
+<<<<<<< HEAD
 		ui.titleBarButtonGui.Move(GuiX+425,GuiY-7,72,)
+=======
+		ui.titleBarButtonGui.Move(winX+425,WinY-7,72,)
+>>>>>>> 6369ce33ca03d30e8dec681be47725668dede52c
 	
 	} else {
 		ui.AfkDocked := true
@@ -383,6 +391,7 @@ ShowAfkInGui()
 
 TabsChanged(*)
 {
+<<<<<<< HEAD
 	ui.activeTab := ui.MainGuiTabs.Text
 	if (ui.activeTab == "Bindings" || ui.activeTab == "Audio") {
 		ui.MainGuiTabs.Choose(ui.previousTab)
@@ -396,6 +405,11 @@ TabsChanged(*)
 	debugLog("Tab Changed to " ui.activeTab)
 	(ui.activeTab = "AFK") && (ui.AfkAnchoredToGui) ? ShowAfkInGui() : (ui.activeTab == "Setup") ? (ui.MainGuiTabs.Focus(), ui.AfkGui.Hide()) : ui.AfkGui.Hide()
 	ui.previousTab := ui.activeTab
+=======
+	debugLog("Tab Changed to " ui.MainGuiTabs.Text)
+	(ui.MainGuiTabs.Text = "AFK") && (ui.AfkAnchoredToGui) ? ShowAfkInGui() : (ui.MainGuiTabs.Text == "Setup") ? ui.MainGuiTabs.Focus() : ui.AfkGui.Hide()
+
+>>>>>>> 6369ce33ca03d30e8dec681be47725668dede52c
 }
 
 InitConsole(&ui)
@@ -551,6 +565,46 @@ ShowGui(*)
 	debugLog("Showing Interface")
 }
 
+<<<<<<< HEAD
+=======
+ToggleDebug(*)
+{
+	Global
+	if (cfg.debugEnabled == false)
+	{
+		cfg.debugEnabled := 1
+		BlockInput(true)
+		ui.ButtonDebug.Value := "./Img/button_viewlog_down.png"
+		ui.ButtonDebug.Opt("Background" cfg.ThemeButtonOnColor)
+		BlockInput(false)
+		ui.MainGui.GetPos(&GuiX,&GuiY,&GuiW,&GuiH)
+		While (GuiH < 395)
+		{
+			GuiH += 10
+			ui.MainGui.Show("h" GuiH " NoActivate") 
+			Sleep(10)
+		}
+			
+		ui.MainGui.Show("h395 NoActivate")
+		debugLog("Showing Log")
+	} else {
+		cfg.debugEnabled := 0
+		BlockInput(true)	 
+		ui.ButtonDebug.Value := "./Img/button_viewlog_up.png"
+		ui.ButtonDebug.Opt("Background" cfg.ThemeButtonReadyColor)
+		BlockInput(false)
+		ui.MainGui.GetPos(&GuiX,&GuiY,&GuiW,&GuiH)
+		While (GuiH > 214)
+		{
+			GuiH -= 10
+			ui.MainGui.Show("h" GuiH " NoActivate")
+			Sleep(10)
+		}
+		ui.MainGui.Show("h214 NoActivate")
+		debugLog("Hiding Log")
+	}
+}
+>>>>>>> 6369ce33ca03d30e8dec681be47725668dede52c
 
 DockApps(*)
 {

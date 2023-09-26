@@ -497,11 +497,16 @@ NotifyOSD(NotifyMsg,Duration := 10)
 	WinSetTransparent(0,ui.notifyGui)
 	ui.notifyGui.Show("NoActivate")  ; NoActivate avoids deactivating the currently active window.
 	ui.notifyGui.GetPos(&x,&y,&w,&h)
+<<<<<<< HEAD
 	
 	ui.MainGui.GetPos(&GuiX,&GuiY,&GuiW,&GuiH)
 	ui.notifyGui.Show("x" (GuiX+(GuiW/2)-(w/2)) " y" GuiY+((GuiH/2)-(h/2)))
 	drawOutlineNotifyGui(0,0,w,h,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,3)
 	drawOutlineNotifyGui(5,5,w-10,h-10,cfg.ThemeBright1Color,cfg.ThemeBright2Color,2)
+=======
+	drawOutlineNotifyGui(x+2,y+2,w-4,h-6,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,2)
+	drawOutlineNotifyGui(x+5,y+5,w-10,h-10,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,2)
+>>>>>>> 6369ce33ca03d30e8dec681be47725668dede52c
 	Transparent := 250
 	WinSetTransparent(Transparent,ui.notifyGui)
 	Sleep(500)

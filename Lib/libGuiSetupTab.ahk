@@ -79,7 +79,11 @@ GuiSetupTab(&ui,&cfg)
 	
 	ui.buttonNewTheme := ui.MainGui.AddPicture("x245 y36 section w24 h23 Background" cfg.ThemeButtonReadyColor,"./Img/button_plus_ready.png")
 
+<<<<<<< HEAD
 	ui.ThemeDDL := ui.MainGui.AddDDL("ys w120 section center Background" cfg.ThemeEditboxColor,cfg.ThemeList)
+=======
+	ui.ThemeDDL := ui.MainGui.AddDDL("ys w120 section Background" cfg.ThemeEditboxColor,cfg.ThemeList)
+>>>>>>> 6369ce33ca03d30e8dec681be47725668dede52c
 	ui.ThemeDDl.Choose(cfg.Theme)
 	ui.ThemeDDL.OnEvent("Change",ThemeChanged)
 	ui.ThemeDDL.ToolTip := "Select Theme Preset"
@@ -115,14 +119,23 @@ GuiSetupTab(&ui,&cfg)
 
 
 	
+<<<<<<< HEAD
 	ui.MainGui.SetFont("s10")
 	ui.MainGui.AddText("x255 y52 section hidden")
+=======
+	ui.MainGui.SetFont("s9")
+	ui.MainGui.AddText("x275 y58 section hidden")
+>>>>>>> 6369ce33ca03d30e8dec681be47725668dede52c
 
 	Loop ui.ThemeElements.Length
 	{
 		this_color := ui.ThemeElements[A_Index]
 		if (A_Index == 8)
+<<<<<<< HEAD
 			ui.MainGui.AddText("x+30 y52 section hidden")
+=======
+			ui.MainGui.AddText("x+30 y58 section hidden")
+>>>>>>> 6369ce33ca03d30e8dec681be47725668dede52c
 		ui.%this_color%Picker := ui.MainGui.AddText("xs y+2 section w30 h20 Border Background" cfg.%this_color% " c" cfg.%this_color%,this_color)
 		ui.%this_color%Label := ui.MainGui.AddText("x+5 ys+2 c" cfg.ThemeFont1Color,StrReplace(SubStr(this_color,6),"Color"))
 		ui.%this_color%Picker.OnEvent("Click",PickColor)

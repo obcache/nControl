@@ -27,6 +27,7 @@ WM_WINDOWPOSCHANGED(wParam, lParam, msg, Hwnd)
 {
 	if (Hwnd = ui.MainGui.Hwnd)
 	{
+<<<<<<< HEAD
 		ui.MainGui.GetPos(&winX,&winY,,)
 		ui.AfkGui.Move(winX+10,winY+35,,)
 		ui.titleBarButtonGui.Opt("Owner" ui.MainGui.Hwnd)
@@ -37,6 +38,21 @@ WM_WINDOWPOSCHANGED(wParam, lParam, msg, Hwnd)
 		;MsgBox(AfkGuiX "`n" AfkGuiY)
 		ui.titleBarButtonGui.Opt("Owner" ui.AfkGui.Hwnd)
 		ui.titleBarButtonGui.Move(AfkGuiX+155,AfkGuiY-5)
+=======
+		if (Hwnd = ui.MainGui.Hwnd)
+		{
+			ui.MainGui.GetPos(&winX,&winY,,)
+			ui.AfkGui.Move(winX+10,winY+35,,)
+			ui.titleBarButtonGui.Opt("Owner" ui.MainGui.Hwnd)
+			ui.titleBarButtonGui.Move(winX+425,WinY-7) 
+		} 
+		if (ui.AfkDocked) && (Hwnd = ui.AfkGui.Hwnd) {
+				WinGetPos(&AfkGuiX,&AfkGuiY,,,ui.AfkGui)
+				;MsgBox(AfkGuiX "`n" AfkGuiY)
+				ui.titleBarButtonGui.Opt("Owner" ui.AfkGui.Hwnd)
+				ui.titleBarButtonGui.Move(AfkGuiX+155,AfkGuiY-5)
+		}
+>>>>>>> 6369ce33ca03d30e8dec681be47725668dede52c
 	}
 }
 ; OnMessage(WM_ACTIVATEAPP := 0x1C, OnActivate)

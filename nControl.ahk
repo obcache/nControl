@@ -1,5 +1,9 @@
 ;@Ahk2Exe-SetName nControl
+<<<<<<< HEAD
 ;@Ahk2Exe-SetVersion 1.1.3.1-beta
+=======
+;@Ahk2Exe-SetVersion 1.1.1.6-alpha
+>>>>>>> 6369ce33ca03d30e8dec681be47725668dede52c
 ;@Ahk2Exe-ExeName E:\Desktop\nControl.exe
 
 #Requires AutoHotkey v2.0

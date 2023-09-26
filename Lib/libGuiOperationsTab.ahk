@@ -66,7 +66,11 @@ GuiOperationsTab(&ui,&cfg)
 	
 
 	ui.MainGui.SetFont("s15 c" cfg.ThemeFont1Color,"Calibri")
+<<<<<<< HEAD
 	ui.Win1Hwnd := ui.MainGui.AddText("ys+26 x+5 section Right w102 h30 Background" cfg.ThemeDisabledColor,"")
+=======
+	ui.Win1Hwnd := ui.MainGui.AddText("ys+60 x+5 section Right w102 h30 Background" cfg.ThemeDisabledColor,"")
+>>>>>>> 6369ce33ca03d30e8dec681be47725668dede52c
 	ui.Win1HwndPadding := ui.MainGui.AddText("ys+0 x+0 section w5 h30 Background" cfg.ThemeDisabledColor,"")
 	ui.Win1Hwnd.Text := ""
 	ui.Win1Hwnd.ToolTip := "Window ID for Game Window 1"	
@@ -86,15 +90,30 @@ GuiOperationsTab(&ui,&cfg)
 	ui.Game2StatusIcon.ToolTip := "Toggle to have this window ignored by nControl"
 
 
+<<<<<<< HEAD
 	ui.ButtonHelp := ui.MainGui.AddPicture("xs-108 y+1 w138 h32 section Background" cfg.ThemeButtonAlertColor,"./Img/button_help.png")
 	ui.ButtonHelp.OnEvent("Click",LaunchHelp)
 	ui.ButtonDebug := ui.MainGui.AddPicture("xs y+1 w138 h32 section Background" cfg.ThemeButtonReadyColor,"./Img/button_viewlog_up.png")
+=======
+	
+	ui.ButtonDebug := ui.MainGui.AddPicture("xs-107 y+0 w138 h32 section Background" cfg.ThemeButtonReadyColor,"./Img/button_viewlog_down.png")
+>>>>>>> 6369ce33ca03d30e8dec681be47725668dede52c
 	ui.ButtonDebug.OnEvent("Click",ToggleDebug)	
 
 	
 	; ui.MainGui.SetFont("s14 c" cfg.ThemeFont1Color,"Calibri Thin")
 	; ui.MainGui.AddText("x+10 ys+2","View Log")
 	
+<<<<<<< HEAD
+=======
+	drawOutlineMainGui(0,32,501,30,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,2)		;Ops Toolbar Outline
+	;drawOutlineMainGui(0,58, 360,153,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,2)		;Ops GameWindowBox Outline
+	drawOutlineMainGui(118,33,154,29,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,2)	;Ops Clock Outline
+	drawOutlineMainGui(363,120,140,62,cfg.ThemeBorderLightColor,cfg.ThemeBorderLightColor,2)	;Ops Window Status Icons Outline
+	drawOutlineMainGui(363,150,140,2,cfg.ThemeBorderLightColor,cfg.ThemeBorderLightColor,2)		;Ops Window Handle Divider Outline
+	drawOutlineMainGui(360,180,143,34,cfg.ThemeBorderLightColor,cfg.ThemeBorderLightColor,2)	;Ops Log Viewer Button Outline
+
+>>>>>>> 6369ce33ca03d30e8dec681be47725668dede52c
 	ui.GameDDL.Choose(1)
 
 	ui.ClockMode := "Clock"
@@ -105,7 +124,11 @@ GuiOperationsTab(&ui,&cfg)
 	ui.StopwatchTime := "00:00 "
 	ui.StopwatchState := "Stopped"
 	
+<<<<<<< HEAD
 	ui.buttonSwapHwnd := ui.MainGui.AddPicture("x364 y89 w19 h57 BackgroundTrans","./Img/button_swapHwnd_disabled.png")
+=======
+	ui.buttonSwapHwnd := ui.MainGui.AddPicture("x364 y123 w19 h56 BackgroundTrans","./Img/button_swapHwnd_disabled.png")
+>>>>>>> 6369ce33ca03d30e8dec681be47725668dede52c
 	ui.buttonSwapHwnd.OnEvent("Click",ToggleHwndSwap)
 	ui.buttonSwapHwnd.ToolTip := "Swap Windows"
 
@@ -368,7 +391,11 @@ RefreshWinHwnd(*)
 		} else {
 			ui.Game%WinNumber%StatusIcon.Value := "./Img/button_ready.png"
 			ui.Game%WinNumber%StatusIcon.Opt("Background" cfg.ThemeButtonReadyColor)
+<<<<<<< HEAD
 			ui.Win%WinNumber%HwndPadding.Opt("+Disabled Background" cfg.ThemeDisabledColor)
+=======
+			ui.Win%WinNumber%HwndPadding.Opt("Background" cfg.ThemeDisabledColor)
+>>>>>>> 6369ce33ca03d30e8dec681be47725668dede52c
 			ui.Win%WinNumber%Hwnd.Opt("+Disabled Background" cfg.ThemeDisabledColor)
 			ui.Win%WinNumber%ClassDDL.Opt("+Disabled")	
 		}
@@ -379,6 +406,7 @@ RefreshWinHwnd(*)
 	ui.buttonSwapHwnd.Value := cfg.HwndSwapEnabled ? "./Img/button_swapHwnd_enabled.png" : "./Img/button_swapHwnd_disabled.png"
 	ui.buttonSwapHwnd.Redraw()
 	ui.MainGuiTabs.UseTab("Sys")
+<<<<<<< HEAD
 
 	drawOutlineMainGui(382,116,143,2,cfg.ThemeBorderLightColor,cfg.ThemeBorderLightColor,2)		;Ops Window Handle Divider Outline
 	drawOutlineMainGui(361,147,143,34,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,2)	;Ops Log Viewer Button Outline
@@ -390,6 +418,9 @@ RefreshWinHwnd(*)
 	drawOutlineMainGui(118,33,154,29,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,2)	;Ops Clock Outline
 
 	;Ops GameWindowBox Outline	
+=======
+	drawOutlineMainGui(4,63,358,151,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,2)		;Ops GameWindowBox Outline	
+>>>>>>> 6369ce33ca03d30e8dec681be47725668dede52c
 }
 
 AddGame(*)
