@@ -2,20 +2,19 @@
 #Requires AutoHotKey v2.0+
 #Warn All, Off
 
-if (InStr(A_LineFile,A_ScriptFullPath))
-{
+if (InStr(A_LineFile,A_ScriptFullPath)) {
 	Run(A_ScriptDir "/../nControl.ahk")
 	ExitApp
 	Return
 }
 
-InitGui(&cfg, &ui)
-{
+initGui(&cfg, &ui) {
 	ui.TransparentColor := "010203"
 	ui.MainGui := Gui()
 	ui.MainGui.Name := "nControl"
 	ui.TaskbarHeight := GetTaskBarHeight()
-
+	ui.MainGui.BackColor := ui.TransparentColor
+	ui.MainGui.Color := ui.TransparentColor
 	
 	ui.MainGui.Opt("-Caption -Border")
 	if (cfg.AlwaysOnTopEnabled)
@@ -23,47 +22,51 @@ InitGui(&cfg, &ui)
 		ui.MainGui.Opt("+AlwaysOnTop 0x4000000")
 	}
 
-
 	ui.titleBarButtonGui := Gui()
+
 	ui.titleBarButtonGui.Opt("-Caption -Border AlwaysOnTop Owner" ui.MainGui.Hwnd)
-	ui.DownButton 	:= ui.titleBarButtonGui.AddPicture("x0 y0 w34 h35 section Background" cfg.ThemeFont1Color,"./Img/button_minimize.png")
+	ui.titleBarButtonGui.BackColor := ui.TransparentColor
+	ui.titleBarButtonGui.Color := ui.TransparentColor
+	
+	;ui.handleBarImage := ui.titleBarButtonGui.AddPicture("x0 y+3 w35 h214","./Img/handlebar_vertical.png")
+	;ui.handleBarImage.OnEvent("DoubleClick",ToggleGuiCollapse)
+
+	ui.DownButton 	:= ui.titleBarButtonGui.AddPicture("x458 y0 w35 h35 section Background" cfg.ThemeFont1Color,"./Img/button_minimize.png")
 	ui.DownButton.OnEvent("Click",HideGui)
 	ui.DownButton.ToolTip := "Minimizes nControl App"
 
-	ui.ExitButton 	:= ui.titleBarButtonGui.AddPicture("x37 ys w35 h35 Background" cfg.ThemeFont1Color,"./Img/button_quit.png")
+	ui.ExitButton 	:= ui.titleBarButtonGui.AddPicture("x+3 ys section w35 h35 Background" cfg.ThemeFont1Color,"./Img/button_quit.png")
 	ui.ExitButton.OnEvent("Click",ExitButtonPushed)
 	ui.ExitButton.ToolTip := "Terminates nControl App"
-	
-	ui.buttonUndockAfk := ui.titleBarButtonGui.AddPicture("x74 ys w35 h35 hidden Background" cfg.ThemeButtonAlertColor,"./Img/button_dockRight_on.png")
-	ui.buttonUnDockAfk.OnEvent("Click",ToggleAfkDock)
-	ui.buttonUnDockAfk.ToolTip := "UnDock AFK Panel"
-	
-	WinSetTransparent(0,ui.titleBarButtonGui)
-	ui.titleBarButtonGui.Show("x" cfg.GuiX+425 " y" cfg.GuiY-7 " w72 h35 NoActivate")
-
 	
 	ui.MainGui.MarginX := 0
 	ui.MainGui.MarginY := 0
 	ui.MainGui.SetFont("s13 c" cfg.ThemeFont1Color,"Calibri")
-<<<<<<< HEAD
-	ui.MainGuiTabs := ui.MainGui.AddTab3("x0 y0 w505 h214 Buttons +Redraw Background" cfg.ThemeBackgroundColor " -E0x200", ["Sys","AFK","Bindings","Dock","Setup","Audio"])
-=======
-	ui.MainGuiTabs := ui.MainGui.AddTab3("x0 y0 w505 h214 Buttons +Redraw Background" cfg.ThemeBackgroundColor " -E0x200", ["Sys","AFK","Keymaps","Dock","Setup","Audio"])
->>>>>>> 6369ce33ca03d30e8dec681be47725668dede52c
+	ui.MainGuiTabs := ui.MainGui.AddTab3("x35 y1 w504 h214 Buttons -Redraw Background" cfg.ThemeBackgroundColor " -E0x200", ["Sys","AFK","Bindings","Dock","Setup","Audio"])
 	ui.MainGuiTabs.OnEvent("Change",TabsChanged)
 	ui.MainGuiTabs.Choose("AFK")
+	ui.MainGuiTabs.UseTab("")
+	ui.MainGui.SetFont("s12 c" cfg.ThemeFont1Color,"Calibri")
+	ui.handleBarImage := ui.MainGui.AddPicture("x0 y-2 w35 h216","./Img/handlebar_vertical.png")
+	ui.handleBarImage.OnEvent("DoubleClick",ToggleGuiCollapse)
+	ui.handleBarImage.OnEvent("Click",WM_LBUTTONDOWN_callback)
+	ui.rightHandlebarImage := ui.MainGui.AddPicture("x535 w35 y-2 h216 section","./Img/handlebar_vertical.png")
+	;ui.rightHandlebarImage.OnEvent("DoubleClick",ToggleGuiCollapse)
+	ui.gvConsole := ui.MainGui.AddListBox("x35 y220 w500 h192 +Background" cfg.ThemePanel1Color)
+	ui.gvConsole.Color := cfg.ThemeBright1Color
 	
-	GuiOperationsTab(&ui,&cfg)
+	afk 						:= Object()
+
+	
 	GuiAFKTab(&ui,&afk)
+
 	GuiDockTab(&ui)
 	GuiSetupTab(&ui,&cfg)
 	;GuiSystemTab(&ui)	
 	GuiAudioTab(&ui,&audio)
 
-	ui.MainGuiTabs.UseTab("")
-	ui.MainGui.SetFont("s12 c" cfg.ThemeFont1Color,"Calibri")
-	ui.gvConsole := ui.MainGui.AddListBox("section xs-12 y+50 w527 h192 +Background" cfg.ThemeConsoleBgColor)
-	ui.gvConsole.Color := cfg.ThemeBorderDarkColor
+	GuiOperationsTab(&ui,&cfg,&afk)
+
 	
 	if (FileExist("./Logs/persist.log"))
 	{
@@ -73,73 +76,85 @@ InitGui(&cfg, &ui)
 		}
 		FileDelete("./Logs/persist.log")
 	}
-	ui.MainGui.AddPicture("x504 y-2 w32 h220 section","./Img/handlebar_vertical.png")
+
 	
-	drawOutlineTitleBarButtonGui(35,0,2,35,cfg.ThemeBorderDarkColor,cfg.ThemeBorderDarkColor,3)
-	drawOutlineTitleBarButtonGui(73,0,2,35,cfg.ThemeBorderDarkColor,cfg.ThemeBorderDarkColor,3)
-	drawOutlineMainGui(0,28,421,4,cfg.ThemeBorderDarkColor,cfg.ThemeBorderDarkColor,2)
-	drawOutlineMainGui(421,0,82,32,cfg.ThemeBorderDarkColor,cfg.ThemeBorderDarkColor,16)
-	drawOutlineMainGui(0,0,505,214,cfg.ThemeBright1Color,cfg.ThemeBright2Color,2)   	;Main Gui Outline
-	drawOutlineAfkGui(2,2,511,28,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,1)
-	;drawOutlineMainGui(2,33,503,184,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,1)			;
-	drawOutlineMainGui(0,218,532,184,cfg.ThemeBright1Color,cfg.ThemeBright2Color,1) 	;Log Panel Outline
-	drawOutlineMainGui(2,220,532,187,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,1)		;Log Panel 3D Effect
-	;drawOutlineMainGui(438,3,63,30,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,2)			;Titlebar Buttons 3D Effect
+	;drawOutlineTitleBarButtonGui(31,0,5,35,cfg.ThemeBright1Color,cfg.ThemeBright1Color,3)
+	;drawOutlineTitleBarButtonGui(73,0,2,35,cfg.ThemeBright1Color,cfg.ThemeBright1Color,3)
+	drawOutlineMainGui(35,29,500,3,cfg.ThemeBackgroundColor,cfg.ThemeBackgroundColor,2)
+	;drawOutlineMainGui(421,0,10,32,cfg.ThemeBackgroundColor,cfg.ThemeBackgroundColor,16)
+	drawOutlineMainGui(35,0,500,214,cfg.ThemeBright1Color,cfg.ThemeBright2Color,2)   	;Main Gui Outline
+	drawOutlineAfkGui(37,2,498,28,cfg.ThemeBright1Color,cfg.ThemeBright2Color,1)
+	;drawOutlineMainGui(2,33,503,184,cfg.ThemeBright1Color,cfg.ThemeBright2Color,1)			;
+	drawOutlineMainGui(35,218,532,184,cfg.ThemeBright1Color,cfg.ThemeBright2Color,1) 	;Log Panel Outline
+	drawOutlineMainGui(37,220,532,187,cfg.ThemeBright1Color,cfg.ThemeBright2Color,1)		;Log Panel 3D Effect
+	;drawOutlineMainGui(438,3,63,30,cfg.ThemeBright1Color,cfg.ThemeBright2Color,2)			;Titlebar Buttons 3D Effect
+	
 	
 	WinSetTransparent(0,ui.MainGui)
 	WinSetTransparent(0,ui.titleBarButtonGui)
-	ui.MainGui.Show("x" cfg.GuiX " y" cfg.GuiY " w532 h214 NoActivate")
-	ui.MainGuiTabs.Choose("Sys")
 	
+	ui.titleBarButtonGui.Show("x35" cfg.GuiX " y" cfg.GuiY-3 " w570 h218 NoActivate")
+	ui.MainGui.Show("x" cfg.GuiX " y" cfg.GuiY " w569 h214 NoActivate")
+
+	ui.MainGuiTabs.Choose("Sys")
+
 	if (cfg.AnimationsEnabled) {
 		Transparency := 0
-		BlockInput(True)
 		While Transparency < 253
 		{
 			Transparency += 2.5
 			WinSetTransparent(Round(Transparency),ui.MainGui)
-			WinSetTransparent(Round(Transparency),ui.titleBarButtonGui)
+			;WinSetTransparent(Round(Transparency),ui.titleBarButtonGui)
 			Sleep(1)
 		}
-		BlockInput(False)
 	}
-
 	WinSetTransparent(255,ui.MainGui)
 	WinSetTransparent(255,ui.titleBarButtonGui)
 	WinSetTransparent("Off",ui.MainGui)	
 	WinSetTransparent("Off",ui.titleBarButtonGui)	
+	WinSetTransColor(ui.TransparentColor ,ui.titleBarButtonGui)
+	WinSetTransColor(ui.TransparentColor ,ui.MainGui)	
 	InitOSDGui()
-	
-	ui.AfkGui.Opt("+Owner" ui.MainGui.Hwnd)
-	if (cfg.AlwaysOnTopEnabled)
-	{
-		ui.AfkGui.Opt("+AlwaysOnTop")
+	if (cfg.consoleVisible) {
+		(cfg.consoleVisible := !cfg.consoleVisible)
+		toggleConsole()
 	}
+	
+	if (cfg.AlwaysOnTopEnabled) 
+	{
+		ui.MainGui.Opt("+AlwaysOnTop")
+		ui.titleBarButtonGui.Opt("+AlwaysOnTop")
+		ui.AfkGui.Opt("+AlwaysOnTop")
+	} else {
+		ui.MainGui.Opt("-AlwaysOnTop")
+		ui.titleBarButtonGui.Opt("-AlwaysOnTop")
+		ui.AfkGui.Opt("-AlwaysOnTop")	
+	}
+	
 	debugLog("Interface Initialized")
-	if (cfg.consoleEnabled)
-		toggleDebug()
+	ui.MainGuiTabs.UseTab("")
+	;drawOutline(ui.MainGui,534,0,35,214,cfg.ThemeBright2Color,cfg.ThemeBright2Color,2)
 
+	;drawOutline(ui.titleBarButtonGui,0,3,35,214,cfg.ThemeBright2Color,cfg.ThemeBright2Color,2)
+OnMessage(0x0200, WM_MOUSEMOVE)
+OnMessage(0x0201, WM_LBUTTONDOWN)
+OnMessage(0x47, WM_WINDOWPOSCHANGED)
 }
 
-GuiAFKTab(&ui,&afk)
-{
+guiAFKTab(&ui,&afk) {
 	ui.MainGuiTabs.UseTab("AFK")
 	;Any logic needed for the AFK tab beneath the docked AfkGui
-	ui.Win1AfkRoutine := ui.MainGui.AddText("x292 y40 section w206 h81 Background" cfg.ThemeConsoleBgColor,"")
-	ui.Win2AfkRoutine := ui.MainGui.AddText("xs y+6 w206 h81 Background" cfg.ThemeConsoleBgColor,"")
+	ui.Win1AfkRoutine := ui.MainGui.AddText("x362 y40 section w206 h81 Background" cfg.ThemePanel1Color,"")
+	ui.Win2AfkRoutine := ui.MainGui.AddText("xs y+6 w206 h81 Background" cfg.ThemePanel1Color,"")
 	ui.Win1AfkRoutine.SetFont("s10")
 	ui.Win2AfkRoutine.SetFont("s10")
-	
-	drawOutlineMainGui(290,38,210,85,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,2)
-	drawOutlineMainGui(290,125,210,85,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,2)
+	drawOutlineAfkGui(240,40,67,58,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,2)
+	drawOutlineMainGui(360,38,210,85,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,2)
+	drawOutlineMainGui(360,125,210,85,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,2)
 }
 
-InitOSDGui()
-{
+initOSDGui() {
 	Global 
-
-	GameWinID := WinGetList("Roblox")
-
 	afk := Object()
 	MsgString := ""
 	ui.afkEnabled := false
@@ -172,7 +187,7 @@ InitOSDGui()
 	ui.buttonAntiIdle.ToolTip := "Toggles AntiIdle Mode On/Off"
 	
 	ui.buttonAutoFire := ui.AfkGui.AddPicture("x+0 ys0 w30 h30 Background" cfg.ThemeButtonReadyColor,"./Img/button_AutoFire_ready.png")
-	ui.buttonAutoFire.OnEvent("Click",AutoFireButtonClicked)
+	ui.buttonAutoFire.OnEvent("Click",toggleAutoFire)
 	ui.buttonAutoFire.ToolTip := "Toggles AutoFire on Current Window"
 	
 	ui.buttonAutoClicker := ui.AfkGui.AddPicture("x+0 ys0 w30 h30 Background" cfg.ThemeButtonReadyColor,"./Img/button_AutoClicker_ready.png")
@@ -184,17 +199,15 @@ InitOSDGui()
 	ui.buttonAfkHide.OnEvent("Click",HideAfkGui)
 	ui.buttonAfkHide.ToolTip := "Minimizes AFK Window to System Tray"
 	
-	; ui.buttonAfkUndock := ui.AfkGui.AddPicture("x+0 ys0 w30 h30 hidden Background" cfg.ThemeButtonReadyColor,"./Img/button_dockright_ready.png")
-	; ui.buttonAfkUndock.OnEvent("Click",ToggleAfkDock)
-	; ui.buttonAfkUndock.ToolTip := "Undocks AFK Window"
+	ui.buttonUndockAfk := ui.AfkGui.AddPicture("x+0 ys0 w30 h30 hidden Background" cfg.ThemeButtonReadyColor,"./Img/button_dockright_ready.png")
+	ui.buttonUndockAfk.OnEvent("Click",ToggleAfkDock)
+	ui.buttonUndockAfk.ToolTip := "Undocks AFK Window"
 
 	ui.buttonPopout := ui.AfkGui.AddPicture("x+0 ys0 w30 h30 Background" cfg.ThemeButtonReadyColor,"./Img/button_popout_ready.png")
 	ui.buttonPopout.OnEvent("Click",AfkPopoutButtonPushed)
 	
 	ui.Win1Label := ui.AfkGui.AddPicture("xs+15 y+8 section w35 h29","./Img/arrow_left.png")
 	ui.AfkGui.SetFont("s12","Calibri")
-
-
 
 	Afk.DataRow := Array()
 	ui.ProfileList := Array()
@@ -216,233 +229,239 @@ InitOSDGui()
 	
 	debugLog("Finished Reading AfkData File")
 
-	ui.Win1ClassDDL := ui.AfkGui.AddDDL("x+10 ys w115 AltSubmit choose3 Background" cfg.ThemeDisabledColor, ui.ProfileList)
+	ui.Win1ClassDDL := ui.AfkGui.AddDDL("x+10 ys w125 AltSubmit choose3 Background" cfg.ThemeEditboxColor, ui.ProfileList)
 	ui.Win1ClassDDL.OnEvent("Change",RefreshWin1AfkRoutine)
-	ui.Win1Icon := ui.AfkGui.AddPicture("ys+2 w25 h25","./Img/sleep_icon.png")
 	ui.AfkGui.SetFont("s14","Calibri")
+	ui.Win1Icon := ui.AfkGui.AddPicture("ys+2 w25 h25","./Img/sleep_icon.png")
 	ui.Win1Status := ui.AfkGui.AddText("x+-1 ys+3 w35 +BackgroundTrans","")
 	;ui.Win1Hwnd := ui.AfkGui.AddText("ys w60 hidden", "")
 
 	ui.Win2Label := ui.AfkGui.AddPicture("xs2 y+7 section w35 h29","./Img/arrow_right.png")
 	ui.AfkGui.SetFont("s12","Calibri")
-	ui.Win2ClassDDL := ui.AfkGui.AddDDL("x+8 ys-2 w115 AltSubmit choose3 Background" cfg.ThemeDisabledColor, ui.ProfileList)
+	ui.Win2ClassDDL := ui.AfkGui.AddDDL("x+8 ys-2 w125 AltSubmit choose3 Background" cfg.ThemeEditboxColor, ui.ProfileList)
 	ui.Win2ClassDDL.OnEvent("Change",RefreshWin2AfkRoutine)
 	ui.AfkGui.SetFont("s14","Calibri")
 	ui.Win2Icon := ui.AfkGui.AddPicture("ys-2 w25 h25","./Img/sleep_icon.png")
 	ui.Win2Status := ui.AfkGui.AddText("x+0 ys w35 +BackgroundTrans","")
 	;ui.Win2Hwnd := ui.AfkGui.AddText("ys w60 hidden","")
-	ui.Win1ClassDDL.Choose(1)
-	ui.Win2ClassDDL.Choose(2)
 
+	ui.Win1ClassDDL.Choose(1)
+	Loop ui.ProfileList.Length {
+		if (cfg.Win1Class == ui.ProfileList[A_Index])
+			ui.Win1ClassDDL.Choose(ui.ProfileList[A_Index])
+	}
+	
+	ui.Win2CLassDDL.Choose(1)
+	Loop ui.ProfileList.Length {
+		if (cfg.Win2Class == ui.ProfileList[A_Index])
+			ui.Win2ClassDDL.Choose(ui.ProfileList[A_Index])
+	}
+		
 	RefreshWin1AfkRoutine()
 	RefreshWin2AfkRoutine()	
 	
-
 	ui.AfkGui.SetFont("s16 bold")  ; Set a large font size (32-point).
 	ui.Title := ui.AfkGui.AddText("x5 y+13","")
 	
-	ui.Status := ui.AfkGui.AddPicture("x+0 ys+37 w220 h30","./Img/timer_off.png")  ; XX & YY serve to auto-size the window.
+	ui.AfkGui.AddPicture("x+-3 ys+35 w15 h40","./Img/label_left_trim.png")
+	ui.Status := ui.AfkGui.AddPicture("x+0 ys+35 w100 h40 Background" cfg.ThemeButtonReadyColor,"./Img/label_timer_off.png")  ; XX & YY serve to auto-size the window.
+	ui.AfkGui.AddPicture("x+0 ys+35 w15 h40","./Img/label_right_trim.png")
 	
-	ui.Progress := ui.AfkGui.AddProgress("x16 y145 w220 h20 c" cfg.ThemeBright2Color " vTimerProgress Smooth Range0-270 Background858585 ",0)
+	ui.Progress := ui.AfkGui.AddProgress("xs y145 w240 h20 c" cfg.ThemeBright2Color " vTimerProgress Smooth Range0-270 Background858585 ",0)
 	
 	
 
 	;ui.AfkGui.Show("x137 y730 w250 NoActivate")  ; NoActivate avoids deactivating the currently active window.
 	ui.AfkGui.Opt("+LastFound")
 	WinSetTransparent(210)
-	drawOutlineAfkGui(14,142,224,24,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,2)
-	drawOutlineAfkGui(180,40,67,58,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,2)
 	 
 	OnMessage(0x0201, wmAfkLButtonDown)
 
-	;WinGetPos(&MainGuiX,&MainGuiY,,,ui.MainGui)
-	;ui.AfkGui.Show("x" MainGuix+10 " y" MainGuiY+35 " w350 NoActivate")
 	ui.AfkAnchoredToGui := true
 	ui.HandlebarAfkGui := ui.AfkGui.AddPicture("x265 y0 w24 h170 section +Hidden","./Img/handlebar_vertical.png")
 	ui.AfkGui.Opt("+LastFound")
+	WinSetTransparent(0,ui.AfkGui)
+	ui.MainGui.GetPos(&MainGuiX,&MainGuiY,,)
+	drawOutlineAfkGui(14,143,244,24,cfg.ThemeBright1Color,cfg.ThemeBright2Color,2)
+	drawOutlineAfkGui(190,40,67,58,cfg.ThemeBright1Color,cfg.ThemeBright2Color,2)
+	ui.AfkGui.Show("x" MainGuix+45 " y" MainGuiY+35 " w275 h170 NoActivate")
 }
 	
-AutoFireButtonClicked(*) {
-	if (WinExist("ahk_id " (WinHwnd := WinGetID(ui.GameDDL.Text))))
-	WinActivate("ahk_id " WinHwnd)
-	
+autoFireButtonClicked(*) {
 	ToggleAutoFire()
 }
 
-RefreshWin1AfkRoutine(*)
-{
-try
-{
-	ui.Win1AfkRoutine.Text := ""
-	
-	Afk.DataRow := Array()
-	ui.ProfileList := Array()
-	ui.ProfileListString := ""
-	Loop read, cfg.AfkDataFile
+refreshWin1AfkRoutine(*) {
+	try
 	{
-		LineNumber := A_Index
-		Afk.DataColumn := Array()
-		Loop parse, A_LoopReadLine, "CSV"
-		{
-			if (A_Index == 1 && (ui.Win1ClassDDL.Text == A_LoopField))
-			{
-				ui.Win1AfkRoutine.Text .= "  " A_LoopReadLine "`n"
-			}
-		}
+		ui.Win1AfkRoutine.Text := ""
 		
+		Afk.DataRow := Array()
+		ui.ProfileList := Array()
+		ui.ProfileListString := ""
+		Loop read, cfg.AfkDataFile
+		{
+			LineNumber := A_Index
+			Afk.DataColumn := Array()
+			Loop parse, A_LoopReadLine, "CSV"
+			{
+				if (A_Index == 1 && (ui.Win1ClassDDL.Text == A_LoopField))
+				{
+					ui.Win1AfkRoutine.Text .= "  " A_LoopReadLine "`n"
+				}
+			}
+			
+		}
 	}
 }
-}
 
-RefreshWin2AfkRoutine(*)
-{
-try
-{
-	ui.Win2AfkRoutine.Text := ""
-	
-	Afk.DataRow := Array()
-	ui.ProfileList := Array()
-	ui.ProfileListString := ""
-	Loop read, cfg.AfkDataFile
+refreshWin2AfkRoutine(*) {
+	try
 	{
-		LineNumber := A_Index
-		Afk.DataColumn := Array()
-		Loop parse, A_LoopReadLine, "CSV"
-		{
-			if (A_Index == 1 && (ui.Win2ClassDDL.Text == A_LoopField))
-			{
-				ui.Win2AfkRoutine.Text .= "  " A_LoopReadLine "`n"
-			}
-		}
+		ui.Win2AfkRoutine.Text := ""
 		
+		Afk.DataRow := Array()
+		ui.ProfileList := Array()
+		ui.ProfileListString := ""
+		Loop read, cfg.AfkDataFile
+		{
+			LineNumber := A_Index
+			Afk.DataColumn := Array()
+			Loop parse, A_LoopReadLine, "CSV"
+			{
+				if (A_Index == 1 && (ui.Win2ClassDDL.Text == A_LoopField))
+				{
+					ui.Win2AfkRoutine.Text .= "  " A_LoopReadLine "`n"
+				}
+			}
+			
+		}
 	}
 }
-}
 
-
-	
-ToggleAfkDock(*)
-{
+toggleGuiCollapse(*) {
 	Global
-	if (ui.AfkDocked)
-	{
-		ui.AfkDocked := false
-		ui.GuiX := ui.GuiPrevX
-		ui.GuiY := ui.GuiPrevY
-		IniWrite(ui.GuiX,"nControl.ini","Interface","GuiX")
-		IniWrite(ui.GuiY,"nControl.ini","Interface","GuiY")
-		if !(ui.MainGuiTabs.Text == "AFK")
-		{
-			AfkPopoutButtonPushed()
+	(ui.GuiCollapsed := !ui.GuiCollapsed) ? CollapseGui() : UncollapseGui()
+
+	CollapseGui() {
+		ui.titleBarButtonGui.Show("w35")
+		if (cfg.AnimationsEnabled) {
+			GuiWidth := 567
+			While GuiWidth > 35 {
+				ui.MainGui.Show("w" GuiWidth)
+				;ui.titleBarButtonGui.Show("w" GuiWidth+35)
+				GuiWidth -= 10
+			}	
 		}
-		ui.buttonDockAfk.Opt("-Hidden")
-		ui.buttonUndockAfk.Opt("Hidden")		
-		ui.buttonPopout.Opt("-Hidden")
-		BlockInput(True)
-		ShowGui()
-		BlockInput(False)
-<<<<<<< HEAD
-		ui.titleBarButtonGui.Move(GuiX+425,GuiY-7,72,)
-=======
-		ui.titleBarButtonGui.Move(winX+425,WinY-7,72,)
->>>>>>> 6369ce33ca03d30e8dec681be47725668dede52c
+		ui.MainGui.Show("w35")
+
+	}
 	
-	} else {
-		ui.AfkDocked := true
-		ui.AfkAnchoredToGui := false
-
-		WinSetTransparent(255,ui.titleBarButtonGui)
-		ui.buttonStartAFK.Move(2,2)
-		ui.buttonTower.Move(32,2)
-		ui.buttonAntiIdle.Move(62,2)
-		ui.buttonAutoFire.Move(92,2)
-		ui.buttonAutoClicker.Move(122,2)
-		ui.buttonDockAfk.Opt("Hidden")
-		ui.buttonUndockAfk.Opt("-Hidden")
-		ui.buttonDockAfk.Value := "./Img/button_dockRight_on.png"
-		ui.MainGui.GetPos(&GuiPrevX,&GuiPrevY,,)
-		ui.GuiPrevX := GuiPrevX
-		ui.GuiPrevY := GuiPrevY
-		HideGui()
-		
-		ui.HandlebarAfkGui.Opt("-Hidden")
-		;ui.AfkGui.Show("y" A_ScreenHeight-ui.TaskbarHeight-ui.AfkHeight)
-
-		WinSetTransparent(0,ui.MainGui)
-		ui.buttonDockAfk.Value := "./Img/button_dockright.png"
-		ui.buttonPopout.Opt("+Hidden")
-		;ui.MainGui.Show("x-10 y" A_ScreenHeight-ui.TaskbarHeight-ui.AfkHeight-33 " NoActivate")
-		ui.AfkGui.Show("x0 y" (A_ScreenHeight-(ui.TaskbarHeight+ui.AfkHeight)) " w290 h" ui.AfkHeight " NoActivate")
-		WinGetPos(&AfkGuiX,&AfkGuiY,&AfkGuiW,&AfkGuiH,ui.AfkGui)
-		WinSetTransparent(0,ui.titleBarButtonGui)
-		ui.titleBarButtonGui.Move(AfkGuiX+155,AfkGuiY-5,109,)
-		WinSetTransparent(210,ui.titleBarButtonGui)
-		HideGui()
-
-
-	}
-}
-
-ShowAfkInGui()
-{
-		ui.MainGui.GetPos(&MainGuiX,&MainGuiY,,)
-		ui.AfkGui.Show("x" MainGuix+10 " y" MainGuiY+35 " w275 h170 NoActivate")
-}
-
-TabsChanged(*)
-{
-<<<<<<< HEAD
-	ui.activeTab := ui.MainGuiTabs.Text
-	if (ui.activeTab == "Bindings" || ui.activeTab == "Audio") {
-		ui.MainGuiTabs.Choose(ui.previousTab)
-		SetTimer(BindingsDisabled,-1)
-		BindingsDisabled() {
-			notifyOSD("Tab currently disabled `nby developer",2500)
+	UncollapseGui() {
+		GuiWidth := 0
+		if (cfg.AnimationsEnabled) {
+			While GuiWidth < 567 {
+				ui.MainGui.Show("w" GuiWidth)
+				;ui.titleBarButtonGui.Show("w" GuiWidth+35)
+				GuiWidth += 10
+			}
 		}
-		Return
+		ui.MainGui.Show("w567")
+		ui.titleBarButtonGui.Show("w567")
 	}
-
-	debugLog("Tab Changed to " ui.activeTab)
-	(ui.activeTab = "AFK") && (ui.AfkAnchoredToGui) ? ShowAfkInGui() : (ui.activeTab == "Setup") ? (ui.MainGuiTabs.Focus(), ui.AfkGui.Hide()) : ui.AfkGui.Hide()
-	ui.previousTab := ui.activeTab
-=======
-	debugLog("Tab Changed to " ui.MainGuiTabs.Text)
-	(ui.MainGuiTabs.Text = "AFK") && (ui.AfkAnchoredToGui) ? ShowAfkInGui() : (ui.MainGuiTabs.Text == "Setup") ? ui.MainGuiTabs.Focus() : ui.AfkGui.Hide()
-
->>>>>>> 6369ce33ca03d30e8dec681be47725668dede52c
 }
 
-InitConsole(&ui)
-{
-	ui.gvMonitorSelectGui := Gui()
-	ui.gvMonitorSelectGui.Opt("-Theme -Border -Caption +AlwaysOnTop +Parent" ui.MainGui.Hwnd " +Owner" ui.MainGui.Hwnd)
-	ui.gvMonitorSelectGui.BackColor := "212121"
-	ui.gvMonitorSelectGui.SetFont("s16 c00FFFF","Calibri Bold")
-	ui.gvMonitorSelectGui.Add("Text",,"Click anywhere on the screen`nyou'd like your nControlDock on.")
+toggleAfkDock(*) {
+	Global
+	
+	(ui.AfkDocked) ? undockAfkGui() : dockAfkGui()
 }
 
-ToggleGui(*)
-{
-	global
-	If !(ui.hidden)
+dockAfkGui() {
+	Global
+	ui.AfkDocked := true
+	ui.AfkAnchoredToGui := false
+
+	;ui.buttonDockAfk.Value := "./Img/button_dockRight.png"
+	ui.MainGui.GetPos(&GuiPrevX,&GuiPrevY,,)
+	ui.GuiPrevX := GuiPrevX
+	ui.GuiPrevY := GuiPrevY
+	HideGui()
+	
+	
+	;ui.AfkGui.Show("y" A_ScreenHeight-ui.TaskbarHeight-ui.AfkHeight)
+
+	WinSetTransparent(0,ui.MainGui)
+	WinSetTransparent(0,ui.titleBarButtonGui)
+	ui.buttonDockAfk.Opt("Hidden")
+	ui.buttonUndockAfk.Opt("-Hidden")
+	ui.HandlebarAfkGui.Opt("-Hidden")
+	ui.buttonPopout.Opt("+Hidden")
+	ui.buttonStartAFK.Move(2,3)
+	ui.buttonTower.Move(32,3)
+	ui.buttonAntiIdle.Move(62,3)
+	ui.buttonAutoFire.Move(92,3)
+	ui.buttonAutoClicker.Move(122,3)
+	;ui.MainGui.Show("x-10 y" A_ScreenHeight-ui.TaskbarHeight-ui.AfkHeight-33 " NoActivate")
+	;ui.AfkGui.Show("x0 y" (A_ScreenHeight-(ui.TaskbarHeight+ui.AfkHeight)) " w290 h" ui.AfkHeight " NoActivate")
+	WinGetPos(&AfkGuiX,&AfkGuiY,&AfkGuiW,&AfkGuiH,ui.AfkGui)
+	ui.AfkTransRect1 := ui.AfkGui.AddText("x154 y0 w108 h32 BackgroundFFFFFF")
+	;WinSetTransColor(ui.TransparentColor " 0",ui.titleBarButtonGui)
+	;WinSetTransparent(210,ui.AfkGui)
+	
+	ui.titleBarButtonGui.Opt("Owner" ui.AfkGui.Hwnd)
+	ui.titleBarButtonGui.Move(AfkGuiX+154,AfkGuiY-3,109,)
+	WinSetTransparent(255,ui.AfkGui)
+	WinSetTransparent(255,ui.titleBarButtonGui)
+	WinSetTransparent("Off",ui.AfkGui)
+	WinSetTransparent("Off",ui.titleBarButtonGui)
+
+;	WinSetTransColor(ui.TransparentColor " 210",ui.AfkGui)
+	WinSetTransparent(210,ui.titleBarButtonGui)
+
+	HideGui()
+}
+	
+undockAfkGui() {
+	Global
+	ui.AfkDocked := false
+	ui.GuiX := ui.GuiPrevX
+	ui.GuiY := ui.GuiPrevY
+	IniWrite(ui.GuiX,"nControl.ini","Interface","GuiX")
+	IniWrite(ui.GuiY,"nControl.ini","Interface","GuiY")
+	WinSetTransparent(0,ui.titleBarButtonGui)
+	WinSetTransparent(0,ui.MainGui)
+	WinSetTransparent(0,ui.AfkGui)
+	ui.AfkTransRect1.Opt("BackgroundTrans")
+	
+	if !(ui.MainGuiTabs.Text == "AFK")
 	{
-		ui.hidden := 1
-		;ShowToolbar()
-	} else {
-		ui.hidden := 0
-		ui.Pinned := 0
-		ShowGui()
+		AfkPopoutButtonPushed()
 	}
-	debugLog("Interface Toggled")
-}
+	ui.buttonDockAfk.Opt("-Hidden")
+	ui.buttonUndockAfk.Opt("Hidden")		
+	ui.buttonPopout.Opt("-Hidden")
+	ui.buttonStartAFK.Move(32,2)
+	ui.buttonTower.Move(62,2)
+	ui.buttonAntiIdle.Move(92,2)
+	ui.buttonAutoFire.Move(122,2)
+	ui.buttonAutoClicker.Move(152,2)
 
-ExitButtonPushed(*)
-{
-	ExitApp
-}
+	BlockInput(True)
+	ShowGui()
+	BlockInput(False)
+	ui.titleBarButtonGui.Opt("Owner" ui.MainGui.Hwnd)
+	ui.titleBarButtonGui.Move(GuiX+425,GuiY-7,72,)
+	WinSetTransparent(255,ui.titleBarButtonGui)
+	WinSetTransparent(255,ui.MainGui)
+	WinSetTransparent(255,ui.AfkGui)
+	WinSetTransparent("Off",ui.titleBarButtonGui)
+	WinSetTransparent("Off",ui.MainGui)
+	WinSetTransparent("Off",ui.AfkGui)
+	WinSetTransColor(ui.TransparentColor ,ui.titleBarButtonGui)
+}	
 
-AfkPopoutButtonPushed(*)
-{
+afkPopoutButtonPushed(*) {
 	Global
 	
 	ui.MainGui.GetPos(&PrevAfkX,&PrevAfkY,,)	
@@ -459,26 +478,26 @@ AfkPopoutButtonPushed(*)
 		ui.HandlebarAfkGui.Opt("-Hidden")
 
 
-		if (cfg.AfkSnapEnabled) && !(ui.AfkDocked)
-		{
-			Switch
-			{
-				case (AfkX < 100): 
+		; if (cfg.AfkSnapEnabled) && !(ui.AfkDocked)
+		; {
+			; Switch
+			; {
+				; case (AfkX < 100): 
 					ui.AfkGui.Show("x0 NoActivate")
 			
-				case (AfkX > A_ScreenWidth-100):
+				; case (AfkX > A_ScreenWidth-100):
 					ui.AfkGui.Show("x" A_ScreenHeight-275 " NoActivate")
 				
-				case (AfkY < 100):
+				; case (AfkY < 100):
 					ui.AfkGui.Show("y0 NoActivate")
 		
-				case (AfkY > A_ScreenHeight-130):
+				; case (AfkY > A_ScreenHeight-130):
 					ui.AfkGui.Show("y" A_ScreenHeight-ui.TaskbarHeight-ui.AfkHeight " NoActivate")
 				
-				Default:
+				; Default:
 					ui.AfkGui.Show("x" PrevAfkX " y" PrevAfkY " NoActivate")
-			}
-		}		
+			; }
+		; }		
 	} else {
 		ui.buttonPopout.Value := "./Img/button_popout_ready.png"
 		ui.buttonPopout.Opt("Background" cfg.ThemeButtonReadyColor)
@@ -499,8 +518,34 @@ AfkPopoutButtonPushed(*)
 	}
 }
 
-HideGui(*)
-{
+hideAfkGui(*) {
+	ui.AfkGui.Hide()
+}
+
+showAfkInGui() {
+		ui.MainGui.GetPos(&MainGuiX,&MainGuiY,,)
+		;ui.AfkGui.Show("x" MainGuix+10 " y" MainGuiY+35 " w275 h170 NoActivate")
+}
+
+toggleGui(*) {
+	global
+	If !(ui.hidden)
+	{
+		ui.hidden := 1
+		;ShowToolbar()
+	} else {
+		ui.hidden := 0
+		ui.Pinned := 0
+		ShowGui()
+	}
+	debugLog("Interface Toggled")
+}
+
+exitButtonPushed(*) {
+	ExitApp
+}
+
+hideGui(*) {
 	Global
 	SaveGuiPos()
 	WinSetTransparent(255,ui.MainGui)
@@ -514,8 +559,7 @@ HideGui(*)
 	debugLog("Hiding Interface")
 }
 
-SaveGuiPos(*)
-{
+saveGuiPos(*) {
 	Global
 	ui.MainGui.GetPos(&GuiX,&GuiY,&GuiW,&GuiH)
 	ui.AfkGui.GetPos(&AfkX,&AfkY,&AfkW,&AfkH)
@@ -531,22 +575,19 @@ SaveGuiPos(*)
 	debugLog("Saving Window Location at x" GuiX " y" GuiY)
 }
 
-ReadGuiPos(*)
-{
+readGuiPos(*) {
 	Global
 	cfg.GuiX := IniRead(cfg.file,"Interface","GuiX",A_ScreenWidth/2)
 	cfg.GuiY := IniRead(cfg.file,"Interface","GuiY",A_ScreenHeight/2)
-	ui.MainGui.Show("x" cfg.GuiX " y" cfg.GuiY " NoActivate")
 	if (ui.MainGuiTabs.text = "AFK")
 	{
-		ui.AfkGui.Show("x" cfg.GuiX+10 " y" cfg.GuiY+35 " w275 h170 NoActivate")
+		;ui.AfkGui.Show("x" cfg.GuiX+10 " y" cfg.GuiY+35 " w275 h170 NoActivate")
 	
 	}
 	debugLog("Showing Interface at x" cfg.GuiX " y" cfg.GuiY)
 }
 
-ShowGui(*)
-{
+showGui(*) {
 	Global
 	if !(ui.MainGuiTabs.Text == "AFK")
 	{
@@ -560,59 +601,56 @@ ShowGui(*)
 		ui.buttonAfkHide.opt("+hidden")
 		ui.AfkAnchoredToGui := true
 		ui.AfkDocked := false
-		ui.AfkGui.Show("x" MainGuiX+10 " y" MainGuiY+35 " w275 h170 NoActivate")
+		;ui.AfkGui.Show("x" MainGuiX+10 " y" MainGuiY+35 " w275 h170 NoActivate")
 	}
+	ui.MainGui.Show("x" cfg.GuiX " y" cfg.GuiY " NoActivate")
 	debugLog("Showing Interface")
 }
 
-<<<<<<< HEAD
-=======
-ToggleDebug(*)
-{
+toggleConsole(*) {
 	Global
-	if (cfg.debugEnabled == false)
+	if (cfg.ConsoleVisible == false)
 	{
-		cfg.debugEnabled := 1
-		BlockInput(true)
+		cfg.ConsoleVisible := true
+		
 		ui.ButtonDebug.Value := "./Img/button_viewlog_down.png"
 		ui.ButtonDebug.Opt("Background" cfg.ThemeButtonOnColor)
-		BlockInput(false)
-		ui.MainGui.GetPos(&GuiX,&GuiY,&GuiW,&GuiH)
-		While (GuiH < 395)
-		{
-			GuiH += 10
-			ui.MainGui.Show("h" GuiH " NoActivate") 
-			Sleep(10)
+		
+		;MsgBox("here")
+		if (cfg.AnimationsEnabled) {
+		GuiH := 214	
+			While (GuiH < 395)
+			{
+				GuiH += 10
+				ui.MainGui.move(,,,GuiH) 
+				Sleep(10)
+			}
 		}
-			
-		ui.MainGui.Show("h395 NoActivate")
+
+		ui.mainGui.show("h400")
+		ui.MainGui.GetPos(&GuiX,&GuiY,&GuiW,&GuiH)
+		;MsgBox(GuiX "`n" GuiY "`n" GuiW "`n" GuiH)
 		debugLog("Showing Log")
 	} else {
-		cfg.debugEnabled := 0
-		BlockInput(true)	 
+		cfg.ConsoleVisible := false
 		ui.ButtonDebug.Value := "./Img/button_viewlog_up.png"
 		ui.ButtonDebug.Opt("Background" cfg.ThemeButtonReadyColor)
-		BlockInput(false)
+
 		ui.MainGui.GetPos(&GuiX,&GuiY,&GuiW,&GuiH)
-		While (GuiH > 214)
-		{
-			GuiH -= 10
-			ui.MainGui.Show("h" GuiH " NoActivate")
-			Sleep(10)
+		if (cfg.AnimationsEnabled) {
+			While (GuiH > 225)
+			{
+				GuiH -= 10
+				ui.MainGui.move(,,,GuiH)
+				Sleep(10)
+			}
 		}
-		ui.MainGui.Show("h214 NoActivate")
+		ui.MainGui.move(,,,214)
 		debugLog("Hiding Log")
 	}
 }
->>>>>>> 6369ce33ca03d30e8dec681be47725668dede52c
 
-DockApps(*)
-{
-	ToggleDockApps()
-}
-
-ToggleDockApps()
-{
+dockApps(*) {
 	global
 	dockApp.enabled := !dockApp.enabled
 	
@@ -634,141 +672,91 @@ ToggleDockApps()
 	}
 }
 
-drawOutlineMainGui(X, Y, W, H, Color1 := "Black", Color2 := "Black", Thickness := 1)
-{	
-	ui.MainGui.AddProgress("x" X " y" Y " w" W " h" Thickness " Background" Color1) 
-	ui.MainGui.AddProgress("x" X " y" Y " w" Thickness " h" H " Background" Color1) 
-	ui.MainGui.AddProgress("x" X " y" Y + H - Thickness " w" W " h" Thickness " Background" Color2) 
-	ui.MainGui.AddProgress("x" X + W - Thickness " y" Y " w" Thickness " h" H " Background" Color2) 	
+initConsole(&ui) {
+	ui.gvMonitorSelectGui := Gui()
+	ui.gvMonitorSelectGui.Opt("-Theme -Border -Caption +AlwaysOnTop +Parent" ui.MainGui.Hwnd " +Owner" ui.MainGui.Hwnd)
+	ui.gvMonitorSelectGui.BackColor := "212121"
+	ui.gvMonitorSelectGui.SetFont("s16 c00FFFF","Calibri Bold")
+	ui.gvMonitorSelectGui.Add("Text",,"Click anywhere on the screen`nyou'd like your nControlDock on.")
 }
 
-drawOutlineDialogBoxGui(X, Y, W, H, Color1 := "Black", Color2 := "Black", Thickness := 1)
-{	
-	ui.dialogBoxGui.AddProgress("x" X " y" Y " w" W " h" Thickness " Background" Color1) 
-	ui.dialogBoxGui.AddProgress("x" X " y" Y " w" Thickness " h" H " Background" Color1) 
-	ui.dialogBoxGui.AddProgress("x" X " y" Y + H - Thickness " w" W " h" Thickness " Background" Color2) 
-	ui.dialogBoxGui.AddProgress("x" X + W - Thickness " y" Y " w" Thickness " h" H " Background" Color2) 	
-}
+tabsChanged(*) {
+	ui.activeTab := ui.MainGuiTabs.Text
 
-drawOutlineNewGameGui(X, Y, W, H, Color1 := "Black", Color2 := "Black", Thickness := 1)
-{	
-	ui.NewGameGui.AddProgress("x" X " y" Y " w" W " h" Thickness " Background" Color1) 
-	ui.NewGameGui.AddProgress("x" X " y" Y " w" Thickness " h" H " Background" Color1) 
-	ui.NewGameGui.AddProgress("x" X " y" Y + H - Thickness " w" W " h" Thickness " Background" Color2) 
-	ui.NewGameGui.AddProgress("x" X + W - Thickness " y" Y " w" Thickness " h" H " Background" Color2) 	
-}
-
-drawOutlineNotifyGui(X, Y, W, H, Color1 := "Black", Color2 := "Black", Thickness := 1)
-{	
-	ui.NotifyGui.AddProgress("x" X " y" Y " w" W " h" Thickness " Background" Color1) 
-	ui.NotifyGui.AddProgress("x" X " y" Y " w" Thickness " h" H " Background" Color1) 
-	ui.NotifyGui.AddProgress("x" X " y" Y + H - Thickness " w" W " h" Thickness " Background" Color2) 
-	ui.NotifyGui.AddProgress("x" X + W - Thickness " y" Y " w" Thickness " h" H " Background" Color2) 	
-}
-
-
-drawOutlineAfkGui(X, Y, W, H, Color1 := "Black", Color2 := "Black", Thickness := 1)
-{	
+	Switch {
+		case (ui.activeTab == "AFK") && !(ui.afkDocked) && (ui.afkAnchoredToGui):
+		{
+			WinSetTransparent(255,ui.AfkGui)
+		}
+		case (ui.activeTab == "Bindings") || (ui.activeTab == "Audio"):
+		{
+			ui.MainGuiTabs.Choose(ui.previousTab)
+			SetTimer(BindingsDisabled,-1)
+			BindingsDisabled() {
+				notifyOSD("Tab currently disabled `nby developer",2500)
+			}
+			Return				
+		}
+		default:
+		{
+			WinSetTransparent(0,ui.AfkGui)
+		}
+	}
 	
-	ui.AfkGui.AddProgress("x" X " y" Y " w" W " h" Thickness " Background" Color1) 
-	ui.AfkGui.AddProgress("x" X " y" Y " w" Thickness " h" H " Background" Color1) 
-	ui.AfkGui.AddProgress("x" X " y" Y + H - Thickness " w" W " h" Thickness " Background" Color2) 
-	ui.AfkGui.AddProgress("x" X + W - Thickness " y" Y " w" Thickness " h" H " Background" Color2) 	
+	ui.previousTab := ui.activeTab
 }
 
-drawOutlineTitleBarButtonGui(X, Y, W, H, Color1 := "Black", Color2 := "Black", Thickness := 1)
-{	
-	
-	ui.titleBarButtonGui.AddProgress("x" X " y" Y " w" W " h" Thickness " Background" Color1) 
-	ui.titleBarButtonGui.AddProgress("x" X " y" Y " w" Thickness " h" H " Background" Color1) 
-	ui.titleBarButtonGui.AddProgress("x" X " y" Y + H - Thickness " w" W " h" Thickness " Background" Color2) 
-	ui.titleBarButtonGui.AddProgress("x" X + W - Thickness " y" Y " w" Thickness " h" H " Background" Color2) 	
-}
+{ ;Draw Outline Functions
+	drawOutlineMainGui(X, Y, W, H, Color1 := "Black", Color2 := "Black", Thickness := 1) {	
+		ui.MainGui.AddProgress("x" X " y" Y " w" W " h" Thickness " Background" Color1) 
+		ui.MainGui.AddProgress("x" X " y" Y " w" Thickness " h" H " Background" Color1) 
+		ui.MainGui.AddProgress("x" X " y" Y + H - Thickness " w" W " h" Thickness " Background" Color2) 
+		ui.MainGui.AddProgress("x" X + W - Thickness " y" Y " w" Thickness " h" H " Background" Color2) 	
+	}
 
+	drawOutlineDialogBoxGui(X, Y, W, H, Color1 := "Black", Color2 := "Black", Thickness := 1) {	
+		ui.dialogBoxGui.AddProgress("x" X " y" Y " w" W " h" Thickness " Background" Color1) 
+		ui.dialogBoxGui.AddProgress("x" X " y" Y " w" Thickness " h" H " Background" Color1) 
+		ui.dialogBoxGui.AddProgress("x" X " y" Y + H - Thickness " w" W " h" Thickness " Background" Color2) 
+		ui.dialogBoxGui.AddProgress("x" X + W - Thickness " y" Y " w" Thickness " h" H " Background" Color2) 	
+	}
 
-; toggleButton(featureName) {
-	; %featureName%_enabled := ! %featureName%_enabled
-; button%featureName%.Value := "./Img/" buttonName "_on.png"
-; SetTimer(buttonOff,-1000)
-; %buttonName%.Opt("Background" cfg.ThemeButtonOnColor)
-; buttonRelease(*) {
-	; %buttonName%.Value := "./Img" buttonName "_ready.png"
+	drawOutlineNewGameGui(X, Y, W, H, Color1 := "Black", Color2 := "Black", Thickness := 1) {	
+		ui.NewGameGui.AddProgress("x" X " y" Y " w" W " h" Thickness " Background" Color1) 
+		ui.NewGameGui.AddProgress("x" X " y" Y " w" Thickness " h" H " Background" Color1) 
+		ui.NewGameGui.AddProgress("x" X " y" Y + H - Thickness " w" W " h" Thickness " Background" Color2) 
+		ui.NewGameGui.AddProgress("x" X + W - Thickness " y" Y " w" Thickness " h" H " Background" Color2) 	
+	}
 
-; }
+	drawOutlineNotifyGui(X, Y, W, H, Color1 := "Black", Color2 := "Black", Thickness := 1) {	
+		ui.NotifyGui.AddProgress("x" X " y" Y " w" W " h" Thickness " Background" Color1) 
+		ui.NotifyGui.AddProgress("x" X " y" Y " w" Thickness " h" H " Background" Color1) 
+		ui.NotifyGui.AddProgress("x" X " y" Y + H - Thickness " w" W " h" Thickness " Background" Color2) 
+		ui.NotifyGui.AddProgress("x" X + W - Thickness " y" Y " w" Thickness " h" H " Background" Color2) 	
+	}
 
-; }
-
-; ToggleAFK(*)
-; {
-	; Global
-	; ui.afkEnabled := !ui.afkEnabled
-	;IniWrite(ui.afkEnabled,cfg.file,"AFK","Enabled")
-	; if (ui.afkEnabled)
-	; {
-		; ui.buttonStartAFK.Value := "./Img/button_on.png"
-
-		; WindowsLocked := 0
-
-		; GameWindow := WinGetList("Roblox")
-
-		; Msg := ""
-	
-		; if(GameWindow.Length > 1)
-			; SetTimer(win2timer,ui.Win2Timing.Value)
-		; if(GameWindow.Length > 0)
-			; SetTimer(win1timer,ui.Win2Timing.Value)
-		; else
-		; {
-			; MsgBox("There are no Roblox windows. Disabling AFK")
-		; }
-	
-		; Thread "NoTimers", True
-
+	drawOutlineAfkGui(X, Y, W, H, Color1 := "Black", Color2 := "Black", Thickness := 1) {	
 		
-	; } else {
-		; ui.buttonStartAFK.Value := "./Img/button_ready.png"
-		; SetTimer(win1timer,0)
-		; SetTimer(win2timer,0)
-	; }
-; }
+		ui.AfkGui.AddProgress("x" X " y" Y " w" W " h" Thickness " Background" Color1) 
+		ui.AfkGui.AddProgress("x" X " y" Y " w" Thickness " h" H " Background" Color1) 
+		ui.AfkGui.AddProgress("x" X " y" Y + H - Thickness " w" W " h" Thickness " Background" Color2) 
+		ui.AfkGui.AddProgress("x" X + W - Thickness " y" Y " w" Thickness " h" H " Background" Color2) 	
+	}
+
+	drawOutline(guiName, X, Y, W, H, Color1 := "Black", Color2 := "Black", Thickness := 1) {	
+		
+		guiName.AddProgress("x" X " y" Y " w" W " h" Thickness " Background" Color1) 
+		guiName.AddProgress("x" X " y" Y " w" Thickness " h" H " Background" Color1) 
+		guiName.AddProgress("x" X " y" Y + H - Thickness " w" W " h" Thickness " Background" Color2) 
+		guiName.AddProgress("x" X + W - Thickness " y" Y " w" Thickness " h" H " Background" Color2) 	
+	}
 
 
-; win1timer()
-; {
-	; global
-	; if (GameWindow[1])
-	; {
-		; if (WindowsLocked = 1)
-		; Loop {
-			; if (WindowsLocked = 0)
-				; Break
-			; Sleep(100)
-		; }
-			
-		; WindowsLocked := 1
-		; WinActivate(GameWindow[1])
-		; Sleep(100)
-		; Send("{" ui.Win1Key.Value "}")
-		; WindowsLocked := 0
-	; }
-; }
-	
-; win2timer()
-; {
-	; global
-	; if (GameWindow[2])
-	; {
-		; if (WindowsLocked = 1)
-		; Loop {
-			; if (WindowsLocked = 0)
-				; Break
-			; Sleep(100)
-		; }
-			
-		; WindowsLocked := 1
-		; WinActivate(GameWindow[2])
-		; Sleep(100)
-		; Send("{" ui.Win2Key.Value "}")
-		; WindowsLocked := 0
-	; }
-; }
+	drawOutlineTitleBarButtonGui(X, Y, W, H, Color1 := "Black", Color2 := "Black", Thickness := 1) {	
+		
+		ui.titleBarButtonGui.AddProgress("x" X " y" Y " w" W " h" Thickness " Background" Color1) 
+		ui.titleBarButtonGui.AddProgress("x" X " y" Y " w" Thickness " h" H " Background" Color1) 
+		ui.titleBarButtonGui.AddProgress("x" X " y" Y + H - Thickness " w" W " h" Thickness " Background" Color2) 
+		ui.titleBarButtonGui.AddProgress("x" X + W - Thickness " y" Y " w" Thickness " h" H " Background" Color2) 	
+	}
+} ;End Draw Outline Functions

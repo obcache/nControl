@@ -1,9 +1,5 @@
 ;@Ahk2Exe-SetName nControl
-<<<<<<< HEAD
-;@Ahk2Exe-SetVersion 1.1.3.1-beta
-=======
-;@Ahk2Exe-SetVersion 1.1.1.6-alpha
->>>>>>> 6369ce33ca03d30e8dec681be47725668dede52c
+;@Ahk2Exe-SetVersion 2.0.0.1-alpha
 ;@Ahk2Exe-ExeName E:\Desktop\nControl.exe
 
 #Requires AutoHotkey v2.0
@@ -23,8 +19,6 @@ ui 			:= Object()
 InstallDir := A_MyDocuments "\nControl"
 ConfigFileName := "nControl.ini"
 ui.AntiIdle_enabled := false
-cfg.afk_enabled := false
-
 
 PreAutoExec(InstallDir,ConfigFileName)
 
@@ -41,14 +35,14 @@ ui.hidden := 0
 ui.hwndAfkGui := ""
 ui.AfkHeight := 170
 
-; cfg.ThemeBorderDarkColor := "212121"
-; cfg.ThemeBorderLightColor := "555555"
-; cfg.ThemeBright1Color := "00FFFF"
-; cfg.ThemeBright2Color := "FF00FF"
+; cfg.ThemeBright1Color := "212121"
+; cfg.ThemeBright2Color := "555555"
+; cfg.ThemePanel1AccentColor := "00FFFF"
+; cfg.ThemePanel2AccentColor := "FF00FF"
 ; cfg.ThemeBackgroundColor := "363636"
 ; cfg.ThemeFont1Color := "00FFFF"
 ; cfg.ThemeFont2Color := "FF00FF"
-; cfg.ThemeConsoleBgColor := "204040"
+; cfg.ThemePanel1Color := "204040"
 ; cfg.ThemeEditboxColor := "353535"
 ; cfg.ThemeDisabledColor := "212121"
 
@@ -63,7 +57,9 @@ ui.AfkDocked := false
 ui.AfkAnchoredToGui := true
 ui.AfkEnabled := false
 ui.towerEnabled := false
-
+CfgLoad(&cfg, &ui)
+InitGui(&cfg, &ui)
+InitConsole(&ui)
 #include <libGui>
 #include <libWinMgr>
 #include <libGlobal>
@@ -78,26 +74,22 @@ ui.towerEnabled := false
 #include <libHotkeys>
 #include <libRoutines>
 #include <Class_SQLiteDB>
-CfgLoad(&cfg, &ui)
-InitGui(&cfg, &ui)
-InitConsole(&ui)
+
 debugLog("Interface Initialized")
 
 OnExit(ExitFunc)
 
-;debugLog("Console Initialized")
-if (cfg.consoleEnabled == true)
-{
-	ToggleDebug()
-}
+debugLog("Console Initialized")
+; if (cfg.ConsoleVisible == true)
+; {
+	; toggleConsole()
+; }
 
 
 
 InitTrayMenu(&ThisTray)
 
-OnMessage(0x0200, WM_MOUSEMOVE)
-OnMessage(0x0201, WM_LBUTTONDOWN)
-OnMessage(0x47, WM_WINDOWPOSCHANGED)
+
 
 RefreshWinHwnd()
 	

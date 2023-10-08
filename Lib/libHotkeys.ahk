@@ -9,6 +9,12 @@ if (InStr(A_LineFile,A_ScriptFullPath))
 	Return
 }
 
+!^Backspace::
+{
+ui.MainGui.GetPos(,,,&GuiH)
+ui.MainGui.Move(30,A_ScreenHeight-ui.TaskbarHeight-GuiH)
+ToggleGuiCollapse()
+}
 
 !^F1::
 {
@@ -16,7 +22,7 @@ if (InStr(A_LineFile,A_ScriptFullPath))
 	RobloxLauncher()
 }	
 
-!^f::
+!^\::
 {
 DialogBox("AutoFire: On")
 SetTimer(DialogBoxClose,1000)

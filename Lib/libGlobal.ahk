@@ -2,33 +2,13 @@
 #Requires AutoHotKey v2.0+
 #Warn All, Off
 
-if (InStr(A_LineFile,A_ScriptFullPath))
-{
+if (InStr(A_LineFile,A_ScriptFullPath)){
 	Run(A_ScriptDir "/../nControl.ahk")
 	ExitApp
 	Return
 }
 
-; class Toggle extends  {
-	; __New(enabled,pictureValue,backgroundColor,buttonName,position,options)
-		; {
-			; this.enabled := enabled
-			; this.pictureValue := pictureValue
-			; this.backgroundColor := backgroundColor
-			; this.buttonName := buttonName
-			; this.position := position
-			; this.options := options
-		; }
-
-	; __Push()
-	; {
-		; this.enabled := !this.enabled
-		; this.buttonName.Value := t
-	; }
-; }
-
-InitTrayMenu(&ThisTray)
-{
+initTrayMenu(&ThisTray) {
 	ThisTray := A_TrayMenu
 	ThisTray.Delete
 	ThisTray.Add
@@ -37,7 +17,7 @@ InitTrayMenu(&ThisTray)
 	ThisTray.Add("Reset Window Position",ResetWindowPosition)
 	ThisTray.Add("Toggle Dock", DockApps)
 	ThisTray.Add()
-	ThisTray.Add("Toggle Log Window",ToggleDebug)
+	ThisTray.Add("Toggle Log Window",toggleConsole)
 	ThisTray.Add()
 	ThisTray.Add("Exit App",KillMe)
 	ThisTray.Default := "Show Window"
@@ -45,8 +25,7 @@ InitTrayMenu(&ThisTray)
 		persistLog("Tray Initialized")
 }
 
-PreAutoExec(InstallDir,ConfigFileName)
-{
+preAutoExec(InstallDir,ConfigFileName) {
 	Global
 
 	if (A_IsCompiled)
@@ -58,7 +37,7 @@ PreAutoExec(InstallDir,ConfigFileName)
 				; InstallDir := SelectedFolder
 		; }
 		if StrCompare(A_ScriptDir,InstallDir)
-		{
+  		{
 			persistLog("Running standalone executable, attempting to auto-install")
 			if !(DirExist(InstallDir))
 			{
@@ -124,9 +103,11 @@ PreAutoExec(InstallDir,ConfigFileName)
 			FileInstall("./Img/button_execute.png",InstallDir "/Img/button_execute.png",true)
 			FileInstall("./Img/status_stopped.png",InstallDir "/Img/status_stopped.png",true)
 			FileInstall("./Img/status_running.png",InstallDir "/Img/status_running.png",true)
-			FileInstall("./Img/timer_off.png",InstallDir "/Img/timer_off.png",true)
-			FileInstall("./Img/timer_antiIdle.png",InstallDir "/Img/timer_antiIdle.png",true)
-			FileInstall("./Img/timer_infiniteTower.png",InstallDir "/Img/timer_infiniteTower.png",true)
+			FileInstall("./Img/label_timer_off.png",InstallDir "/Img/label_timer_off .png",true)
+			FileInstall("./Img/label_left_trim.png",InstallDir "/Img/label_left_trim.png",true)
+			FileInstall("./Img/label_right_trim.png",InstallDir "/Img/label_right_trim.png",true)
+			FileInstall("./Img/label_anti_idle_timer.png",InstallDir "/Img/label_anti_idle_timer.png",true)
+			FileInstall("./Img/label_infinite_tower.png",InstallDir "/Img/label_infinite_tower.png",true)
 			FileInstall("./Img/handlebar_vertical.png",InstallDir "/Img/handlebar_vertical.png",true)
 			FileInstall("./Img/button_quit.png",InstallDir "/Img/button_quit.png",true)
 			FileInstall("./Img/button_minimize.png",InstallDir "/Img/button_minimize.png",true)
@@ -172,10 +153,8 @@ PreAutoExec(InstallDir,ConfigFileName)
 			FileInstall("./Img/button_swapHwnd_disabled.png",InstallDir "/Img/button_swapHwnd_disabled.png",1)
 			FileInstall("./Img/button_autoClicker_on.png",InstallDir "/Img/button_autoClicker_on.png",1)
 			FileInstall("./Img/help.png",InstallDir "/Img/help.png",1)
+			FileInstall("./Img/button_help.png",InstallDir "/Img/button_help.png",1)
 			FileInstall("./lib/ColorChooser.exe",InstallDir "./lib/ColorChooser.exe",1)
-
-
-
 
 			
 			persistLog("Copied Assets to: " InstallDir)
@@ -193,8 +172,7 @@ PreAutoExec(InstallDir,ConfigFileName)
 	}
 }
 
-persistLog(LogMsg)
-{
+persistLog(LogMsg) {
 	Global
 	if !(DirExist(InstallDir "\Logs"))
 	{
@@ -205,33 +183,40 @@ persistLog(LogMsg)
 	FileAppend(A_YYYY A_MM A_DD " [" A_Hour ":" A_Min ":" A_Sec "] " LogMsg "`n",InstallDir "/Logs/persist.log")
 }
 
-CfgLoad(&cfg, &ui)
-{
+cfgLoad(&cfg, &ui) {
+	ui.gameWindowsList 	:= array()
 	cfg.GameWindowsList 		:= array()
 
 	cfg.MainGui			:= IniRead(cfg.file,"System","MainGui","MainGui")
 	ui.GuiH					:= 220  	;430 for Console Mode
 	ui.ClockTimerStarted 	:= false
+	ui.ClockMode			:= "Clock"
 	ui.AutoFire1Enabled		:= false
 	ui.AutoFire2Enabled		:= false
 	ui.AutoClickerEnabled 	:= false
+	ui.antiIdleInterval		:= 900000
 	ui.previousTab			:= "Sys"
 	ui.activeTab			:= "Sys"
 	ui.LastWindowHwnd		:= 0
-	ui.ColorChanged := false
+	ui.ColorChanged 		:= false
+	ui.GuiCollapsed			:= false
 	
+	cfg.MainGui				:= IniRead(cfg.file,"System","MainGui","MainGui")
 	cfg.InstallDir			:= IniRead(cfg.file,"System","InstallDir", A_MyDocuments "\nControl")
 	cfg.MainScriptName		:= IniRead(cfg.file,"System","MainScriptName", "nControl")
-	cfg.MainScriptName		:= IniRead(cfg.file,"System","ScriptName","nControl")
 	cfg.debugEnabled		:= IniRead(cfg.file,"System","debugEnabled",false)
-	
-	cfg.consoleEnabled		:= IniRead(cfg.file,"System","consoleEnabled",true)
+	cfg.consoleVisible		:= IniRead(cfg.file,"System","consoleVisible",false)
+	cfg.toggleOn			:= IniRead(cfg.file,"Interface","ToggleOnImage","./Img/toggle_on.png")
+	cfg.toggleOff			:= IniRead(cfg.file,"Interface","ToggleOffImage","./Img/toggle_off.png")
 	cfg.ToolTipsEnabled 	:= IniRead(cfg.file,"System","ToolTipsEnabled",true)
 	cfg.AlwaysOnTopEnabled	:= IniRead(cfg.file,"Interface","AlwaysOnTopEnabled",true)
 	cfg.AnimationsEnabled	:= IniRead(cfg.file,"Interface","AnimationsEnabled",true)
 	cfg.ColorPickerEnabled 	:= IniRead(cfg.file,"Interface","ColorPickerEnabled",true)
 	cfg.GuiX 				:= IniRead(cfg.file,"Interface","GuiX",200)
 	cfg.GuiY 				:= IniRead(cfg.file,"Interface","GuiY",200)
+	cfg.GuiW				:= IniRead(cfg.file,"Interface","GuiW",534)
+	cfg.GuiH				:= IniRead(cfg.file,"Interface","GuiH",214)
+
 	MonitorGet(MonitorGetPrimary(),&L,&T,&R,&B)
 	if (cfg.GuiX < L)
 		cfg.GuiX := 200
@@ -253,11 +238,13 @@ CfgLoad(&cfg, &ui)
 	cfg.Profile					:= IniRead(cfg.file,"AFK","Profile","1")
 	cfg.Win1Class				:= IniRead(cfg.file,"AFK","Win1Class","Summoner1")
 	cfg.Win2Class				:= IniRead(cfg.file,"AFK","Win2Class","Summoner2")
+	cfg.antiIdleWin1Cmd			:= IniRead(cfg.file,"AFK","AntiIdleWin1Cmd","5")
+	cfg.antiIdleWin2Cmd			:= IniRead(cfg.file,"AFK","AntiIdleWin2Cmd","5")
+	cfg.antiIdleInterval		:= IniRead(cfg.file,"AFK","AntiIdleInterval","1250")
 	cfg.SilentIdleEnabled := IniRead(cfg.file,"AFK","SilentIdleEnabled",true)
 	cfg.AutoClickerSpeed := IniRead(cfg.file,"AFK","AutoClickerSpeed",50)
-	
-	cfg.nControlMonitor 	:= IniRead(cfg.file,"nControl","nControlMonitor","1")
-	cfg.app1filename		:= IniRead(cfg.file,"nControl","app1filename","")
+	cfg.CelestialTowerEnabled := IniRead(cfg.file,"AFK","CelestialTowerEnabled",false)
+	cfg.nControlMonitor 	:= IniRead(cfg.file,"nControl","nControlMonitor","1")	cfg.app1filename		:= IniRead(cfg.file,"nControl","app1filename","")
 	cfg.app1path			:= IniRead(cfg.file,"nControl","app1path","")
 	cfg.app2filename		:= IniRead(cfg.file,"nControl","app2filename","")
 	cfg.app2path			:= IniRead(cfg.file,"nControl","app2path","")
@@ -279,25 +266,25 @@ CfgLoad(&cfg, &ui)
 
 	cfg.Theme							:= IniRead(cfg.file,"Interface","Theme","Modern Class")
 	cfg.ThemeList						:= StrSplit(IniRead(cfg.file,"Interface","ThemeList","Modern Class,Cold Steel,Militarized,Custom"),",")
-	cfg.ThemeBright2Color	:= IniRead(cfg.file,cfg.Theme,"ThemeBright2Color","C0C0C0")
-	cfg.ThemeBright1Color		:= IniRead(cfg.file,cfg.Theme,"ThemeBright1Color","FFFFFF")
-	cfg.ThemeBorderLightColor			:= IniRead(cfg.file,cfg.Theme,"ThemeBorderLightColor","888888")
-	cfg.ThemeBorderDarkColor		:= IniRead(cfg.file,cfg.Theme,"ThemeBorderDarkColor","333333")
 	cfg.ThemeBackgroundColor			:= IniRead(cfg.file,cfg.Theme,"ThemeBackgroundColor","414141")
 	cfg.ThemeFont1Color					:= IniRead(cfg.file,cfg.Theme,"ThemeFont1Color","1FFFF")
 	cfg.ThemeFont2Color					:= IniRead(cfg.file,cfg.Theme,"ThemeFont2Color","FBD58E")
-	cfg.ThemeConsoleBgColor				:= IniRead(cfg.file,cfg.Theme,"ThemeConsoleBgColor","204040")
-	cfg.ThemeConsoleBg2Color			:= IniRead(cfg.file,cfg.Theme,"ThemeConsoleBg2Color","804001")
+	cfg.ThemeBright2Color				:= IniRead(cfg.file,cfg.Theme,"ThemeBright2Color","C0C0C0")
+	cfg.ThemeBright1Color				:= IniRead(cfg.file,cfg.Theme,"ThemeBright1Color","FFFFFF")
+	cfg.ThemeBorderLightColor			:= IniRead(cfg.file,cfg.Theme,"ThemeBorderLightColor","888888")
+	cfg.ThemeBorderDarkColor			:= IniRead(cfg.file,cfg.Theme,"ThemeBorderDarkColor","333333")
+	cfg.ThemePanel1Color				:= IniRead(cfg.file,cfg.Theme,"ThemePanel1Color","204040")
+	cfg.ThemePanel2Color				:= IniRead(cfg.file,cfg.Theme,"ThemePanel2Color","804001")
+	cfg.ThemePanel1AccentColor			:= IniRead(cfg.file,cfg.Theme,"ThemePanel1AccentColor","204040")
+	cfg.ThemePanel2AccentColor			:= IniRead(cfg.file,cfg.Theme,"ThemePanel2AccentColor","804001")
 	cfg.ThemeEditboxColor				:= IniRead(cfg.file,cfg.Theme,"ThemeEditboxColor","292929")
 	cfg.ThemeDisabledColor				:= IniRead(cfg.file,cfg.Theme,"ThemeDisabledColor","212121")
-	cfg.ThemeButtonAlertColor		:= IniRead(cfg.file,cfg.Theme,"ThemeButtonAlertColor","3C3C3C")
+	cfg.ThemeButtonAlertColor			:= IniRead(cfg.file,cfg.Theme,"ThemeButtonAlertColor","3C3C3C")
 	cfg.ThemeButtonOnColor				:= IniRead(cfg.file,cfg.Theme,"ThemeButtonOnColor","FF01FF")
 	cfg.ThemeButtonReadyColor			:= IniRead(cfg.file,cfg.Theme,"ThemeButtonReadyColor","1FFFF0")
 }
 
-
-WriteConfig()
-{
+WriteConfig() {
 	Global
 	tmpGameList := ""
 
@@ -343,15 +330,17 @@ WriteConfig()
 	IniWrite(ui.ThemeDDL.Text,cfg.file,"Interface","Theme")
 	
 	if (ui.ThemeDDL.Text == "Custom") {
-		IniWrite(cfg.ThemeBorderLightColor,cfg.file,"Custom","ThemeBorderLightColor")
-		IniWrite(cfg.ThemeBorderDarkColor,cfg.file,"Custom","ThemeBorderDarkColor")
-		IniWrite(cfg.ThemeBright1Color,cfg.file,"Custom","ThemeBright1Color")
 		IniWrite(cfg.ThemeBright2Color,cfg.file,"Custom","ThemeBright2Color")
+		IniWrite(cfg.ThemeBright1Color,cfg.file,"Custom","ThemeBright1Color")
+		IniWrite(cfg.ThemeBorderDarkColor,cfg.file,"Custom","ThemeBorderDarkColor")
+		IniWrite(cfg.ThemeBorderLightColor,cfg.file,"Custom","ThemeBorderLightColor")
 		IniWrite(cfg.ThemeBackgroundColor,cfg.file,"Custom","ThemeBackgroundColor")
 		IniWrite(cfg.ThemeFont1Color,cfg.file,"Custom","ThemeFont1Color")
 		IniWrite(cfg.ThemeFont2Color,cfg.file,"Custom","ThemeFont2Color")
-		IniWrite(cfg.ThemeConsoleBgColor,cfg.file,"Custom","ThemeConsoleBgColor")
-		IniWrite(cfg.ThemeConsoleBg2Color,cfg.file,"Custom","ThemeConsoleBg2Color")
+		IniWrite(cfg.ThemePanel1Color,cfg.file,"Custom","ThemePanel1Color")
+		IniWrite(cfg.ThemePanel1AccentColor,cfg.file,"Custom","ThemePanel1AccentColor")
+		IniWrite(cfg.ThemePanel2Color,cfg.file,"Custom","ThemePanel2Color")
+		IniWrite(cfg.ThemePanel2AccentColor,cfg.file,"Custom","ThemePanel2AccentColor")
 		IniWrite(cfg.ThemeEditboxColor,cfg.file,"Custom","ThemeEditboxColor")
 		IniWrite(cfg.ThemeDisabledColor,cfg.file,"Custom","ThemeDisabledColor")
 		IniWrite(cfg.ThemeButtonOnColor,cfg.file,"Custom","ThemeButtonOnColor")
@@ -377,8 +366,10 @@ WriteConfig()
 	IniWrite(cfg.AfkY,cfg.file,"Interface","AfkY")
 	IniWrite(cfg.AfkSnapEnabled,cfg.file,"Interface","AfkSnapEnabled")
 	IniWrite(cfg.GuiSnapEnabled,cfg.file,"Interface","GuiSnapEnabled")
-	IniWrite(cfg.consoleEnabled,cfg.file,"System","consoleEnabled")
-	IniWrite(cfg.debugEnabled,cfg.file,"System","debugEnabled")
+	IniWrite(cfg.toggleOn,cfg.file,"Interface","ToggleOnImage")
+	IniWrite(cfg.toggleOff,cfg.file,"Interface","ToggleOffImage")
+	IniWrite(cfg.ConsoleVisible,cfg.file,"System","ConsoleVisible")
+	IniWrite(cfg.consoleVisible,cfg.file,"System","consoleVisible")
 	IniWrite(cfg.ToolTipsEnabled,cfg.file,"System","ToolTipsEnabled")
 	IniWrite(cfg.AlwaysOnTopEnabled,cfg.file,"Interface","AlwaysOnTopEnabled")
 	IniWrite(cfg.AnimationsEnabled,cfg.file,"Interface","AnimationsEnabled")
@@ -394,48 +385,30 @@ WriteConfig()
 	{
 		DirCreate("./Logs")
 	}
-	if (cfg.debugEnabled)
+	
+	if (cfg.ConsoleVisible)
+	{
 		FileAppend(ui.gvConsole.Value,"./Logs/gvLog_" A_YYYY A_MM A_DD A_Hour A_Min A_Sec ".txt")
+	}
 	ui.MainGui.Destroy()
 	BlockInput("Off")
 }
 
-	; toggleButton(name,tab := "",opts := "xs y+0",toolTip := "Default",guiName := "ui.MainGui",tabControl := "ui.MainGuiTabs") 
-	; {
-		
-		; Toggle%name%(*) 
-		; {
-			; ui.toggle%name%.Opt((cfg.%name%Enabled := !cfg.%name%Enabled) ? ("Background" cfg.ThemeButtonColor) : ("Background" cfg.ThemeButtonReadyColor))
-			; ui.toggle%name%.Redraw()
-		; }
-	
-		; %tabControl%.Use(%tab%)
-		; ui.toggle%name% := %guiName%.AddPicture(opts " section " (cfg.%name%Enabled ? ("Background" cfg.ThemeButtonOnColor) :("Background" cfg.ThemeButtonReadyColor)),"./Img/button_ready.png")
-		; ui.toggle%name%.OnEvent("Click",Toggle%name%)
-		; if (toolTip == "Default")
-			; ui.toggle%name%ToolTip := "Toggle " %name%
-		; else
-			; ui.toggle%name%.ToolTip := toolTip
-	
-		; ui.label%name% := ui.%guiName%.AddText("x+3 ys+3 s10 BackgroundTrans",%name%)
-	; }
-	
-	
 GetWinNumber() {
 	Try {
-		debugLog("GetWinNumber Comparing " ui.Win1Hwnd.Text " and " ui.Win2Hwnd.Text " to " WinExist("A"))
-		Return (ui.Win1Hwnd.Text == WinExist("A")) ? 1 : (ui.Win2Hwnd.Text == WinExist("A") ? 2 : 0)
+		debugLog("GetWinNumber Comparing " ui.Win1Hwnd " and " ui.Win2Hwnd.Text " to " WinExist("A"))
+		Return (ui.Win1Hwnd == WinExist("A")) ? 1 : (ui.Win2Hwnd.Text == WinExist("A") ? 2 : 0)
 	} Catch {
 		Return 0
 	}
 }
 
-debugLog(LogMsg)
-{
+debugLog(LogMsg) {
 	Global
 	ui.gvConsole.Add([A_YYYY A_MM A_DD " [" A_Hour ":" A_Min ":" A_Sec "] " LogMsg])
 	PostMessage("0x115",7,,,"ahk_id " ui.gvConsole.hwnd) 
 }
+
 
 DialogBox(DialogText, DialogTitle := "")
 {
@@ -471,15 +444,6 @@ DialogBoxClose(*)
 	ui.dialogBoxGui.Destroy()
 }
 
-HasVal(haystack, needle) {
-	if !(IsObject(haystack)) || (haystack.Length() = 0)
-		return 0
-	for index, value in haystack
-		if (value = needle)
-			return index
-	return 0
-}
-
 NotifyOSD(NotifyMsg,Duration := 10)
 {
 	Transparent := 250
@@ -491,22 +455,17 @@ NotifyOSD(NotifyMsg,Duration := 10)
 	ui.notifyGui.Title 	:= "Notify"
 
 	ui.notifyGui.Opt("+AlwaysOnTop -Caption +ToolWindow Owner" ui.MainGui.Hwnd)  ; +ToolWindow avoids a taskbar button and an alt-tab menu item.
-	ui.notifyGui.BackColor := cfg.ThemeConsoleBg2Color  ; Can be any RGB color (it will be made transparent below).
+	ui.notifyGui.BackColor := cfg.ThemePanel2Color  ; Can be any RGB color (it will be made transparent below).
 	ui.notifyGui.SetFont("s16")  ; Set a large font size (32-point).
 	ui.notifyGui.AddText("c" cfg.ThemeFont2Color " BackgroundTrans",NotifyMsg)  ; XX & YY serve to 00auto-size the window.
 	WinSetTransparent(0,ui.notifyGui)
 	ui.notifyGui.Show("NoActivate")  ; NoActivate avoids deactivating the currently active window.
 	ui.notifyGui.GetPos(&x,&y,&w,&h)
-<<<<<<< HEAD
 	
 	ui.MainGui.GetPos(&GuiX,&GuiY,&GuiW,&GuiH)
 	ui.notifyGui.Show("x" (GuiX+(GuiW/2)-(w/2)) " y" GuiY+((GuiH/2)-(h/2)))
 	drawOutlineNotifyGui(0,0,w,h,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,3)
 	drawOutlineNotifyGui(5,5,w-10,h-10,cfg.ThemeBright1Color,cfg.ThemeBright2Color,2)
-=======
-	drawOutlineNotifyGui(x+2,y+2,w-4,h-6,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,2)
-	drawOutlineNotifyGui(x+5,y+5,w-10,h-10,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,2)
->>>>>>> 6369ce33ca03d30e8dec681be47725668dede52c
 	Transparent := 250
 	WinSetTransparent(Transparent,ui.notifyGui)
 	Sleep(500)
@@ -521,23 +480,27 @@ NotifyOSD(NotifyMsg,Duration := 10)
 }
 
 
-KillMe(*)
-{
+
+hasVal(haystack, needle) {
+	if !(IsObject(haystack)) || (haystack.Length() = 0)
+		return 0
+	for index, value in haystack
+		if (value = needle)
+			return index
+	return 0
+}
+
+killMe(*) {
 	ExitApp
 }
 
-
-ResetWindowPosition(*)
-{
+resetWindowPosition(*) {
 	WinSetTransparent(0,ui.MainGui)
 	ui.MainGui.Move(200,200,,)
 	Reload()
 }
 
-ExitFunc(ExitReason,ExitCode)	
-{
-	try
-		ui.helpGui.Destroy()
+exitFunc(ExitReason,ExitCode) {
 	debugLog("Exit Command Received")
 	ui.MainGui.Opt("-AlwaysOnTop")
 

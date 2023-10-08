@@ -12,11 +12,8 @@ if (InStr(A_LineFile,A_ScriptFullPath))
 GuiKeybindsTab(&ui)
 {
 	ui.MainGuiTabs.UseTab("Bindings")
-<<<<<<< HEAD
 
 	ui.KeyBindList := ui.MainGui.AddListBox("x5 y33 w300 section c" cfg.ThemeFont2Color " Background" cfg.ThemeBackgroundColor)
-=======
->>>>>>> 6369ce33ca03d30e8dec681be47725668dede52c
-	;drawOutlineMainGui(10,40,445,120,cfg.ThemeBright1Color,cfg.ThemeBright2Color,2)
+	;drawOutlineMainGui(10,40,445,120,cfg.ThemeConsole1AccentColor,cfg.ThemeConsole2AccentColor,2)
 	ui.MainGuiTabs.AddListBox()
 }
