@@ -18,75 +18,40 @@ GetTaskbarHeight()
 	Return TaskbarHeight
 }
 
-;###########WINDOW EVENTS##############
-WM_ACTIVATE(wparam) {
-   OnMessage(0x200, "WM_MOUSEMOVE", !!wparam)
-}
-
 WM_WINDOWPOSCHANGED(wParam, lParam, msg, Hwnd)
 {
-	if (Hwnd = ui.MainGui.Hwnd)
-	{
-<<<<<<< HEAD
-		ui.MainGui.GetPos(&winX,&winY,,)
-		ui.AfkGui.Move(winX+10,winY+35,,)
-		ui.titleBarButtonGui.Opt("Owner" ui.MainGui.Hwnd)
-		ui.titleBarButtonGui.Move(winX+425,WinY-7) 
-	} 
+
 	if (ui.AfkDocked) && (Hwnd = ui.AfkGui.Hwnd) {
 		WinGetPos(&AfkGuiX,&AfkGuiY,,,ui.AfkGui)
 		;MsgBox(AfkGuiX "`n" AfkGuiY)
-		ui.titleBarButtonGui.Opt("Owner" ui.AfkGui.Hwnd)
-		ui.titleBarButtonGui.Move(AfkGuiX+155,AfkGuiY-5)
-=======
+		ui.titleBarButtonGui.Move(AfkGuiX+154,AfkGuiY-3)
+	} else {
 		if (Hwnd = ui.MainGui.Hwnd)
 		{
 			ui.MainGui.GetPos(&winX,&winY,,)
-			ui.AfkGui.Move(winX+10,winY+35,,)
-			ui.titleBarButtonGui.Opt("Owner" ui.MainGui.Hwnd)
-			ui.titleBarButtonGui.Move(winX+425,WinY-7) 
-		} 
-		if (ui.AfkDocked) && (Hwnd = ui.AfkGui.Hwnd) {
-				WinGetPos(&AfkGuiX,&AfkGuiY,,,ui.AfkGui)
-				;MsgBox(AfkGuiX "`n" AfkGuiY)
-				ui.titleBarButtonGui.Opt("Owner" ui.AfkGui.Hwnd)
-				ui.titleBarButtonGui.Move(AfkGuiX+155,AfkGuiY-5)
-		}
->>>>>>> 6369ce33ca03d30e8dec681be47725668dede52c
+			ui.AfkGui.Move(winX+45,winY+35,,)
+			ui.titleBarButtonGui.Move(winX+2,WinY-5)
+		} 	
 	}
 }
-; OnMessage(WM_ACTIVATEAPP := 0x1C, OnActivate)
 
-; OnActivate(wparam, lParam, msg, Hwnd) {
-    
-	; if (lParam != ui.MainGui.Hwnd) && (lParam != ui.AfkGui.Hwnd) && (lParam != ui.LastWindowHwnd) {
-		; ui.LastWindowHwnd := lParam
-		; MsgBox(lParam)
-	; }
-; }
+WM_LBUTTONDOWN_callback(*) {
+	WM_LBUTTONDOWN(0,0,0,ui.MainGui.Hwnd)
+}
 
 ;###########MOUSE EVENTS##############
-WM_LBUTTONDOWN(wParam, lParam, msg, Hwnd)
-{
+WM_LBUTTONDOWN(wParam, lParam, msg, Hwnd) {
 	;ShowMouseClick()
-	if (Hwnd = ui.MainGui.hwnd)
+	if (Hwnd = ui.MainGui.hwnd) || (Hwnd = ui.titleBarButtonGui.Hwnd)
 		PostMessage("0xA1",2)
 }
 
-; ShowMouseClick()
-; {
-	; Global
-	; ui.MouseClickStatus.Value := "Left Click"
-	; SetTimer () => ClearMouseClick(), -1500
-; }
+wmAfkLButtonDown(wParam, lParam, msg, hwnd) {
+	if !(ui.AfkAnchoredToGui)
+		PostMessage(0xA1, 2)
+}
 
-; ClearMouseClick()
-; {
-	; ui.MouseClickStatus.Value := ""
-; }
-
-WM_MOUSEMOVE(wParam, lParam, msg, Hwnd)
-{
+WM_MOUSEMOVE(wParam, lParam, msg, Hwnd) {
     static PrevHwnd := 0
     if (Hwnd != PrevHwnd)
     {

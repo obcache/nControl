@@ -10,8 +10,7 @@ if (InStr(A_LineFile,A_ScriptFullPath))
 }
 
 
-RobloxLauncher()
-{
+RobloxLauncher() {
 	BlockInput(true)
 	BlockInput("SendAndMouse")
 	SetTitleMatchMode(3)
@@ -85,4 +84,139 @@ RobloxLauncher()
 	BlockInput(false)
 	BlockInput("Off")
 	RefreshWinHwnd()
+}
+
+AfkRoutine(*) {
+	Sleep(1000)
+	if (ui.Win1Hwnd)
+		if (ui.Win1ClassDDL.text != "Summoner")
+			AttackWin(1,"R")
+
+	Sleep(2000)
+	if (ui.Win2Hwnd.Text)
+		AttackWin(2,"X")
+		
+	if (ui.Win1Hwnd)
+		AttackWin(1,"F")
+
+	Sleep(3000)
+	if (ui.Win2Hwnd.Text)
+		if (ui.Win2ClassDDL.text != "Demon")
+			AttackWin(2,"E")
+		
+	if (ui.Win1Hwnd)
+		AttackWin(1,"1")
+
+	Sleep(2000)
+	if (ui.Win2Hwnd.Text)
+		if (ui.Win2ClassDDL.text != "Summoner")
+			AttackWin(2,"R")
+		
+	if (ui.Win1Hwnd)
+		AttackWin(1,"X")
+
+	Sleep(3000)
+	if (ui.Win2Hwnd.Text)
+		AttackWin(2,"F")
+		
+	if (ui.Win1Hwnd)
+		if (ui.Win1ClassDDL.text != "Demon")
+			AttackWin(1,"E")
+
+	Sleep(2000)
+	if (ui.Win2Hwnd.Text)
+		AttackWin(2,"1")
+}
+
+
+ReturnToWorld(*) {
+	Thread("NoTimers",true)
+
+	if (WinExist("ahk_id " ui.Win1Hwnd) && (ui.Win2Hwnd == "" || WinExist("ahk_id " ui.Win2Hwnd)))
+	{
+		RefreshWinHwnd()
+	}
+	
+	Loop ui.FilteredGameWindowsList.Length
+	{
+		WinActivate("ahk_id " ui.FilteredGameWindowsList[A_Index])
+		CoordMode("Mouse","Client")
+
+		try
+			ui.CurrWin := WinExist("A")
+
+		WinGetPos(&WinX,&WinY,&WinW,&WinH,ui.CurrWin)
+		ReturnToWorldButtonX := (WinW/2)-200
+		ReturnToWorldButtonY := (WinH/2)-170
+		
+		if (WinGetProcessName("ahk_id " CurrWin) = "ApplicationFrameHost.exe")
+		{
+			ReturnToWorldButtonY += 30
+		}
+		
+		if (A_TimeIdlePhysical < 1000) or (A_TimeIdleMouse < 1000)
+			Return
+
+		Sleep(250)
+		Send("{N}")
+		Sleep(1200)
+
+		Mouse(ReturnToWorldButtonX,ReturnToWorldButtonY)
+		Sleep(1000)
+		Mouse(ReturnToWorldButtonX,ReturnToWorldButtonY)
+		Sleep(1000)
+	}
+	StopAFK()
+	if (ui.towerEnabled)
+	{
+		ToggleTower()
+	}
+}
+
+RestartTower(*) {
+	if (ui.afkEnabled = true)
+	{
+		StopAFK()
+		Sleep(1000)
+		StopAFK()
+		Sleep(2000)
+		StopAFK()
+	}
+
+	ui.progress.value := 0
+	if (WinExist("ahk_id " ui.Win1Hwnd) && (ui.Win2Hwnd == "" || WinExist("ahk_id " ui.Win2Hwnd)))
+	{
+		RefreshWinHwnd()
+	}
+	
+	Loop 2
+	{
+		this_window := "ahk_id " ui.Win%A_Index%Hwnd
+		if (cfg.game%A_Index%StatusEnabled)
+		{
+			WinActivate(this_window)
+		
+			CoordMode("Mouse","Client")
+			WinGetPos(&WinX,&WinY,&WinW,&WinH,this_window)
+			InfTowerButtonX := (WinW/2)-40
+			InfTowerButtonY := (WinH/2)+130
+			StartButtonX 	:= (WinW/2)+240
+			StartButtonY 	:= (WinH/2)+130
+			
+			if (WinGetProcessName(this_window) == "ApplicationFrameHost.exe")
+			{
+				InfTowerButtonY += 30
+				StartButtonY 	+= 30
+			}
+		
+			Sleep(250)
+			Send("{V}")
+			Sleep(1200)
+
+			Mouse(InfTowerButtonX,InfTowerButtonY)
+			Sleep(1000)
+			Mouse(StartButtonX,StartButtonY)
+			Sleep(1000)
+		}
+	}
 }
