@@ -55,7 +55,7 @@ preAutoExec(InstallDir,ConfigFileName) {
 			}
 			persistLog("Copying executable to install location")
 			try{
-				FileCopy(A_ScriptFullPath, InstallDir "/" A_ScriptName, true)
+				FileCopy(A_ScriptFullPath, InstallDir "/" A_AppName ".exe", true)
 			}
 
 			; if !(FileExist(InstallDir "/nControl.ini"))
@@ -103,11 +103,12 @@ preAutoExec(InstallDir,ConfigFileName) {
 			FileInstall("./Img/button_execute.png",InstallDir "/Img/button_execute.png",true)
 			FileInstall("./Img/status_stopped.png",InstallDir "/Img/status_stopped.png",true)
 			FileInstall("./Img/status_running.png",InstallDir "/Img/status_running.png",true)
-			FileInstall("./Img/label_timer_off.png",InstallDir "/Img/label_timer_off .png",true)
 			FileInstall("./Img/label_left_trim.png",InstallDir "/Img/label_left_trim.png",true)
 			FileInstall("./Img/label_right_trim.png",InstallDir "/Img/label_right_trim.png",true)
+			FileInstall("./Img/label_timer_off.png",InstallDir "/Img/label_timer_off.png",true)
 			FileInstall("./Img/label_anti_idle_timer.png",InstallDir "/Img/label_anti_idle_timer.png",true)
 			FileInstall("./Img/label_infinite_tower.png",InstallDir "/Img/label_infinite_tower.png",true)
+			FileInstall("./Img/label_celestial_tower.png",InstallDir "/Img/label_celestial_tower.png",true)			
 			FileInstall("./Img/handlebar_vertical.png",InstallDir "/Img/handlebar_vertical.png",true)
 			FileInstall("./Img/button_quit.png",InstallDir "/Img/button_quit.png",true)
 			FileInstall("./Img/button_minimize.png",InstallDir "/Img/button_minimize.png",true)
@@ -132,10 +133,10 @@ preAutoExec(InstallDir,ConfigFileName) {
 			FileInstall("./Img/button_minus_on.png",InstallDir "/Img/button_minus_on.png",true)
 			FileInstall("./Img/button_OpsDock.png",InstallDir "/Img/button_OpsDock.png",true)
 			FileInstall("./Img/color_swatches.png",InstallDir "/Img/color_swatches.png",1)
+			FileInstall("./Img/toggle_off.png",InstallDir "/Img/toggle_off.png",1)
+			FileInstall("./Img/toggle_on.png",InstallDir "/Img/toggle_on.png",1)
 			FileInstall("./Img/toggle_left.png",InstallDir "/Img/toggle_left.png",1)
 			FileInstall("./Img/toggle_right.png",InstallDir "/Img/toggle_right.png",1)
-			FileInstall("./Img/button_viewlog_down.png",InstallDir "/Img/button_viewlog_down.png",1)
-			FileInstall("./Img/button_viewlog_up.png",InstallDir "/Img/button_viewlog_up.png",1)
 			FileInstall("./Img/button_popout_ready.png",InstallDir "/Img/button_popout_ready.png",1)
 			FileInstall("./Img/button_popout_on.png",InstallDir "/Img/button_popout_on.png",1)
 			FileInstall("./Img/button_refresh.png",InstallDir "/Img/button_refresh.png",1)
@@ -154,6 +155,10 @@ preAutoExec(InstallDir,ConfigFileName) {
 			FileInstall("./Img/button_autoClicker_on.png",InstallDir "/Img/button_autoClicker_on.png",1)
 			FileInstall("./Img/help.png",InstallDir "/Img/help.png",1)
 			FileInstall("./Img/button_help.png",InstallDir "/Img/button_help.png",1)
+			FileInstall("./Img/button_help_ready.png",InstallDir "/Img/button_help_ready.png",1)
+			FileInstall("./Img/button_help_on.png",InstallDir "/Img/button_help_on.png",1)			
+			FileInstall("./Img/button_console_ready.png",InstallDir "/Img/button_console_ready.png",1)
+			FileInstall("./Img/button_console_on.png",InstallDir "/Img/button_console_on.png",1)
 			FileInstall("./lib/ColorChooser.exe",InstallDir "./lib/ColorChooser.exe",1)
 
 			
@@ -165,7 +170,7 @@ preAutoExec(InstallDir,ConfigFileName) {
 				persistLog("Created Redist Folder")
 			}
 			
-		Run(InstallDir "\" A_ScriptName)
+		Run(InstallDir "\" A_AppName ".exe")
 		ExitApp
 		
 		}
@@ -184,7 +189,8 @@ persistLog(LogMsg) {
 }
 
 cfgLoad(&cfg, &ui) {
-	ui.gameWindowsList 	:= array()
+	Global
+	ui.gameWindowsList 			:= array()
 	cfg.GameWindowsList 		:= array()
 
 	cfg.MainGui			:= IniRead(cfg.file,"System","MainGui","MainGui")
@@ -200,6 +206,11 @@ cfgLoad(&cfg, &ui) {
 	ui.LastWindowHwnd		:= 0
 	ui.ColorChanged 		:= false
 	ui.GuiCollapsed			:= false
+	ui.AfkDocked 			:= false
+	ui.AfkAnchoredToGui 	:= true
+	ui.AfkEnabled 			:= false
+	ui.towerEnabled 		:= false
+	ui.helpActive			:= false
 	
 	cfg.MainGui				:= IniRead(cfg.file,"System","MainGui","MainGui")
 	cfg.InstallDir			:= IniRead(cfg.file,"System","InstallDir", A_MyDocuments "\nControl")
@@ -232,8 +243,8 @@ cfgLoad(&cfg, &ui) {
 	cfg.Game					:= IniRead(cfg.file,"Game","Game","2")
 	cfg.HwndSwapEnabled			:= IniRead(cfg.file,"Game","HwndSwapEnabled",false)
 
-	cfg.Game1StatusEnabled 		:= IniRead(cfg.file,"Game","Game1Enabled",true)
-	cfg.Game2StatusEnabled 		:= IniRead(cfg.file,"Game","Game2Enabled",true)
+	cfg.win1Enabled 		:= IniRead(cfg.file,"Game","Game1Enabled",true)
+	cfg.win2Enabled 		:= IniRead(cfg.file,"Game","Game2Enabled",true)
 	cfg.AfkDataFile				:= IniRead(cfg.file,"AFK","AfkDataFile","./AfkData.csv")
 	cfg.Profile					:= IniRead(cfg.file,"AFK","Profile","1")
 	cfg.Win1Class				:= IniRead(cfg.file,"AFK","Win1Class","Summoner1")
@@ -244,7 +255,8 @@ cfgLoad(&cfg, &ui) {
 	cfg.SilentIdleEnabled := IniRead(cfg.file,"AFK","SilentIdleEnabled",true)
 	cfg.AutoClickerSpeed := IniRead(cfg.file,"AFK","AutoClickerSpeed",50)
 	cfg.CelestialTowerEnabled := IniRead(cfg.file,"AFK","CelestialTowerEnabled",false)
-	cfg.nControlMonitor 	:= IniRead(cfg.file,"nControl","nControlMonitor","1")	cfg.app1filename		:= IniRead(cfg.file,"nControl","app1filename","")
+	cfg.nControlMonitor 	:= IniRead(cfg.file,"nControl","nControlMonitor","1")	
+	cfg.app1filename		:= IniRead(cfg.file,"nControl","app1filename","")
 	cfg.app1path			:= IniRead(cfg.file,"nControl","app1path","")
 	cfg.app2filename		:= IniRead(cfg.file,"nControl","app2filename","")
 	cfg.app2path			:= IniRead(cfg.file,"nControl","app2path","")
@@ -302,8 +314,8 @@ WriteConfig() {
 	}
 	IniWrite(tmpGameList,cfg.file,"Game","GameList")
 	IniWrite(cfg.Game,cfg.file,"Game","Game")
-	IniWrite(cfg.Game1StatusEnabled,cfg.file,"Game","Game1StatusEnabled")
-	IniWrite(cfg.Game2StatusEnabled,cfg.file,"Game","Game2StatusEnabled")
+	IniWrite(cfg.win1Enabled,cfg.file,"Game","Game1StatusEnabled")
+	IniWrite(cfg.win2Enabled,cfg.file,"Game","Game2StatusEnabled")
 	IniWrite(cfg.HwndSwapEnabled,cfg.file,"Game","HwndSwapEnabled")
 	IniWrite(cfg.nControlMonitor,cfg.file,"nControl","nControlMonitor")
 	IniWrite(cfg.DockHeight,cfg.file,"nControl","DockHeight")
@@ -354,12 +366,17 @@ WriteConfig() {
 	cfg.GuiY := GuiY
 	cfg.AfkX := AfkX
 	cfg.AfkY := AfkY
-	
-	if (ui.AfkDocked)
-	{
-		cfg.GuiX := ui.GuiPrevX
-		cfg.GuiY := ui.GuiPrevY
-	}
+	try {
+			if (ui.AfkDocked)
+			{
+				cfg.GuiX := ui.GuiPrevX
+				cfg.GuiY := ui.GuiPrevY
+			} 
+		} catch {
+			cfg.GuiX := 200
+			cfg.GuiY := 200
+		}
+		
 	IniWrite(cfg.GuiX,cfg.file,"Interface","GuiX")
 	IniWrite(cfg.GuiY,cfg.file,"Interface","GuiY")
 	IniWrite(cfg.AfkX,cfg.file,"Interface","AfkX")
@@ -395,12 +412,12 @@ WriteConfig() {
 }
 
 GetWinNumber() {
-	Try {
-		debugLog("GetWinNumber Comparing " ui.Win1Hwnd " and " ui.Win2Hwnd.Text " to " WinExist("A"))
-		Return (ui.Win1Hwnd == WinExist("A")) ? 1 : (ui.Win2Hwnd.Text == WinExist("A") ? 2 : 0)
-	} Catch {
-		Return 0
-	}
+	 Try {
+		debugLog("GetWinNumber Comparing " ui.Win1Hwnd " and " ui.Win2Hwnd " to " WinExist("A"))
+		Return (ui.Win1Hwnd == WinExist("A")) ? 1 : (ui.Win2Hwnd == WinExist("A") ? 2 : 0)
+	 } Catch {
+		 Return 0
+	 }
 }
 
 debugLog(LogMsg) {

@@ -15,33 +15,40 @@ GuiSetupTab(&ui,&cfg)
 {
 	ui.MainGuiTabs.UseTab("Setup")
 	ui.MainGui.SetFont("s09")
-	ui.AutoClickerSpeedSlider := ui.MainGui.AddSlider("x23 y42 w25 h160 Range1-64 Vertical Left TickInterval8 Invert ToolTipTop",cfg.AutoClickerSpeed)
-	ui.AutoClickerSpeedSliderLabel := ui.MainGui.AddText("x15 y32 w60 r1 BackgroundTrans","AutoClicker")
-	ui.AutoClickerSpeedSliderLabel2 := ui.MainGui.AddText("x25 y195 w50 r1 BackgroundTrans","Speed")
+	ui.AutoClickerSpeedSlider := ui.MainGui.AddSlider("x40 y40 w25 h160 Range1-64 Vertical Left TickInterval8 Invert ToolTipTop",cfg.AutoClickerSpeed)
+	ui.AutoClickerSpeedSlider.ToolTip := "AutoClicker Speed"
+	ui.AutoClickerSpeedSliderLabel2 := ui.MainGui.AddText("x30 y195 w50 r1 Center BackgroundTrans","CPS")
 	
 	ui.AutoClickerSpeedSlider.OnEvent("Change",AutoClickerSpeedChanged)
 	
 	ui.MainGui.SetFont("s10")
-	drawOutlineMainGui(4,31,499,182,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,2)
+	drawOutlineMainGui(39,31,499,182,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,2)
 	
-	ui.MainGui.SetFont("s12")
-	ToggleToolTips(*)
-	{
-		ui.toggleToolTips.Opt((cfg.ToolTipsEnabled := !cfg.ToolTipsEnabled) ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor))
-		ui.toggleToolTips.Redraw()
-	}
+	ui.MainGui.SetFont("s10")
 	
-	ui.toggleToolTips := ui.MainGui.AddPicture("x110 y28 w30 h30 section " (cfg.ToolTipsEnabled ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor)),"./Img/button_ready.png")
+	
+	
+	
+	ui.toggleToolTips := ui.MainGui.AddPicture("x85 y50 w50 h25 section " ((cfg.ToolTipsEnabled) ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor)),((cfg.ToolTipsEnabled) ? (cfg.toggleOn) : (cfg.toggleOff)))
 	ui.toggleToolTips.OnEvent("Click", ToggleToolTips)
 	ui.toggleToolTips.ToolTip := "Toggles ToolTips"
 	ui.labelToolTips := ui.MainGui.AddText("x+3 ys+3 BackgroundTrans","ToolTips")
+	ToggleToolTips(*)
+	{
+		ui.toggleToolTips.value := 
+			(cfg.ToolTipsEnabled := !cfg.ToolTipsEnabled) 
+				? (ui.toggleToolTips.Opt("Background" cfg.ThemeButtonOnColor),cfg.toggleOn) 
+				: (ui.toggleToolTips.Opt("Background" cfg.ThemeButtonReadyColor),cfg.toggleOff)
+		ui.toggleToolTips.Redraw()
+	}
 
 	ToggleAfkSnap(*)
 	{
 		ui.toggleAfkSnap.Opt((cfg.AfkSnapEnabled := !cfg.AfkSnapEnabled) ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor))
 		ui.toggleAfkSnap.Redraw()
 	}
-	ui.toggleAfkSnap := ui.MainGui.AddPicture("xs w30 h30 section " (cfg.AfkSnapEnabled ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor)),"./Img/button_ready.png")
+	
+	ui.toggleAfkSnap := ui.MainGui.AddPicture("xs w50 h25 section " (cfg.AfkSnapEnabled ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor)),"./Img/toggle_off.png")
 	ui.toggleAfkSnap.OnEvent("Click", ToggleAfkSnap)
 	ui.toggleAfkSnap.ToolTip := "Toggles Afk Screen Snapping"
 	ui.labelAfkSnap:= ui.MainGui.AddText("x+3 ys+3","AFK Snapping")
@@ -51,7 +58,7 @@ GuiSetupTab(&ui,&cfg)
 		ui.toggleSilentIdle.Opt((cfg.SilentIdleEnabled := !cfg.SilentIdleEnabled) ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor))
 		ui.toggleSilentIdle.Redraw()
 	}
-	ui.toggleSilentIdle := ui.MainGui.AddPicture("xs w30 h30 section " (cfg.SilentIdleEnabled ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor)),"./Img/button_ready.png")
+	ui.toggleSilentIdle := ui.MainGui.AddPicture("xs w50 h25 section " (cfg.SilentIdleEnabled ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor)),"./Img/toggle_off.png")
 	ui.toggleSilentIdle.OnEvent("Click", ToggleSilentIdle)
 	ui.toggleSilentIdle.ToolTip := "Minimizes Roblox Windows While Anti-Idling"
 	ui.labelSilentIdle:= ui.MainGui.AddText("x+3 ys+3","Silent AntiIdle")
@@ -61,7 +68,7 @@ GuiSetupTab(&ui,&cfg)
 		ui.toggleAlwaysOnTop.Opt((cfg.AlwaysOnTopEnabled := !cfg.AlwaysOnTopEnabled) ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor))
 		ui.toggleAlwaysOnTop.Redraw()
 	}
-	ui.toggleAlwaysOnTop := ui.MainGui.AddPicture("xs w30 h30 section " (cfg.AlwaysOnTopEnabled ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor)),"./Img/button_ready.png")
+	ui.toggleAlwaysOnTop := ui.MainGui.AddPicture("xs w50 h25 section " (cfg.AlwaysOnTopEnabled ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor)),"./Img/toggle_off.png")
 	ui.toggleAlwaysOnTop.OnEvent("Click", ToggleAlwaysOnTop)
 	ui.toggleAlwaysOnTop.ToolTip := "Keeps this app on top of all other windows."
 	ui.labelAlwaysOnTop:= ui.MainGui.AddText("x+3 ys+3","AlwaysOnTop")	
@@ -71,7 +78,7 @@ GuiSetupTab(&ui,&cfg)
 		ui.toggleAnimations.Opt((cfg.AnimationsEnabled := !cfg.AnimationsEnabled) ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor))
 		ui.toggleAnimations.Redraw()
 	}
-	ui.toggleAnimations := ui.MainGui.AddPicture("xs w30 h30 section " (cfg.AnimationsEnabled ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor)),"./Img/button_ready.png")
+	ui.toggleAnimations := ui.MainGui.AddPicture("xs w50 h25 section " (cfg.AnimationsEnabled ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor)),"./Img/toggle_off.png")
 	ui.toggleAnimations.OnEvent("Click", ToggleAnimations)
 	ui.toggleAnimations.ToolTip := "Keeps this app on top of all other windows."
 	ui.labelAnimations:= ui.MainGui.AddText("x+3 ys+3","Animations")	
@@ -81,7 +88,7 @@ GuiSetupTab(&ui,&cfg)
 		ui.toggleCelestialTower.Opt((cfg.CelestialTowerEnabled := !cfg.CelestialTowerEnabled) ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor))
 		ui.toggleCelestialTower.Redraw()
 	}
-	ui.toggleCelestialTower := ui.MainGui.AddPicture("xs w30 h30 section " (cfg.CelestialTowerEnabled ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor)),"./Img/button_ready.png")
+	ui.toggleCelestialTower := ui.MainGui.AddPicture("xs w50 h25 section " (cfg.CelestialTowerEnabled ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor)),"./Img/toggle_off.png")
 	ui.toggleCelestialTower.OnEvent("Click", ToggleCelestialTower)
 	ui.toggleCelestialTower.ToolTip := "Switches Tower AFK to Celestial."
 	ui.labelCelestialTower:= ui.MainGui.AddText("x+3 ys+3","Celestial Tower")	
@@ -123,8 +130,6 @@ GuiSetupTab(&ui,&cfg)
 		ui.toggleColorSelector.Redraw()
 	}
 
-
-	
 	ui.MainGui.SetFont("s10")
 	ui.MainGui.AddText("x255 y52 section hidden")
 
@@ -137,6 +142,8 @@ GuiSetupTab(&ui,&cfg)
 		ui.%this_color%Label := ui.MainGui.AddText("x+5 ys+2 c" cfg.ThemeFont1Color,StrReplace(SubStr(this_color,6),"Color"))
 		ui.%this_color%Picker.OnEvent("Click",PickColor)
 	}
+
+	ControlFocus(ui.toggleColorSelector,ui.mainGui)
 
 	PickColor(Obj,msg,Info*)
 	{

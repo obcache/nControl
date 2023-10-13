@@ -65,8 +65,8 @@ Afk			:= Object()
 		{
 			ui.towerEnabled := false
 			;ui.buttonTower.value := "./Img/button_repeat.png"
-			ui.status.value := "./Img/label_timer_off.png"
-			ui.OpsStatus.value := "./Img/label_timer_off.png"
+			ui.AfkStatus1.value := "./Img/label_timer_off.png"
+			ui.OpsStatus1.value := "./Img/label_timer_off.png"
 			ui.OpsTowerButton.Opt("Background" cfg.ThemeButtonReadyColor)
 			ui.OpsTowerButton.Redraw()
 
@@ -80,11 +80,11 @@ Afk			:= Object()
 			ui.towerEnabled := true
 			;ui.buttonTower.value := "./Img/button_repeating.png"
 			if !(cfg.CelestialTowerEnabled) {
-				ui.status.value := "./Img/label_infinite_tower.png"
-				ui.OpsStatus.value := "./Img/label_infinite_tower.png"
+				ui.AfkStatus1.value := "./Img/label_infinite_tower.png"
+				ui.OpsStatus1.value := "./Img/label_infinite_tower.png"
 			} else { 
-				ui.status.value := "./Img/label_infinite_tower.png"
-				ui.OpsStatus.value := "./Img/label_infinite_tower.png"
+				ui.AfkStatus1.value := "./Img/label_infinite_tower.png"
+				ui.OpsStatus1.value := "./Img/label_infinite_tower.png"
 			}			
 			ui.OpsTowerButton.Opt("Background" cfg.ThemeButtonOnColor)
 			ui.OpsTowerButton.Redraw()
@@ -97,45 +97,167 @@ Afk			:= Object()
 		}
 	}
 
-	toggleAntiIdle(*) {
-		(ui.AntiIdle_enabled := !ui.AntiIdle_enabled) ? AntiIdleOn() : AntiIdleOff()
+	toggleAntiIdle1(*) {
+		(ui.AntiIdle1_enabled := !ui.AntiIdle1_enabled) ? AntiIdle1On() : AntiIdle1Off()
+		
+		antiIdle1On() {
+			;SetTimer(AntiIdle,1080000)
+			;SetTimer(UpdateTimer,4000)
+			SetTimer(AntiIdle1,120000)
+			SetTimer(UpdateTimer1,400)
+			ui.progress.value := 0
+			ui.OpsProgress1.value := 0
+			;ui.buttonAntiIdle1.value := "./Img/button_on.png"
+			ui.buttonTower.OnEvent("Click",ToggleTower,False)
+			ui.AfkStatus1.value := "./Img/label_anti_idle_timer.png"
+			ui.OpsStatus1.value := "./Img/label_anti_idle_timer.png"
+			ui.OpsAntiIdle1Button.Value := "./Img/button_antiIdle_on.png"
+			ui.OpsAntiIdle1Button.Opt("Background" cfg.ThemeButtonOnColor)
+			ui.OpsAntiIdle1Button.Redraw()
+			ui.buttonAntiIdle1.Value := "./Img/button_antiIdle_on.png"
+			ui.buttonAntiIdle1.Opt("Background" cfg.ThemeButtonOnColor)
+			ui.buttonAntiIdle1.Redraw()
+			ui.buttonTower.ToolTip := "Tower timer disabled while AntiIdle is running."
+			AntiIdle(1)
+		}
+
+		antiIdle1Off() {
+			SetTimer(AntiIdle,0)
+			SetTimer(UpdateTimer,0)
+			ui.buttonTower.ToolTip := "Starts Infinte Tower"
+			ui.AfkStatus1.value := "./Img/label_timer_off.png"
+			ui.OpsStatus1.value := "./Img/label_timer_off.png"
+			ui.OpsAntiIdle1Button.Opt("Background" cfg.ThemeButtonReadyColor)
+			ui.OpsAntiIdle1Button.Redraw()
+			ui.buttonAntiIdle1.Value := "./Img/button_antiIdle_ready.png"
+			ui.buttonAntiIdle1.Opt("Background" cfg.ThemeButtonReadyColor)
+			ui.buttonAntiIdle1.Redraw()
+			ui.buttonTower.OnEvent("Click",ToggleTower)
+			ui.progress.value := 0
+			ui.Opsprogress.value := 0
+		}
 	}	
 
-	antiIdleOff() {
-		SetTimer(AntiIdle,0)
-		SetTimer(UpdateTimer,0)
-		ui.buttonTower.ToolTip := "Starts Infinte Tower"
-		ui.status.value := "./Img/label_timer_off.png"
-		ui.OpsStatus.value := "./Img/label_timer_off.png"
-		ui.OpsAntiIdleButton.Opt("Background" cfg.ThemeButtonReadyColor)
-		ui.OpsAntiIdleButton.Redraw()
-		ui.buttonAntiIdle.Value := "./Img/button_antiIdle_ready.png"
-		ui.buttonAntiIdle.Opt("Background" cfg.ThemeButtonReadyColor)
-		ui.buttonAntiIdle.Redraw()
-		ui.buttonTower.OnEvent("Click",ToggleTower)
-		ui.progress.value := 0
-		ui.Opsprogress.value := 0
+	toggleAntiIdle2(*) {
+		(ui.AntiIdle2_enabled := !ui.AntiIdle2_enabled) ? AntiIdle2On() : AntiIdle2Off()
+
+		antiIdle2On() {
+			;SetTimer(AntiIdle2,1080000)
+			;SetTimer(UpdateTimer,4000)
+			SetTimer(AntiIdle2,120000)
+			SetTimer(UpdateTimer2,400)
+			ui.progress.value := 0
+			ui.OpsProgress2.value := 0
+			;ui.buttonAntiIdle2.value := "./Img/button_on.png"
+			ui.buttonTower.OnEvent("Click",ToggleTower,False)
+			ui.AfkStatus1.value := "./Img/label_anti_idle_timer.png"
+			ui.OpsStatus2.value := "./Img/label_anti_idle_timer.png"
+			ui.OpsAntiIdle2Button.Value := "./Img/button_antiIdle_on.png"
+			ui.OpsAntiIdle2Button.Opt("Background" cfg.ThemeButtonOnColor)
+			ui.OpsAntiIdle2Button.Redraw()
+			ui.buttonAntiIdle2.Value := "./Img/button_antiIdle_on.png"
+			ui.buttonAntiIdle2.Opt("Background" cfg.ThemeButtonOnColor)
+			ui.buttonAntiIdle2.Redraw()
+			ui.buttonTower.ToolTip := "Tower timer disabled while AntiIdle is running."
+			AntiIdle(2)
+		}		
+
+		antiIdle2Off() {
+			SetTimer(AntiIdle,0)
+			SetTimer(UpdateTimer,0)
+			ui.buttonTower.ToolTip := "Starts Infinte Tower"
+			ui.AfkStatus1.value := "./Img/label_timer_off.png"
+			ui.OpsStatus1.value := "./Img/label_timer_off.png"
+			ui.OpsAntiIdle1Button.Opt("Background" cfg.ThemeButtonReadyColor)
+			ui.OpsAntiIdle1Button.Redraw()
+			ui.buttonAntiIdle1.Value := "./Img/button_antiIdle_ready.png"
+			ui.buttonAntiIdle1.Opt("Background" cfg.ThemeButtonReadyColor)
+			ui.buttonAntiIdle1.Redraw()
+			ui.buttonTower.OnEvent("Click",ToggleTower)
+			ui.progress.value := 0
+			ui.Opsprogress.value := 0
+		}
+
+
+	}	
+
+
+	antiIdle(WinNumber := 0) {
+		Try
+			ui.CurrWin := WinExist("A")
+
+		CoordMode("Mouse","Client")
+		MouseGetPos(&mouseX,&mouseY)
+		
+		Loop 2 {
+			if (cfg.Game%A_Index%StatusEnabled) && ((WinNumber == A_Index) || (WinNumber == 0)) {
+				WinActivate("ahk_id " ui.Win%A_Index%Hwnd)
+				autoFire()
+				
+				if (cfg.SilentIdleEnabled)
+				{
+					WinMinimize("ahk_id " ui.Win%A_Index%Hwnd)
+				}
+			}
+		}
+		
+		WinActivate("ahk_id " ui.CurrWin)
+		Sleep(150)
+		MouseMove(mouseX,mouseY)
 	}
 
-	antiIdleOn() {
-		;SetTimer(AntiIdle,1080000)
-		;SetTimer(UpdateTimer,4000)
-		SetTimer(AntiIdle,120000)
-		SetTimer(UpdateTimer,400)
-		ui.progress.value := 0
-		ui.OpsProgress.value := 0
-		;ui.buttonAntiIdle.value := "./Img/button_on.png"
-		ui.buttonTower.OnEvent("Click",ToggleTower,False)
-		ui.status.value := "./Img/label_anti_idle_timer.png"
-		ui.OpsStatus.value := "./Img/label_anti_idle_timer.png"
-		ui.OpsAntiIdleButton.Value := "./Img/button_antiIdle_on.png"
-		ui.OpsAntiIdleButton.Opt("Background" cfg.ThemeButtonOnColor)
-		ui.OpsAntiIdleButton.Redraw()
-		ui.buttonAntiIdle.Value := "./Img/button_antiIdle_on.png"
-		ui.buttonAntiIdle.Opt("Background" cfg.ThemeButtonOnColor)
-		ui.buttonAntiIdle.Redraw()
-		ui.buttonTower.ToolTip := "Tower timer disabled while AntiIdle is running."
-		AntiIdle()
+
+	toggleAntiIdleBoth(*) {
+		(ui.AntiIdle_enabled := !ui.AntiIdle_enabled) ? AntiIdleBothOn() : AntiIdleBothOff()
+	
+		antiIdleBothOff() {
+			SetTimer(AntiIdle,0)
+			SetTimer(UpdateTimer,0)
+			ui.buttonTower.ToolTip := "Starts Infinte Tower"
+			ui.AfkStatus1.value := "./Img/label_timer_off.png"
+			ui.OpsStatus1.value := "./Img/label_timer_off.png"
+			ui.OpsAntiIdle1Button.Opt("Background" cfg.ThemeButtonReadyColor)
+			ui.OpsAntiIdle1Button.Redraw()
+			ui.buttonAntiIdle1.Value := "./Img/button_antiIdle_ready.png"
+			ui.buttonAntiIdle1.Opt("Background" cfg.ThemeButtonReadyColor)
+			ui.buttonAntiIdle1.Redraw()
+			ui.buttonTower.OnEvent("Click",ToggleTower)
+			ui.progress.value := 0
+			ui.Opsprogress.value := 0
+		}
+
+		antiIdleBothOn() {
+			;SetTimer(AntiIdle,1080000)
+			;SetTimer(UpdateTimer,4000)
+			SetTimer(AntiIdle,120000)
+			SetTimer(UpdateTimer,400)
+			ui.progress.value := 0
+			ui.OpsProgress1.value := 0
+			ui.OpsProgress2.value := 0
+			;ui.buttonAntiIdle1.value := "./Img/button_on.png"
+			ui.buttonTower.OnEvent("Click",ToggleTower,False)
+			ui.AfkStatus1.value := "./Img/label_anti_idle_timer.png"
+			ui.OpsStatus1.value := "./Img/label_anti_idle_timer.png"
+			ui.OpsAntiIdle1Button.Value := "./Img/button_antiIdle_on.png"
+			ui.OpsAntiIdle1Button.Opt("Background" cfg.ThemeButtonOnColor)
+			ui.OpsAntiIdle1Button.Redraw()
+			ui.buttonAntiIdle1.Value := "./Img/button_antiIdle_on.png"
+			ui.buttonAntiIdle1.Opt("Background" cfg.ThemeButtonOnColor)
+			ui.buttonAntiIdle1.Redraw()
+			ui.buttonTower.ToolTip := "Tower timer disabled while AntiIdle is running."
+			;ui.buttonAntiIdle2.value := "./Img/button_on.png"
+			ui.buttonTower.OnEvent("Click",ToggleTower,False)
+			ui.AfkStatus1.value := "./Img/label_anti_idle_timer.png"
+			ui.OpsStatus2.value := "./Img/label_anti_idle_timer.png"
+			ui.OpsAntiIdle2Button.Value := "./Img/button_antiIdle_on.png"
+			ui.OpsAntiIdle2Button.Opt("Background" cfg.ThemeButtonOnColor)
+			ui.OpsAntiIdle2Button.Redraw()
+			ui.buttonAntiIdle2.Value := "./Img/button_antiIdle_on.png"
+			ui.buttonAntiIdle2.Opt("Background" cfg.ThemeButtonOnColor)
+			ui.buttonAntiIdle2.Redraw()
+			ui.buttonTower.ToolTip := "Tower timer disabled while AntiIdle is running."
+			AntiIdle(0)
+		}
 	}
 
 	toggleAFK(*) {
@@ -146,7 +268,7 @@ Afk			:= Object()
 		Global
 		debugLog("Starting AFK")
 		
-		if (WinExist("ahk_id " ui.Win1Hwnd) && (ui.Win2Hwnd.Text == "" || WinExist("ahk_id " ui.Win2Hwnd.Text)))
+		if (WinExist("ahk_id " ui.Win1Hwnd) && (ui.Win2Hwnd == "" || WinExist("ahk_id " ui.Win2Hwnd)))
 		{
 			RefreshWinHwnd()
 		}
@@ -207,12 +329,13 @@ Afk			:= Object()
 		debugLog("Finished Reading AfkData File")
 	}	
 
+
 	runAfkRoutines(*) { ;Executes Instruction Sets
 		Global
 		ui.Win1StillWorking := ""
 		ui.Win2StillWorking := ""
 		Thread("NoTimers",True)
-			if (WinExist("ahk_id " ui.Win1Hwnd) && cfg.Game2StatusEnabled)
+			if (WinExist("ahk_id " ui.Win1Hwnd) && cfg.win2Enabled)
 			{
 				Loop Afk.DataRow.Length
 				{
@@ -244,7 +367,7 @@ Afk			:= Object()
 				RefreshWinHwnd()
 			}
 
-			if (WinExist("ahk_id " ui.Win2Hwnd.Text) && cfg.Game2StatusEnabled)
+			if (WinExist("ahk_id " ui.Win2Hwnd) && cfg.win2Enabled)
 			{
 				Loop Afk.DataRow.Length
 				{
@@ -275,84 +398,42 @@ Afk			:= Object()
 	}
 
 	autoFire(WinNumber := GetWinNumber()) {
-		if (WinNumber == 0)
+		if (WinNumber == 0) {
+			debugLog("Couldn't Identify Window to Enable")
 			Return 1
-		if !(ui.AutoFire%WinNumber%Enabled)
-		{
-			ui.AutoFire%WinNumber%Enabled := true
-			WinActivate("ahk_id " ui.Win%WinNumber%Hwnd)
-			debugLog("Enabling AutoFire on Win" WinNumber)
-			ui.buttonAutoFire.Opt("Background" cfg.ThemeButtonOnColor)
-			ui.buttonAutoFire.Value := "./Img/button_autoFire" WinNumber "_on.png"
-			ui.buttonAutoFire.Redraw()
-			SetTimer(ResetAutoFireStatus,-5000)
-			CoordMode("Mouse","Client")
-			WinGetPos(&WinX,&WinY,&WinW,&WinH,"ahk_id " ui.Win%WinNumber%Hwnd)
-			MouseMove(WinW-50,WinH-120)
-			MouseClick("Left",WinW-50,WinH-120)
-		
-			if (WinGetProcessName("ahk_id " ui.Win%WinNumber%Hwnd) == "RobloxPlayerBeta.exe")
-			{	
-				debugLog("RobloxPlayerBeta AutoFire Start")
-			
-				MouseClick("Left",WinW-50,WinH-120)
-				Sleep(250)
-				Send("{LButton Down}")
-				Sleep(250)
-				Send("!{Tab}")
-				Sleep(250)
-				Send("{LButton Up}")
-				Sleep(250)
-				Send("!{Tab}")
-			
-			} else {
-				Sleep(250)
-				MouseClickDrag("Left",WinW-50,WinH-120,WinW+50,WinH-120,5)
-			}
-		} else {
-			ui.AutoFire%WinNumber%Enabled := false
-			debugLog("Disabling AutoFire")
-			Send("{LButton}")
-			ui.buttonAutoFire.Opt("Background" cfg.ThemeButtonReadyColor)
-			ui.buttonAutoFire.Value := "./Img/button_autoFire_ready.png"
-			ui.buttonAutoFire.Redraw()
 		}
 
-	}
+		debugLog("Enabling AutoFire on Win" WinNumber)
+		ui.buttonAutoFire.Opt("Background" cfg.ThemeButtonOnColor)
+		ui.buttonAutoFire.Value := "./Img/button_autoFire" WinNumber "_on.png"
+		ui.buttonAutoFire.Redraw()
 
-	antiIdle(*) {
-		
-
-		Try
-			ui.CurrWin := WinExist("A")
-
+		SetTimer(ResetAutoFireStatus,-1500)
 		CoordMode("Mouse","Client")
-		MouseGetPos(&mouseX,&mouseY)
+		WinGetPos(&WinX,&WinY,&WinW,&WinH,"ahk_id " ui.Win%WinNumber%Hwnd)
+		MouseMove(WinW-50,WinH-120)
+		MouseClick("Left",WinW-50,WinH-120)
 		
-		Loop 2 {
-			if (cfg.Game%A_Index%StatusEnabled) {
-				WinActivate("ahk_id " ui.Win%A_Index%Hwnd)
-				autoFire()
-			
-		
-		
-		; Loop RobloxWindow.Length
-		; {
-			; DllCall("SetForegroundWindow", "UInt", RobloxWindow[A_Index])
-			; Sleep(150)
-			; Send("{Space}")
-				if (cfg.SilentIdleEnabled)
-				{
-					WinMinimize("ahk_id " ui.Win%A_Index%Hwnd)
-				}
-			}
+		if (WinGetProcessName("ahk_id " ui.Win%WinNumber%Hwnd) == "RobloxPlayerBeta.exe")
+		{	
+			debugLog("RobloxPlayerBeta AutoFire Start")
+			MouseClick("Left",WinW-50,WinH-120)
+			Sleep(250)
+			Send("{LButton Down}")
+			Sleep(250)
+			Send("!{Tab}")
+			Sleep(250)
+			Send("{LButton Up}")
+			Sleep(250)
+			Send("!{Tab}")	
+		} else {
+			Sleep(250)
+			MouseClickDrag("Left",WinW-50,WinH-120,WinW+50,WinH-120,5)
 		}
-		; }
-		
-		WinActivate("ahk_id " ui.CurrWin)
-		Sleep(150)
-		MouseMove(mouseX,mouseY)
+		WinActivate("ahk_id " ui.Win%WinNumber%Hwnd)
 	}
+
+
 } ;End Primary AFK Action Functions
 
 { ;Primary Action Helper Functions
@@ -386,8 +467,6 @@ Afk			:= Object()
 	}
 
 	resetAutoFireStatus(*) {
-		ui.AutoFire1Enabled := false
-		ui.AutoFire2Enabled := false
 		ui.buttonAutoFire.Opt("Background" cfg.ThemeButtonReadyColor)
 		ui.buttonAutoFire.Value := "./Img/button_autoFire_ready.png"
 		ui.buttonAutoFire.Redraw()

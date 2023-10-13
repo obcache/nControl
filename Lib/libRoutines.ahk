@@ -93,14 +93,14 @@ AfkRoutine(*) {
 			AttackWin(1,"R")
 
 	Sleep(2000)
-	if (ui.Win2Hwnd.Text)
+	if (ui.Win2Hwnd)
 		AttackWin(2,"X")
 		
 	if (ui.Win1Hwnd)
 		AttackWin(1,"F")
 
 	Sleep(3000)
-	if (ui.Win2Hwnd.Text)
+	if (ui.Win2Hwnd)
 		if (ui.Win2ClassDDL.text != "Demon")
 			AttackWin(2,"E")
 		
@@ -108,7 +108,7 @@ AfkRoutine(*) {
 		AttackWin(1,"1")
 
 	Sleep(2000)
-	if (ui.Win2Hwnd.Text)
+	if (ui.Win2Hwnd)
 		if (ui.Win2ClassDDL.text != "Summoner")
 			AttackWin(2,"R")
 		
@@ -116,7 +116,7 @@ AfkRoutine(*) {
 		AttackWin(1,"X")
 
 	Sleep(3000)
-	if (ui.Win2Hwnd.Text)
+	if (ui.Win2Hwnd)
 		AttackWin(2,"F")
 		
 	if (ui.Win1Hwnd)
@@ -124,7 +124,7 @@ AfkRoutine(*) {
 			AttackWin(1,"E")
 
 	Sleep(2000)
-	if (ui.Win2Hwnd.Text)
+	if (ui.Win2Hwnd)
 		AttackWin(2,"1")
 }
 

@@ -1,6 +1,11 @@
+A_FileVersion := "3.1.4.3"
+A_AppName := "nControl"
+;@Ahk2Exe-Let FileVersion=%A_PriorLine~U)^(.+"){1}(.+)".*$~$2% 
+
 ;@Ahk2Exe-SetName nControl
-;@Ahk2Exe-SetVersion 2.0.0.1-alpha
-;@Ahk2Exe-ExeName E:\Desktop\nControl.exe
+;@Ahk2Exe-SetVersion %U_FileVersion%
+;@Ahk2Exe-SetFileVersion %U_FileVersion%
+
 
 #Requires AutoHotkey v2.0
 #SingleInstance
@@ -51,12 +56,7 @@ MonitorGetWorkArea(MonitorGetPrimary(),&PrimaryWorkAreaLeft,&PrimaryWorkAreaTop,
 ui.TaskbarHeight := PrimaryMonitorBottom - PrimaryWorkAreaBottom
 
 LogData := ""
-dockApp.enabled := 0
 
-ui.AfkDocked := false
-ui.AfkAnchoredToGui := true
-ui.AfkEnabled := false
-ui.towerEnabled := false
 CfgLoad(&cfg, &ui)
 InitGui(&cfg, &ui)
 InitConsole(&ui)
@@ -97,6 +97,5 @@ RefreshWinHwnd()
 ;AutoDetectGameToggle()
 
 ;END AUTOEXEC
-
 
 

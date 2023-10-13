@@ -22,11 +22,9 @@ ToggleGuiCollapse()
 	RobloxLauncher()
 }	
 
-!^\::
+!^F::
 {
-DialogBox("AutoFire: On")
-SetTimer(DialogBoxClose,1000)
-AutoFire()
+	autoFire()
 }
 
 !^c::

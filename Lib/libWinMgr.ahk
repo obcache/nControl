@@ -52,20 +52,19 @@ wmAfkLButtonDown(wParam, lParam, msg, hwnd) {
 }
 
 WM_MOUSEMOVE(wParam, lParam, msg, Hwnd) {
-    static PrevHwnd := 0
+    static prevHwnd := 0
     if (Hwnd != PrevHwnd)
     {
-        Text := ""
-		ToolTip()
-        CurrControl := GuiCtrlFromHwnd(Hwnd)
-		if cfg.ToolTipsEnabled && CurrControl.HasProp("ToolTip")
+        text := ""
+		toolTip()
+        currControl := GuiCtrlFromHwnd(Hwnd)
+		if cfg.toolTipsEnabled && currControl.hasProp("ToolTip")
         {
-            Text := CurrControl.ToolTip
-            SetTimer () => ToolTip(Text), -400
-			
-            SetTimer () => ToolTip(), -5500
+            text := currControl.ToolTip
+            setTimer () => toolTip(text), -400
+            setTimer () => toolTip(), -5500
         }
-        PrevHwnd := Hwnd
+        prevHwnd := Hwnd
     }
 }
 
