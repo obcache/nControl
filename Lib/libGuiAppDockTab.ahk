@@ -71,9 +71,10 @@ GuiDockTab(&ui)
 	ui.ButtonDockApps := ui.MainGui.AddPicture("ys-2 w30 h30","./Img/button_ready.png")
 	ui.ButtonDockApps.OnEvent("Click",DockApps)
 
-	ui.MainGui.AddText("xs y+3 section w100 Right","Pin App1  ")
-	ui.PinDockButton := ui.MainGui.AddPicture("ys-3 w30 h30","./Img/button_ready.png")
-	ui.PinDockButton.OnEvent("Click",TogglePinDockApp)
+	ui.MainGui.AddText("xs y+3 section w100 Right","Snap Windows")
+	ui.snapWindows := ui.MainGui.AddPicture("ys-3 w30 h30","./Img/button_ready.png")
+	ui.snapWindows.toolTip := "Launches and Snaps Roblox Windows"
+	ui.snapWindows.OnEvent("Click",snapWindows)
 	
 	ui.MainGui.AddText("xs y+4 section w100 Right","Pin App2  ")
 	ui.PinWorkAppButton := ui.MainGui.AddPicture("ys-4 w30 h30","")
@@ -87,6 +88,38 @@ GuiDockTab(&ui)
 
 }
 
+snapWindows(*) {
+	DetectHiddenWindows(true)
+	setTimer(launchRobloxPlayer,-10)
+	setTimer(launchRobloxApp,-10)
+	
+	launchRobloxPlayer() {
+		if !(winExist("ahk_exe RobloxPlayerBeta.exe")) {
+			runApp("Roblox Player")
+		} else {
+			if (WinExist("ahk_exe RobloxPlayerInstaller.exe")) {
+				SetTimer(launchRobloxPlayer,-2000)
+				Return
+			}
+		
+		WinActivate("ahk_exe RobloxPlayerBeta.exe")
+		}
+		
+		robloxPlayerHwnd := WinWait("ahk_exe RobloxPlayerBeta.exe")
+		Send("#{Left}")
+	
+	}
+	
+	launchRobloxApp() {
+		if !(winExist("ahk_exe ApplicationFrameHost.exe")) {
+			runApp("Roblox")
+		} else {
+			WinActivate("ahk_exe ApplicationFrameHost.exe")
+		}
+		robloxAppHwnd := WinWait("ahk_exe ApplicationFrameHost.exe")
+		Send("#{Right}")
+	}
+}
 
 app1browse(*)
 {

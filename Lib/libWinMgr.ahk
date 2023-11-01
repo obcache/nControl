@@ -68,36 +68,48 @@ WM_MOUSEMOVE(wParam, lParam, msg, Hwnd) {
     }
 }
 
-StartPIP(&ui)
+StartPIP()
 {
-	ui.HwndWin1.Text
-;	MonitorGetWorkArea(cfg.GameDisplayNum, &cfg.GameDisplayL, &cfg.GameDisplayT, &cfg.GameDisplayR, &cfg.GameDisplayB)
-;	cfg.GameDisplayL, cfg.GameDisplayT, cfg.GameDisplayR, cfg.GameDisplayB, 
-	WindowID := ui.HwndWin1.Text
-	if (WinGetTransparent(WindowID) < 150)
-	{
-		WinMove(0,0,A_ScreenWidth,A_ScreenHeight,WindowID)
-		WinSetAlwaysOnTop(0)
-		WinSetStyle("+0xC00000")
-		WinSetTransparent(255)
-		WindowID := ui.HwndWin2.Text
-		WinMove(10,A_ScreenHeight-650,800,600,WindowID)
-		WinSetAlwaysOnTop(1)
-		WinSetStyle("-0xC00000")
-		WinSetTransparent(125)
+	if (!(ui.Win2Hwnd) || !(ui.Win1Hwnd)) {
+		debugLog("PiP: Can't find 2 Game Windows.")
+		Return
+	}
+	WindowID := "ahk_id " ui.Win1Hwnd
+	
+	if (WinGetTransparent(WindowID)) {
+		if (WinGetTransparent(WindowID) < 150) {
+			WinMove(0,0,A_ScreenWidth,A_ScreenHeight,WindowID)
+			WinSetAlwaysOnTop(0,WindowID)
+			WinSetStyle("+0xC00000",WindowID)
+			WinSetTransparent(255,WindowID)
+			WindowID := "ahk_id " ui.Win2Hwnd
+			WinMove(10,A_ScreenHeight-650,800,600,WindowID)
+			WinSetAlwaysOnTop(1,WindowID)
+			WinSetStyle("-0xC00000",WindowID)
+			WinSetTransparent(125,WindowID)
+		} else {
+			WinMove(0,0,A_ScreenWidth,A_ScreenHeight,WindowID)
+			WinSetAlwaysOnTop(0,WindowID)
+			WinSetStyle("+0xC00000",WindowID)
+			WinSetTransparent(255,WindowID)
+			WindowID := "ahk_id " ui.Win1Hwnd
+			WinMove(10,A_ScreenHeight-650,800,600,WindowID)
+			WinSetAlwaysOnTop(1,WindowID)
+			WinSetStyle("-0xC00000",WindowID)
+			WinSetTransparent(125,WindowID)
+		}
 	} else {
-		WindowID := ui.HwndWin2.Text
-		WinMove(0,0,A_ScreenWidth,A_ScreenHeight,WindowID)
-		WinSetAlwaysOnTop(0)
-		WinSetStyle("+0xC00000")
-		WinSetTransparent(255)
-		WindowID := ui.HwndWin1.Text
-		WinMove(10,A_ScreenHeight-650,800,600,WindowID)
-		WinSetAlwaysOnTop(1)
-		WinSetStyle("-0xC00000")
-		WinSetTransparent(125)
+			WinMove(0,0,A_ScreenWidth,A_ScreenHeight,WindowID)
+			WinSetAlwaysOnTop(0,WindowID)
+			WinSetStyle("+0xC00000",WindowID)
+			WinSetTransparent(255,WindowID)
+			WindowID := "ahk_id " ui.Win2Hwnd
+			WinMove(10,A_ScreenHeight-650,800,600,WindowID)
+			WinSetAlwaysOnTop(1,WindowID)
+			WinSetStyle("-0xC00000",WindowID)
+			WinSetTransparent(125,WindowID)
 	}
-	}
+}
 
 
 ChangeWindowFocus()

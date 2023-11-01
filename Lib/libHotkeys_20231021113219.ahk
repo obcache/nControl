@@ -21,12 +21,7 @@ ToggleGuiCollapse()
 resetDefaultThemes()
 }
 
-^Enter::
-{
-	MsgBox("here")
-	StartPip()
-}
-
+!^
 !^F1::
 {
 	Global

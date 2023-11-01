@@ -183,7 +183,7 @@ RestartTower(*) {
 		StopAFK()
 	}
 
-	ui.progress.value := 0
+	ui.afkProgress.value := 0
 	if (WinExist("ahk_id " ui.Win1Hwnd) && (ui.Win2Hwnd == "" || WinExist("ahk_id " ui.Win2Hwnd)))
 	{
 		RefreshWinHwnd()
@@ -192,7 +192,7 @@ RestartTower(*) {
 	Loop 2
 	{
 		this_window := "ahk_id " ui.Win%A_Index%Hwnd
-		if (cfg.game%A_Index%StatusEnabled)
+		if (cfg.win%A_Index%Enabled)
 		{
 			WinActivate(this_window)
 		

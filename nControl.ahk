@@ -1,4 +1,4 @@
-A_FileVersion := "3.1.4.3"
+A_FileVersion := "3.1.5.3"
 A_AppName := "nControl"
 ;@Ahk2Exe-Let FileVersion=%A_PriorLine~U)^(.+"){1}(.+)".*$~$2% 
 
@@ -19,31 +19,32 @@ KeyHistory(10)
 
 SetWorkingDir(A_ScriptDir)
 
-cfg			:= Object()
-ui 			:= Object()
-InstallDir := A_MyDocuments "\nControl"
+cfg				:= Object()
+ui 				:= Object()
+InstallDir 		:= A_MyDocuments "\nControl"
 ConfigFileName := "nControl.ini"
-ui.AntiIdle_enabled := false
+ThemeFileName	:= "nControl.themes"
 
 PreAutoExec(InstallDir,ConfigFileName)
 
 ErrorLevel 		:= 0 
 ui.AfkGui 		:= Gui()
 
-dockApp 	:= Object()
-workApp		:= Object()
+dockApp 		:= Object()
+workApp			:= Object()
 
-cfg.file := "./" ConfigFileName
-ui.pinned := 0
-ui.hidden := 0
+cfg.file 		:= "./" ConfigFileName
+cfg.ThemeFile	:= "./" ThemeFileName
+ui.pinned 		:= 0
+ui.hidden 		:= 0
 
-ui.hwndAfkGui := ""
-ui.AfkHeight := 170
+ui.hwndAfkGui 	:= ""
+ui.AfkHeight 	:= 170
 
 ; cfg.ThemeBright1Color := "212121"
 ; cfg.ThemeBright2Color := "555555"
-; cfg.ThemePanel1AccentColor := "00FFFF"
-; cfg.ThemePanel2AccentColor := "FF00FF"
+; cfg.ThemePanel3Color := "00FFFF"
+; cfg.ThemePanel4Color := "FF00FF"
 ; cfg.ThemeBackgroundColor := "363636"
 ; cfg.ThemeFont1Color := "00FFFF"
 ; cfg.ThemeFont2Color := "FF00FF"
@@ -70,11 +71,16 @@ InitConsole(&ui)
 #include <libGuiAppDockTab>
 #include <libGuiKeybindsTab>
 #include <libGuiAudioTab>
+
 #include <libGuiSystemTab>
 #include <libHotkeys>
 #include <libRoutines>
 #include <Class_SQLiteDB>
 
+resetDefaultThemes() {
+	ui.themeResetScheduled := true
+	Reload()
+}
 debugLog("Interface Initialized")
 
 OnExit(ExitFunc)
@@ -83,7 +89,7 @@ debugLog("Console Initialized")
 ; if (cfg.ConsoleVisible == true)
 ; {
 	; toggleConsole()
-; }
+; }																																																																																																																																																																																																																																																																																																																																			
 
 
 

@@ -19,4 +19,4 @@ Loop Read MainScriptFile, MainScriptFile "-tmp"
 FileMove(MainScriptFile,"E:\Backups\nControl\nControl-" OldBuildNumber ".ahk",1)
 FileMove(MainScriptFile "-tmp",MainScriptFile,1)
 RunWait('"c:\Program Files\AutoHotkey\Compiler\Ahk2Exe.exe" /in "E:\Documents\Resources\AutoHotKey\__nControl\nControl.ahk" /out "E:\Documents\Resources\AutoHotKey\__nControl\Bin\nControl_' BuildNumber '.exe"')
-
+FileCreateShortcut("E:\Documents\Resources\AutoHotKey\__nControl\Bin\nControl_" BuildNumber ".exe","e:\desktop\ncontrol.lnk")

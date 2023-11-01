@@ -21,16 +21,16 @@ Afk			:= Object()
 		
 		if (WinNumber) 
 		{
-			(ui.AutoFire%WinNumber%Enabled := !ui.AutoFire%WinNumber%Enabled)
+			; (ui.AutoFire%WinNumber%Enabled := !ui.AutoFire%WinNumber%Enabled)
 			
-			if (ui.AutoFire%WinNumber%Enabled)
-			{
-				NotifyOSD("Win" WinNumber ": AutoFire Enabled",10)
-			}
+			; if (ui.AutoFire%WinNumber%Enabled)
+			; {
+				; NotifyOSD("Win" WinNumber ": AutoFire Started",10)
+			; }
 			
 		AutoFire(WinNumber)
 		}
-		debugLog("AutoFire WinNumber: " WinNumber)
+		debugLog("AutoFire Win" WinNumber)
 	}
 
 	toggleAutoClicker(*) {
@@ -56,45 +56,41 @@ Afk			:= Object()
 	}
 
 	toggleTower(*) {
-		Global
-		; ControlClick("x90 y10 SysTabControl321",ui.MainGui)
-		; ControlClick("Static16",ui.AfkGui)
-		; ControlClick("Static1",ui.AfkGui)
-
-		if ui.towerEnabled = true
-		{
-			ui.towerEnabled := false
-			;ui.buttonTower.value := "./Img/button_repeat.png"
-			ui.AfkStatus1.value := "./Img/label_timer_off.png"
-			ui.OpsStatus1.value := "./Img/label_timer_off.png"
-			ui.OpsTowerButton.Opt("Background" cfg.ThemeButtonReadyColor)
-			ui.OpsTowerButton.Redraw()
-
-			ui.buttonTower.Opt("Background" cfg.ThemeButtonReadyColor)
-			ui.buttonTower.Redraw()
-			SetTimer(RestartTower,0)
-			SetTimer(UpdateTimer,0)
-			ui.progress.value := 0
-			ui.OpsProgress.value := 0
-		} else {
-			ui.towerEnabled := true
-			;ui.buttonTower.value := "./Img/button_repeating.png"
-			if !(cfg.CelestialTowerEnabled) {
-				ui.AfkStatus1.value := "./Img/label_infinite_tower.png"
-				ui.OpsStatus1.value := "./Img/label_infinite_tower.png"
-			} else { 
-				ui.AfkStatus1.value := "./Img/label_infinite_tower.png"
-				ui.OpsStatus1.value := "./Img/label_infinite_tower.png"
-			}			
-			ui.OpsTowerButton.Opt("Background" cfg.ThemeButtonOnColor)
-			ui.OpsTowerButton.Redraw()
-			ui.buttonTower.Opt("Background" cfg.ThemeButtonOnColor)
-			ui.buttonTower.Redraw()
-			SetTimer(UpdateTimer,1000)
-			SetTimer(RestartTower,270000)
-			UpdateTimer()
-			RestartTower()
-		}
+			if !((cfg.win1Enabled && WinExist("ahk_id " ui.win1Hwnd)) 
+			|| (cfg.win2Enabled && WinExist("ahk_id " ui.win2Hwnd))) {
+				debugLog("AutoTower: Failed to start. No game windows found.")
+				Return
+			} else {
+				debugLog("AutoTower: Starting")
+			}
+			
+		(ui.towerEnabled := ! ui.towerEnabled)
+		? (
+			!(cfg.celestialTowerEnabled)
+			? (
+				ui.afkStatus1.value 	:= "./Img/label_celestial_tower.png"
+				,ui.opsStatus1.value 	:= "./Img/label_celestial_tower.png"
+			) : (
+				ui.afkStatus1.value		:= "./Img/label_infinite_tower.png"
+				,ui.opsStatus1.value 	:= "./Img/label_infinite_tower.png"
+			)
+			,ui.opsTowerButton.opt("Background" cfg.ThemeButtonOnColor)
+			,ui.buttonTower.Opt("Background" cfg.ThemeButtonOnColor)
+			,setTimer(updateTimer,1000)
+			,setTimer(restartTower,cfg.towerInterval)
+			,updateTimer()
+			,restartTower()
+		) : (
+			setTimer(RestartTower,0)
+			,setTimer(UpdateTimer,0)
+			,ui.afkProgress.value 		:= 0
+			,ui.opsProgress.value 		:= 0
+			,ui.afkStatus1.value 		:= "./Img/label_timer_off.png"
+			,ui.opsStatus1.value 		:= "./Img/label_timer_off.png"
+			,ui.opsTowerButton.opt("background" cfg.themeButtonReadyColor)
+			,ui.buttonTower.opt("background" cfg.themeButtonReadyColor)
+		)
+	
 	}
 
 	toggleAntiIdle1(*) {
@@ -103,14 +99,16 @@ Afk			:= Object()
 		antiIdle1On() {
 			;SetTimer(AntiIdle,1080000)
 			;SetTimer(UpdateTimer,4000)
-			SetTimer(AntiIdle1,120000)
-			SetTimer(UpdateTimer1,400)
-			ui.progress.value := 0
+			SetTimer () => antiIdle(1),120000
+			SetTimer () => updateTimer(1),400			
+			ui.afkProgress.value := 0
 			ui.OpsProgress1.value := 0
 			;ui.buttonAntiIdle1.value := "./Img/button_on.png"
 			ui.buttonTower.OnEvent("Click",ToggleTower,False)
-			ui.AfkStatus1.value := "./Img/label_anti_idle_timer.png"
-			ui.OpsStatus1.value := "./Img/label_anti_idle_timer.png"
+			ui.AfkStatus1.value := "./Img/label_anti_idle_timer_left.png"
+			ui.OpsStatus1.value := "./Img/label_anti_idle_timer_left.png"
+			ui.afkStatus1.opt("Background" cfg.ThemeButtonOnColor)
+			ui.opStatus1.opt("Background" cfg.ThemeButtonOnColor)
 			ui.OpsAntiIdle1Button.Value := "./Img/button_antiIdle_on.png"
 			ui.OpsAntiIdle1Button.Opt("Background" cfg.ThemeButtonOnColor)
 			ui.OpsAntiIdle1Button.Redraw()
@@ -133,7 +131,7 @@ Afk			:= Object()
 			ui.buttonAntiIdle1.Opt("Background" cfg.ThemeButtonReadyColor)
 			ui.buttonAntiIdle1.Redraw()
 			ui.buttonTower.OnEvent("Click",ToggleTower)
-			ui.progress.value := 0
+			ui.afkProgress.value := 0
 			ui.Opsprogress.value := 0
 		}
 	}	
@@ -144,14 +142,17 @@ Afk			:= Object()
 		antiIdle2On() {
 			;SetTimer(AntiIdle2,1080000)
 			;SetTimer(UpdateTimer,4000)
-			SetTimer(AntiIdle2,120000)
-			SetTimer(UpdateTimer2,400)
-			ui.progress.value := 0
+			SetTimer () => antiIdle(2),120000
+			SetTimer () => updateTimer(2),400
+			ui.afkProgress.value := 0
 			ui.OpsProgress2.value := 0
 			;ui.buttonAntiIdle2.value := "./Img/button_on.png"
 			ui.buttonTower.OnEvent("Click",ToggleTower,False)
-			ui.AfkStatus1.value := "./Img/label_anti_idle_timer.png"
+			ui.AfkStatus2.value := "./Img/label_anti_idle_timer.png"
+			
 			ui.OpsStatus2.value := "./Img/label_anti_idle_timer.png"
+			ui.afkStatus2.opt("Background" cfg.ThemeButtonOnColor)
+			ui.OpsStatus2.opt("Background" cfg.ThemeButtonOnColor)
 			ui.OpsAntiIdle2Button.Value := "./Img/button_antiIdle_on.png"
 			ui.OpsAntiIdle2Button.Opt("Background" cfg.ThemeButtonOnColor)
 			ui.OpsAntiIdle2Button.Redraw()
@@ -174,13 +175,10 @@ Afk			:= Object()
 			ui.buttonAntiIdle1.Opt("Background" cfg.ThemeButtonReadyColor)
 			ui.buttonAntiIdle1.Redraw()
 			ui.buttonTower.OnEvent("Click",ToggleTower)
-			ui.progress.value := 0
+			ui.afkProgress.value := 0
 			ui.Opsprogress.value := 0
 		}
-
-
 	}	
-
 
 	antiIdle(WinNumber := 0) {
 		Try
@@ -190,7 +188,7 @@ Afk			:= Object()
 		MouseGetPos(&mouseX,&mouseY)
 		
 		Loop 2 {
-			if (cfg.Game%A_Index%StatusEnabled) && ((WinNumber == A_Index) || (WinNumber == 0)) {
+			if (cfg.Win%A_Index%Enabled) && ((WinNumber == A_Index) || (WinNumber == 0)) {
 				WinActivate("ahk_id " ui.Win%A_Index%Hwnd)
 				autoFire()
 				
@@ -222,7 +220,7 @@ Afk			:= Object()
 			ui.buttonAntiIdle1.Opt("Background" cfg.ThemeButtonReadyColor)
 			ui.buttonAntiIdle1.Redraw()
 			ui.buttonTower.OnEvent("Click",ToggleTower)
-			ui.progress.value := 0
+			ui.afkProgress.value := 0
 			ui.Opsprogress.value := 0
 		}
 
@@ -231,7 +229,7 @@ Afk			:= Object()
 			;SetTimer(UpdateTimer,4000)
 			SetTimer(AntiIdle,120000)
 			SetTimer(UpdateTimer,400)
-			ui.progress.value := 0
+			ui.afkProgress.value := 0
 			ui.OpsProgress1.value := 0
 			ui.OpsProgress2.value := 0
 			;ui.buttonAntiIdle1.value := "./Img/button_on.png"
@@ -268,20 +266,21 @@ Afk			:= Object()
 		Global
 		debugLog("Starting AFK")
 		
-		if (WinExist("ahk_id " ui.Win1Hwnd) && (ui.Win2Hwnd == "" || WinExist("ahk_id " ui.Win2Hwnd)))
+		if !(WinExist("ahk_id " ui.Win1Hwnd))
 		{
 			RefreshWinHwnd()
 		}
 		;ui.buttonStartAFK.value := "./Img/button_started.png"
 		ui.OpsAfkButton.Opt("Background" cfg.ThemeButtonOnColor)
 		ui.buttonStartAFK.Opt("Background" cfg.ThemeButtonOnColor)
-		ui.OpsAfkButton.Redraw()
-		ui.buttonStartAFK.Redraw()	
+		; ui.OpsAfkButton.Redraw()
+		; ui.buttonStartAFK.Redraw()	
 		
 		ui.Win1CurrentStep := 0
 		ui.Win2CurrentStep := 0
 		LoadAfkDataFile(&ui,&cfg,&afk)
 		SetTimer(RunAfkRoutines,3000)
+		RunAfkRoutines()
 		;SetTimer(AfkRoutine,6000)
 	;	AfkRoutine()
 	}	
@@ -292,15 +291,15 @@ Afk			:= Object()
 		ui.afkEnabled := false
 		debugLog("Stopping AFK")
 		;ui.buttonStartAFK.value := "./Img/button_start.png"
-		ui.Win1Icon.value := "./Img/sleep_icon.png"
-		ui.Win1Status.text := ""
-		ui.Win2Icon.value := "./Img/sleep_icon.png"
-		ui.Win2Status.text := ""
+		ui.Win1AfkIcon.value := "./Img/sleep_icon.png"
+		ui.Win1AfkStatus.text := ""
+		ui.Win2AfkIcon.value := "./Img/sleep_icon.png"
+		ui.Win2AfkStatus.text := ""
 		;ui.buttonStartAFK.value := "./Img/button_start.png"
 		ui.OpsAfkButton.Opt("Background" cfg.ThemeButtonReadyColor)
 		ui.buttonStartAFK.Opt("Background" cfg.ThemeButtonReadyColor)
-		ui.OpsAfkButton.Redraw()
-		ui.buttonStartAFK.Redraw()
+		; ui.OpsAfkButton.Redraw()
+		; ui.buttonStartAFK.Redraw()
 		;SetTimer(RunAfkRoutines,0)
 		SetTimer(AfkRoutine,0)
 	}
@@ -335,7 +334,7 @@ Afk			:= Object()
 		ui.Win1StillWorking := ""
 		ui.Win2StillWorking := ""
 		Thread("NoTimers",True)
-			if (WinExist("ahk_id " ui.Win1Hwnd) && cfg.win2Enabled)
+			if (WinExist("ahk_id " ui.Win1Hwnd) && cfg.win1Enabled)
 			{
 				Loop Afk.DataRow.Length
 				{
@@ -404,11 +403,10 @@ Afk			:= Object()
 		}
 
 		debugLog("Enabling AutoFire on Win" WinNumber)
-		ui.buttonAutoFire.Opt("Background" cfg.ThemeButtonOnColor)
-		ui.buttonAutoFire.Value := "./Img/button_autoFire" WinNumber "_on.png"
-		ui.buttonAutoFire.Redraw()
+		ui.autoFireWin%WinNumber%Button.Opt("Background" cfg.ThemeButtonOnColor)
+		ui.autoFireWin%WinNumber%Button.Value := "./Img/button_autoFire" WinNumber "_on.png"
 
-		SetTimer(ResetAutoFireStatus,-1500)
+		SetTimer(ResetAutoFireStatus,-2500)
 		CoordMode("Mouse","Client")
 		WinGetPos(&WinX,&WinY,&WinW,&WinH,"ahk_id " ui.Win%WinNumber%Hwnd)
 		MouseMove(WinW-50,WinH-120)
@@ -416,7 +414,7 @@ Afk			:= Object()
 		
 		if (WinGetProcessName("ahk_id " ui.Win%WinNumber%Hwnd) == "RobloxPlayerBeta.exe")
 		{	
-			debugLog("RobloxPlayerBeta AutoFire Start")
+			; debugLog("RobloxPlayerBeta AutoFire Start")
 			MouseClick("Left",WinW-50,WinH-120)
 			Sleep(250)
 			Send("{LButton Down}")
@@ -432,28 +430,34 @@ Afk			:= Object()
 		}
 		WinActivate("ahk_id " ui.Win%WinNumber%Hwnd)
 	}
-
-
 } ;End Primary AFK Action Functions
 
 { ;Primary Action Helper Functions
 	attackWin(WinNumber,Command) {
-		Global
 		CoordMode("Mouse","Client")
+
+		ui.Win%WinNumber%AfkIcon.value := "./Img/sleep_icon.png"
+		ui.Win%WinNumber%AfkStatus.text := ""
+
 		if (A_TimeIdlePhysical > 1500 and A_TimeIdleMouse > 1500)
 		{
+			ui.Win%WinNumber%AfkStatus.SetFont("s14 c00FFFF","Calibri")
+
 			CurrentHwnd := ui.Win%WinNumber%Hwnd
-			ui.Win%WinNumber%Icon.value := "./Img/sleep_icon.png"
-			ui.Win%WinNumber%Status.text := ""
-			ui.Win%WinNumber%Icon.value := "./Img/attack_icon.png"
-			ui.Win%WinNumber%Status.SetFont("s14 c00FFFF","Calibri")
-			ui.Win%WinNumber%Status.text := "  " Command
+			
+			ui.Win%WinNumber%AfkIcon.value := "./Img/attack_icon.png"
+			ui.Win%WinNumber%AfkStatus.SetFont("c" cfg.ThemeFont2Color)
+			ui.Win%WinNumber%AfkStatus.text := "  " Command
 			
 			WinActivate("ahk_id " CurrentHwnd)
 			WinGetPos(&WinX,&WinY,&WinW,&WinH,"ahk_id " CurrentHwnd)
 
 			MouseClick("Left",WinW-50, WinH-120)
-			
+			if (WinGetProcessName("ahk_id " CurrentHwnd) == "RobloxPlayerBeta.exe")
+			{	
+				MouseClick ("Left",WinW-50, WinH-120)
+			}
+		
 			Sleep(400)
 			SendEvent("{" Command "}")
 			Sleep(150)
@@ -461,7 +465,7 @@ Afk			:= Object()
 
 			if !(ui.Win%WinNumber%ClassDDL.Text == "Demon") 
 			{
-				AutoFire()
+				AutoFire(WinNumber)
 			}	
 		}
 	}
@@ -471,11 +475,25 @@ Afk			:= Object()
 		ui.buttonAutoFire.Value := "./Img/button_autoFire_ready.png"
 		ui.buttonAutoFire.Redraw()
 	}
+}
 
+{
 	updateTimer(Interval := 270) {
-		if ui.Progress.value > Interval-1
-			ui.Progress.value := 0
-		ui.Progress.value += 1
+		if ui.afkProgress.value > Interval-1
+			ui.afkProgress.value := 0
+		ui.afkProgress.value += 1
+	}
+
+	updateTimerWin1(Interval := 270) {
+		if ui.opsProgress1.value > Interval-1
+			ui.opsProgress1.value := 0
+		ui.opsProgress1.value += 1
+	}
+
+	updateTimerWin2(Interval := 270) {
+		if ui.opsProgress2.value > Interval-1
+			ui.opsProgress2.value := 0
+		ui.opsProgress2.value += 1
 	}
 
 	inputWatcher() {
