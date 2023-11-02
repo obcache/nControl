@@ -20,17 +20,16 @@ GetTaskbarHeight()
 
 WM_WINDOWPOSCHANGED(wParam, lParam, msg, Hwnd)
 {
-
-	if (ui.AfkDocked) && (Hwnd = ui.AfkGui.Hwnd) {
-		WinGetPos(&AfkGuiX,&AfkGuiY,,,ui.AfkGui)
-		;MsgBox(AfkGuiX "`n" AfkGuiY)
-		ui.titleBarButtonGui.Move(AfkGuiX+154,AfkGuiY-3)
+	if ((ui.AfkDocked) || !(ui.AfkAnchoredToGui)) && (Hwnd == ui.AfkGui.Hwnd) {
+		WinGetPos(&AfkGuiX,&AfkGuiY,,,ui.afkGui)
+		ui.titleBarButtonGui.Move(AfkGuiX+162,AfkGuiY-5)
 	} else {
 		if (Hwnd = ui.MainGui.Hwnd)
 		{
 			ui.MainGui.GetPos(&winX,&winY,,)
-			ui.AfkGui.Move(winX+45,winY+35,,)
-			ui.titleBarButtonGui.Move(winX+2,WinY-5)
+			ui.AfkGui.Move(winX+30,winY+35,,)
+			ui.titleBarButtonGui.Move(winX+1,WinY-5)
+			ui.opsGui.Move(winX,winY)
 		} 	
 	}
 }

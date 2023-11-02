@@ -31,7 +31,7 @@ initGui(&cfg, &ui) {
 	;ui.handleBarImage := ui.titleBarButtonGui.AddPicture("x0 y+3 w35 h214","./Img/handlebar_vertical.png")
 	;ui.handleBarImage.OnEvent("DoubleClick",ToggleGuiCollapse)
 
-	ui.DownButton 	:= ui.titleBarButtonGui.AddPicture("x454 y0 w35 h35 section Background" cfg.ThemeFont1Color,"./Img/button_minimize.png")
+	ui.DownButton := ui.titleBarButtonGui.AddPicture("x454 y0 w35 h35 section Background" cfg.ThemeFont1Color,"./Img/button_minimize.png")
 	ui.DownButton.OnEvent("Click",HideGui)
 	ui.DownButton.ToolTip := "Minimizes nControl App"
 
@@ -50,7 +50,7 @@ initGui(&cfg, &ui) {
 	ui.handleBarImage := ui.MainGui.AddPicture("x0 y-2 w35 h216","./Img/handlebar_vertical.png")
 	ui.handleBarImage.OnEvent("DoubleClick",ToggleGuiCollapse)
 	ui.handleBarImage.OnEvent("Click",WM_LBUTTONDOWN_callback)
-	ui.rightHandlebarImage := ui.MainGui.AddPicture("x535 w35 y-2 h216 section","./Img/handlebar_vertical.png")
+	ui.rightHandlebarImage := ui.MainGui.AddPicture("x530 w35 y-2 h216 section","./Img/handlebar_vertical.png")
 	;ui.rightHandlebarImage.OnEvent("DoubleClick",ToggleGuiCollapse)
 
 	ui.gvConsole := ui.MainGui.AddListBox("x35 y220 w500 h192 +Background" cfg.ThemePanel1Color)
@@ -184,11 +184,11 @@ initOSDGui() {
 	ui.buttonAfkHide.OnEvent("Click",HideAfkGui)
 	ui.buttonAfkHide.ToolTip := "Minimizes AFK Window to System Tray"
 	
-	ui.buttonUndockAfk := ui.AfkGui.AddPicture("x+0 ys0 w30 h30 hidden Background" cfg.ThemeButtonReadyColor,"./Img/button_dockright_ready.png")
+	ui.buttonUndockAfk := ui.AfkGui.AddPicture("x+0 ys0 w30 h30 hidden Background" cfg.ThemeButtonAlertColor,"./Img/button_dockright_ready.png")
 	ui.buttonUndockAfk.OnEvent("Click",ToggleAfkDock)
 	ui.buttonUndockAfk.ToolTip := "Undocks AFK Window"
 
-	ui.buttonPopout := ui.AfkGui.AddPicture("x+0 ys0 w30 h30 Background" cfg.ThemeButtonReadyColor,"./Img/button_popout_ready.png")
+	ui.buttonPopout := ui.AfkGui.AddPicture("x+-15 ys0 w30 h30 Background" cfg.ThemeButtonReadyColor,"./Img/button_popout_ready.png")
 	ui.buttonPopout.OnEvent("Click",AfkPopoutButtonPushed)
 	
 	ui.Win1Label := ui.AfkGui.AddPicture("xs+15 y+8 section w35 h29","./Img/arrow_left.png")
@@ -255,17 +255,21 @@ initOSDGui() {
 	OnMessage(0x0201, wmAfkLButtonDown)
 
 	ui.AfkAnchoredToGui := true
-	ui.HandlebarAfkGui := ui.AfkGui.AddPicture("x265 y0 w24 h170 section +Hidden","./Img/handlebar_vertical.png")
+	ui.HandlebarAfkGui := ui.AfkGui.AddPicture("x280 y0 w24 h170 section +Hidden","./Img/handlebar_vertical.png")
 	ui.AfkGui.Opt("+LastFound")
-	WinSetTransparent(0,ui.AfkGui)
-	ui.MainGui.GetPos(&MainGuiX,&MainGuiY,,)
+	guiVis(ui.afkGui,false)
+	ui.mainGui.getPos(&MainGuiX,&MainGuiY,,)
 	drawOutlineAfkGui(14,143,244,24,cfg.ThemeBright1Color,cfg.ThemeBright2Color,2)
 	drawOutlineAfkGui(190,40,67,58,cfg.ThemeBright1Color,cfg.ThemeBright2Color,2)
-	ui.AfkGui.Show("x" MainGuix+45 " y" MainGuiY+35 " w275 h170 NoActivate")
+	ui.AfkGui.Show("x" MainGuix+45 " y" MainGuiY+35 " w300 h170 NoActivate")
 }
 
 toggleChange(name) {
-	(%name%Enabled := !%name%Enabled) ? (%name%Toggle.Opt("Background" cfg.ThemeButtonOnColor),cfg.toggleOn) : (%name%Toggle.Opt("Background" cfg.ThemeButtonReadyColor),cfg.toggleOff)
+	(%name%Enabled := !%name%Enabled) 
+	? (%name%Toggle.Opt("Background" cfg.ThemeButtonOnColor)
+		,cfg.toggleOn) 
+	: (%name%Toggle.Opt("Background" cfg.ThemeButtonReadyColor)
+		,cfg.toggleOff)
 }
 	
 fadeIn() {
@@ -275,21 +279,16 @@ fadeIn() {
 		{
 			Transparency += 2.5
 			WinSetTransparent(Round(Transparency),ui.MainGui)
-			;WinSetTransparent(Round(Transparency),ui.titleBarButtonGui)
 			Sleep(1)
 		}
 	}
 	
-	ui.MainGui.GetPos(&winX,&winY,,)
+	ui.mainGui.getPos(&winX,&winY,,)
 	ui.AfkGui.Move(winX+45,winY+35,,)
 	ui.titleBarButtonGui.Move(winX+2,WinY-5)
-			
-	; WinSetTransparent(255,ui.MainGui)
-	; WinSetTransparent(255,ui.titleBarButtonGui)
-	WinSetTransparent("Off",ui.MainGui)	
-	WinSetTransparent("Off",ui.titleBarButtonGui)	
-	WinSetTransColor(ui.TransparentColor ,ui.titleBarButtonGui)
-	WinSetTransColor(ui.TransparentColor ,ui.MainGui)	
+	guiVis(ui.MainGui,true)
+	guiVis(ui.titleBarButtonGui,true)
+	guiVis(ui.opsGui,true)
 }
 
 autoFireButtonClicked(*) {
@@ -298,50 +297,49 @@ autoFireButtonClicked(*) {
 
 
 toggleGuiCollapse(*) {
-	Global
 	(ui.GuiCollapsed := !ui.GuiCollapsed) ? CollapseGui() : UncollapseGui()
 
 	CollapseGui() {
-		ui.titleBarButtonGui.Show("w35")
+		guiVis(ui.titleBarButtonGui,false)
+		guiVis(ui.opsGui,false)
+	
 		if (cfg.AnimationsEnabled) {
-			GuiWidth := 567
+			GuiWidth := cfg.GuiW
 			While GuiWidth > 35 {
-				ui.MainGui.Show("w" GuiWidth)
-				;ui.titleBarButtonGui.Show("w" GuiWidth+35)
+				ui.MainGui.Move(,,GuiWidth,)
 				GuiWidth -= 10
 			}	
 		}
-		ui.MainGui.Show("w35")
-
+		ui.MainGui.Move(,,35,)
 	}
 	
 	UncollapseGui() {
 		GuiWidth := 0
 		if (cfg.AnimationsEnabled) {
 			While GuiWidth < 567 {
-				ui.MainGui.Show("w" GuiWidth)
-				;ui.titleBarButtonGui.Show("w" GuiWidth+35)
+				ui.MainGui.Move(,,GuiWidth,)
 				GuiWidth += 10
 			}
 		}
-		ui.MainGui.Show("w567")
-		ui.titleBarButtonGui.Show("w567")
+		ui.MainGui.Move(,,567,)
+		guiVis(ui.titleBarButtonGui,true)
+		guiVis(ui.opsGui,true)
 	}
 }
 
 toggleAfkDock(*) {
-	Global
-	(ui.AfkDocked := !ui.AfkDocked) ? dockAfkGui() : undockAfkGui()
+	(ui.AfkDocked := !ui.AfkDocked) 
+	? dockAfkGui() 
+	: undockAfkGui()
 }
 
-dockAfkGui() {
-	Global
-	WinSetTransparent(0,ui.MainGui)
-	WinSetTransparent(0,ui.titleBarButtonGui)
+
+dockAfkGui(*) {
+	guiVis(ui.opsGui,false)
+	guiVis(ui.mainGui,false)
 
 	ui.AfkAnchoredToGui := false
-	ui.buttonDockAfk.Value := "./Img/button_dockRight.png"
-	WinGetPos(&GuiPrevX,&GuiPrevY,,,ui.MainGui)
+	WinGetPos(&GuiPrevX,&GuiPrevY,,,ui.mainGui)
 	ui.GuiX := GuiPrevX
 	ui.GuiY := GuiPrevY
 	
@@ -349,141 +347,115 @@ dockAfkGui() {
 	ui.buttonUndockAfk.Opt("-Hidden")
 	ui.HandlebarAfkGui.Opt("-Hidden")
 	ui.buttonPopout.Opt("+Hidden")
-	ui.buttonStartAFK.Move(2,3)
-	ui.buttonTower.Move(32,3)
-	ui.buttonAntiIdle1.Move(62,3)
-	ui.buttonAutoFire.Move(92,3)
-	ui.buttonAutoClicker.Move(122,3)
-
-	
-	;ui.MainGui.Move(GuiX-10,A_ScreenHeight-ui.TaskbarHeight-ui.AfkHeight-33)
-	WinGetPos(&AfkGuiX,&AfkGuiY,&AfkGuiW,&AfkGuiH,ui.AfkGui)
-	ui.AfkGui.Move(0,A_ScreenHeight-ui.TaskbarHeight-AfkGuiH,300,)
-
-	; ui.AfkTransRect1 := ui.AfkGui.AddText("x0 y+-5 w108 h32 Background" ui.TransparentColor)
+	ui.buttonStartAFK.Move(3,3)
+	ui.buttonTower.Move(33,3)
+	ui.buttonAntiIdle1.Move(63,3)
+	ui.buttonAutoFire.Move(93,3)
+	ui.buttonAutoClicker.Move(123,3)
+	ui.buttonUndockAfk.Move(252,3)
+	ui.downButton.Move(3,3)
+	ui.exitButton.Move(43,3)
+	WinGetPos(&AfkGuiX,&AfkGuiY,&AfkGuiW,&AfkGuiH,ui.afkGui)
+	ui.AfkGui.Move(0,A_ScreenHeight-ui.TaskbarHeight-AfkGuiH,300,)	
 	ui.titleBarButtonGui.Opt("Owner" ui.AfkGui.Hwnd)
-	WinSetTransColor(ui.TransparentColor,ui.titleBarButtonGui)
-	ui.titleBarButtonGui.Move(AfkGuiX+154,AfkGuiY-3,109,)
-
-	;WinSetTransparent(210,ui.titleBarButtonGui)
+	ui.titleBarButtonGui.Move(AfkGuiX+162,AfkGuiY-5,109)
+	guiVis(ui.titleBarButtonGui,true)
+	guiVis(ui.mainGui,false)
+	guiVis(ui.afkGui,true)
 	WinSetTransparent(210,ui.AfkGui)
-	WinSetTransparent(0,ui.MainGui)
+	controlFocus(ui.buttonUndockAfk)
 }
 	
-undockAfkGui() {
-	Global
+undockAfkGui(*) {
 	; IniWrite(cfg.GuiX,"nControl.ini","Interface","GuiX")
 	; IniWrite(cfg.GuiY,"nControl.ini","Interface","GuiY")
-
-
+	guiVis(ui.opsGui,true)
 	ui.buttonDockAfk.Opt("-Hidden")
-	ui.buttonUndockAfk.Opt("Hidden")		
+	ui.buttonUndockAfk.Opt("Hidden")
+	ui.HandlebarAfkGui.Opt("Hidden")	
 	ui.buttonPopout.Opt("-Hidden")
-	ui.buttonStartAFK.Move(67,2)
-	ui.buttonTower.Move(97,2)
-	ui.buttonAntiIdle1.Move(129,2)
-	ui.buttonAutoFire.Move(159,2)
-	ui.buttonAutoClicker.Move(189,2)
-
+	ui.buttonDockAfk.Move(2,2)
+	ui.buttonStartAFK.Move(32,2)
+	ui.buttonTower.Move(62,2)
+	ui.buttonAntiIdle1.Move(92,2)
+	ui.buttonAutoFire.Move(122,2)
+	ui.buttonAutoClicker.Move(152,2)
+	ui.downButton.Move(454,3)
+	ui.exitButton.Move(494,3)
 	ui.titleBarButtonGui.Opt("Owner" ui.MainGui.Hwnd)
-	ui.titleBarButtonGui.Move(GuiX+425,GuiY-7,72,)
+	ui.MainGui.GetPos(&winX,&winY,,)
+	ui.AfkGui.Move(winX+30,winY+35,,)
+	ui.titleBarButtonGui.Move(winX+1,WinY-5,570,)
+	ui.opsGui.Move(winX,winY)
 
-	WinSetTransparent(255,ui.titleBarButtonGui)
-	WinSetTransparent(255,ui.MainGui)
+	guiVis(ui.titleBarButtonGui,true)
+	guiVis(ui.mainGui,true)
 	if !(ui.MainGuiTabs.Text == "AFK")
 	{
-		WinSetTransparent(0,ui.AfkGui)
-		;AfkPopoutButtonPushed()
+		guiVis(ui.afkGui,false)
+		AfkPopoutButtonPushed()
 	} else {
-		WinSetTransparent(255,ui.AfkGui)
+		guiVis(ui.afkGui,true)
 	}
-	WinSetTransColor(ui.TransparentColor ,ui.titleBarButtonGui)
-	WinSetTransColor(ui.TransparentCOlor, ui.MainGui)
-	
+	controlFocus(ui.buttonDockAfk)
 }	
 
 afkPopoutButtonPushed(*) {
-	Global
-	(ui.AfkAnchoredToGui := !ui.AfkAnchoredToGui) 
+
+	(ui.AfkAnchoredToGui := !ui.AfkAnchoredToGui)
+	? afkPopIn()
+	: afkPopOut()
 	
-	if !(ui.AfkAnchoredToGui)
-	{
+	afkPopOut() {
 		debugLog("PopOut of AFK Gui")
 		ui.buttonPopout.Value := "./Img/button_popout_on.png"
 		ui.buttonPopout.Opt("Background" cfg.ThemeButtonOnColor)
 
-		ui.titleBarButtonGui.Opt("Owner" ui.AfkGui.Hwnd)
-		WinSetTransColor(ui.TransparentColor,ui.titleBarButtonGui)
-		ui.AfkGui.GetPos(&AfkGuiX,&AfkGuiY,,)
-		ui.titleBarButtonGui.Move(AfkGuiX+154,AfkGuiY-3,109,)
-		ui.HandlebarAfkGui.Opt("-Hidden")
-
-		WinSetTransparent(210,ui.titleBarButtonGui)
+		guiVis(ui.opsGui,false)
+		guiVis(ui.MainGui,false)
+		ui.downButton.Move(3,3)
+		ui.exitButton.Move(43,3)
+		ui.buttonPopout.move(255,3)
+		WinGetPos(&AfkGuiX,&AfkGuiY,&AfkGuiW,&AfkGuiH,ui.afkGui)
+		ui.afkGui.move(afkGuiX,afkGuiY,300,)
 		WinSetTransparent(210,ui.AfkGui)
-		WinSetTransparent(0,ui.MainGui)
-
-
-
-		; if (cfg.AfkSnapEnabled) && !(ui.AfkDocked)
-		; {
-			; Switch
-			; {
-				; case (AfkX < 100): 
-;					ui.AfkGui.Show("x0 NoActivate")
-			
-				; case (AfkX > A_ScreenWidth-100):
-;					ui.AfkGui.Show("x" A_ScreenHeight-275 " NoActivate")
-				
-				; case (AfkY < 100):
-;					ui.AfkGui.Show("y0 NoActivate")
-		
-				; case (AfkY > A_ScreenHeight-130):
-;					ui.AfkGui.Show("y" A_ScreenHeight-ui.TaskbarHeight-ui.AfkHeight " NoActivate")
-				
-				; Default:
-;					ui.AfkGui.Show("x" PrevAfkX " y" PrevAfkY " NoActivate")
-			; }
-		; }		
-	} else {
+		ui.titleBarButtonGui.Opt("Owner" ui.AfkGui.Hwnd)
+		ui.titleBarButtonGui.Move(AfkGuiX+180,AfkGuiY-7,109,40)
+		guiVis(ui.titleBarButtonGui,true)
+		ui.HandlebarAfkGui.Opt("-Hidden")
+		ui.AfkAnchoredToGui := false
+		controlFocus(ui.buttonPopout)
+	}
+	
+	afkPopIn() {
 		ui.buttonPopout.Value := "./Img/button_popout_ready.png"
 		ui.buttonPopout.Opt("Background" cfg.ThemeButtonReadyColor)
-		ui.MainGui.GetPos(&winX,&winY,,)	
-		ui.AfkGui.Move(winX+45,winY+35,,)
+		WinGetPos(&winX,&winY,,,ui.mainGui)
 		ui.buttonAfkHide.opt("+hidden")
 		ui.HandlebarAfkGui.Opt("+Hidden")
-		WinSetTransparent(255,ui.titleBarButtonGui)
-		WinSetTransparent(255,ui.MainGui)
+		ui.downButton.Move(454,3)
+		ui.exitButton.Move(494,3)
+		ui.buttonPopout.move(225,3)
+		ui.titleBarButtonGui.Opt("Owner" ui.MainGui.Hwnd)
+		ui.AfkGui.Move(winX+30,winY+35,,)
+		ui.titleBarButtonGui.Move(winX+1,WinY-5,570,)
+		ui.opsGui.Move(winX,winY)
+		guiVis(ui.titleBarButtonGui,true)
+		guiVis(ui.mainGui,true)
 		
 		if !(ui.MainGuiTabs.Text == "AFK")
 		{
-			WinSetTransparent(0,ui.AfkGui)
+			guiVis(ui.afkGui,false)
 		}
 		
 		ui.AfkDocked := false
+		ui.AfkAnchoredToGui := true
 	}
 }
+
 
 hideAfkGui(*) {
-	ui.AfkGui.Hide()
-}
-
-showAfkInGui() {
-		ui.MainGui.GetPos(&MainGuiX,&MainGuiY,,)
-		;ui.AfkGui.Show("x" MainGuix+10 " y" MainGuiY+35 " w275 h170 NoActivate")
-}
-
-toggleGui(*) {
-	global
-	If !(ui.hidden)
-	{
-		ui.hidden := 1
-		;ShowToolbar()
-	} else {
-		ui.hidden := 0
-		ui.Pinned := 0
-		ShowGui()
-	}
-	debugLog("Interface Toggled")
+	WinSetTransparent(0,ui.AfkGui)
 }
 
 exitButtonPushed(*) {
@@ -491,7 +463,6 @@ exitButtonPushed(*) {
 }
 
 hideGui(*) {
-	Global
 	SaveGuiPos()
 	WinSetTransparent(0,ui.MainGui)
 	if ui.AfkAnchoredToGui = true
@@ -525,28 +496,17 @@ readGuiPos(&cfg) {
 }
 
 showGui(*) {
-	Global
-	if !(ui.MainGuiTabs.Text == "AFK")
-	{
-		WinSetTransparent(0,ui.AfkGui)
-	}	
 	ReadGuiPos(&cfg)
 	ui.MainGui.GetPos(&MainGuiX,&MainGuiY,,,)
-	if (ui.MainGuiTabs.Text = "AFK")
-	{
-		ui.HandlebarAfkGui.Opt("+Hidden")
-		ui.buttonAfkHide.opt("+hidden")
-		ui.AfkAnchoredToGui := true
-		ui.AfkDocked := false
-		;ui.AfkGui.Show("x" MainGuiX+10 " y" MainGuiY+35 " w275 h170 NoActivate")
-	}
-		WinSetTransparent(255,ui.MainGui)
-		if (ui.MainGuiTabs.Text == "AFK") {
-			WinSetTransparent(255,ui.AfkGui)
-		}
-		WinSetTransparent(255,ui.titleBarButtonGui)
 
-	ui.MainGui.Show("x" cfg.GuiX " y" cfg.GuiY " NoActivate")
+	ui.mainGuiTabs.Choose(previousTab)
+	ui.HandlebarAfkGui.Opt("+Hidden")
+	ui.buttonAfkHide.opt("+hidden")
+	ui.AfkAnchoredToGui := true
+	ui.AfkDocked := false
+	guiVis(ui.mainGui,true)
+	guiVis(ui.titleBarButtonGui,true)
+
 	debugLog("Showing Interface")
 }
 
@@ -624,13 +584,34 @@ initConsole(&ui) {
 	ui.gvMonitorSelectGui.Add("Text",,"Click anywhere on the screen`nyou'd like your nControlDock on.")
 }
 
-tabsChanged(*) {
-	ui.activeTab := ui.MainGuiTabs.Text
 
+guiVis(guiName,isVisible:= true) {
+	if (isVisible) {
+		WinSetTransparent(255,guiName)
+		WinSetTransparent("Off",guiName)
+		WinSetTransColor(ui.TransparentColor,guiName)
+	} else {
+		WinSetTransparent(0,guiName)
+	}
+}
+
+tabsChanged(*) {
+	ui.activeTab := ui.mainGuiTabs.Text
+	
 	Switch {
+		case (ui.activeTab == "Sys"): 
+		{
+			guiVis(ui.afkGui,false)
+			;WinSetTransparent(0,ui.afkGui)
+			guiVis(ui.opsGui,true)
+			; WinSetTransparent(255,ui.opsGui)
+			; WinSetTransparent("Off",ui.OpsGui)
+			; WinSetTransColor(ui.TransparentColor,ui.OpsGui)
+		}
 		case (ui.activeTab == "AFK"):
 		{
-			WinSetTransparent(255,ui.AfkGui)
+			WinSetTransparent(0,ui.opsGui)
+			WinSetTransparent(255,ui.afkGui)
 		}
 		case (ui.activeTab == "Bindings") || (ui.activeTab == "Audio"):
 		{
@@ -643,10 +624,13 @@ tabsChanged(*) {
 		}
 		case (ui.activeTab == "Setup"):
 		{
-				ControlFocus(ui.toggleColorSelector,ui.mainGui)
+			WinSetTransparent(0,ui.opsGui)
+			WinSetTransparent(0,ui.afkGui)
+			ControlFocus(ui.toggleColorSelector,ui.mainGui)
 		}
 		default:
 		{
+			WinSetTransparent(0,ui.opsGui)
 			WinSetTransparent(0,ui.AfkGui)
 		}
 	}

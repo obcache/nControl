@@ -233,7 +233,6 @@ Afk			:= Object()
 			ui.OpsProgress1.value := 0
 			ui.OpsProgress2.value := 0
 			;ui.buttonAntiIdle1.value := "./Img/button_on.png"
-			ui.buttonTower.OnEvent("Click",ToggleTower,False)
 			ui.AfkStatus1.value := "./Img/label_anti_idle_timer.png"
 			ui.OpsStatus1.value := "./Img/label_anti_idle_timer.png"
 			ui.OpsAntiIdle1Button.Value := "./Img/button_antiIdle_on.png"
@@ -245,7 +244,7 @@ Afk			:= Object()
 			ui.buttonTower.ToolTip := "Tower timer disabled while AntiIdle is running."
 			;ui.buttonAntiIdle2.value := "./Img/button_on.png"
 			ui.buttonTower.OnEvent("Click",ToggleTower,False)
-			ui.AfkStatus1.value := "./Img/label_anti_idle_timer.png"
+			ui.AfkStatus2.value := "./Img/label_anti_idle_timer.png"
 			ui.OpsStatus2.value := "./Img/label_anti_idle_timer.png"
 			ui.OpsAntiIdle2Button.Value := "./Img/button_antiIdle_on.png"
 			ui.OpsAntiIdle2Button.Opt("Background" cfg.ThemeButtonOnColor)
@@ -260,33 +259,31 @@ Afk			:= Object()
 
 	toggleAFK(*) {
 		(ui.afkEnabled := !ui.afkEnabled) ? StartAFK() : StopAFK()
-	}
 
 	startAFK(*) {
-		Global
+		global
 		debugLog("Starting AFK")
 		
-		if !(WinExist("ahk_id " ui.Win1Hwnd))
-		{
-			RefreshWinHwnd()
-		}
-		;ui.buttonStartAFK.value := "./Img/button_started.png"
 		ui.OpsAfkButton.Opt("Background" cfg.ThemeButtonOnColor)
 		ui.buttonStartAFK.Opt("Background" cfg.ThemeButtonOnColor)
-		; ui.OpsAfkButton.Redraw()
-		; ui.buttonStartAFK.Redraw()	
+		ui.OpsAfkButton.Redraw()
+		ui.buttonStartAFK.Redraw()	
 		
 		ui.Win1CurrentStep := 0
 		ui.Win2CurrentStep := 0
 		LoadAfkDataFile(&ui,&cfg,&afk)
-		SetTimer(RunAfkRoutines,3000)
-		RunAfkRoutines()
+		SetTimer(runAfkRoutines,4000)
+		runAfkRoutines()
 		;SetTimer(AfkRoutine,6000)
 	;	AfkRoutine()
 	}	
 
 	stopAFK(*) {
-		Thread("NoTimers",true)
+		SetTimer(runAfkRoutines,0)
+		ui.OpsAfkButton.Opt("Background" cfg.ThemeButtonReadyColor)
+		ui.buttonStartAFK.Opt("Background" cfg.ThemeButtonReadyColor)
+		ui.OpsAfkButton.Redraw()
+		ui.buttonStartAFK.Redraw()	
 		SendEvent("{LButton Up}")
 		ui.afkEnabled := false
 		debugLog("Stopping AFK")
@@ -296,13 +293,16 @@ Afk			:= Object()
 		ui.Win2AfkIcon.value := "./Img/sleep_icon.png"
 		ui.Win2AfkStatus.text := ""
 		;ui.buttonStartAFK.value := "./Img/button_start.png"
-		ui.OpsAfkButton.Opt("Background" cfg.ThemeButtonReadyColor)
-		ui.buttonStartAFK.Opt("Background" cfg.ThemeButtonReadyColor)
+
 		; ui.OpsAfkButton.Redraw()
 		; ui.buttonStartAFK.Redraw()
 		;SetTimer(RunAfkRoutines,0)
-		SetTimer(AfkRoutine,0)
+
 	}
+
+	}
+
+
 } ;End Primary Action Interface Functions
 
 { ;Primary AFK Action Function
@@ -331,9 +331,10 @@ Afk			:= Object()
 
 	runAfkRoutines(*) { ;Executes Instruction Sets
 		Global
-		ui.Win1StillWorking := ""
-		ui.Win2StillWorking := ""
-		Thread("NoTimers",True)
+		if (A_TimeIdlePhysical > 1500 and A_TimeIdleMouse > 1500)
+		{
+			ui.Win1StillWorking := ""
+			ui.Win2StillWorking := ""
 			if (WinExist("ahk_id " ui.Win1Hwnd) && cfg.win1Enabled)
 			{
 				Loop Afk.DataRow.Length
@@ -363,9 +364,11 @@ Afk			:= Object()
 					ui.Win1CurrentStep := 0
 				}
 			} else {
-				RefreshWinHwnd()
+				;RefreshWinHwnd()
 			}
-
+		}
+		
+		if (A_TimeIdlePhysical > 1500 and A_TimeIdleMouse > 1500) {
 			if (WinExist("ahk_id " ui.Win2Hwnd) && cfg.win2Enabled)
 			{
 				Loop Afk.DataRow.Length
@@ -393,9 +396,10 @@ Afk			:= Object()
 					debugLog("Finished Win2 AFK - Restarting")
 					ui.Win2CurrentStep := 0
 				}
-		} 
+			} 
+		}
 	}
-
+	
 	autoFire(WinNumber := GetWinNumber()) {
 		if (WinNumber == 0) {
 			debugLog("Couldn't Identify Window to Enable")
@@ -437,7 +441,9 @@ Afk			:= Object()
 		CoordMode("Mouse","Client")
 
 		ui.Win%WinNumber%AfkIcon.value := "./Img/sleep_icon.png"
-		ui.Win%WinNumber%AfkStatus.text := ""
+		ui.Win%WinNumber%AfkStatus.text := ""		
+		ui.opsWin%WinNumber%AfkIcon.value := "./Img/sleep_icon.png"
+		ui.opsWin%WinNumber%AfkStatus.text := ""
 
 		if (A_TimeIdlePhysical > 1500 and A_TimeIdleMouse > 1500)
 		{
@@ -448,7 +454,10 @@ Afk			:= Object()
 			ui.Win%WinNumber%AfkIcon.value := "./Img/attack_icon.png"
 			ui.Win%WinNumber%AfkStatus.SetFont("c" cfg.ThemeFont2Color)
 			ui.Win%WinNumber%AfkStatus.text := "  " Command
-			
+			ui.opsWin%WinNumber%AfkIcon.value := "./Img/attack_icon.png"
+			ui.opsWin%WinNumber%AfkStatus.SetFont("c" cfg.ThemeFont2Color)
+			ui.opsWin%WinNumber%AfkStatus.text := "  " Command
+
 			WinActivate("ahk_id " CurrentHwnd)
 			WinGetPos(&WinX,&WinY,&WinW,&WinH,"ahk_id " CurrentHwnd)
 
