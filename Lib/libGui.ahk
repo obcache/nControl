@@ -191,7 +191,7 @@ initOSDGui() {
 	ui.buttonPopout := ui.AfkGui.AddPicture("x+-15 ys0 w30 h30 Background" cfg.ThemeButtonReadyColor,"./Img/button_popout_ready.png")
 	ui.buttonPopout.OnEvent("Click",AfkPopoutButtonPushed)
 	
-	ui.Win1Label := ui.AfkGui.AddPicture("xs+15 y+8 section w35 h29","./Img/arrow_left.png")
+	ui.Win1Label := ui.AfkGui.AddPicture("xs+15 y+4 section w35 h29","./Img/arrow_left.png")
 	ui.AfkGui.SetFont("s12","Calibri")
 
 	Afk.DataRow := Array()
@@ -215,7 +215,7 @@ initOSDGui() {
 	ui.Win1ClassDDL := ui.AfkGui.AddDDL("x+10 ys w125 AltSubmit choose1 Background" cfg.ThemeEditboxColor, ui.ProfileList)
 	ui.Win1ClassDDL.OnEvent("Change",RefreshWin1AfkRoutine)
 	ui.AfkGui.SetFont("s14","Calibri")
-	ui.Win1AfkIcon := ui.AfkGui.AddPicture("ys+2 w25 h25","./Img/sleep_icon.png")
+	ui.Win1AfkIcon := ui.AfkGui.AddPicture("ys-2 w25 h25","./Img/sleep_icon.png")
 	ui.Win1AfkStatus := ui.AfkGui.AddText("x+-1 ys+3 w35 +BackgroundTrans","")
 	;ui.Win1Hwnd := ui.AfkGui.AddText("ys w60 hidden", "")
 
@@ -243,11 +243,11 @@ initOSDGui() {
 	ui.AfkGui.SetFont("s16 bold")  ; Set a large font size (32-point).
 	ui.Title := ui.AfkGui.AddText("x5 y+13","")
 	
-	ui.AfkGui.AddPicture("x+-3 ys+35 w15 h40","./Img/label_left_trim.png")
-	ui.AfkStatus1 := ui.AfkGui.AddPicture("x+0 ys+35 w100 h40 Background" cfg.ThemeButtonReadyColor,"./Img/label_timer_off.png")  ; XX & YY serve to auto-size the window.
-	ui.AfkGui.AddPicture("x+0 ys+35 w15 h40","./Img/label_right_trim.png")
+	ui.AfkGui.AddPicture("x+-3 ys+31 w15 h40","./Img/label_left_trim.png")
+	ui.AfkStatus1 := ui.AfkGui.AddPicture("x+0 ys+31 w100 h40 Background" cfg.ThemeButtonReadyColor,"./Img/label_timer_off.png")  ; XX & YY serve to auto-size the window.
+	ui.AfkGui.AddPicture("x+0 ys+31 w15 h40","./Img/label_right_trim.png")
 	
-	ui.afkProgress := ui.AfkGui.AddProgress("xs y145 w240 h20 c" cfg.ThemeBright2Color " vTimerProgress Smooth Range0-270 Background858585 ",0)
+	ui.afkProgress := ui.AfkGui.AddProgress("xs y141 w236 h20 c" cfg.ThemeBright2Color " vTimerProgress Smooth Range0-270 Background858585 ",0)
 	
 	ui.AfkGui.Opt("+LastFound")
 	WinSetTransparent(210)
@@ -255,12 +255,12 @@ initOSDGui() {
 	OnMessage(0x0201, wmAfkLButtonDown)
 
 	ui.AfkAnchoredToGui := true
-	ui.HandlebarAfkGui := ui.AfkGui.AddPicture("x280 y0 w24 h170 section +Hidden","./Img/handlebar_vertical.png")
+	ui.HandlebarAfkGui := ui.AfkGui.AddPicture("x252 y35 w24 h170 section +Hidden","./Img/handlebar_vertical.png")
 	ui.AfkGui.Opt("+LastFound")
 	guiVis(ui.afkGui,false)
 	ui.mainGui.getPos(&MainGuiX,&MainGuiY,,)
-	drawOutlineAfkGui(14,143,244,24,cfg.ThemeBright1Color,cfg.ThemeBright2Color,2)
-	drawOutlineAfkGui(190,40,67,58,cfg.ThemeBright1Color,cfg.ThemeBright2Color,2)
+	drawOutlineAfkGui(14,138,240,24,cfg.ThemeBright1Color,cfg.ThemeBright2Color,2)
+	drawOutlineAfkGui(190,36,67,58,cfg.ThemeBright1Color,cfg.ThemeBright2Color,2)
 	ui.AfkGui.Show("x" MainGuix+45 " y" MainGuiY+35 " w300 h170 NoActivate")
 }
 
@@ -275,10 +275,19 @@ toggleChange(name) {
 fadeIn() {
 	if (cfg.AnimationsEnabled) {
 		Transparency := 0
+		While Transparency < 140
+		{
+			Transparency += 2.5
+			WinSetTransparent(Round(Transparency),ui.MainGui)			
+			; WinSetTransparent(Round(Transparency),ui.opsGui)
+			Sleep(1)
+		}
+
 		While Transparency < 253
 		{
 			Transparency += 2.5
 			WinSetTransparent(Round(Transparency),ui.MainGui)
+			; WinSetTransparent(Round(Transparency),ui.opsGui)
 			Sleep(1)
 		}
 	}
@@ -288,7 +297,7 @@ fadeIn() {
 	ui.titleBarButtonGui.Move(winX+2,WinY-5)
 	guiVis(ui.MainGui,true)
 	guiVis(ui.titleBarButtonGui,true)
-	guiVis(ui.opsGui,true)
+	; guiVis(ui.opsGui,true)
 }
 
 autoFireButtonClicked(*) {
@@ -301,7 +310,7 @@ toggleGuiCollapse(*) {
 
 	CollapseGui() {
 		guiVis(ui.titleBarButtonGui,false)
-		guiVis(ui.opsGui,false)
+		; guiVis(ui.opsGui,false)
 	
 		if (cfg.AnimationsEnabled) {
 			GuiWidth := cfg.GuiW
@@ -323,7 +332,7 @@ toggleGuiCollapse(*) {
 		}
 		ui.MainGui.Move(,,567,)
 		guiVis(ui.titleBarButtonGui,true)
-		guiVis(ui.opsGui,true)
+		; guiVis(ui.opsGui,true)
 	}
 }
 
@@ -335,7 +344,7 @@ toggleAfkDock(*) {
 
 
 dockAfkGui(*) {
-	guiVis(ui.opsGui,false)
+	; guiVis(ui.opsGui,false)
 	guiVis(ui.mainGui,false)
 
 	ui.AfkAnchoredToGui := false
@@ -363,13 +372,14 @@ dockAfkGui(*) {
 	guiVis(ui.mainGui,false)
 	guiVis(ui.afkGui,true)
 	WinSetTransparent(210,ui.AfkGui)
+	WinSetTransparent(210,ui.HandlebarAfkGui)
 	controlFocus(ui.buttonUndockAfk)
 }
 	
 undockAfkGui(*) {
 	; IniWrite(cfg.GuiX,"nControl.ini","Interface","GuiX")
 	; IniWrite(cfg.GuiY,"nControl.ini","Interface","GuiY")
-	guiVis(ui.opsGui,true)
+	; guiVis(ui.opsGui,true)
 	ui.buttonDockAfk.Opt("-Hidden")
 	ui.buttonUndockAfk.Opt("Hidden")
 	ui.HandlebarAfkGui.Opt("Hidden")	
@@ -386,7 +396,7 @@ undockAfkGui(*) {
 	ui.MainGui.GetPos(&winX,&winY,,)
 	ui.AfkGui.Move(winX+30,winY+35,,)
 	ui.titleBarButtonGui.Move(winX+1,WinY-5,570,)
-	ui.opsGui.Move(winX,winY)
+	; ui.opsGui.Move(winX,winY)
 
 	guiVis(ui.titleBarButtonGui,true)
 	guiVis(ui.mainGui,true)
@@ -411,7 +421,7 @@ afkPopoutButtonPushed(*) {
 		ui.buttonPopout.Value := "./Img/button_popout_on.png"
 		ui.buttonPopout.Opt("Background" cfg.ThemeButtonOnColor)
 
-		guiVis(ui.opsGui,false)
+		; guiVis(ui.opsGui,false)
 		guiVis(ui.MainGui,false)
 		ui.downButton.Move(3,3)
 		ui.exitButton.Move(43,3)
@@ -439,7 +449,7 @@ afkPopoutButtonPushed(*) {
 		ui.titleBarButtonGui.Opt("Owner" ui.MainGui.Hwnd)
 		ui.AfkGui.Move(winX+30,winY+35,,)
 		ui.titleBarButtonGui.Move(winX+1,WinY-5,570,)
-		ui.opsGui.Move(winX,winY)
+		; ui.opsGui.Move(winX,winY)
 		guiVis(ui.titleBarButtonGui,true)
 		guiVis(ui.mainGui,true)
 		
@@ -469,6 +479,8 @@ hideGui(*) {
 	{
 		WinSetTransparent(0,ui.AfkGui)
 		WinSetTransparent(0,ui.titleBarButtonGui)
+		WinSetTransparent(0,ui.HandlebarAfkGui)
+		; WinSetTransparent(0,ui.opsGui)
 	}
 	debugLog("Hiding Interface")
 }
@@ -489,17 +501,14 @@ saveGuiPos(*) {
 	debugLog("Saving Window Location at x" GuiX " y" GuiY)
 }
 
-readGuiPos(&cfg) {
+showGui(*) {
+	global
 	cfg.GuiX := IniRead(cfg.file,"Interface","GuiX",A_ScreenWidth/2)
 	cfg.GuiY := IniRead(cfg.file,"Interface","GuiY",A_ScreenHeight/2)
 	debugLog("Showing Interface at x" cfg.GuiX " y" cfg.GuiY)
-}
-
-showGui(*) {
-	ReadGuiPos(&cfg)
 	ui.MainGui.GetPos(&MainGuiX,&MainGuiY,,,)
 
-	ui.mainGuiTabs.Choose(previousTab)
+	ui.mainGuiTabs.Choose(ui.previousTab)
 	ui.HandlebarAfkGui.Opt("+Hidden")
 	ui.buttonAfkHide.opt("+hidden")
 	ui.AfkAnchoredToGui := true
@@ -603,14 +612,14 @@ tabsChanged(*) {
 		{
 			guiVis(ui.afkGui,false)
 			;WinSetTransparent(0,ui.afkGui)
-			guiVis(ui.opsGui,true)
+			; guiVis(ui.opsGui,true)
 			; WinSetTransparent(255,ui.opsGui)
 			; WinSetTransparent("Off",ui.OpsGui)
 			; WinSetTransColor(ui.TransparentColor,ui.OpsGui)
 		}
 		case (ui.activeTab == "AFK"):
 		{
-			WinSetTransparent(0,ui.opsGui)
+			; WinSetTransparent(0,ui.opsGui)
 			WinSetTransparent(255,ui.afkGui)
 		}
 		case (ui.activeTab == "Bindings") || (ui.activeTab == "Audio"):
@@ -624,13 +633,13 @@ tabsChanged(*) {
 		}
 		case (ui.activeTab == "Setup"):
 		{
-			WinSetTransparent(0,ui.opsGui)
+			; WinSetTransparent(0,ui.opsGui)
 			WinSetTransparent(0,ui.afkGui)
 			ControlFocus(ui.toggleColorSelector,ui.mainGui)
 		}
 		default:
 		{
-			WinSetTransparent(0,ui.opsGui)
+			; WinSetTransparent(0,ui.opsGui)
 			WinSetTransparent(0,ui.AfkGui)
 		}
 	}

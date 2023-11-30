@@ -27,6 +27,12 @@ resetDefaultThemes()
 	StartPip()
 }
 
+!^m::
+{
+	getClick(&clickX,&clickY,&activeWindow)
+}
+
+
 !^F1::
 {
 	Global

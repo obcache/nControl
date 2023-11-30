@@ -29,7 +29,7 @@ WM_WINDOWPOSCHANGED(wParam, lParam, msg, Hwnd)
 			ui.MainGui.GetPos(&winX,&winY,,)
 			ui.AfkGui.Move(winX+30,winY+35,,)
 			ui.titleBarButtonGui.Move(winX+1,WinY-5)
-			ui.opsGui.Move(winX,winY)
+			; ui.opsGui.Move(winX,winY)
 		} 	
 	}
 }

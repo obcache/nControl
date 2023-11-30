@@ -479,6 +479,7 @@ WriteConfig() {
 	IniWrite(cfg.AfkDataFile,cfg.file,"AFK","AfkDataFile")
 	IniWrite(cfg.SilentIdleEnabled,cfg.file,"AFK","SilentIdleEnabled")
 	iniWrite(cfg.towerInterval,cfg.file,"AFK","TowerInterval")
+	iniWrite(cfg.CelestialTowerEnabled,cfg.file,"AFK","CelestialTowerEnabled")
 	IniWrite(ui.AutoClickerSpeedSlider.Value,cfg.file,"AFK","AutoClickerSpeed")
 	IniWrite(ui.Win1ClassDDL.Text,cfg.file,"AFK","Win1Class")
 	if (ui.Win2ClassDDL.Text != "N/A")
@@ -494,6 +495,29 @@ WriteConfig() {
 	}
 	ui.MainGui.Destroy()
 	BlockInput("Off")
+}
+
+
+
+
+getClick(&clickX,&clickY,&activeWindow) {
+	DialogBox("Click to get information about a pixel")
+	Sleep(750)
+	CoordMode("Mouse","Client")
+	MonitorSelectStatus := KeyWait("LButton", "D T15")
+	DialogBoxClose()
+	if (MonitorSelectStatus = 0)
+	{	
+		MsgBox("A monitor was not selected in time.`nPlease try again.")
+		Return
+	} else {
+		MouseGetPos(&clickX,&clickY,&pixelColor,&activeWindow)
+		pixelColor := PixelGetColor(clickX,clickY)
+		activeWindow := winWait("A")
+		fileAppend("Window: [" activeWindow "] " WinGetTitle("ahk_id " activeWindow) " `nx: " clickX " y: " clickY "`nColor: " pixelColor "`n`n", "./capturedPixels.txt")
+		debugLog("Window: [" activeWindow "] " WinGetTitle("ahk_id " activeWindow) ", x: " clickX " y: " clickY ", Color: " pixelColor)
+	}
+
 }
 
 GetWinNumber() {

@@ -265,10 +265,11 @@ Afk			:= Object()
 		debugLog("Starting AFK")
 		
 		ui.OpsAfkButton.Opt("Background" cfg.ThemeButtonOnColor)
+		ui.opsAfkButton.Value := "./Img/button_afk_on.png"
 		ui.buttonStartAFK.Opt("Background" cfg.ThemeButtonOnColor)
+		ui.buttonStartAfk.value("./Img/button_afk_on.png")
 		ui.OpsAfkButton.Redraw()
 		ui.buttonStartAFK.Redraw()	
-		
 		ui.Win1CurrentStep := 0
 		ui.Win2CurrentStep := 0
 		LoadAfkDataFile(&ui,&cfg,&afk)
@@ -276,12 +277,15 @@ Afk			:= Object()
 		runAfkRoutines()
 		;SetTimer(AfkRoutine,6000)
 	;	AfkRoutine()
+	MsgBox("Here")
 	}	
 
 	stopAFK(*) {
 		SetTimer(runAfkRoutines,0)
 		ui.OpsAfkButton.Opt("Background" cfg.ThemeButtonReadyColor)
+		ui.opsAfkButton.Value("./Img/button_afk_ready.png")
 		ui.buttonStartAFK.Opt("Background" cfg.ThemeButtonReadyColor)
+		ui.buttonStartAfk.value("./Img/button_afk_ready.png")
 		ui.OpsAfkButton.Redraw()
 		ui.buttonStartAFK.Redraw()	
 		SendEvent("{LButton Up}")
@@ -293,6 +297,10 @@ Afk			:= Object()
 		ui.Win2AfkIcon.value := "./Img/sleep_icon.png"
 		ui.Win2AfkStatus.text := ""
 		;ui.buttonStartAFK.value := "./Img/button_start.png"
+		ui.opsWin1AfkIcon.value := "./Img/sleep_icon.png"
+		ui.opsWin1AfkStatus.text := ""
+		ui.opsWin2AfkIcon.value := "./Img/sleep_icon.png"
+		ui.opsWin2AfkStatus.text := ""
 
 		; ui.OpsAfkButton.Redraw()
 		; ui.buttonStartAFK.Redraw()
@@ -327,6 +335,37 @@ Afk			:= Object()
 		}
 		debugLog("Finished Reading AfkData File")
 	}	
+	
+	; loadAfkRoutine(&ui,&cfg,&afk) { ;Loads Automation Instruction Sets from Data File
+		; debugLog("Loading AFK Routine Data File")
+		; debugLog("[DataRow],[AFK Profile],[Step],[Action],[Mouse To/From],[ClickX],[ClickY],[PreDelay],[Duration],[PostDelay]")
+		
+		; Afk.DataRow := Array()
+		; Loop read, cfg.AfkDataFile
+		; {
+			; LineNumber := A_Index
+			; LogRow := LineNumber
+			
+			; Afk.DataColumn := Array()
+			; Loop parse, A_LoopReadLine, "CSV"
+			; {
+				; if (A_Index == 1) {
+					; switch A_LoopField
+					; {
+						; case ui.win1ClassDDL:
+						; {
+						; }
+						
+						; case ui.win2ClassDDL:
+						; })
+				; Afk.DataColumn.InsertAt(A_Index,A_LoopField)
+				; LogRow .= "," A_LoopField 
+			; }
+			; Afk.DataRow.InsertAt(LineNumber,Afk.DataColumn)
+			; debugLog(LogRow)
+		; }
+		; debugLog("Finished Reading AfkData File")
+	; }	
 
 
 	runAfkRoutines(*) { ;Executes Instruction Sets
