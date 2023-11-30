@@ -3,7 +3,7 @@
 #Requires AutoHotKey v2.0+
 #Warn All, Off
 
-ConfigFile := (!A_Compiled ? FilesIn("../" A_ScriptFullPath,"*.ini")[1] 
+ConfigFile := (!A_Compiled ? FilesIn("../" A_ScriptFullPath,"*.ini"))[1] 
 if (ConfigFile := FilesIn("../" A_ScriptFullPath,"*.ini")[1]) {
 	SplitPath(ConfigFile,&selectedFilename,&selectedPath,&selectedExt,&selectedName,&selectedDrive)
 	AppName := SelectedName
@@ -26,12 +26,12 @@ HasVal(haystack, needle) {
 }
 
 
-FilesIn(Path,Mask := "*.*")
-{
-	FileList := Array()
-	Loop %Path%\%Mask%
-	{
-		FileList.Push(%A_LoopFileName%)
-	}
-	Return FileList
-}
+; FilesIn(Path,Mask := "*.*")
+; {
+	; FileList := Array()
+	; Loop %Path%\%Mask%
+	; {
+		; FileList.Push(%A_LoopFileName% 
+	; Return FileList
+; }
+

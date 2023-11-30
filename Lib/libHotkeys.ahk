@@ -11,8 +11,8 @@ if (InStr(A_LineFile,A_ScriptFullPath))
 
 !^Backspace::
 {
-ui.MainGui.GetPos(,,,&GuiH)
 ui.MainGui.Move(30,A_ScreenHeight-ui.TaskbarHeight-GuiH)
+ui.MainGui.GetPos(,,,&GuiH)
 ToggleGuiCollapse()
 }
 
@@ -23,9 +23,15 @@ resetDefaultThemes()
 
 ^Enter::
 {
-	MsgBox("here")
-	StartPip()
+		togglePip()
+	
+	}
+
+!^m::
+{
+	getClick(&clickX,&clickY,&activeWindow)
 }
+
 
 !^F1::
 {
@@ -63,3 +69,23 @@ resetDefaultThemes()
 	ToggleAfkDock()
 }
 
+HotIfWinActive("ahk_exe FortniteClient-Win64-Shipping.exe")
+hotkey("{LCtrl}", crouchDown)
+
+hotkey("{LCtrl Up}", crouchUp)
+crouchDown(*) {
+	if (cfg.holdToCrouchEnabled)
+	{
+		send("{LShift}")
+		keyWait("{LShift}")
+		Return
+	}
+}
+crouchUp(*) {
+	if (cfg.holdToCrouchEnabled)
+	{
+		send("{LShift}")
+		Return
+	}
+}
+HotIfWinActive

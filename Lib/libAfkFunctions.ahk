@@ -265,23 +265,27 @@ Afk			:= Object()
 		debugLog("Starting AFK")
 		
 		ui.OpsAfkButton.Opt("Background" cfg.ThemeButtonOnColor)
+		ui.opsAfkButton.Value := "./Img/button_afk_on.png"
 		ui.buttonStartAFK.Opt("Background" cfg.ThemeButtonOnColor)
+		ui.buttonStartAfk.value := "./Img/button_afk_on.png"
 		ui.OpsAfkButton.Redraw()
 		ui.buttonStartAFK.Redraw()	
-		
-		ui.Win1CurrentStep := 0
-		ui.Win2CurrentStep := 0
-		LoadAfkDataFile(&ui,&cfg,&afk)
-		SetTimer(runAfkRoutines,4000)
-		runAfkRoutines()
+		; ui.Win1CurrentStep := 0
+		; ui.Win2CurrentStep := 0
+		; LoadAfkDataFile(&ui,&cfg,&afk)
+		SetTimer(runAfkRoutine,8000)
+		runAfkRoutine()
 		;SetTimer(AfkRoutine,6000)
 	;	AfkRoutine()
+	;MsgBox("Here")
 	}	
 
 	stopAFK(*) {
-		SetTimer(runAfkRoutines,0)
+		SetTimer(runAfkRoutine,0)
 		ui.OpsAfkButton.Opt("Background" cfg.ThemeButtonReadyColor)
+		ui.opsAfkButton.Value := "./Img/button_afk_ready.png"
 		ui.buttonStartAFK.Opt("Background" cfg.ThemeButtonReadyColor)
+		ui.buttonStartAfk.value := "./Img/button_afk_ready.png"
 		ui.OpsAfkButton.Redraw()
 		ui.buttonStartAFK.Redraw()	
 		SendEvent("{LButton Up}")
@@ -293,6 +297,10 @@ Afk			:= Object()
 		ui.Win2AfkIcon.value := "./Img/sleep_icon.png"
 		ui.Win2AfkStatus.text := ""
 		;ui.buttonStartAFK.value := "./Img/button_start.png"
+		ui.opsWin1AfkIcon.value := "./Img/sleep_icon.png"
+		ui.opsWin1AfkStatus.text := ""
+		ui.opsWin2AfkIcon.value := "./Img/sleep_icon.png"
+		ui.opsWin2AfkStatus.text := ""
 
 		; ui.OpsAfkButton.Redraw()
 		; ui.buttonStartAFK.Redraw()
@@ -306,100 +314,36 @@ Afk			:= Object()
 } ;End Primary Action Interface Functions
 
 { ;Primary AFK Action Function
-	loadAfkDataFile(&ui,&cfg,&afk) { ;Loads Automation Instruction Sets from Data File
-		debugLog("Loading AFK Routine Data File")
-		debugLog("[DataRow],[AFK Profile],[Step],[Action],[Mouse To/From],[ClickX],[ClickY],[PreDelay],[Duration],[PostDelay]")
-		
-		Afk.DataRow := Array()
-		Loop read, cfg.AfkDataFile
-		{
-			LineNumber := A_Index
-			LogRow := LineNumber
-			
-			Afk.DataColumn := Array()
-			Loop parse, A_LoopReadLine, "CSV"
+
+
+
+	runAfkRoutine(*) {
+		global
+
+		if WinExist("ahk_id " ui.win1Hwnd) {	
+			Loop read, cfg.AfkDataFile
 			{
-				Afk.DataColumn.InsertAt(A_Index,A_LoopField)
-				LogRow .= "," A_LoopField 
+				currRow := strSplit( A_LoopReadLine,',')
+				if (currRow[1] == ui.win1ClassDDL.text) {
+					attackWin(1,currRow[3])
+					Sleep(currRow[4])
+				}
 			}
-			Afk.DataRow.InsertAt(LineNumber,Afk.DataColumn)
-			debugLog(LogRow)
 		}
-		debugLog("Finished Reading AfkData File")
+		if WinExist("ahk_id " ui.win2Hwnd) {
+			Loop read, cfg.AfkDataFile
+			{
+				currRow := strSplit( A_LoopReadLine,',')
+				if (currRow[1] == ui.win2ClassDDL.text) {
+					attackWin(2,currRow[3])
+					Sleep(currRow[4])
+				}
+			}	
+		}
+				
 	}	
 
 
-	runAfkRoutines(*) { ;Executes Instruction Sets
-		Global
-		if (A_TimeIdlePhysical > 1500 and A_TimeIdleMouse > 1500)
-		{
-			ui.Win1StillWorking := ""
-			ui.Win2StillWorking := ""
-			if (WinExist("ahk_id " ui.Win1Hwnd) && cfg.win1Enabled)
-			{
-				Loop Afk.DataRow.Length
-				{
-					if !(ui.AfkEnabled)
-					{
-						debugLog("AFK Disabled - Exiting Routine")
-						Break
-					}
-					ui.Win1StillWorking := ""
-			
-					Try
-					{
-						if ((Afk.DataRow.Get(A_Index).Get(1) == ui.Win1ClassDDL.Text) && (Afk.DataRow.Get(A_Index).Get(2) > ui.Win1CurrentStep))
-						{
-							AttackWin(1,Afk.DataRow.Get(A_Index).Get(3))
-							ui.Win1CurrentStep := Afk.DataRow.Get(A_Index).Get(2)
-							ui.Win1StillWorking := true
-							Break
-						}
-					}
-				}
-
-				if !(ui.Win1StillWorking)
-				{
-					debugLog("Finished Win1 AFK - Restarting")
-					ui.Win1CurrentStep := 0
-				}
-			} else {
-				;RefreshWinHwnd()
-			}
-		}
-		
-		if (A_TimeIdlePhysical > 1500 and A_TimeIdleMouse > 1500) {
-			if (WinExist("ahk_id " ui.Win2Hwnd) && cfg.win2Enabled)
-			{
-				Loop Afk.DataRow.Length
-				{
-					if !(ui.AfkEnabled)
-					{
-						debugLog("AFK Disabled - Exiting Routine")
-						Break
-					}
-					
-					ui.Win2StillWorking := ""
-					Try
-					{
-						if ((Afk.DataRow.Get(A_Index).Get(1) == ui.Win2ClassDDL.Text) && (Afk.DataRow.Get(A_Index).Get(2) > ui.Win2CurrentStep))
-						{
-							AttackWin(2,Afk.DataRow.Get(A_Index).Get(3))
-							ui.Win2CurrentStep := Afk.DataRow.Get(A_Index).Get(2)
-							ui.Win2StillWorking := true
-							Break
-						}
-					}
-				}
-				if !(ui.Win2StillWorking)
-				{
-					debugLog("Finished Win2 AFK - Restarting")
-					ui.Win2CurrentStep := 0
-				}
-			} 
-		}
-	}
-	
 	autoFire(WinNumber := GetWinNumber()) {
 		if (WinNumber == 0) {
 			debugLog("Couldn't Identify Window to Enable")
@@ -460,13 +404,12 @@ Afk			:= Object()
 
 			WinActivate("ahk_id " CurrentHwnd)
 			WinGetPos(&WinX,&WinY,&WinW,&WinH,"ahk_id " CurrentHwnd)
-
-			MouseClick("Left",WinW-50, WinH-120)
-			if (WinGetProcessName("ahk_id " CurrentHwnd) == "RobloxPlayerBeta.exe")
-			{	
-				MouseClick ("Left",WinW-50, WinH-120)
+			if (WinGetProcessName("ahk_id " CurrentHwnd) == "RobloxPlayerBeta.exe") {
+				MouseClick("Left",WinW-50,WinH-120,2)
+			} else {
+				MouseClick("Left",WinW-50,WinH-120)
 			}
-		
+
 			Sleep(400)
 			SendEvent("{" Command "}")
 			Sleep(150)
@@ -523,4 +466,104 @@ Afk			:= Object()
 
 
 	
+		; loadAfkDataFile(&ui,&cfg,&afk) { ;Loads Automation Instruction Sets from Data File
+		; debugLog("Loading AFK Routine Data File")
+		; debugLog("[DataRow],[AFK Profile],[Step],[Action],[Mouse To/From],[ClickX],[ClickY],[PreDelay],[Duration],[PostDelay]")
+		
+		; Afk.DataRow := Array()
+		; Loop read, cfg.AfkDataFile
+		; {
+			; LineNumber := A_Index
+			; LogRow := LineNumber
+			
+			; Afk.DataColumn := Array()
+			; Loop parse, A_LoopReadLine, "CSV"
+			; {
+				; Afk.DataColumn.InsertAt(A_Index,A_LoopField)
+				; LogRow .= "," A_LoopField 
+			; }
+			; Afk.DataRow.InsertAt(LineNumber,Afk.DataColumn)
+			; debugLog(LogRow)
+		; }
+		; debugLog("Finished Reading AfkData File")
+	; }	
+	
+	; loadAfkDataFile(&ui,&cfg,&afgk,&win1AfkSteps,&win2AfkSteps) {
+		; global
+		; Afk.win1Steps := Array()
+		; Afk.win2Steps := Array()
+		; afk.win1waits := array()
+		; afk.win2waits := array()
+		
+		; Loop 2 {
+		; Loop read, cfg.AfkDataFile
+		; {
+			; LineNumber := A_Index
+			; LogRow := LineNumber
+		
+			; currentWindow := A_Index
+
+			; Afk.DataColumn%currentWindow := Array()
+			; Loop parse, A_LoopReadLine, "CSV"
+			; {
+			; {
+				; if A_Idex
+				; Afk.DataColumn%currentWindow.InsertAt(A_Index,A_LoopField)
+				; LogRow .= "," A_LoopField 
+			; }			
+	
+
+
+	; loop Afk.DataRow.Length 
+		; {
+			; CurrentStep := A_Index%
+			; if ((Afk.DataRow.Get(A_Index).Get(1) 
+			; == ui.Win%currentWindow%ClassDDL.Text) 
+			; && (Afk.DataRow.Get(A_Index).Get(2))) {
+			; }			
+			
+		; }
+		
+			; win%A_Index%AfkSteps }
+	; runAfkRoutines(*) { ;Executes Instruction Sets
+		; Global
+		; Loop 2 {
+			; currentWindow := A_Index
+			; if (A_TimeIdlePhysical > 1500 and A_TimeIdleMouse > 1500)
+			; {
+				; ui.Win%currentWindow%StillWorking := ""
+				; if (WinExist("ahk_id " ui.Win%A_Index%Hwnd) && cfg.win%A_Index%Enabled)
+				; {
+					; Loop Afk.DataRow.Length
+					; {
+						; if !(ui.AfkEnabled)
+						; {
+							; debugLog("AFK Disabled - Exiting Routine")
+							; Break
+						; }
+						; ui.Win%currentWindow%StillWorking := ""
+				
+						; Try
+						; {
+							; if ((Afk.DataRow.Get(A_Index).Get(1) == ui.Win%currentWindow%ClassDDL.Text) && (Afk.DataRow.Get(A_Index).Get(2) > ui.Win%currentWindow%CurrentStep))
+							; {
+								; AttackWin(currentWindow,Afk.DataRow.Get(A_Index).Get(3))
+								; ui.Win%currentWindow%CurrentStep := Afk.DataRow.Get(A_Index).Get(2)
+								; ui.Win%currentWindow%StillWorking := true
+								; Break
+							; }
+						; }
+					; }
+
+					; if !(ui.Win%currentWindow%StillWorking)
+					; {
+						; debugLog("Finished Win" currentWindow " AFK - Restarting")
+						; ui.Win%currentWindow%CurrentStep := 0
+					; }
+				; } else {
+					;RefreshWinHwnd()
+				; }
+			; }
+		; }
+	; }
 	

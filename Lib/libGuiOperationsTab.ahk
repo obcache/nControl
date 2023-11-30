@@ -50,7 +50,7 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 	
 
 	ui.MainGui.SetFont("s12 c" cfg.ThemeFont1Color,"Calibri Thin")
-	ui.OpsClockModeLabel := ui.MainGui.AddText("x+2 ys+2 section w53 h23 Background" cfg.ThemePanel2Color," Clock")
+	ui.OpsClockModeLabel := ui.MainGui.AddText("x+4 ys+2 section w48 h23 Background" cfg.ThemePanel2Color," Clock")
 	ui.OpsClockModeLabel.SetFont("s8 c" cfg.ThemeFont2Color,"Ariel Bold")
 	
 	ui.OpsClock := ui.MainGui.AddText("x+0 ys w120 Right h23 Background" cfg.ThemePanel2Color " c" cfg.ThemeFont2Color,)
@@ -61,10 +61,14 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 	SetTimer(opsClickTimeUpdate,1000)
 	
 	ui.ButtonDebug := ui.MainGui.AddPicture( 
-	(cfg.consoleVisible) ? "x+2 ys-2 w27 h27 section Background" cfg.ThemeButtonOnColor : "x+2 ys-2 w27 h27 section Background" cfg.ThemeButtonReadyColor,
-	(cfg.consoleVisible) ? "./Img/button_console_ready.png" : "./Img/button_console_ready.png")
+	(cfg.consoleVisible) 
+		? "x+2 ys-2 w27 h27 section Background" cfg.ThemeButtonOnColor 
+		: "x+2 ys-2 w27 h27 section Background" cfg.ThemeButtonReadyColor,
+	(cfg.consoleVisible) 
+		? "./Img/button_console_ready.png" 
+		: "./Img/button_console_ready.png")
+	
 	ui.ButtonDebug.OnEvent("Click",toggleConsole)		
-
 
 	ui.RefreshWindowHandlesButton := ui.MainGui.AddPicture("x+1 ys section w27 h27 Background" cfg.ThemeFont1Color, "./Img/button_refresh.png")	
 	ui.RefreshWindowHandlesButton.OnEvent("Click",RefreshWinHwnd)
@@ -95,9 +99,9 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 
 	{ ;GameWindows Gui Controls
 		ui.MainGui.SetFont("s11 c" cfg.ThemeFont1Color,"Calibri")
-		ui.Win1Label := ui.MainGui.AddText("xs-2 y62 section w68 Border h20 c" cfg.ThemeFont1Color " Center Background" cfg.ThemePanel1Color,"Game1")
+		ui.Win1Label := ui.MainGui.AddText("xs-2 y62 section w68 h20 Border h20 c" cfg.ThemeFont1Color " Center Background" cfg.ThemePanel1Color,"Game1")
 
-		ui.Win1EnabledPlaceholder := ui.mainGui.AddPicture("xs-4 y+0 section w70 h25 Background" cfg.ThemeButtonReadyColor, cfg.toggleOff)
+		ui.Win1EnabledToggle := ui.mainGui.AddPicture("xs-1 y+0 section w69 h25 Background" cfg.ThemeButtonReadyColor, cfg.toggleOff)
 
 
 		ui.MainGui.SetFont("s8 c" cfg.ThemeFont4Color,"Calibri")
@@ -107,7 +111,7 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 		ui.Win1HwndText := ui.MainGui.AddText("xs y+1 section w154 Right Background" cfg.ThemePanel4Color,"Found  ")
 		ui.Win1HwndText.ToolTip := "Window ID for Game Window 1"
 		
-		ui.buttonSwapHwnd := ui.MainGui.AddPicture("ys-29 x+1 section w45 h45 Background" (cfg.HwndSwapEnabled ? cfg.ThemeButtonOnColor : cfg.ThemeButtonReadyColor), (cfg.HwndSwapEnabled ? "./Img/button_swapHwnd_enabled.png" : "./Img/button_swapHwnd_disabled.png"))
+		ui.buttonSwapHwnd := ui.MainGui.AddPicture("ys-29 x+-1 section w45 h45 Background" (cfg.HwndSwapEnabled ? cfg.ThemeButtonOnColor : cfg.ThemeButtonReadyColor), (cfg.HwndSwapEnabled ? "./Img/button_swapHwnd_enabled.png" : "./Img/button_swapHwnd_disabled.png"))
 		ui.buttonSwapHwnd.OnEvent("Click",ToggleHwndSwap)
 		ui.buttonSwapHwnd.ToolTip := "Swap Windows"
 
@@ -121,9 +125,9 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 		ui.MainGui.SetFont("s11 c" cfg.ThemeFont1Color,"Calibri")
 		ui.Win2Label := ui.MainGui.AddText("ys-30 section w70 h20 c" cfg.ThemeFont1Color " Center Background" cfg.ThemePanel1Color,"Game2")
 
-		ui.Win2EnabledPlaceholder := ui.MainGui.AddPicture("xs section w70 h25 Background" cfg.ThemeButtonReadyColor, cfg.toggleOff)
-
-		ui.opsWin1AfkStatus := ui.MainGui.AddText("xs-427 section w45 h30 Background" cfg.ThemePanel1Color,"")
+		ui.Win2EnabledToggle := ui.MainGui.AddPicture("xs section w69 h25 Background" cfg.ThemeButtonReadyColor, cfg.toggleOff)
+		
+		ui.opsWin1AfkStatus := ui.MainGui.AddText("xs-429 section w45 h30 Background" cfg.ThemePanel1Color,"")
 		ui.opsWin1AfkIcon := ui.MainGui.AddPicture("ys section w25 h30 Background" cfg.ThemePanel1Color,"./Img/sleep_icon.png")
 
 		ui.Win1ClassDDL := ui.MainGui.AddDDL("ys-1 x+0 w156 r4 AltSubmit choose3 Background" cfg.ThemeEditBoxColor, ui.ProfileList)
@@ -131,11 +135,11 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 		ui.Win1ClassDDL.OnEvent("Change",RefreshWin1AfkRoutine)
 		PostMessage("0x153", -1, 26,, "AHK_ID " ui.Win1ClassDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153
 		PostMessage("0x153", 0, 26,, "AHK_ID " ui.Win1ClassDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153	
-		ui.OpsAfkButton := ui.MainGui.AddPicture("ys x+-1 w45 h48 section Background" cfg.ThemeButtonReadyColor,"./Img/button_afk_ready.png")
+		ui.OpsAfkButton := ui.MainGui.AddPicture("ys x+2 w45 h48 section Background" cfg.ThemeButtonReadyColor,"./Img/button_afk_ready.png")
 		ui.OpsAfkButton.OnEvent("Click",ToggleAFK)
 		ui.OpsAfkButton.ToolTip := "Toggle AFK"
 	
-		ui.Win2ClassDDL := ui.MainGui.AddDDL("x+1 ys-1 w156 r4 section AltSubmit choose3 Background" cfg.ThemeEditBoxColor, ui.ProfileList)
+		ui.Win2ClassDDL := ui.MainGui.AddDDL("x+3 ys-1 w152 r4 section AltSubmit choose3 Background" cfg.ThemeEditBoxColor, ui.ProfileList)
 		ui.Win2ClassDDL.SetFont("s11")
 		ui.Win2ClassDDL.OnEvent("Change",RefreshWin2AfkRoutine)
 		PostMessage("0x153", -1, 26,, "AHK_ID " ui.Win2ClassDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153
@@ -143,7 +147,7 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 		ui.opsWin2AfkIcon := ui.MainGui.AddPicture("ys+1 w25 h30 section Background" cfg.ThemePanel1Color,"./Img/sleep_icon.png")
 		ui.opsWin2AfkStatus := ui.MainGui.AddText("x+0 ys section w50 h30 +Background" cfg.ThemePanel1Color,"")
 
-		ui.autoFireWin1Button := ui.MainGui.AddPicture("x37 y137 section w30 h30 Disabled Background" cfg.ThemeButtonReadyColor,"./Img/button_autoFire1_ready.png")
+		ui.autoFireWin1Button := ui.MainGui.AddPicture("x36 y137 section w30 h30 Disabled Background" cfg.ThemeButtonReadyColor,"./Img/button_autoFire1_ready.png")
 		ui.autoFireWin1Button.Tooltip := "Window1 AutoFire"
 		ui.autoFireWin1Button.OnEvent("Click",autoFireWin1)
 
@@ -153,17 +157,17 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 		
 		ui.OpsProgress1 := ui.MainGui.AddProgress("ys section w160 h30 c" cfg.ThemeFont1Color " Smooth Range0-270 Background" cfg.ThemePanel1Color,0)	
 	
-		ui.OpsTowerButton := ui.MainGui.AddPicture("x+-2 ys+17 w45 h48 section Background" cfg.ThemeButtonReadyColor,"./Img/button_tower_ready.png")
+		ui.OpsTowerButton := ui.MainGui.AddPicture("x+-1 ys+17 w45 h48 section Background" cfg.ThemeButtonReadyColor,"./Img/button_tower_ready.png")
 		ui.OpsTowerButton.OnEvent("Click",ToggleTower)
 		ui.OpsTowerButton.ToolTip := "Toggle Tower Timer + AFK"
 	
-		ui.OpsProgress2 := ui.MainGui.AddProgress("ys-15 section w172 h30 c" cfg.ThemeFont1Color " Smooth Range0-270 Background" cfg.ThemePanel1Color,0)	
+		ui.OpsProgress2 := ui.MainGui.AddProgress("ys-16 section w170 h30 c" cfg.ThemeFont1Color " Smooth Range0-270 Background" cfg.ThemePanel1Color,0)	
 
-		ui.OpsAntiIdle2Button := ui.MainGui.AddPicture("x+0 ys+2 w28 h28 section Background" cfg.ThemeButtonReadyColor,"./Img/button_antiIdle_ready.png")
+		ui.OpsAntiIdle2Button := ui.MainGui.AddPicture("x+0 ys w28 h28 section Background" cfg.ThemeButtonReadyColor,"./Img/button_antiIdle_ready.png")
 		ui.OpsAntiIdle2Button.OnEvent("Click",ToggleAntiIdle2)
 		ui.OpsAntiIdle2Button.ToolTip := "Toggle Anti-Idle"
 		
-		ui.autoFireWin2Button := ui.MainGui.AddPicture("ys+0 x+0 section w28 h28 Disabled Background" cfg.ThemeButtonReadyColor,"./Img/button_autoFire2_ready.png")
+		ui.autoFireWin2Button := ui.MainGui.AddPicture("ys x+0 section w28 h28 Disabled Background" cfg.ThemeButtonReadyColor,"./Img/button_autoFire2_ready.png")
 		ui.autoFireWin2Button.Tooltip := "Window2 AutoFire"
 		ui.autoFireWin2Button.OnEvent("Click",autoFireWin2)
 		
@@ -173,24 +177,24 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 		ui.OpsStatus2 := ui.MainGui.AddPicture("x+47 ys w100 h40 section Background" cfg.ThemeButtonReadyColor,"./Img/label_timer_off.png")  ; XX & YY serve to auto-size the window.
 		ui.OpsStatusRightTrim := ui.mainGui.AddPicture("ys w15 h40","./Img/label_right_trim.png")
 
-		ui.opsGui := Gui()
-		ui.opsGui.Name := "nControlMain"
-		ui.opsGui.BackColor := ui.TransparentColor
-		ui.opsGui.Color := ui.TransparentColor
-		ui.opsGui.MarginX := 5
-		ui.opsGui.Opt("-Caption -Border +AlwaysOnTop +ToolWindow +0x4000000 +Owner" ui.MainGui.Hwnd)
-		ui.Win1EnabledToggle := ui.opsGui.AddPicture("x28 y84 section w80 h28 Background" cfg.ThemeButtonReadyColor, cfg.toggleOff)
+		; ui.opsGui := Gui()
+		; ui.opsGui.Name := "nControlMain"
+		; ui.opsGui.BackColor := ui.TransparentColor
+		; ui.opsGui.Color := ui.TransparentColor
+		; ui.opsGui.MarginX := 5
+		; ui.opsGui.Opt("-Caption -Border +AlwaysOnTop +ToolWindow +0x4000000 +Owner" ui.MainGui.Hwnd)
+		; ui.Win1EnabledToggle := ui.opsGui.AddPicture("x28 y84 section w80 h25 Background" cfg.ThemeButtonReadyColor, cfg.toggleOff)
 		ui.Win1EnabledToggle.OnEvent("Click",ToggleGame1Status)
 		ui.Win1EnabledToggle.ToolTip := "Toggle to have this window ignored by nControl"
-		ui.Win2EnabledToggle := ui.opsGui.AddPicture("ys x+350 section w80 h28 Background" cfg.ThemeButtonReadyColor, cfg.toggleOff)
+		; ui.Win2EnabledToggle := ui.opsGui.AddPicture("ys x+350 section w80 h25 Background" cfg.ThemeButtonReadyColor, cfg.toggleOff)
 		ui.Win2EnabledToggle.OnEvent("Click",ToggleGame2Status)
 		ui.Win2EnabledToggle.ToolTip := "Toggle to have this window ignored by nControl"
 		
-		WinSetTransColor(ui.TransparentColor,ui.opsGui)
-		WinSetTransparent(0,ui.opsGui)
-		ui.opsGui.show("x" cfg.GuiX " y" cfg.GuiY " w" cfg.GuiW+5 " h" cfg.GuiH)
+		; WinSetTransColor(ui.TransparentColor,ui.opsGui)
+		; WinSetTransparent(0,ui.opsGui)
+		; ui.opsGui.show("x" cfg.GuiX " y" cfg.GuiY " w" cfg.GuiW+5 " h" cfg.GuiH)
 
-		drawGridLines()
+		;drawGridLines()
 		drawOpsOutlines()
 		ui.Win1ClassDDL.Choose(1)
 		ui.Win2ClassDDL.Choose(2)
@@ -201,44 +205,9 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 }
 
 { ;Functions
-drawGridLines() {
-ui.MainGuiTabs.UseTab("Sys")
-	drawOutline(ui.MainGui,103,77,158,15,cfg.ThemeFont4Color,cfg.ThemeFont4Color,1)				;Win1 Info Gridlines  
-	drawOutline(ui.MainGui,305,77,157,15,cfg.ThemeFont4Color,cfg.ThemeFont4Color,1)				;Win2 Info Gridlines
-	drawOutline(ui.MainGui,305,62,157,76,cfg.ThemeBorderLightColor,cfg.ThemeBorderLightColor,2)	;WIn2 Info Frame
-	drawOutline(ui.MainGui,103,62,158,76,cfg.ThemeBorderLightColor,cfg.ThemeBorderLightColor,2) ;Win1 Info Frame
-	
-	; drawOutline(ui.mainGui,259,106,47,47,cfg.ThemeBorderLightColor,cfg.ThemeBorderLightColor,2)		;Ops Toolbar Outline
-	; drawOutline(ui.mainGui,258,62,49,138,cfg.ThemeBorderDarkColor,cfg.ThemeBorderDarkColor,2)		;Ops Toolbar Outline
-	; drawOutline(ui.mainGui,259,62,47,136,cfg.ThemeBorderLightColor,cfg.ThemeBorderLightColor,2)		;Ops Toolbar Outline}
-}
-
-drawOpsOutlines() {
-	ui.MainGuiTabs.UseTab("Sys")
-	drawOutlineNamed("opsClock",ui.mainGui,65,32,176,30,cfg.ThemeBorderDarkColor,cfg.ThemeBorderDarkColor,2)		;Ops Clock
-	drawOutlineNamed("opsToolbarOutline",ui.MainGui,103,62,500,45,cfg.ThemeBorderLightColor,cfg.ThemeBorderLightColor,2)		;Toolbar Outlineine
-	drawOutlineNamed("opsToolbarOutline2",ui.mainGui,35,32,500,32,cfg.ThemeBorderLightColor,cfg.ThemeBorderLightColor,2)		;Ops Toolbar Outline
-
-	drawOutlineNamed("opsStatusBarRightDark",ui.mainGui,304,137,232,30,cfg.ThemeBorderDarkColor,cfg.ThemeBorderDarkColor,2)	;Status Bar
-	drawOutlineNamed("opsStatusBarRightLight",ui.mainGui,305,136,230,32,cfg.ThemeBorderLightColor,cfg.ThemeBorderLightColor,2)	;Status Bar
-	drawOutlineNamed("opsStatusBarLeftDark",ui.mainGui,35,137,225,30,cfg.ThemeBorderDarkColor,cfg.ThemeBorderDarkColor,2)	;Status Bar
-	drawOutlineNamed("opsStatusBarLeftLight",ui.mainGui,36,136,224,32,cfg.ThemeBorderLightColor,cfg.ThemeBorderLightColor,2)	;Status Bar
-
-	drawOutlineNamed("opsMiddleColumnMiddleRow",ui.mainGui,259,105,48,50,cfg.ThemeBorderLightColor,cfg.ThemeBorderLightColor,2)		;Ops Toolbar Outline
-	drawOutlineNamed("opsMiddleColumnOutlineDark",ui.mainGui,258,62,50,143,cfg.ThemeBorderDarkColor,cfg.ThemeBorderDarkColor,2)		;Ops Toolbar Outline
-	drawOutlineNamed("opsMiddleColumnOutlineLight",ui.mainGui,259,62,48,143,cfg.ThemeBorderLightColor,cfg.ThemeBorderLightColor,2)		;Ops Toolbar Outline
 
 
-	; ui.MainGuiTabs.UseTab("")
-	; drawOutlineNamed("mainGuiOutline",ui.MainGui,33,30,502,212,cfg.ThemeBorderLightColor,cfg.ThemeBorderLightColor,2)
-	;drawOutline(ui.mainGui,106,106,157,25,cfg.ThemeBorderDarkColor,cfg.ThemeBorderDarkColor,2)			;Status Bar
-	;drawOutline(ui.mainGui,37,106,224,27,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,1)			;Status Bar	
-	;drawOutline(ui.mainGui,37,60,498,152,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,2)		;Ops GameWindowBox Outline	
-	;drawOutline(ui.mainGui,37,60,498,48,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,2)		;Ops GameWindowBox Outline
-	;drawOutline(ui.mainGui,35,133,224,36,cfg.ThemeBorderDarkColor,cfg.ThemeBorderDarkColor,2)	;Status Bar
-	;drawOutline(ui.mainGui,308,133,230,36,cfg.ThemeBorderDarkColor,cfg.ThemeBorderDarkColor,2)	;Status Barock Outl
-	;drawOutline(ui.mainGui,310,106,249,26,cfg.ThemeBorderDarkColor,cfg.ThemeBorderDarkColor,2)		;Status Bar
-}
+
 
 
 refreshWin1AfkRoutine(*) {
@@ -527,7 +496,7 @@ refreshWin2AfkRoutine(*) {
 				ui.autoFireWin%WinNumber%Button.Value := "./Img/button_autoFire" A_WinNumber "_disabled.png"
 			}
 		}
-		drawGridLines()
+		;drawGridLines()
 	}
 		
 	refreshWinHwnd(*) { ;Performs Window Discovery, Game Identification and Gui Data Updates

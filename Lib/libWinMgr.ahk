@@ -22,14 +22,14 @@ WM_WINDOWPOSCHANGED(wParam, lParam, msg, Hwnd)
 {
 	if ((ui.AfkDocked) || !(ui.AfkAnchoredToGui)) && (Hwnd == ui.AfkGui.Hwnd) {
 		WinGetPos(&AfkGuiX,&AfkGuiY,,,ui.afkGui)
-		ui.titleBarButtonGui.Move(AfkGuiX+162,AfkGuiY-5)
+		ui.titleBarButtonGui.Move(AfkGuiX+187,AfkGuiY-5)
 	} else {
 		if (Hwnd = ui.MainGui.Hwnd)
 		{
 			ui.MainGui.GetPos(&winX,&winY,,)
-			ui.AfkGui.Move(winX+30,winY+35,,)
+			ui.AfkGui.Move(winX+40,winY+35,,)
 			ui.titleBarButtonGui.Move(winX+1,WinY-5)
-			ui.opsGui.Move(winX,winY)
+			; ui.opsGui.Move(winX,winY)
 		} 	
 	}
 }
@@ -67,49 +67,66 @@ WM_MOUSEMOVE(wParam, lParam, msg, Hwnd) {
     }
 }
 
-StartPIP()
+togglePIP()
 {
-	if (!(ui.Win2Hwnd) || !(ui.Win1Hwnd)) {
+	if (!WinExist("ahk_id " ui.Win2Hwnd) 
+		|| !WinExist("ahk_id " ui.Win1Hwnd)) {
 		debugLog("PiP: Can't find 2 Game Windows.")
+		try {
+		stopPip()
+		}
 		Return
 	}
-	WindowID := "ahk_id " ui.Win1Hwnd
-	
-	if (WinGetTransparent(WindowID)) {
-		if (WinGetTransparent(WindowID) < 150) {
-			WinMove(0,0,A_ScreenWidth,A_ScreenHeight,WindowID)
-			WinSetAlwaysOnTop(0,WindowID)
-			WinSetStyle("+0xC00000",WindowID)
-			WinSetTransparent(255,WindowID)
-			WindowID := "ahk_id " ui.Win2Hwnd
-			WinMove(10,A_ScreenHeight-650,800,600,WindowID)
-			WinSetAlwaysOnTop(1,WindowID)
-			WinSetStyle("-0xC00000",WindowID)
-			WinSetTransparent(125,WindowID)
+
+	if (WinGetTransparent("ahk_id " ui.Win1Hwnd)) {
+		if (WinGetTransparent("ahk_id " ui.Win1Hwnd) < 150) {
+			WinMove(0,0,A_ScreenWidth,A_ScreenHeight,"ahk_id " ui.Win1Hwnd)
+			WinSetAlwaysOnTop(0,"ahk_id " ui.Win1Hwnd)
+			WinSetStyle("+0xC00000","ahk_id " ui.Win1Hwnd)
+			WinSetTransparent(255,"ahk_id " ui.Win1Hwnd)
+
+			WinMove(10,A_ScreenHeight-650,800,600,"ahk_id " ui.Win2Hwnd)
+			WinSetAlwaysOnTop(1,"ahk_id " ui.Win2Hwnd)
+			WinSetStyle("-0xC00000","ahk_id " ui.Win2Hwnd)
+			WinSetTransparent(125,"ahk_id " ui.Win2Hwnd)
 		} else {
-			WinMove(0,0,A_ScreenWidth,A_ScreenHeight,WindowID)
-			WinSetAlwaysOnTop(0,WindowID)
-			WinSetStyle("+0xC00000",WindowID)
-			WinSetTransparent(255,WindowID)
-			WindowID := "ahk_id " ui.Win1Hwnd
-			WinMove(10,A_ScreenHeight-650,800,600,WindowID)
-			WinSetAlwaysOnTop(1,WindowID)
-			WinSetStyle("-0xC00000",WindowID)
-			WinSetTransparent(125,WindowID)
+			WinMove(0,0,A_ScreenWidth,A_ScreenHeight,"ahk_id " ui.Win2Hwnd)
+			WinSetAlwaysOnTop(0,"ahk_id " ui.Win2Hwnd)
+			WinSetStyle("+0xC00000","ahk_id " ui.Win2Hwnd)
+			WinSetTransparent(255,"ahk_id " ui.Win2Hwnd)
+
+			WinMove(10,A_ScreenHeight-650,800,600,WindowswID)
+			WinSetAlwaysOnTop(1,"ahk_id " ui.Win1Hwnd)
+			WinSetStyle("-0xC00000","ahk_id " ui.Win1Hwnd)
+			WinSetTransparent(125,"ahk_id " ui.Win1Hwnd)
 		}
 	} else {
-			WinMove(0,0,A_ScreenWidth,A_ScreenHeight,WindowID)
-			WinSetAlwaysOnTop(0,WindowID)
-			WinSetStyle("+0xC00000",WindowID)
-			WinSetTransparent(255,WindowID)
-			WindowID := "ahk_id " ui.Win2Hwnd
-			WinMove(10,A_ScreenHeight-650,800,600,WindowID)
-			WinSetAlwaysOnTop(1,WindowID)
-			WinSetStyle("-0xC00000",WindowID)
-			WinSetTransparent(125,WindowID)
+			WinMove(0,0,A_ScreenWidth,A_ScreenHeight,"ahk_id " ui.Win1Hwnd)
+			WinSetAlwaysOnTop(0,"ahk_id " ui.Win1Hwnd)
+			WinSetStyle("+0xC00000","ahk_id " ui.Win1Hwnd)
+			WinSetTransparent(255,"ahk_id " ui.Win1Hwnd)
+
+			WinMove(10,A_ScreenHeight-650,800,600,"ahk_id " ui.Win2Hwnd)
+			WinSetAlwaysOnTop(1,"ahk_id " ui.Win2Hwnd)
+			WinSetStyle("-0xC00000","ahk_id " ui.Win2Hwnd)
+			WinSetTransparent(125,"ahk_id " ui.Win2Hwnd)
+	}
+
+		WinSetAlwaysOnTop(0,"ahk_id " ui.Win2Hwnd)
+			WinSetStyle("+0xC00000","ahk_id " ui.Win2Hwnd)
+			WinSetTransparent(255,"ahk_id " ui.Win2Hwnd)
+			
+	StopPip() {
+		WinMove(0,0,(A_ScreenWidth/2),(A_ScreenHeight-getTaskbarHeight()),"ahk_id " ui.win1Hwnd)
+		WinMove(A_ScreenWidth/2,0,(A_ScreenWidth/2),(A_ScreenHeight-getTaskbarHeight()),"ahk_id " ui.win2Hwnd)
+		WinSetAlwaysOnTop(0,"ahk_id " ui.win1Hwnd)
+		WinSetAlwaysOnTop(0,"ahk_id " ui.win2Hwnd)
+		WinSetTransparent(255,"ahk_id " ui.win1Hwnd)
+		WinSetTransparent(255,"ahk_id " ui.win2Hwnd)
+
 	}
 }
-
+	
 
 ChangeWindowFocus()
 {

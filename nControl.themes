@@ -41,8 +41,8 @@ ThemeProgressColor=B9B9BC
 [Militarized]
 ThemeBorderLightColor=888888
 ThemeBorderDarkColor=333333
-ThemeBright1Color=66B1FE
-ThemeBright2Color=FEFE98
+ThemeBright1Color=B2B2B2
+ThemeBright2Color=4F4F4F
 ThemeBackgroundColor=606060
 ThemeFont1Color=98CBFE
 ThemeFont2Color=FE8001

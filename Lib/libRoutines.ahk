@@ -200,20 +200,30 @@ RestartTower(*) {
 			WinGetPos(&WinX,&WinY,&WinW,&WinH,this_window)
 			InfTowerButtonX := (WinW/2)-40
 			InfTowerButtonY := (WinH/2)+130
-			StartButtonX 	:= (WinW/2)+240
-			StartButtonY 	:= (WinH/2)+130
+			CelestialTowerX := 1038
+			CelestialTowerY := 957
+			
+			; StartButtonX 	:= (WinW/2)+240
+			; StartButtonY 	:= (WinH/2)+130
+						
+			StartButtonX 	:= 1038
+			StartButtonY 	:= 986
 			
 			if (WinGetProcessName(this_window) == "ApplicationFrameHost.exe")
 			{
-				InfTowerButtonY += 30
-				StartButtonY 	+= 30
+				InfTowerButtonY += 33
+				StartButtonY 	+= 33
 			}
 		
 			Sleep(250)
 			Send("{V}")
 			Sleep(1200)
-
-			Mouse(InfTowerButtonX,InfTowerButtonY)
+			if (cfg.celestialTowerEnabled)
+			{
+				Mouse(CelestialTowerX,CelestialTowerY)
+			} else {
+				Mouse(InfTowerButtonX,InfTowerButtonY)
+			}
 			Sleep(1000)
 			Mouse(StartButtonX,StartButtonY)
 			Sleep(1000)

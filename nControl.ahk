@@ -1,4 +1,4 @@
-A_FileVersion := "3.1.5.6"
+A_FileVersion := "3.1.6.4"
 A_AppName := "nControl"
 ;@Ahk2Exe-Let FileVersion=%A_PriorLine~U)^(.+"){1}(.+)".*$~$2% 
 
@@ -69,7 +69,7 @@ InitConsole(&ui)
 #include <libGuiOperationsTab>
 #include <libGuiSetupTab>
 #include <libGuiAppDockTab>
-#include <libGuiKeybindsTab>
+#include <libGameSettings>
 #include <libGuiAudioTab>
 
 #include <libGuiSystemTab>

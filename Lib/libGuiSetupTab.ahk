@@ -29,17 +29,12 @@ GuiSetupTab(&ui,&cfg)
 	
 	
 	
-	ui.toggleToolTips := ui.MainGui.AddPicture("x85 y50 w60 h25 section vToolTips " ((cfg.ToolTipsEnabled) ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor)),((cfg.ToolTipsEnabled) ? (cfg.toggleOn) : (cfg.toggleOff)))
+	ui.toggleToolTips := ui.MainGui.AddPicture("x85 y35 w60 h25 section vToolTips " ((cfg.ToolTipsEnabled) ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor)),((cfg.ToolTipsEnabled) ? (cfg.toggleOn) : (cfg.toggleOff)))
 	ui.toggleToolTips.OnEvent("Click", toggleChanged)
 	ui.toggleToolTips.ToolTip := "Toggles ToolTips"
 	ui.labelToolTips := ui.MainGui.AddText("x+3 ys+3 BackgroundTrans","ToolTips")
 
-	toggleChanged(toggleControl,*) {
-		toggleControl.value := 
-			(cfg.%toggleControl.name%Enabled := !cfg.%toggleControl.name%Enabled)
-				? (toggleControl.Opt("Background" cfg.ThemeButtonOnColor),cfg.toggleOn)
-				: (toggleControl.Opt("Background" cfg.ThemeButtonReadyColor),cfg.toggleOff)
-			}
+
 	
 	ToggleAfkSnap(*)
 	{
@@ -68,9 +63,11 @@ GuiSetupTab(&ui,&cfg)
 		ui.toggleAlwaysOnTop.Redraw()
 	}
 	ui.toggleAlwaysOnTop := ui.MainGui.AddPicture("xs w60 h25 section vAlwaysOnTop " (cfg.AlwaysOnTopEnabled ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor)),((cfg.AlwaysOnTopEnabled) ? (cfg.toggleOn) : (cfg.toggleOff)))
-	ui.toggleAlwaysOnTop.OnEvent("Click", toggleChanged)
+	ui.toggleAlwaysOnTop.OnEvent("Click", ToggleChanged)
 	ui.toggleAlwaysOnTop.ToolTip := "Keeps this app on top of all other windows."
 	ui.labelAlwaysOnTop:= ui.MainGui.AddText("x+3 ys+3","AlwaysOnTop")	
+	
+
 	
 	ToggleAnimations(*)
 	{
@@ -91,6 +88,17 @@ GuiSetupTab(&ui,&cfg)
 	ui.toggleCelestialTower.OnEvent("Click", toggleChanged)
 	ui.toggleCelestialTower.ToolTip := "Switches Tower AFK to Celestial."
 	ui.labelCelestialTower:= ui.MainGui.AddText("x+3 ys+3","Celestial Tower")	
+	
+	ToggleHoldToCrouch(*)
+	{
+		ui.toggleHoldToCrouch.Opt((cfg.holdToCrouch := !cfg.holdToCrouchEnabled) ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor))
+		ui.ToggleHoldToCrouch.Redraw()
+	}
+	
+	ui.holdToCrouch := ui.MainGui.AddPicture("xs w60 h25 section vHoldToCrouch " (cfg.holdToCrouchEnabled ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor)),((cfg.holdToCrouchEnabled) ? (cfg.toggleOn) : (cfg.toggleOff)))
+	ui.holdToCrouch.OnEvent("Click", toggleChanged)
+	ui.holdToCrouch.ToolTip := "Hold Left Shit to Crouch/Slide."
+	ui.holdToCrouch:= ui.MainGui.AddText("x+3 ys+3","Hold To Crouch")	
 	
 
 

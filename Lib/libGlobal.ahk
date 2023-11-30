@@ -192,7 +192,7 @@ preAutoExec(InstallDir,ConfigFileName) {
 			FileInstall("./Img/button_console_ready.png",InstallDir "/Img/button_console_ready.png",1)
 			FileInstall("./Img/button_console_on.png",InstallDir "/Img/button_console_on.png",1)
 			FileInstall("./lib/ColorChooser.exe",InstallDir "./lib/ColorChooser.exe",1)
-
+			FileInstall("./Redist/nircmd.exe",InstallDir "./Redist/nircmd.exe",1)
 			
 			persistLog("Copied Assets to: " InstallDir)
 			
@@ -270,6 +270,7 @@ cfgLoad(&cfg, &ui) {
 	ui.themeResetScheduled 	:= false
 	ui.Win1Hwnd				:= ""
 	ui.Win2Hwnd				:= ""
+	ui.pipEnabled			:= false
 	
 	cfg.MainGui				:= IniRead(cfg.file,"System","MainGui","MainGui")
 	cfg.InstallDir			:= IniRead(cfg.file,"System","InstallDir", A_MyDocuments "\nControl")
@@ -284,8 +285,8 @@ cfgLoad(&cfg, &ui) {
 	cfg.ColorPickerEnabled 	:= IniRead(cfg.file,"Interface","ColorPickerEnabled",true)
 	cfg.GuiX 				:= IniRead(cfg.file,"Interface","GuiX",200)
 	cfg.GuiY 				:= IniRead(cfg.file,"Interface","GuiY",200)
-	cfg.GuiW				:= IniRead(cfg.file,"Interface","GuiW",534)
-	cfg.GuiH				:= IniRead(cfg.file,"Interface","GuiH",214)
+	cfg.GuiW				:= IniRead(cfg.file,"Interface","GuiW",545)
+	cfg.GuiH				:= IniRead(cfg.file,"Interface","GuiH",210)
 
 	MonitorGet(MonitorGetPrimary(),&L,&T,&R,&B)
 	if (cfg.GuiX < L)
@@ -330,12 +331,13 @@ cfgLoad(&cfg, &ui) {
 	cfg.UndockedW 			:= IniRead(cfg.file,"nControl","UndockedW","1600")
 	cfg.UndockedH 			:= IniRead(cfg.file,"nControl","UndockedH","1000")
 
+	cfg.gameAudioEnabled	:= IniRead(cfg.file,"audio","gameAudioEnabled","false")
 	cfg.MicName				:= IniRead(cfg.file,"audio","MicName","Yeti")
 	cfg.SpeakerName			:= IniRead(cfg.file,"audio","SpeakerName","S2MASTER")
 	cfg.HeadsetName			:= IniRead(cfg.file,"audio","HeadsetName","G432")
-	cfg.MicVolume			:= IniRead(cfg.file,"audio","MicVolume","80")
-	cfg.SpeakerVolume	 	:= IniRead(cfg.file,"audio","SpeakerVolume","50")
-	cfg.HeadsetVolume		:= IniRead(cfg.file,"audio","HeadsetVolume","80")
+	cfg.MicVolume			:= IniRead(cfg.file,"audio","MicVolume",".80")
+	cfg.SpeakerVolume	 	:= IniRead(cfg.file,"audio","SpeakerVolume",".50")
+	cfg.HeadsetVolume		:= IniRead(cfg.file,"audio","HeadsetVolume",".80")
 	cfg.Mode				:= IniRead(cfg.file,"audio","Mode","1")
 
 	cfg.Theme				:= IniRead(cfg.file,"Interface","Theme","Modern Class")
@@ -361,6 +363,9 @@ cfgLoad(&cfg, &ui) {
 	cfg.ThemeButtonAlertColor	:= IniRead(cfg.themeFile,cfg.Theme,"ThemeButtonAlertColor","3C3C3C")
 	cfg.ThemeButtonOnColor	:= IniRead(cfg.themeFile,cfg.Theme,"ThemeButtonOnColor","FF01FF")
 	cfg.ThemeButtonReadyColor	:= IniRead(cfg.themeFile,cfg.Theme,"ThemeButtonReadyColor","1FFFF0")
+	
+	cfg.holdToCrouchEnabled 			:= IniRead(cfg.file,"game","HoldToCrouch",true)
+	
 }
 
 WriteConfig() {
@@ -401,11 +406,12 @@ WriteConfig() {
 	IniWrite(ui.app1path.text,cfg.file,"nControl","app1path")
 	IniWrite(ui.app1filename.text,cfg.file,"nControl","app1filename")
 
+	IniWrite(cfg.gameAudioEnabled,cfg.file,"Audio","gameAudioEnabled")
 	IniWrite(cfg.MicName,cfg.file,"Audio","Mic")
 	IniWrite(cfg.SpeakerName,cfg.file,"Audio","Speaker")
 	IniWrite(cfg.HeadsetName,cfg.file,"Audio","Headset")
-	IniWrite(cfg.MicVolume,cfg.file,"Audio","MicVolume")
-	IniWrite(cfg.SpeakerVolume,cfg.file,"Audio","SpeakerVolume")
+	IniWrite(cfg.micVolume,cfg.file,"Audio","MicVolume")
+	IniWrite(cfg.speakerVolume,cfg.file,"Audio","SpeakerVolume")
 	IniWrite(cfg.HeadsetVolume,cfg.file,"Audio","HeadsetVolume")
 	IniWrite(cfg.Mode,cfg.file,"Audio","Mode")
 
@@ -442,6 +448,8 @@ WriteConfig() {
 		IniWrite(cfg.ThemeButtonOnColor,cfg.themeFile,"Custom","ThemeButtonOnColor")
 		IniWrite(cfg.ThemeButtonReadyColor,cfg.themeFile,"Custom","ThemeButtonReadyColor")
 		IniWrite(cfg.ThemeButtonAlertColor,cfg.themeFile,"Custom","ThemeButtonAlertColor")
+	
+		IniWrite(cfg.holdToCrouchEnabled,cfg.file,"game","HoldToCrouch")
 	}
 	
 	ui.MainGui.GetPos(&GuiX,&GuiY,,)
@@ -479,6 +487,7 @@ WriteConfig() {
 	IniWrite(cfg.AfkDataFile,cfg.file,"AFK","AfkDataFile")
 	IniWrite(cfg.SilentIdleEnabled,cfg.file,"AFK","SilentIdleEnabled")
 	iniWrite(cfg.towerInterval,cfg.file,"AFK","TowerInterval")
+	iniWrite(cfg.CelestialTowerEnabled,cfg.file,"AFK","CelestialTowerEnabled")
 	IniWrite(ui.AutoClickerSpeedSlider.Value,cfg.file,"AFK","AutoClickerSpeed")
 	IniWrite(ui.Win1ClassDDL.Text,cfg.file,"AFK","Win1Class")
 	if (ui.Win2ClassDDL.Text != "N/A")
@@ -494,6 +503,29 @@ WriteConfig() {
 	}
 	ui.MainGui.Destroy()
 	BlockInput("Off")
+}
+
+
+
+
+getClick(&clickX,&clickY,&activeWindow) {
+	DialogBox("Click to get information about a pixel")
+	Sleep(750)
+	CoordMode("Mouse","Client")
+	MonitorSelectStatus := KeyWait("LButton", "D T15")
+	DialogBoxClose()
+	if (MonitorSelectStatus = 0)
+	{	
+		MsgBox("A monitor was not selected in time.`nPlease try again.")
+		Return
+	} else {
+		MouseGetPos(&clickX,&clickY,&pixelColor,&activeWindow)
+		pixelColor := PixelGetColor(clickX,clickY)
+		activeWindow := winWait("A")
+		fileAppend("Window: [" activeWindow "] " WinGetTitle("ahk_id " activeWindow) " `nx: " clickX " y: " clickY "`nColor: " pixelColor "`n`n", "./capturedPixels.txt")
+		debugLog("Window: [" activeWindow "] " WinGetTitle("ahk_id " activeWindow) ", x: " clickX " y: " clickY ", Color: " pixelColor)
+	}
+
 }
 
 GetWinNumber() {
