@@ -17,7 +17,7 @@ ThemeDisabledColor=212121
 ThemeButtonOnColor=FF01FF
 ThemeButtonReadyColor=1FFFF
 ThemeButtonAlertColor=FFCC00
-ThemeFont4Color=B2B2B2
+ThemeFont4Color=252525
 [Cold Steel]
 ThemeBorderLightColor=B2B2B2
 ThemeBorderDarkColor=575757
@@ -121,7 +121,7 @@ ThemeBackgroundColor=D2C35
 ThemeFont1Color=1FFFF
 ThemeFont2Color=FCC84B
 ThemeFont3Color=1FFFF0
-ThemeFont4Color=B2B2B2
+ThemeFont4Color=252525
 ThemePanel1Color=355051
 ThemePanel3Color=A8C5C6
 ThemePanel2Color=804001

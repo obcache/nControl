@@ -95,10 +95,10 @@ GuiSetupTab(&ui,&cfg)
 		ui.ToggleHoldToCrouch.Redraw()
 	}
 	
-	ui.holdToCrouch := ui.MainGui.AddPicture("xs w60 h25 section vHoldToCrouch " (cfg.holdToCrouchEnabled ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor)),((cfg.holdToCrouchEnabled) ? (cfg.toggleOn) : (cfg.toggleOff)))
-	ui.holdToCrouch.OnEvent("Click", toggleChanged)
-	ui.holdToCrouch.ToolTip := "Hold Left Shit to Crouch/Slide."
-	ui.holdToCrouch:= ui.MainGui.AddText("x+3 ys+3","Hold To Crouch")	
+	; ui.holdToCrouch := ui.MainGui.AddPicture("xs w60 h25 section vHoldToCrouch " (cfg.holdToCrouchEnabled ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor)),((cfg.holdToCrouchEnabled) ? (cfg.toggleOn) : (cfg.toggleOff)))
+	; ui.holdToCrouch.OnEvent("Click", toggleChanged)
+	; ui.holdToCrouch.ToolTip := "Hold Left Shit to Crouch/Slide."
+	; ui.holdToCrouch:= ui.MainGui.AddText("x+3 ys+3","Hold To Crouch")	
 	
 
 

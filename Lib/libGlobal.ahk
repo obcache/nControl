@@ -186,6 +186,8 @@ preAutoExec(InstallDir,ConfigFileName) {
 			FileInstall("./Img/button_autoClicker_on.png",InstallDir "/Img/button_autoClicker_on.png",1)
 			FileInstall("./Img/help.png",InstallDir "/Img/help.png",1)
 			FileInstall("./Img/button_save_up.png",InstallDir "/Img/button_save_up.png",1)
+			FileInstall("./Img/button_up.png",InstallDir "/Img/button_up.png",1)
+			FileInstall("./Img/button_down.png",InstallDir "/Img/button_down.png",1)
 			FileInstall("./Img/button_help.png",InstallDir "/Img/button_help.png",1)
 			FileInstall("./Img/button_help_ready.png",InstallDir "/Img/button_help_ready.png",1)
 			FileInstall("./Img/button_help_on.png",InstallDir "/Img/button_help_on.png",1)			
@@ -193,6 +195,10 @@ preAutoExec(InstallDir,ConfigFileName) {
 			FileInstall("./Img/button_console_on.png",InstallDir "/Img/button_console_on.png",1)
 			FileInstall("./lib/ColorChooser.exe",InstallDir "./lib/ColorChooser.exe",1)
 			FileInstall("./Redist/nircmd.exe",InstallDir "./Redist/nircmd.exe",1)
+			FileInstall("./Img/button_power.png",InstallDir "./Img/button_power.png",1)
+			FileInstall("./Img/button_power_on.png",InstallDir "./Img/button_power_on.png",1)
+			FileInstall("./Img/button_power_ready.png",InstallDir "./Img/button_power_ready.png",1)
+			FileInstall("./nControl_currentBuild.dat",InstallDir "./nControl_currentBuild.dat",1)
 			
 			persistLog("Copied Assets to: " InstallDir)
 			
@@ -242,36 +248,59 @@ persistLog(LogMsg) {
 }
 
 cfgLoad(&cfg, &ui) {
-	Global
+	global
 	ui.gameWindowsList 		:= array()
-	cfg.GameWindowsList 	:= array()
-	cfg.MainGui				:= IniRead(cfg.file,"System","MainGui","MainGui")
-	ui.GuiH					:= 220  	;430 for Console Mode
-	ui.ClockTimerStarted 	:= false
-	ui.ClockMode			:= "Clock"
-	ui.AutoFire1Enabled		:= false
-	ui.AutoFire2Enabled		:= false
-	ui.AutoClickerEnabled 	:= false
-	ui.AntiIdle_enabled 	:= false
+	cfg.gameWindowsList 	:= array()
+	cfg.mainGui				:= IniRead(cfg.file,"System","MainGui","MainGui")
+	ui.guiH					:= 220  	;430 for Console Mode
+	ui.clockTimerStarted 	:= false
+	ui.clockMode			:= "Clock"
+	ui.autoFire1Enabled		:= false
+	ui.autoFire2Enabled		:= false
+	ui.autoClickerEnabled 	:= false
+	ui.antiIdle_enabled 	:= false
 	ui.antiIdle1_enabled 	:= false
 	ui.antiIdle2_enabled 	:= false
 	ui.antiIdleInterval		:= 900000
 	ui.previousTab			:= "Sys"
 	ui.activeTab			:= "Sys"
-	ui.LastWindowHwnd		:= 0
-	ui.ColorChanged 		:= false
-	ui.GuiCollapsed			:= false
-	ui.AfkDocked 			:= false
-	ui.AfkAnchoredToGui 	:= true
-	ui.AfkEnabled 			:= false
+	ui.lastWindowHwnd		:= 0
+	ui.colorChanged 		:= false
+	ui.guiCollapsed			:= false
+	ui.afkDocked 			:= false
+	ui.afkAnchoredToGui 	:= true
+	ui.afkEnabled 			:= false
 	ui.towerEnabled 		:= false
 	ui.helpActive			:= false
 	ui.dockApp_enabled		:= false
 	ui.themeResetScheduled 	:= false
-	ui.Win1Hwnd				:= ""
-	ui.Win2Hwnd				:= ""
+	ui.win1Hwnd				:= ""
+	ui.win2Hwnd				:= ""
 	ui.pipEnabled			:= false
+	ui.pauseAlwaysRun		:= false
 	
+	afk						:= object()
+	ui.profileList			:= array()
+	ui.profileListStr		:= ""
+	win1afk 				:= object()
+	win2afk					:= object()
+	win1afk.steps			:= array()
+	win2afk.steps			:= array()
+	win1afk.nextStep		:= ""
+	win2afk.nextStep 		:= ""
+	win1afk.waits 			:= array()
+	win2afk.waits			:= array()
+	win1afk.nextWait		:= ""
+	win2afk.nextWait		:= ""
+	win1afk.waiting			:= false
+	win2afk.waiting			:= false
+	win1afk.currStepNum		:= ""
+	win2afk.currStepNum 	:= ""
+	
+	ui.runKey				:= "CapsLock"
+	ui.dividerGui			:= gui()
+	
+	cfg.holdToScopeEnabled 	:= IniRead(cfg.file,"Game","cs2holdToScopeEnabled",false)
 	cfg.MainGui				:= IniRead(cfg.file,"System","MainGui","MainGui")
 	cfg.InstallDir			:= IniRead(cfg.file,"System","InstallDir", A_MyDocuments "\nControl")
 	cfg.MainScriptName		:= IniRead(cfg.file,"System","MainScriptName", "nControl")
@@ -294,63 +323,64 @@ cfgLoad(&cfg, &ui) {
 	if (cfg.GuiY > B)
 		cfg.GuiY := 200
 		
-	cfg.AfkX				:= IniRead(cfg.file,"Interface","AfkX",cfg.GuiX+10)
-	cfg.AfkY				:= IniRead(cfg.file,"Interface","AfkY",cfg.GuiY+35)
-	cfg.AfkSnapEnabled		:= IniRead(cfg.file,"Interface","AfkSnapEnabled",false)
-	cfg.GuiSnapEnabled		:= IniRead(cfg.file,"Interface","GuiSnapEnabled",true)
+	cfg.AfkX					:= IniRead(cfg.file,"Interface","AfkX",cfg.GuiX+10)
+	cfg.AfkY					:= IniRead(cfg.file,"Interface","AfkY",cfg.GuiY+35)
+	cfg.AfkSnapEnabled			:= IniRead(cfg.file,"Interface","AfkSnapEnabled",false)
+	cfg.GuiSnapEnabled			:= IniRead(cfg.file,"Interface","GuiSnapEnabled",true)
 
-	cfg.AutoDetectGame		:= IniRead(cfg.file,"Game","AutoDetectGame",true)
-	cfg.GameList			:= StrSplit(IniRead(cfg.file,"Game","GameList","Roblox,Rocket League"),",")
-	cfg.game				:= IniRead(cfg.file,"Game","Game","2")
-	cfg.HwndSwapEnabled		:= IniRead(cfg.file,"Game","HwndSwapEnabled",false)
-	cfg.win1Enabled 		:= IniRead(cfg.file,"Game","Win1Enabled",true)
-	cfg.win2Enabled 		:= IniRead(cfg.file,"Game","Win2Enabled",true)	
-	cfg.win1Disabled 		:= IniRead(cfg.file,"Game","Win1Disabled",true)
-	cfg.win2Disabled 		:= IniRead(cfg.file,"Game","Win2Disabled",true)
-	cfg.AfkDataFile			:= IniRead(cfg.file,"AFK","AfkDataFile","./AfkData.csv")
-	cfg.Profile				:= IniRead(cfg.file,"AFK","Profile","1")
-	cfg.Win1Class			:= IniRead(cfg.file,"AFK","Win1Class","Summoner1")
-	cfg.Win2Class			:= IniRead(cfg.file,"AFK","Win2Class","Summoner2")
-	cfg.antiIdleWin1Cmd		:= IniRead(cfg.file,"AFK","AntiIdleWin1Cmd","5")
-	cfg.antiIdleWin2Cmd		:= IniRead(cfg.file,"AFK","AntiIdleWin2Cmd","5")
-	cfg.towerInterval		:= iniRead(cfg.file,"AFK","TowerInterval","270000")
-	cfg.antiIdleInterval	:= IniRead(cfg.file,"AFK","AntiIdleInterval","1250")
-	cfg.SilentIdleEnabled 	:= IniRead(cfg.file,"AFK","SilentIdleEnabled",true)
-	cfg.AutoClickerSpeed 	:= IniRead(cfg.file,"AFK","AutoClickerSpeed",50)
-	cfg.CelestialTowerEnabled	:= IniRead(cfg.file,"AFK","CelestialTowerEnabled",false)
-	cfg.nControlMonitor 	:= IniRead(cfg.file,"nControl","nControlMonitor","1")	
-	cfg.app1filename		:= IniRead(cfg.file,"nControl","app1filename","")
-	cfg.app1path			:= IniRead(cfg.file,"nControl","app1path","")
-	cfg.app2filename		:= IniRead(cfg.file,"nControl","app2filename","")
-	cfg.app2path			:= IniRead(cfg.file,"nControl","app2path","")
+	cfg.AutoDetectGame			:= IniRead(cfg.file,"Game","AutoDetectGame",true)
+	cfg.GameList				:= StrSplit(IniRead(cfg.file,"Game","GameList","Roblox,Rocket League"),",")
+	cfg.game					:= IniRead(cfg.file,"Game","Game","2")
+	cfg.HwndSwapEnabled			:= IniRead(cfg.file,"Game","HwndSwapEnabled",false)
+	cfg.win1Enabled 			:= IniRead(cfg.file,"Game","Win1Enabled",true)
+	cfg.win2Enabled 			:= IniRead(cfg.file,"Game","Win2Enabled",true)	
+	cfg.win1Disabled 			:= IniRead(cfg.file,"Game","Win1Disabled",true)
+	cfg.win2Disabled 			:= IniRead(cfg.file,"Game","Win2Disabled",true)
 	
-	cfg.DockHeight 			:= IniRead(cfg.file,"nControl","DockHeight","240")
-	cfg.DockMarginSize 		:= IniRead(cfg.file,"nControl","DockMarginSize","8")
-	cfg.UndockedX 			:= IniRead(cfg.file,"nControl","UndockedX","150")
-	cfg.UndockedY 			:= IniRead(cfg.file,"nControl","UndockedY","150")
-	cfg.UndockedW 			:= IniRead(cfg.file,"nControl","UndockedW","1600")
-	cfg.UndockedH 			:= IniRead(cfg.file,"nControl","UndockedH","1000")
+	cfg.AfkDataFile				:= IniRead(cfg.file,"AFK","AfkDataFile","./AfkData.csv")
+	cfg.Profile					:= IniRead(cfg.file,"AFK","Profile","1")
+	cfg.win1Class				:= IniRead(cfg.file,"AFK","Win1Class",1)
+	cfg.win2Class				:= IniRead(cfg.file,"AFK","Win2Class",1)
+	cfg.antiIdleWin1Cmd			:= IniRead(cfg.file,"AFK","AntiIdleWin1Cmd","5")
+	cfg.antiIdleWin2Cmd			:= IniRead(cfg.file,"AFK","AntiIdleWin2Cmd","5")
+	cfg.towerInterval			:= iniRead(cfg.file,"AFK","TowerInterval","270000")
+	cfg.antiIdleInterval		:= IniRead(cfg.file,"AFK","AntiIdleInterval","1250")
+	cfg.SilentIdleEnabled 		:= IniRead(cfg.file,"AFK","SilentIdleEnabled",true)
+	cfg.AutoClickerSpeed 		:= IniRead(cfg.file,"AFK","AutoClickerSpeed",50)
+	cfg.CelestialTowerEnabled	:= IniRead(cfg.file,"AFK","CelestialTowerEnabled",false)
+	cfg.nControlMonitor 		:= IniRead(cfg.file,"nControl","nControlMonitor","1")	
+	cfg.app1filename			:= IniRead(cfg.file,"nControl","app1filename","")
+	cfg.app1path				:= IniRead(cfg.file,"nControl","app1path","")
+	cfg.app2filename			:= IniRead(cfg.file,"nControl","app2filename","")
+	cfg.app2path				:= IniRead(cfg.file,"nControl","app2path","")
+	
+	cfg.DockHeight 				:= IniRead(cfg.file,"nControl","DockHeight","240")
+	cfg.DockMarginSize 			:= IniRead(cfg.file,"nControl","DockMarginSize","8")
+	cfg.UndockedX 				:= IniRead(cfg.file,"nControl","UndockedX","150")
+	cfg.UndockedY 				:= IniRead(cfg.file,"nControl","UndockedY","150")
+	cfg.UndockedW 				:= IniRead(cfg.file,"nControl","UndockedW","1600")
+	cfg.UndockedH 				:= IniRead(cfg.file,"nControl","UndockedH","1000")
 
-	cfg.gameAudioEnabled	:= IniRead(cfg.file,"audio","gameAudioEnabled","false")
-	cfg.MicName				:= IniRead(cfg.file,"audio","MicName","Yeti")
-	cfg.SpeakerName			:= IniRead(cfg.file,"audio","SpeakerName","S2MASTER")
-	cfg.HeadsetName			:= IniRead(cfg.file,"audio","HeadsetName","G432")
-	cfg.MicVolume			:= IniRead(cfg.file,"audio","MicVolume",".80")
-	cfg.SpeakerVolume	 	:= IniRead(cfg.file,"audio","SpeakerVolume",".50")
-	cfg.HeadsetVolume		:= IniRead(cfg.file,"audio","HeadsetVolume",".80")
-	cfg.Mode				:= IniRead(cfg.file,"audio","Mode","1")
+	cfg.gameAudioEnabled		:= IniRead(cfg.file,"audio","gameAudioEnabled","false")
+	cfg.MicName					:= IniRead(cfg.file,"audio","MicName","Yeti")
+	cfg.SpeakerName				:= IniRead(cfg.file,"audio","SpeakerName","S2MASTER")
+	cfg.HeadsetName				:= IniRead(cfg.file,"audio","HeadsetName","G432")
+	cfg.MicVolume				:= IniRead(cfg.file,"audio","MicVolume",".80")
+	cfg.SpeakerVolume	 		:= IniRead(cfg.file,"audio","SpeakerVolume",".50")
+	cfg.HeadsetVolume			:= IniRead(cfg.file,"audio","HeadsetVolume",".80")
+	cfg.Mode					:= IniRead(cfg.file,"audio","Mode","1")
 
-	cfg.Theme				:= IniRead(cfg.file,"Interface","Theme","Modern Class")
-	cfg.ThemeList			:= StrSplit(IniRead(cfg.themeFile,"Interface","ThemeList","Modern Class,Cold Steel,Militarized,Custom"),",")
+	cfg.Theme					:= IniRead(cfg.file,"Interface","Theme","Modern Class")
+	cfg.ThemeList				:= StrSplit(IniRead(cfg.themeFile,"Interface","ThemeList","Modern Class,Cold Steel,Militarized,Custom"),",")
 	cfg.ThemeBackgroundColor	:= IniRead(cfg.themeFile,cfg.Theme,"ThemeBackgroundColor","414141")
-	cfg.ThemeFont1Color		:= IniRead(cfg.themeFile,cfg.Theme,"ThemeFont1Color","1FFFF0")
-	cfg.ThemeFont2Color		:= IniRead(cfg.themeFile,cfg.Theme,"ThemeFont2Color","FBD58E")
-	cfg.ThemeFont3Color		:= IniRead(cfg.themeFile,cfg.Theme,"ThemeFont3Color","1FFFF0")
-	cfg.ThemeFont4Color		:= IniRead(cfg.themeFile,cfg.Theme,"ThemeFont4Color","FBD58E")
-	cfg.ThemeBright2Color	:= IniRead(cfg.themeFile,cfg.Theme,"ThemeBright2Color","C0C0C0")
-	cfg.ThemeBright1Color	:= IniRead(cfg.themeFile,cfg.Theme,"ThemeBright1Color","FFFFFF")
-	cfg.ThemeDark2Color		:= IniRead(cfg.themeFile,cfg.Theme,"ThemeDark2Color","C0C0C0")
-	cfg.ThemeDark1Color		:= IniRead(cfg.themeFile,cfg.Theme,"ThemeDark1Color","FFFFFF")
+	cfg.ThemeFont1Color			:= IniRead(cfg.themeFile,cfg.Theme,"ThemeFont1Color","1FFFF0")
+	cfg.ThemeFont2Color			:= IniRead(cfg.themeFile,cfg.Theme,"ThemeFont2Color","FBD58E")
+	cfg.ThemeFont3Color			:= IniRead(cfg.themeFile,cfg.Theme,"ThemeFont3Color","1FFFF0")
+	cfg.ThemeFont4Color			:= IniRead(cfg.themeFile,cfg.Theme,"ThemeFont4Color","FBD58E")
+	cfg.ThemeBright2Color		:= IniRead(cfg.themeFile,cfg.Theme,"ThemeBright2Color","C0C0C0")
+	cfg.ThemeBright1Color		:= IniRead(cfg.themeFile,cfg.Theme,"ThemeBright1Color","FFFFFF")
+	cfg.ThemeDark2Color			:= IniRead(cfg.themeFile,cfg.Theme,"ThemeDark2Color","C0C0C0")
+	cfg.ThemeDark1Color			:= IniRead(cfg.themeFile,cfg.Theme,"ThemeDark1Color","FFFFFF")
 	cfg.ThemeBorderLightColor	:= IniRead(cfg.themeFile,cfg.Theme,"ThemeBorderLightColor","888888")
 	cfg.ThemeBorderDarkColor	:= IniRead(cfg.themeFile,cfg.Theme,"ThemeBorderDarkColor","333333")
 	cfg.ThemePanel1Color	:= IniRead(cfg.themeFile,cfg.Theme,"ThemePanel1Color","204040")
@@ -365,25 +395,26 @@ cfgLoad(&cfg, &ui) {
 	cfg.ThemeButtonReadyColor	:= IniRead(cfg.themeFile,cfg.Theme,"ThemeButtonReadyColor","1FFFF0")
 	
 	cfg.holdToCrouchEnabled 			:= IniRead(cfg.file,"game","HoldToCrouch",true)
-	
+	cfg.alwaysRunEnabled	:= IniRead(cfg.file,"Game","AlwaysRun",true)
+	cfg.alwaysRun_runKey	:= IniRead(cfg.file,"Game","AlwaysRunKey","CapsLock")
 }
 
 WriteConfig() {
 	Global
 	tmpGameList := ""
 
-	IniWrite(cfg.AutoDetectGame,cfg.file,"Game","AutoDetectGame")
-	IniWrite(cfg.Game,cfg.file,"Game","Game")
-	IniWrite(cfg.MainScriptName,cfg.file,"System","ScriptName")
-	IniWrite(cfg.InstallDir,cfg.file,"System","InstallDir")
-	IniWrite(cfg.MainGui,cfg.file,"System","MainGui")
+	IniWrite(cfg.autoDetectGame,cfg.file,"Game","AutoDetectGame")
+	IniWrite(cfg.game,cfg.file,"Game","Game")
+	IniWrite(cfg.mainScriptName,cfg.file,"System","ScriptName")
+	IniWrite(cfg.installDir,cfg.file,"System","InstallDir")
+	IniWrite(cfg.mainGui,cfg.file,"System","MainGui")
 	
-	Loop cfg.GameList.Length
+	Loop cfg.gameList.Length
 	{
 		if !(tmpGameList)
-			tmpGameList := cfg.GameList[A_Index]
+			tmpGameList := cfg.gameList[A_Index]
 		else
-			tmpGameList := tmpGameList "," cfg.GameList[A_Index]
+			tmpGameList := tmpGameList "," cfg.gameList[A_Index]
 	}
 	IniWrite(tmpGameList,cfg.file,"Game","GameList")
 	IniWrite(ui.gameDDL.value,cfg.file,"Game","Game")
@@ -391,15 +422,16 @@ WriteConfig() {
 	IniWrite(cfg.win2Enabled,cfg.file,"Game","Win2Enabled")	
 	IniWrite(cfg.win1Disabled,cfg.file,"Game","Win1Disabled")
 	IniWrite(cfg.win2Disabled,cfg.file,"Game","Win2Disabled")
-	IniWrite(cfg.HwndSwapEnabled,cfg.file,"Game","HwndSwapEnabled")
+	IniWrite(cfg.hwndSwapEnabled,cfg.file,"Game","HwndSwapEnabled")
+	IniWrite(cfg.holdToScopeEnabled,cfg.file,"Game","cs2HoldToScope")
 	IniWrite(cfg.nControlMonitor,cfg.file,"nControl","nControlMonitor")
-	IniWrite(cfg.DockHeight,cfg.file,"nControl","DockHeight")
-	IniWrite(cfg.DockMarginSize,cfg.file,"nControl","DockMarginSize")
+	IniWrite(cfg.dockHeight,cfg.file,"nControl","DockHeight")
+	IniWrite(cfg.dockMarginSize,cfg.file,"nControl","DockMarginSize")
 
-	IniWrite(cfg.UndockedX,cfg.file,"nControl","UndockedX")
-	IniWrite(cfg.UndockedY,cfg.file,"nControl","UndockedY")
-	IniWrite(cfg.UndockedW,cfg.file,"nControl","UndockedW")
-	IniWrite(cfg.UndockedH,cfg.file,"nControl","UndockedH")
+	IniWrite(cfg.undockedX,cfg.file,"nControl","UndockedX")
+	IniWrite(cfg.undockedY,cfg.file,"nControl","UndockedY")
+	IniWrite(cfg.undockedW,cfg.file,"nControl","UndockedW")
+	IniWrite(cfg.undockedH,cfg.file,"nControl","UndockedH")
 
 	IniWrite(ui.app2path.text,cfg.file,"nControl","app2path")
 	IniWrite(ui.app2filename.text,cfg.file,"nControl","app2filename")
@@ -407,49 +439,50 @@ WriteConfig() {
 	IniWrite(ui.app1filename.text,cfg.file,"nControl","app1filename")
 
 	IniWrite(cfg.gameAudioEnabled,cfg.file,"Audio","gameAudioEnabled")
-	IniWrite(cfg.MicName,cfg.file,"Audio","Mic")
-	IniWrite(cfg.SpeakerName,cfg.file,"Audio","Speaker")
-	IniWrite(cfg.HeadsetName,cfg.file,"Audio","Headset")
+	IniWrite(cfg.micName,cfg.file,"Audio","Mic")
+	IniWrite(cfg.speakerName,cfg.file,"Audio","Speaker")
+	IniWrite(cfg.headsetName,cfg.file,"Audio","Headset")
 	IniWrite(cfg.micVolume,cfg.file,"Audio","MicVolume")
 	IniWrite(cfg.speakerVolume,cfg.file,"Audio","SpeakerVolume")
-	IniWrite(cfg.HeadsetVolume,cfg.file,"Audio","HeadsetVolume")
-	IniWrite(cfg.Mode,cfg.file,"Audio","Mode")
+	IniWrite(cfg.headsetVolume,cfg.file,"Audio","HeadsetVolume")
+	IniWrite(cfg.mode,cfg.file,"Audio","Mode")
 
 	if (ui.themeResetScheduled) {
 		FileDelete(cfg.themeFile)
 		FileAppend(ui.defaultThemes,cfg.themeFile)
 		ui.themeResetSchedule := false
 	} else {
-		IniWrite(ui.ThemeDDL.Text,cfg.file,"Interface","Theme")
-		ThemeListString := ""
-		Loop cfg.ThemeList.Length {
-			ThemeListString .= cfg.ThemeList[A_Index] ","
+		IniWrite(ui.themeDDL.text,cfg.file,"Interface","Theme")
+		themeListString := ""
+		Loop cfg.themeList.Length {
+			themeListString .= cfg.themeList[A_Index] ","
 		}
-		ThemeListString := rtrim(ThemeListString,",")
-		IniWrite(ThemeListString,cfg.themeFile,"Interface","ThemeList")
-		IniWrite(cfg.ThemeBright2Color,cfg.themeFile,"Custom","ThemeBright2Color")
-		IniWrite(cfg.ThemeBright1Color,cfg.themeFile,"Custom","ThemeBright1Color")
-		IniWrite(cfg.ThemeDark2Color,cfg.themeFile,"Custom","ThemeDark2Color")
-		IniWrite(cfg.ThemeDark1Color,cfg.themeFile,"Custom","ThemeDark1Color")
-		IniWrite(cfg.ThemeBorderDarkColor,cfg.themeFile,"Custom","ThemeBorderDarkColor")
-		IniWrite(cfg.ThemeBorderLightColor,cfg.themeFile,"Custom","ThemeBorderLightColor")
-		IniWrite(cfg.ThemeBackgroundColor,cfg.themeFile,"Custom","ThemeBackgroundColor")
-		IniWrite(cfg.ThemeFont1Color,cfg.themeFile,"Custom","ThemeFont1Color")
-		IniWrite(cfg.ThemeFont2Color,cfg.themeFile,"Custom","ThemeFont2Color")
-		IniWrite(cfg.ThemeFont3Color,cfg.themeFile,"Custom","ThemeFont3Color")
-		IniWrite(cfg.ThemeFont4Color,cfg.themeFile,"Custom","ThemeFont4Color")
-		IniWrite(cfg.ThemePanel1Color,cfg.themeFile,"Custom","ThemePanel1Color")
-		IniWrite(cfg.ThemePanel3Color,cfg.themeFile,"Custom","ThemePanel3Color")
-		IniWrite(cfg.ThemePanel2Color,cfg.themeFile,"Custom","ThemePanel2Color")
-		IniWrite(cfg.ThemePanel4Color,cfg.themeFile,"Custom","ThemePanel4Color")
-		IniWrite(cfg.ThemeEditboxColor,cfg.themeFile,"Custom","ThemeEditboxColor")
-		IniWrite(cfg.ThemeProgressColor,cfg.themeFile,"Custom","ThemeProgressColor")
-		IniWrite(cfg.ThemeDisabledColor,cfg.themeFile,"Custom","ThemeDisabledColor")
-		IniWrite(cfg.ThemeButtonOnColor,cfg.themeFile,"Custom","ThemeButtonOnColor")
-		IniWrite(cfg.ThemeButtonReadyColor,cfg.themeFile,"Custom","ThemeButtonReadyColor")
-		IniWrite(cfg.ThemeButtonAlertColor,cfg.themeFile,"Custom","ThemeButtonAlertColor")
-	
+		themeListString := rtrim(themeListString,",")
+		IniWrite(themeListString,cfg.themeFile,"Interface","ThemeList")
+		IniWrite(cfg.themeBright2Color,cfg.themeFile,"Custom","ThemeBright2Color")
+		IniWrite(cfg.themeBright1Color,cfg.themeFile,"Custom","ThemeBright1Color")
+		IniWrite(cfg.themeDark2Color,cfg.themeFile,"Custom","ThemeDark2Color")
+		IniWrite(cfg.themeDark1Color,cfg.themeFile,"Custom","ThemeDark1Color")
+		IniWrite(cfg.themeBorderDarkColor,cfg.themeFile,"Custom","ThemeBorderDarkColor")
+		IniWrite(cfg.themeBorderLightColor,cfg.themeFile,"Custom","ThemeBorderLightColor")
+		IniWrite(cfg.themeBackgroundColor,cfg.themeFile,"Custom","ThemeBackgroundColor")
+		IniWrite(cfg.themeFont1Color,cfg.themeFile,"Custom","ThemeFont1Color")
+		IniWrite(cfg.themeFont2Color,cfg.themeFile,"Custom","ThemeFont2Color")
+		IniWrite(cfg.themeFont3Color,cfg.themeFile,"Custom","ThemeFont3Color")
+		IniWrite(cfg.themeFont4Color,cfg.themeFile,"Custom","ThemeFont4Color")
+		IniWrite(cfg.themePanel1Color,cfg.themeFile,"Custom","ThemePanel1Color")
+		IniWrite(cfg.themePanel3Color,cfg.themeFile,"Custom","ThemePanel3Color")
+		IniWrite(cfg.themePanel2Color,cfg.themeFile,"Custom","ThemePanel2Color")
+		IniWrite(cfg.themePanel4Color,cfg.themeFile,"Custom","ThemePanel4Color")
+		IniWrite(cfg.themeEditboxColor,cfg.themeFile,"Custom","ThemeEditboxColor")
+		IniWrite(cfg.themeProgressColor,cfg.themeFile,"Custom","ThemeProgressColor")
+		IniWrite(cfg.themeDisabledColor,cfg.themeFile,"Custom","ThemeDisabledColor")
+		IniWrite(cfg.themeButtonOnColor,cfg.themeFile,"Custom","ThemeButtonOnColor")
+		IniWrite(cfg.themeButtonReadyColor,cfg.themeFile,"Custom","ThemeButtonReadyColor")
+		IniWrite(cfg.themeButtonAlertColor,cfg.themeFile,"Custom","ThemeButtonAlertColor")
 		IniWrite(cfg.holdToCrouchEnabled,cfg.file,"game","HoldToCrouch")
+		IniWrite(cfg.alwaysRunEnabled,cfg.file,"Game","AlwaysRun")
+		IniWrite(cfg.alwaysRun_runKey,cfg.file,"Game","AlwaysRunKey")
 	}
 	
 	ui.MainGui.GetPos(&GuiX,&GuiY,,)
@@ -489,9 +522,9 @@ WriteConfig() {
 	iniWrite(cfg.towerInterval,cfg.file,"AFK","TowerInterval")
 	iniWrite(cfg.CelestialTowerEnabled,cfg.file,"AFK","CelestialTowerEnabled")
 	IniWrite(ui.AutoClickerSpeedSlider.Value,cfg.file,"AFK","AutoClickerSpeed")
-	IniWrite(ui.Win1ClassDDL.Text,cfg.file,"AFK","Win1Class")
-	if (ui.Win2ClassDDL.Text != "N/A")
-		IniWrite(ui.Win2ClassDDL.Text,cfg.file,"AFK","Win2Class")
+	IniWrite(ui.win1classDDL.value,cfg.file,"AFK","Win1Class")
+	if (ui.win2ClassDDL.Text != "N/A")
+		IniWrite(ui.win2classDDL.value,cfg.file,"AFK","Win2Class")
 	if !(DirExist("./Logs"))
 	{
 		DirCreate("./Logs")
@@ -506,7 +539,11 @@ WriteConfig() {
 }
 
 
-
+runApp(appName) {
+	global
+	For app in ComObject('Shell.Application').NameSpace('shell:AppsFolder').Items
+	(app.Name = appName) && RunWait('explorer shell:appsFolder\' app.Path,,,&appPID)
+}
 
 getClick(&clickX,&clickY,&activeWindow) {
 	DialogBox("Click to get information about a pixel")
@@ -668,7 +705,8 @@ exitFunc(ExitReason,ExitCode) {
 	Return
 }
 
-runApp(appName) { 
- For app in ComObject('Shell.Application').NameSpace('shell:AppsFolder').Items
-  (app.Name = appName) && RunWait('explorer shell:appsFolder\' app.Path)
+restartApp(*) {
+	reload()
 }
+
+

@@ -20,17 +20,31 @@ GetTaskbarHeight()
 
 WM_WINDOWPOSCHANGED(wParam, lParam, msg, Hwnd)
 {
-	if ((ui.AfkDocked) || !(ui.AfkAnchoredToGui)) && (Hwnd == ui.AfkGui.Hwnd) {
-		WinGetPos(&AfkGuiX,&AfkGuiY,,,ui.afkGui)
-		ui.titleBarButtonGui.Move(AfkGuiX+187,AfkGuiY-5)
-	} else {
-		if (Hwnd = ui.MainGui.Hwnd)
-		{
-			ui.MainGui.GetPos(&winX,&winY,,)
-			ui.AfkGui.Move(winX+40,winY+35,,)
-			ui.titleBarButtonGui.Move(winX+1,WinY-5)
-			; ui.opsGui.Move(winX,winY)
-		} 	
+	try {
+		if ((ui.AfkDocked) || !(ui.AfkAnchoredToGui)) && (Hwnd == ui.AfkGui.Hwnd) {
+			WinGetPos(&AfkGuiX,&AfkGuiY,,,ui.afkGui)
+			ui.titleBarButtonGui.Move(AfkGuiX+187,AfkGuiY-5)
+		} else {
+			if (Hwnd = ui.MainGui.Hwnd)
+			{
+				ui.MainGui.GetPos(&winX,&winY,,)
+				ui.AfkGui.Move(winX+40,winY+35,,)
+				ui.titleBarButtonGui.Move(winX+1,WinY-5)
+				ui.gameSettingsGui.move(winx+35,winy+35)
+				; ui.opsGui.Move(winX,winY)
+			} 
+		
+			if (Hwnd == ui.dividerGui.hwnd) {
+				MonitorGetWorkArea(cfg.nControlMonitor, &Left, &Top, &Right, &Bottom)
+				winGetPos(&divX,&divY,&divW,&divH,ui.dividerGui)
+				ui.dividerGui.move(Left,,Right-Left,)	
+
+				winMove(,,,divY,"ahk exe " ui.app1filename.text)
+				winMove(,divY,,,"ahk_exe " ui.app2filename.text)
+			}
+			
+			
+		}
 	}
 }
 
@@ -41,7 +55,7 @@ WM_LBUTTONDOWN_callback(*) {
 ;###########MOUSE EVENTS##############
 WM_LBUTTONDOWN(wParam, lParam, msg, Hwnd) {
 	;ShowMouseClick()
-	if (Hwnd = ui.MainGui.hwnd) || (Hwnd = ui.titleBarButtonGui.Hwnd)
+	if (Hwnd = ui.MainGui.hwnd) || (Hwnd = ui.titleBarButtonGui.Hwnd) || (hwnd == ui.dividerGui.hwnd) 
 		PostMessage("0xA1",2)
 }
 
@@ -51,7 +65,7 @@ wmAfkLButtonDown(wParam, lParam, msg, hwnd) {
 }
 
 WM_MOUSEMOVE(wParam, lParam, msg, Hwnd) {
-    static prevHwnd := 0
+	static prevHwnd := 0
     if (Hwnd != PrevHwnd)
     {
         text := ""
@@ -145,3 +159,19 @@ ChangeWindowFocus()
 }
 
 
+; Gui +LastFound 
+; hWnd := WinExist()
+; DllCall( "RegisterShellHookWindow", UInt,Hwnd )
+; MsgNum := DllCall( "RegisterWindowMessage", Str,"SHELLHOOK" )
+; OnMessage( MsgNum, "ShellMessage" )
+; Return
+
+; ShellMessage( wParam,lParam )
+; {
+ ; WinGetTitle, title, ahk_id %lParam%
+ ; If (wParam=4) { ;HSHELL_WINDOWACTIVATED
+  ; ToolTip WinActivated`n%Title%
+  ; sleep 1000
+  ; ToolTip
+ ; }
+; }

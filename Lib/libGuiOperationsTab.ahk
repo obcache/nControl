@@ -19,16 +19,12 @@ if (InStr(A_LineFile,A_ScriptFullPath))
 } ;End Declarations
 
 
-
-GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
-	afk.DataRow 		:= Array()
-	ui.ProfileList 		:= Array()
-	ui.ProfileListStr 	:= ""
+populateClassList() {
+	ui.ProfileList 			:= Array()
+	ui.ProfileListStr 		:= ""
 	Loop read, cfg.AfkDataFile
 	{
-		LineNumber := A_Index
-		Afk.DataColumn := Array()
-		Loop parse, A_LoopReadLine, "CSV"
+		Loop parse, A_LoopReadLine, "CSV" 
 		{
 			if (A_Index == 1 && !(InStr(ui.ProfileListStr,A_LoopField)))
 			{
@@ -36,11 +32,12 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 				ui.ProfileList.Push(A_LoopField)
 			}
 		}
-		
 	}
-	
-	debugLog("Finished Reading AfkData File")
-	
+}
+
+GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
+	global
+	refreshAfkRoutine()
 	ui.MainGuiTabs.UseTab("Sys")
 	ui.MainGui.SetFont("s14","Calibri Thin")
 
@@ -50,10 +47,10 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 	
 
 	ui.MainGui.SetFont("s12 c" cfg.ThemeFont1Color,"Calibri Thin")
-	ui.OpsClockModeLabel := ui.MainGui.AddText("x+4 ys+2 section w48 h23 Background" cfg.ThemePanel2Color," Clock")
+	ui.OpsClockModeLabel := ui.MainGui.AddText("x+2 ys+2 section w48 h22 Background" cfg.ThemePanel2Color," Clock")
 	ui.OpsClockModeLabel.SetFont("s8 c" cfg.ThemeFont2Color,"Ariel Bold")
 	
-	ui.OpsClock := ui.MainGui.AddText("x+0 ys w120 Right h23 Background" cfg.ThemePanel2Color " c" cfg.ThemeFont2Color,)
+	ui.OpsClock := ui.MainGui.AddText("x+0 ys w120 Right h22 Background" cfg.ThemePanel2Color " c" cfg.ThemeFont2Color,)
 	ui.OpsClock.SetFont("s16","Orbitron")
 	ui.OpsClock.OnEvent("Click",ChangeClockMode)
 	ui.OpsClock.OnEvent("ContextMenu",ShowClockMenu)
@@ -71,7 +68,7 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 	ui.ButtonDebug.OnEvent("Click",toggleConsole)		
 
 	ui.RefreshWindowHandlesButton := ui.MainGui.AddPicture("x+1 ys section w27 h27 Background" cfg.ThemeFont1Color, "./Img/button_refresh.png")	
-	ui.RefreshWindowHandlesButton.OnEvent("Click",RefreshWinHwnd)
+	ui.RefreshWindowHandlesButton.OnEvent("Click",restartApp)
 	ui.RefreshWindowHandlesButton.ToolTip := "Rescan for windows matching the selected game profile."
 
 	ui.ButtonHelp := ui.MainGui.AddPicture("ys w27 h27 section Background" cfg.ThemeButtonReadyColor,"./Img/button_help_ready.png")
@@ -128,24 +125,26 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 		ui.Win2EnabledToggle := ui.MainGui.AddPicture("xs section w69 h25 Background" cfg.ThemeButtonReadyColor, cfg.toggleOff)
 		
 		ui.opsWin1AfkStatus := ui.MainGui.AddText("xs-429 section w45 h30 Background" cfg.ThemePanel1Color,"")
+		ui.opsWin1AfkStatus.setFont("s14")
 		ui.opsWin1AfkIcon := ui.MainGui.AddPicture("ys section w25 h30 Background" cfg.ThemePanel1Color,"./Img/sleep_icon.png")
 
-		ui.Win1ClassDDL := ui.MainGui.AddDDL("ys-1 x+0 w156 r4 AltSubmit choose3 Background" cfg.ThemeEditBoxColor, ui.ProfileList)
-		ui.Win1ClassDDL.SetFont("s11")
-		ui.Win1ClassDDL.OnEvent("Change",RefreshWin1AfkRoutine)
+		ui.Win1ClassDDL := ui.MainGui.AddDDL("ys-1 x+0 w156 r6 AltSubmit choose" cfg.win1class " Background" cfg.ThemeEditBoxColor, ui.ProfileList)
+		ui.Win1ClassDDL.SetFont("s14")
+		ui.Win1ClassDDL.OnEvent("Change",opsWin1ClassChange)
 		PostMessage("0x153", -1, 26,, "AHK_ID " ui.Win1ClassDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153
 		PostMessage("0x153", 0, 26,, "AHK_ID " ui.Win1ClassDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153	
 		ui.OpsAfkButton := ui.MainGui.AddPicture("ys x+2 w45 h48 section Background" cfg.ThemeButtonReadyColor,"./Img/button_afk_ready.png")
 		ui.OpsAfkButton.OnEvent("Click",ToggleAFK)
 		ui.OpsAfkButton.ToolTip := "Toggle AFK"
 	
-		ui.Win2ClassDDL := ui.MainGui.AddDDL("x+3 ys-1 w152 r4 section AltSubmit choose3 Background" cfg.ThemeEditBoxColor, ui.ProfileList)
-		ui.Win2ClassDDL.SetFont("s11")
-		ui.Win2ClassDDL.OnEvent("Change",RefreshWin2AfkRoutine)
+		ui.Win2ClassDDL := ui.MainGui.AddDDL("x+3 ys-1 w152 r6 section AltSubmit choose" cfg.win2class " Background" cfg.ThemeEditBoxColor, ui.ProfileList)
+		ui.Win2ClassDDL.SetFont("s14")
+		ui.Win2ClassDDL.OnEvent("Change",opsWin2ClassChange)
 		PostMessage("0x153", -1, 26,, "AHK_ID " ui.Win2ClassDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153
 		PostMessage("0x153", 0, 26,, "AHK_ID " ui.Win2ClassDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153		
 		ui.opsWin2AfkIcon := ui.MainGui.AddPicture("ys+1 w25 h30 section Background" cfg.ThemePanel1Color,"./Img/sleep_icon.png")
 		ui.opsWin2AfkStatus := ui.MainGui.AddText("x+0 ys section w50 h30 +Background" cfg.ThemePanel1Color,"")
+		UI.opsWin2AfkStatus.setFont("s14")
 
 		ui.autoFireWin1Button := ui.MainGui.AddPicture("x36 y137 section w30 h30 Disabled Background" cfg.ThemeButtonReadyColor,"./Img/button_autoFire1_ready.png")
 		ui.autoFireWin1Button.Tooltip := "Window1 AutoFire"
@@ -155,13 +154,13 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 		ui.OpsAntiIdle1Button.OnEvent("Click",ToggleAntiIdle1)
 		ui.OpsAntiIdle1Button.ToolTip := "Toggle Anti-Idle"
 		
-		ui.OpsProgress1 := ui.MainGui.AddProgress("ys section w160 h30 c" cfg.ThemeFont1Color " Smooth Range0-270 Background" cfg.ThemePanel1Color,0)	
+		ui.OpsProgress1 := ui.MainGui.AddProgress("ys section w158 h28 c" cfg.ThemeFont1Color " Smooth Range0-" cfg.towerInterval " Background" cfg.ThemePanel1Color,0)	
 	
-		ui.OpsTowerButton := ui.MainGui.AddPicture("x+-1 ys+17 w45 h48 section Background" cfg.ThemeButtonReadyColor,"./Img/button_tower_ready.png")
+		ui.OpsTowerButton := ui.MainGui.AddPicture("x+2 ys+18 w45 h47 section Background" cfg.ThemeButtonReadyColor,"./Img/button_tower_ready.png")
 		ui.OpsTowerButton.OnEvent("Click",ToggleTower)
 		ui.OpsTowerButton.ToolTip := "Toggle Tower Timer + AFK"
 	
-		ui.OpsProgress2 := ui.MainGui.AddProgress("ys-16 section w170 h30 c" cfg.ThemeFont1Color " Smooth Range0-270 Background" cfg.ThemePanel1Color,0)	
+		ui.OpsProgress2 := ui.MainGui.AddProgress("x+3 ys-17 section w167 h28 c" cfg.ThemeFont1Color " Smooth Range0-" cfg.towerInterval " Background" cfg.ThemePanel1Color,0)	
 
 		ui.OpsAntiIdle2Button := ui.MainGui.AddPicture("x+0 ys w28 h28 section Background" cfg.ThemeButtonReadyColor,"./Img/button_antiIdle_ready.png")
 		ui.OpsAntiIdle2Button.OnEvent("Click",ToggleAntiIdle2)
@@ -177,29 +176,22 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 		ui.OpsStatus2 := ui.MainGui.AddPicture("x+47 ys w100 h40 section Background" cfg.ThemeButtonReadyColor,"./Img/label_timer_off.png")  ; XX & YY serve to auto-size the window.
 		ui.OpsStatusRightTrim := ui.mainGui.AddPicture("ys w15 h40","./Img/label_right_trim.png")
 
-		; ui.opsGui := Gui()
-		; ui.opsGui.Name := "nControlMain"
-		; ui.opsGui.BackColor := ui.TransparentColor
-		; ui.opsGui.Color := ui.TransparentColor
-		; ui.opsGui.MarginX := 5
-		; ui.opsGui.Opt("-Caption -Border +AlwaysOnTop +ToolWindow +0x4000000 +Owner" ui.MainGui.Hwnd)
-		; ui.Win1EnabledToggle := ui.opsGui.AddPicture("x28 y84 section w80 h25 Background" cfg.ThemeButtonReadyColor, cfg.toggleOff)
+
 		ui.Win1EnabledToggle.OnEvent("Click",ToggleGame1Status)
 		ui.Win1EnabledToggle.ToolTip := "Toggle to have this window ignored by nControl"
-		; ui.Win2EnabledToggle := ui.opsGui.AddPicture("ys x+350 section w80 h25 Background" cfg.ThemeButtonReadyColor, cfg.toggleOff)
+
 		ui.Win2EnabledToggle.OnEvent("Click",ToggleGame2Status)
 		ui.Win2EnabledToggle.ToolTip := "Toggle to have this window ignored by nControl"
 		
-		; WinSetTransColor(ui.TransparentColor,ui.opsGui)
-		; WinSetTransparent(0,ui.opsGui)
-		; ui.opsGui.show("x" cfg.GuiX " y" cfg.GuiY " w" cfg.GuiW+5 " h" cfg.GuiH)
 
-		;drawGridLines()
+
+
 		drawOpsOutlines()
-		ui.Win1ClassDDL.Choose(1)
-		ui.Win2ClassDDL.Choose(2)
+		;msgbox(cfg.win1class '`n' cfg.win2class)
+		ui.Win1ClassDDL.Choose(ui.profileList[cfg.win1class])
+		ui.Win2ClassDDL.Choose(ui.profileList[cfg.win2class])
 
-		; RefreshWin1AfkRoutine()
+		RefreshAfkRoutine()
 		; RefreshWin2AfkRoutine()	
 	} ;End GameWindow Gui Controls
 }
@@ -210,53 +202,7 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 
 
 
-refreshWin1AfkRoutine(*) {
-	try
-	{
-		ui.Win1AfkRoutine.Text := ""
-		
-		Afk.DataRow := Array()
-		ui.ProfileList := Array()
-		ui.ProfileListStr := ""
-		Loop read, cfg.AfkDataFile
-		{
-			LineNumber := A_Index
-			Afk.DataColumn := Array()
-			Loop parse, A_LoopReadLine, "CSV"
-			{
-				if (A_Index == 1 && (ui.Win1ClassDDL.Text == A_LoopField))
-				{
-					ui.Win1AfkRoutine.Text .= "  " A_LoopReadLine "`n"
-				}
-			}
-			
-		}
-	}
-}
 
-refreshWin2AfkRoutine(*) {
-	try
-	{
-		ui.Win2AfkRoutine.Text := ""
-		
-		Afk.DataRow := Array()
-		ui.ProfileList := Array()
-		ui.ProfileListStr := ""
-		Loop read, cfg.AfkDataFile
-		{
-			LineNumber := A_Index
-			Afk.DataColumn := Array()
-			Loop parse, A_LoopReadLine, "CSV"
-			{
-				if (A_Index == 1 && (ui.Win2ClassDDL.Text == A_LoopField))
-				{
-					ui.Win2AfkRoutine.Text .= "  " A_LoopReadLine "`n"
-				}
-			}
-			
-		}
-	}
-}
 
 
 	ToggleHelp(*) {
@@ -280,8 +226,11 @@ refreshWin2AfkRoutine(*) {
 		ui.HelpPng.OnEvent("Click",ToggleHelp)
 		ui.HelpGui.Opt("-Caption AlwaysOnTop +Owner" ui.MainGui.Hwnd)
 		ui.MainGui.Opt("Disabled")
-		WinSetTransparent(200,ui.DisableGui)		
-
+		WinSetTransparent(200,ui.DisableGui)
+		
+		
+		ui.BuildNumber :=ui.HelpGui.AddText("x900 y15 w300 h25 BackgroundTrans","Build: " A_FileVersion)
+		ui.buildNumber.setFont("s10 cbbaa99")
 		ui.DisableGui.Show("x" GuiX " y" GuiY-3 " w" GuiW " h" GuiH+3)
 		ui.HelpGui.Show("w1000 h454")
 	}
@@ -483,6 +432,7 @@ refreshWin2AfkRoutine(*) {
 				ui.Win%WinNumber%HwndText.Opt("-Disabled Background" cfg.ThemePanel2Color)
 				ui.Win%WinNumber%Name.Opt("-Disabled Background" cfg.ThemePanel2Color)
 				ui.Win%WinNumber%ClassDDL.Opt("-Disabled")
+				ui.afkWin%WinNumber%ClassDDL.opt("-disabled")
 				ui.autoFireWin%WinNumber%Button.Opt("-Disabled Background" cfg.ThemeButtonReadyColor)
 				ui.autoFireWin%WinNumber%Button.Value := "./Img/button_autoFire" A_WinNumber "_ready.png"
 				;ui.Win%WinNumber%EnabledToggle.ToolTip := ((WinNumber == 1) ? "[Left]" : "[Right]") " [" WinGetTitle("ahk_id " ui.Win%WinNumber%Hwnd) "] [" ui.Win%WinNumber%Hwnd "] [" WinGetProcessName("ahk_id " ui.Win%WinNumber%Hwnd) "]"
@@ -491,7 +441,8 @@ refreshWin2AfkRoutine(*) {
 				ui.Win%WinNumber%ProcessName.Opt("+Disabled Background" cfg.ThemePanel4Color)
 				ui.Win%WinNumber%HwndText.Opt("+Disabled Background" cfg.ThemePanel4Color)
 				ui.Win%WinNumber%Name.Opt("+Disabled Background" cfg.ThemePanel4Color)
-				ui.Win%WinNumber%ClassDDL.Opt("+Disabled")	
+				ui.Win%WinNumber%ClassDDL.Opt("+Disabled")
+				ui.afkWin%winNumber%ClassDDL.opt("+Disabled")
 				ui.autoFireWin%WinNumber%Button.Opt("Disabled Background" cfg.ThemeButtonDisabledColor)
 				ui.autoFireWin%WinNumber%Button.Value := "./Img/button_autoFire" A_WinNumber "_disabled.png"
 			}
@@ -500,17 +451,15 @@ refreshWin2AfkRoutine(*) {
 	}
 		
 	refreshWinHwnd(*) { ;Performs Window Discovery, Game Identification and Gui Data Updates
-		 Thread("NoTimers")
+	 Thread("NoTimers")
 		debugLog("Refreshing Game Window HWND IDs")
-		
+	
 		ui.GameWindowsListBox.Delete()
 		ui.AllGameWindowsList := WinGetList(ui.GameDDL.Text)
-
 		ui.FilteredGameWindowsList := Array()
 		
 		Loop 2
 		{
-			;ui.Win%A_Index%Hwnd := ""
 			ui.Win%A_Index%Name.Text := "  Game  "
 			ui.Win%A_Index%Name.SetFont("c" cfg.ThemeFont4Color)
 			ui.Win%A_Index%Name.Opt("Background" cfg.ThemePanel4Color)
@@ -524,11 +473,7 @@ refreshWin2AfkRoutine(*) {
 			ui.autoFireWin%A_Index%Button.Value := "./Img/button_autoFire" A_Index "_on.png"
 		}
 
-
-
-		Loop ui.AllGameWindowsList.Length
-		{
-			;MsgBox(ui.AllGameWindowsList[A_Index])
+		Loop ui.AllGameWindowsList.Length {
 			if (WinGetProcessName("ahk_id " ui.AllGameWindowsList[A_Index]) != "Windows10Universal.exe") 
 			&& (WinGetProcessName("ahk_id " ui.AllGameWindowsList[A_Index]) != "explorer.exe") 
 			&& (WinGetProcessName("ahk_id " ui.AllGameWindowsList[A_Index]) != "RobloxPlayerLauncher.exe")
@@ -543,7 +488,7 @@ refreshWin2AfkRoutine(*) {
 		Win1Y := "",		Win2Y := ""
 		Win1W := "",		Win2W := ""
 		Win1H := "",		Win2H := ""
-		
+	
 		textList := ""
 		Loop ui.FilteredGameWindowsList.Length {
 			textList .= ui.FilteredGameWindowsList[A_Index] ", "
@@ -555,46 +500,43 @@ refreshWin2AfkRoutine(*) {
 			WinGetPos(&Win%A_Index%X,&Win%A_Index%Y,&Win%A_Index%W,&Win%A_Index%H,"ahk_id " ui.FilteredGameWindowsList[A_Index])
 		}
 
-
-
-		
 		Loop ui.FilteredGameWindowsList.Length
 		{	
-		WinNumber := 
-			(Win1X >  Win2X) 
-			? ((A_Index == 1) 
-				? 2 
-				: 1) 
-			: A_Index
-		WinNumber := 
-			(cfg.HwndSwapEnabled) 
-			? ((WinNumber == 1) 
-				? 2 
-				: 1) 
-			: WinNumber			
+			winNumber := 
+				(Win1X >  Win2X) 
+				? ((A_Index == 1) 
+					? 2 
+					: 1) 
+				: A_Index
+			
+			winNumber := 
+				(cfg.hwndSwapEnabled) 
+				? ((winNumber == 1) 
+					? 2 
+					: 1) 
+				: winNumber			
 
-			cfg.Win%WinNumber%Enabled := true
-			ui.Win%WinNumber%Hwnd := ui.FilteredGameWindowsList[A_Index]
-			ui.Win%WinNumber%HwndText.Text := "  " ui.Win%WinNumber%Hwnd "  "
-			ui.Win%WinNumber%Name.Text := "  " WinGetTitle("ahk_id " ui.FilteredGameWindowsList[A_Index]) "  "
-			ui.Win%WinNumber%ProcessName.Text := "  " WinGetProcessName("ahk_id " ui.Win%WinNumber%Hwnd) "  "
+			cfg.win%WinNumber%Enabled := true
+			ui.win%WinNumber%Hwnd := ui.FilteredGameWindowsList[A_Index]
+			ui.win%WinNumber%HwndText.Text := "  " ui.Win%WinNumber%Hwnd "  "
+			ui.win%WinNumber%Name.Text := "  " WinGetTitle("ahk_id " ui.FilteredGameWindowsList[A_Index]) "  "
+			ui.win%WinNumber%ProcessName.Text := "  " WinGetProcessName("ahk_id " ui.Win%WinNumber%Hwnd) "  "
 	
-			if !(cfg.Win%WinNumber%Disabled)
-			{
+			if !(cfg.win%WinNumber%Disabled) {
+				ui.win%WinNumber%EnabledToggle.Opt("Background" cfg.themeButtonOnColor)
+				ui.win%WinNumber%EnabledToggle.Value := cfg.toggleOn
 
-				ui.Win%WinNumber%EnabledToggle.Opt("Background" cfg.ThemeButtonOnColor)
-				ui.Win%WinNumber%EnabledToggle.Value := cfg.toggleOn
-
-				opsTextControls := array()
-				opsTextControls := ["ProcessName","Name","HwndText"]
+				opsTextControls 	:= array()
+				opsTextControls 	:= ["ProcessName","Name","HwndText"]
+				
 				Loop opsTextControls.Length {
-					ui.Win%WinNumber%%opsTextControls[A_Index]%.SetFont("c" cfg.ThemeFont2Color)
-					ui.Win%WinNumber%%opsTextControls[A_Index]%.Opt("Background" cfg.ThemePanel2Color)
-					ui.Win%WinNumber%%opsTextControls[A_Index]%.Redraw()
+					ui.win%WinNumber%%opsTextControls[A_Index]%.setFont("c" cfg.themeFont2Color)
+					ui.win%WinNumber%%opsTextControls[A_Index]%.opt("Background" cfg.themePanel2Color)
+					ui.win%WinNumber%%opsTextControls[A_Index]%.redraw()
 				}
 				
-				ui.Win%WinNumber%ClassDDL.Opt("-Disabled")
-				
+				ui.win%WinNumber%ClassDDL.Opt("-Disabled")
+				ui.afkWin%WinNumber%ClassDDL.Opt("-Disabled")
 				; ui.Win%WinNumber%ProcessName.SetFont("c" cfg.ThemeFont2Color)
 				; ui.Win%WinNumber%Name.SetFont("c" cfg.ThemeFont2Color)
 				; ui.Win%WinNumber%HwndText.SetFont("c" cfg.ThemeFont2Color)
@@ -608,25 +550,21 @@ refreshWin2AfkRoutine(*) {
 				ui.autoFireWin%WinNumber%Button.Value := "./Img/button_autoFire" WinNumber "_ready.png"				
 				ui.win%WinNumber%enabledToggle.Opt("-Disabled Background" cfg.ThemeButtonOnColor)
 				ui.win%WinNumber%enabledToggle.Value := cfg.toggleOn
-				
-				
-				;ui.Win%WinNumber%EnabledToggle.ToolTip := ((WinNumber == 1) ? "[Left]" : "[Right]") " [" WinGetTitle("ahk_id " ui.Win%WinNumber%Hwnd) "] [" ui.Win%WinNumber%Hwnd "] [" WinGetProcessName("ahk_id " ui.Win%WinNumber%Hwnd) "]"
 			} else {
 				ui.Win%WinNumber%ProcessName.SetFont("c" cfg.ThemeFont4Color)
 				ui.Win%WinNumber%Name.SetFont("c" cfg.ThemeFont4Color)
 				ui.Win%WinNumber%HwndText.SetFont("c" cfg.ThemeFont4Color)
-				ui.Win%WinNumber%ClassDDL.SetFont("c" cfg.ThemeFont4Color)
+				ui.Win%WinNumber%ClassDDL.SetFont("c" cfg.ThemeFont1Color)
+				ui.afkWin%WinNumber%ClassDDl.setFont("c" cfg.themeFont1Color)
 
 				ui.Win%WinNumber%ProcessName.Opt("Background" cfg.ThemePanel4Color)
 				ui.Win%WinNumber%HwndText.Opt("Background" cfg.ThemePanel4Color)
 				ui.Win%WinNumber%Name.Opt("Background" cfg.ThemePanel4Color)
-				ui.Win%WinNumber%ClassDDL.Opt("+Disabled")	
+				ui.Win%WinNumber%ClassDDL.Opt("+Disabled")
+				ui.afkWin%WinNumber%ClassDDL.Opt("+Disabled")
 				ui.autoFireWin%WinNumber%Button.Opt("Disabled Background" cfg.ThemePanel4Color)
 				ui.autoFireWin%WinNumber%Button.Value := "./Img/button_autoFire" WinNumber "_disabled.png"
 			}
-			; ui.Win%WinNumber%EnabledToggle.Redraw()
-			; ui.Win%WinNumber%ProcessName.Redraw()
-			; ui.Win%WinNumber%HwndText.Redraw()
 		}
 		ui.buttonSwapHwnd.Value := cfg.HwndSwapEnabled ? "./Img/button_swapHwnd_enabled.png" : "./Img/button_swapHwnd_disabled.png"
 		ui.buttonSwapHwnd.Redraw()

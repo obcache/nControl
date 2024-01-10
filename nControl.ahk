@@ -1,4 +1,4 @@
-A_FileVersion := "3.1.6.4"
+A_FileVersion := "3.2.4.4"
 A_AppName := "nControl"
 ;@Ahk2Exe-Let FileVersion=%A_PriorLine~U)^(.+"){1}(.+)".*$~$2% 
 
@@ -61,15 +61,17 @@ LogData := ""
 CfgLoad(&cfg, &ui)
 InitGui(&cfg, &ui)
 InitConsole(&ui)
+
+
 #include <libGui>
 #include <libWinMgr>
 #include <libGlobal>
 #include <libGuiAFKTab>
-#include <libAfkFunctions>
 #include <libGuiOperationsTab>
+#include <libAfkFunctions>
 #include <libGuiSetupTab>
 #include <libGuiAppDockTab>
-#include <libGameSettings>
+#include <libGameSettingsTab>
 #include <libGuiAudioTab>
 
 #include <libGuiSystemTab>

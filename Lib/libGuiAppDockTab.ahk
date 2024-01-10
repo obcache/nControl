@@ -1,5 +1,14 @@
 #SingleInstance
+#Requires AutoHotKey v2.0+
 #Warn All, Off
+
+if (InStr(A_LineFile,A_ScriptFullPath))
+{
+	Run(A_ScriptDir "/../nControl.ahk")
+	ExitApp
+	Return
+}
+	
 
 if !(StrCompare(A_LineFile,A_ScriptFullPath))
 {
@@ -14,7 +23,7 @@ GuiDockTab(&ui)
 {
 	ui.MainGuiTabs.UseTab("Dock")
 	
-	ui.SetMonitorButton := ui.MainGui.AddPicture("x55 y40 w60 h20 section","./Img/Button_Change.png")
+	ui.SetMonitorButton := ui.MainGui.AddPicture("x35 y40 w60 h20 section","./Img/Button_Change.png")
 	ui.SetMonitorButton.OnEvent("Click", SetMonitorButtonPush)
 	ui.SetMonitorButton.ToolTip := "Selects secondary monitor to display docked apps while gaming"
 	
@@ -27,59 +36,69 @@ GuiDockTab(&ui)
 	ui.nControlMonitorText.OnEvent("Click", SetMonitorButtonPush)
 	ui.nControlMonitorText.ToolTip := "Monitor currently selected to display docked apps while gaming"
 	
-	drawOutlineMainGui(185,39,30,25,cfg.ThemeBright1Color,cfg.ThemeBright2Color,2)
+	drawOutlineMainGui(165,39,30,25,cfg.ThemeBright1Color,cfg.ThemeBright2Color,2)
 	ui.MainGui.SetFont("s14 c" cfg.ThemeFont2Color, "Calibri Bold")
 	ui.nControlMonitorUpdatedText := ui.MainGui.AddText("ys+2 w130","")
 	
 	ui.MainGui.SetFont("s14 c" cfg.ThemeFont2Color,"Calibri Bold")
-	ui.SetDockFileButton := ui.MainGui.AddPicture("x55 y90 w60 h20 section", "./Img/Button_Select.png")
+	ui.SetDockFileButton := ui.MainGui.AddPicture("x35 y90 w60 h20 section", "./Img/Button_Select.png")
 	ui.SetDockFileButton.OnEvent("Click", app2browse)
 	ui.SetDockFileButton.ToolTip := "Assigns app to dock above taskbar"
 	ui.MainGui.SetFont("s12 c" cfg.ThemeFont2Color,"Calibri")
 	ui.MainGui.AddText("ys-2","Dock App")
 	ui.MainGui.SetFont("s12 c" cfg.ThemeFont1Color, "Calibri")
-	ui.app2filename := ui.MainGui.AddText("x187 ys+0 w195 h20 Background" cfg.ThemeEditboxColor,"")
-	drawOutlineMainGui(185,87,200,25,cfg.ThemeBright1Color,cfg.ThemeBright2Color,2)
+	ui.app2filename := ui.MainGui.AddText("x167 ys+0 w195 h20 Background" cfg.ThemeEditboxColor,"")
+	drawOutlineMainGui(165,87,200,25,cfg.ThemeBright1Color,cfg.ThemeBright2Color,2)
 	ui.MainGui.SetFont("s12 c" cfg.ThemeFont2Color,"Calibri")
 	ui.MainGui.AddText("xs+3 y+5 w100 section","Path")
 	ui.MainGui.SetFont("s10 c" cfg.ThemeFont1Color, "Calibri")
-	ui.app2path := ui.MainGui.AddText("x94 ys+1 w288 h20 Background" cfg.ThemeEditboxColor,"")
-	drawOutlineMainGui(92,115,293,25,cfg.ThemeBright1Color,cfg.ThemeBright2Color,2)
+	ui.app2path := ui.MainGui.AddText("x74 ys+1 w288 h20 Background" cfg.ThemeEditboxColor,"")
+	drawOutlineMainGui(72,115,293,25,cfg.ThemeBright1Color,cfg.ThemeBright2Color,2)
 
 	ui.MainGui.SetFont("s14 c" cfg.ThemeFont2Color,"Calibri")
-	ui.SetWorkFileButton := ui.MainGui.AddPicture("x55 y+5 w60 h20 section", "./Img/Button_Select.png")
+	ui.SetWorkFileButton := ui.MainGui.AddPicture("x35 y+5 w60 h20 section", "./Img/Button_Select.png")
 	ui.SetWorkFileButton.OnEvent("Click", app1browse)
 	ui.SetWorkFileButton.ToolTip := "Assigns app to fill remainder of screen"
 	ui.MainGui.SetFont("s12 c" cfg.ThemeFont2Color,"Calibri")
 	ui.MainGui.AddText("ys-2","Dock App")
 	ui.MainGui.SetFont("s12 c" cfg.ThemeFont1Color, "Calibri")
-	ui.app1filename := ui.MainGui.AddText("x187 ys+0 w195 h20 Background" cfg.ThemeEditboxColor,"")
-	drawOutlineMainGui(185,143,200,25,cfg.ThemeBright1Color,cfg.ThemeBright2Color,2)
+	ui.app1filename := ui.MainGui.AddText("x167 ys+0 w195 h20 Background" cfg.ThemeEditboxColor,"")
+	drawOutlineMainGui(165,143,200,25,cfg.ThemeBright1Color,cfg.ThemeBright2Color,2)
 	ui.MainGui.SetFont("s12 c" cfg.ThemeFont2Color,"Calibri")
 	ui.MainGui.AddText("xs+3 y+5 w100 section","Path")
 	ui.MainGui.SetFont("s10 c" cfg.ThemeFont1Color, "Calibri")
-	ui.app1path := ui.MainGui.AddText("x94 ys+1 w288 h20 Background" cfg.ThemeEditboxColor,"")
-	drawOutlineMainGui(92,170,293,25,cfg.ThemeBright1Color,cfg.ThemeBright2Color,2)
+	ui.app1path := ui.MainGui.AddText("x74 ys+1 w288 h20 Background" cfg.ThemeEditboxColor,"")
+	drawOutlineMainGui(72,170,293,25,cfg.ThemeBright1Color,cfg.ThemeBright2Color,2)
 	; ui.button_app1select := ui.MainGui.AddPicture("ys w60 h25","./Img/button_select.png")
 	; ui.button_app1select.OnEvent("Click",app1browse)
 	; ui.button_app1select.ToolTip := "Browse for file"
 	
 	ui.MainGui.SetFont("s12 c" cfg.ThemeFont1Color,"Calibri")
-	TextDockApps := ui.MainGui.AddText("x385 y40 w100 Right section","GameDash  ")
+	TextDockApps := ui.MainGui.AddText("x355 y40 w140 Right section","GameDash ")
 	
 
-	ui.ButtonDockApps := ui.MainGui.AddPicture("ys-2 w30 h30","./Img/button_ready.png")
+	ui.ButtonDockApps := ui.MainGui.AddPicture("ys+1 w30 h20","./Img/button_up.png")
 	ui.ButtonDockApps.OnEvent("Click",DockApps)
-
-	ui.MainGui.AddText("xs y+3 section w100 Right","Snap Windows")
-	ui.snapWindows := ui.MainGui.AddPicture("ys-3 w30 h30","./Img/button_ready.png")
-	ui.snapWindows.toolTip := "Launches and Snaps Roblox Windows"
-	ui.snapWindows.OnEvent("Click",snapWindows)
+ui.MainGui.AddText("xs+40 y+3 section w100 Right","Toggle Caption ")
+	ui.toggleCaption := ui.MainGui.AddPicture("ys+1 w30 h20","./Img/button_up.png")
+	ui.toggleCaption.toolTip := "Enable/Disable the caption bar on any window."
+	ui.toggleCaption.OnEvent("Click",toggleCaption)
 	
-	ui.MainGui.AddText("xs y+4 section w100 Right","Pin App2  ")
-	ui.PinWorkAppButton := ui.MainGui.AddPicture("ys-4 w30 h30","")
-	ui.PinWorkAppButton.OnEvent("Click",TogglePinWorkApp)
-	ui.PinWorkAppButton.Value := "./Img/button_ready.png"
+	ui.MainGui.AddText("xs y+4 section w100 Right","Toggle OnTop ")
+	ui.universalOnTop := ui.MainGui.AddPicture("ys+1 w30 h20","")
+	ui.universalOnTop.OnEvent("Click",universalOnTop)
+	ui.universalOnTop.Value := "./Img/button_up.png"
+	ui.universalOnTop.toolTip := "Set any window to AlwaysOnTop"
+	 
+	; ui.MainGui.AddText("xs y+3 section w140  Right","Snap Windows")
+	; ui.snapWindows := ui.MainGui.AddPicture("ys-3 w30 h30","./Img/button_ready.png")
+	; ui.snapWindows.toolTip := "Launches and Snaps Roblox Windows"
+	; ui.snapWindows.OnEvent("Click",snapWindows)
+	
+	; ui.MainGui.AddText("xs y+4 section w140	Right","Pin App2  ")
+	; ui.PinWorkAppButton := ui.MainGui.AddPicture("ys-4 w30 h30","")
+	; ui.PinWorkAppButton.OnEvent("Click",TogglePinWorkApp)
+	; ui.PinWorkAppButton.Value := "./Img/button_ready.png"
 	 
 	ui.app1filename.text := cfg.app1filename
 	ui.app2filename.text := cfg.app2filename
@@ -88,6 +107,53 @@ GuiDockTab(&ui)
 
 }
 
+toggleCaption(*) {
+	ui.toggleCaption.value := "./img/button_down.png"
+	ui.toggleCaption.opt("background" cfg.themeButtonAlertColor)
+	SetTimer(releaseButton1,-400)
+	releaseButton1(*) {
+		ui.toggleCaption.value := "./img/button_up.png"
+		ui.toggleCaption.opt("background" cfg.themeButtonReadyColor)
+	}
+	DialogBox("Click anywhere on the window you'd like to toggle caption on.")
+	Sleep(750)
+	ClickStatus := KeyWait("LButton", "D T15")
+
+	if (ClickStatus = 0)
+	{	
+		MsgBox("A window was not selected in time.`nPlease try again.")
+		DialogBoxClose()
+	} else {
+		WinSetStyle("^0xC00000","A")
+		DialogBoxClose()
+	}
+}
+
+universalOnTop(*) {
+	ui.universalOnTop.value := "./img/button_down.png"
+	ui.universalOnTop.opt("background" cfg.themeButtonAlertColor)
+	SetTimer(releaseButton,-400)
+	releaseButton(*) {
+		ui.universalOnTop.value := "./img/button_up.png"
+	ui.universalOnTop.opt("background" cfg.themeButtonReadyColor)
+	
+	}	
+	DialogBox("Click anywhere on the window you'd like to toggle AlwaysOnTop on.")
+	Sleep(750)
+	ClickStatus := KeyWait("LButton", "D T15")
+
+	if (ClickStatus = 0)
+	{	
+		MsgBox("A window was not selected in time.`nPlease try again.")
+		DialogBoxClose()
+	} else {
+		WinSetAlwaysOnTop(-1,"A")
+		DialogBoxClose()
+	}
+}
+
+
+	
 snapWindows(*) {
 	DetectHiddenWindows(true)
 	setTimer(launchRobloxPlayer,-10)
@@ -283,9 +349,44 @@ RemoveNotice()
 {
 	ui.nControlMonitorUpdatedText.Text := ""
 }
+dockApps(*) {
+	global
+	ui.dockApp_enabled := !ui.dockApp_enabled
+	
+	if (ui.dockApp_enabled)
+	{
+		ui.ButtonDockApps.Value := "./Img/button_down.png"
+		SetTimer(UnpushButton,-500)
+		ui.buttonDockApps.Opt("Background" cfg.ThemeButtonOnColor)
+		nControl("On",&cfg)
+	} else {
+		ui.ButtonDockApps.Value := "./Img/button_down.png"
+		SetTimer(UnpushButton,-500)
+		ui.buttonDockApps.Opt("Background" cfg.ThemeButtonAlertColor)
+		nControl("Off",&cfg)
+	}
+	
+	UnpushButton(*) {
+		ui.buttonDockApps.Value := "./Img/button_up.png"
+		ui.buttonDockApps.Opt("Background" cfg.ThemeButtonReadyColor)
+	}
+}
 
+drawDivider() { 
+	MonitorGetWorkArea(cfg.nControlMonitor, &Left, &Top, &Right, &Bottom)
+	WorkAreaHeightWhenDocked :=  (Bottom - Top - cfg.DockHeight)
+	ui.dividerGui.opt("-caption")
+	ui.dividerGui.backColor := cfg.themeButtonAlertColor
+	ui.dividerGui.show("x" Left " y" Top " w" Right-Left " h8")
+	winSetTransparent(200,ui.dividerGui)
+}
+resizeDockedApps() {
+	winGetPos(&divX,&divY,&divW,&divH,ui.dividerGui)
+	
+}
 nControl(Status,&cfg)
 {
+	drawDivider()
 	hwndActiveWin := WinActive("A")
 
 	if (cfg.nControlMonitor > MonitorGetCount())
