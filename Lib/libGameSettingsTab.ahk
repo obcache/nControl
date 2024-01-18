@@ -80,8 +80,9 @@ loop cfg.gameList.length {
 	ui.d2Sliding := false
 	ui.d2HoldingRun := false
 
-	UI.alwaysRunGb := ui.gameSettingsGui.addGroupbox("x10 y0 w210 h120","Always Run")
-	ui.d2AlwaysRun := ui.gameSettingsGui.addPicture("x20 y20 w60 h25 section vd2AlwaysRun " 
+	ui.gameSettingsGui.setFont("s12")
+	UI.alwaysRunGb := ui.gameSettingsGui.addGroupbox("x10 y0 w210 h70","Always Run")
+	ui.d2AlwaysRun := ui.gameSettingsGui.addPicture("x20 y20 w60 h26 section vd2AlwaysRun " 
 		((cfg.d2AlwaysRunEnabled) 
 			? ("Background" cfg.ThemeButtonOnColor) 
 				: ("Background" cfg.themeButtonReadyColor)),
@@ -90,12 +91,12 @@ loop cfg.gameList.length {
 				: (cfg.toggleOff)))
 
 
-	ui.d2SprintKey				:= ui.gameSettingsGui.AddPicture("xs+65 ys-5 w60 h30 section","./img/keyboard_key_up.png")
-	ui.d2SprintKeyData 			:= ui.gameSettingsGui.addText("xs y+-28 w60 h20 center c" cfg.themeFont3Color " backgroundTrans",strUpper(cfg.d2SprintKey))
-	ui.d2SprintKeyLabel			:= ui.gameSettingsGui.addText("xs-2 y+10 w60 h20 center c" cfg.themeFont1Color " backgroundTrans","Sprint")
-	ui.d2CrouchKey				:= ui.gameSettingsGui.addPicture("x+2 ys w60 h30 section","./img/keyboard_key_up.png")
-	ui.d2CrouchKeyData 			:= ui.gameSettingsGui.addText("xs y+-28 w60 h20 center c" cfg.themeFont3Color " backgroundTrans",strUpper(cfg.d2CrouchKey))
-	ui.d2CrouchKeyLabel 		:= ui.gameSettingsGui.addText("xs-2 y+10 w60 h20 center c" cfg.themeFont1Color " backgroundTrans","Crouch")
+	ui.d2SprintKey				:= ui.gameSettingsGui.AddPicture("xs+67 ys+1 w60 h25 section backgroundTrans","./img/keyboard_key_up.png")
+	ui.d2SprintKeyData 			:= ui.gameSettingsGui.addText("xs y+-24 w60 h20 center c" cfg.themeFont3Color " backgroundTrans",strUpper(cfg.d2SprintKey))
+	ui.d2SprintKeyLabel			:= ui.gameSettingsGui.addText("xs-2 y+3 w60 h20 center c" cfg.themeFont1Color " backgroundTrans","Sprint")
+	ui.d2CrouchKey				:= ui.gameSettingsGui.addPicture("x+8 ys w60 h25 section backgroundTrans","./img/keyboard_key_up.png")
+	ui.d2CrouchKeyData 			:= ui.gameSettingsGui.addText("xs y+-24 w60 h20 center c" cfg.themeFont3Color " backgroundTrans",strUpper(cfg.d2CrouchKey))
+	ui.d2CrouchKeyLabel 		:= ui.gameSettingsGui.addText("xs-2 y+3 w60 h20 center c" cfg.themeFont1Color " backgroundTrans","Crouch")
 
 	ui.d2AlwaysRun.ToolTip := "Toggles holdToCrouch"
 	ui.d2SprintKey.ToolTip 		:= "Click to Assign"
