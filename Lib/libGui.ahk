@@ -37,9 +37,9 @@ initGui(&cfg, &ui) {
 	ui.MainGui.MarginX := 0
 	ui.MainGui.MarginY := 0
 	ui.MainGui.SetFont("s13 c" cfg.ThemeFont1Color,"Calibri")
-	ui.MainGuiTabs := ui.MainGui.AddTab3("x35 y1 w495 h213 Buttons -Redraw Background" cfg.ThemeBackgroundColor " -E0x200", ["Sys","AFK","Game","Dock","Setup","Audio"])
+	ui.MainGuiTabs := ui.MainGui.AddTab3("x35 y1 w495 h213 Buttons -Redraw Background" cfg.ThemeBackgroundColor " -E0x200", cfg.mainTabList)
 	ui.MainGuiTabs.OnEvent("Change",TabsChanged)
-	ui.MainGuiTabs.Choose("AFK")
+	ui.MainGuiTabs.Choose(cfg.mainTabList[3])
 	ui.MainGuiTabs.UseTab("")
 	ui.MainGui.SetFont("s12 c" cfg.ThemeFont1Color,"Calibri")
 	ui.handleBarImage := ui.MainGui.AddPicture("x0 y-2 w35 h216","./Img/handlebar_vertical.png")
@@ -59,9 +59,7 @@ initGui(&cfg, &ui) {
 	GuiSetupTab(&ui,&cfg)
 	GuiAudioTab(&ui,&cfg,&audio)
 	GuiGameTab(&ui,&cfg)
-
 	
-
 	if (FileExist("./Logs/persist.log"))
 	{
 		Loop Read, "./Logs/persist.log"
@@ -77,7 +75,7 @@ initGui(&cfg, &ui) {
 	ui.MainGui.Show("x" cfg.GuiX " y" cfg.GuiY " w562 h214 NoActivate")
 
 	ui.gameSettingsGui.show("x" cfg.GuiX+35 " y" cfg.GuiY+35 " w490 h175")
-	ui.MainGuiTabs.Choose("Sys")
+	ui.MainGuiTabs.Choose(cfg.mainTabList[cfg.activeMainTab])
 	FadeIn()
 	InitOSDGui()
 
@@ -102,6 +100,7 @@ initGui(&cfg, &ui) {
 OnMessage(0x0200, WM_MOUSEMOVE)
 OnMessage(0x0201, WM_LBUTTONDOWN)
 OnMessage(0x47, WM_WINDOWPOSCHANGED)
+
 }
 
 
@@ -201,6 +200,15 @@ initOSDGui() {
 	drawAfkOutlines()
 	ui.AfkGui.Show("x" MainGuix+45 " y" MainGuiY+35 " w280 h140 NoActivate")
 }
+
+towerToggleChanged(toggleControl,*) {
+	toggleControl.value := 
+		(cfg.%toggleControl.name%Enabled := !cfg.%toggleControl.name%Enabled)
+			? (toggleControl.Opt("Background" cfg.ThemeButtonAlertColor),"./img/towerToggle_celestial.png")
+			: (toggleControl.Opt("Background" cfg.ThemeButtonAlertColor),"./img/towerToggle_infinite.png")
+		; reload()
+}
+
 toggleChanged(toggleControl,*) {
 	toggleControl.value := 
 		(cfg.%toggleControl.name%Enabled := !cfg.%toggleControl.name%Enabled)
@@ -542,6 +550,7 @@ guiVis(guiName,isVisible:= true) {
 
 tabsChanged(*) {
 	ui.activeTab := ui.mainGuiTabs.Text
+	cfg.activeMainTab := ui.mainGuiTabs.value
 
 	guiVis(ui.afkGui,(ui.activeTab == "AFK") ? true : false)
 	guiVis(ui.gameSettingsGui,(ui.activeTab = "Game") ? true : false)	
@@ -663,8 +672,8 @@ ui.mainGuiTabs.useTab("Sys")
 	drawOutlineNamed("opsClock",ui.mainGui,66,33,171,28,cfg.ThemeBorderDarkColor,cfg.ThemeBorderDarkColor,1)		;Ops Clock
 	drawOutlineNamed("opsClock",ui.mainGui,67,34,169,26,cfg.ThemeBorderLightColor,cfg.ThemeBorderLightColor,1)	
 	drawOutlineNamed("opsToolbarOutline2",ui.mainGui,35,33,497,30,cfg.ThemeBorderLightColor,cfg.ThemeBorderLightColor,2)		;Ops Toolbar Outline
-	drawOutlineNamed("opsStatusBarRightDark",ui.mainGui,304,137,228,30,cfg.ThemeBorderDarkColor,cfg.ThemeBorderDarkColor,2)	;Status Bar
-	drawOutlineNamed("opsStatusBarRightLight",ui.mainGui,305,136,227,32,cfg.ThemeBorderLightColor,cfg.ThemeBorderLightColor,2)	;Status Bar
+	drawOutlineNamed("opsStatusBarRightDark",ui.mainGui,305,137,228,30,cfg.ThemeBorderDarkColor,cfg.ThemeBorderDarkColor,2)	;Status Bar
+	drawOutlineNamed("opsStatusBarRightLight",ui.mainGui,306,136,227,32,cfg.ThemeBorderLightColor,cfg.ThemeBorderLightColor,2)	;Status Bar
 	drawOutlineNamed("opsStatusBarLeftDark",ui.mainGui,34,137,227,30,cfg.ThemeBorderDarkColor,cfg.ThemeBorderDarkColor,2)	;Status Bar
 	drawOutlineNamed("opsStatusBarLeftLight",ui.mainGui,33,136,228,32,cfg.ThemeBorderLightColor,cfg.ThemeBorderLightColor,2)	;Status Bar
 	drawOutlineNamed("opsMiddleColumnMiddleRow",ui.mainGui,259,105,48,50,cfg.ThemeBorderLightColor,cfg.ThemeBorderLightColor,2)		;Ops Toolbar Outline

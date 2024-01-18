@@ -16,10 +16,7 @@ ui.MainGui.GetPos(,,,&GuiH)
 ToggleGuiCollapse()
 }
 
-+^Delete::
-{
-resetDefaultThemes()
-}
+
 
 ^Enter::
 {
@@ -39,6 +36,7 @@ resetDefaultThemes()
 	RobloxLauncher()
 }	
 
+;AFK Hotkeys
 !^F::
 {
 	autoFire()
@@ -67,6 +65,13 @@ resetDefaultThemes()
 !^d::
 {
 	ToggleAfkDock()
+}
+
+;GameSettings HotKeys	
+^+d::
+{
+	global
+	toggleOSD()
 }
 
 ; HotIfWinActive("ahk_exe FortniteClient-Win64-Shipping.exe")

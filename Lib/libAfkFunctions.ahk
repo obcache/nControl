@@ -85,7 +85,7 @@ if (InStr(A_LineFile,A_ScriptFullPath))
 			AntiIdle(1)
 		}
 
-		antiIdle1Off() {
+antiIdle1Off() {
 			SetTimer(AntiIdle,0)
 			SetTimer(UpdateTimer,0)
 			SetTimer2(UpdateTimer,0)
@@ -150,14 +150,16 @@ if (InStr(A_LineFile,A_ScriptFullPath))
 	}	
 
 	antiIdle(WinNumber := 0) {
-		Try
+		global
+		try {
 			ui.CurrWin := WinExist("A")
-
+		}
+		
 		CoordMode("Mouse","Client")
 		MouseGetPos(&mouseX,&mouseY)
 		
 		Loop 2 {
-			if (cfg.Win%A_Index%Enabled) && ((WinNumber == A_Index) || (WinNumber == 0)) {
+			if (winExist("ahk_id " ui.win%a_index%hwnd)) && (cfg.Win%A_Index%Enabled) && ((WinNumber == A_Index) || (WinNumber == 0)) {
 				WinActivate("ahk_id " ui.Win%A_Index%Hwnd)
 				autoFire()
 				
@@ -168,11 +170,12 @@ if (InStr(A_LineFile,A_ScriptFullPath))
 			}
 		}
 		
-		WinActivate("ahk_id " ui.CurrWin)
+		if winExist("ahk_id " ui.currWin)
+			WinActivate("ahk_id " ui.CurrWin)
 		Sleep(150)
 		MouseMove(mouseX,mouseY)
 	}
-
+	
 
 	toggleAntiIdleBoth(*) {
 		(ui.AntiIdle_enabled := !ui.AntiIdle_enabled) ? AntiIdleBothOn() : AntiIdleBothOff()
@@ -237,8 +240,8 @@ if (InStr(A_LineFile,A_ScriptFullPath))
 	toggleTower(*) {
 	global
 	
-	if !((cfg.win1Enabled && WinExist("ahk_id " ui.win1Hwnd)) 
-			|| (cfg.win2Enabled && WinExist("ahk_id " ui.win2Hwnd))) {
+	if !((ui.win1enabled && WinExist("ahk_id " ui.win1Hwnd)) 
+			|| (ui.win2enabled && WinExist("ahk_id " ui.win2Hwnd))) {
 				debugLog("AutoTower: Failed to start. No game windows found.")
 				Return
 			} else {
@@ -256,12 +259,6 @@ if (InStr(A_LineFile,A_ScriptFullPath))
 				,ui.opsTowerButton.value := "./img/button_tower_on.png"
 				,ui.buttonTower.opt("Background" cfg.ThemeButtonOnColor)
 				,ui.buttonTower.value := "./img/button_tower_on.png"
-				;,setTimer(restartTower,cfg.towerInterval,100)
-				; ,setTimer(updateTimer,1000)
-				; ,sleep(200)
-				; ,setTimer(updateTimerWin1,1000)
-				; ,sleep(200)
-				; ,setTimer(updateTimerWin2,1000)
 				,restartTower()
 			 ) : (
 				ui.afkStatus1.value		:= "./Img/label_infinite_tower.png"
@@ -279,11 +276,7 @@ if (InStr(A_LineFile,A_ScriptFullPath))
 				,restartTower()
 			)			
 		) : (
-			setTimer(restartTower,0)
-			,setTimer(updateTimer,0)
-			,setTimer(updateTimerWin1,0)
-			,setTimer(updateTimerWin2,0)
-			,ui.afkProgress.value 		:= 0
+			ui.afkProgress.value 		:= 0
 			,ui.opsProgress1.value 		:= 0
 			,ui.opsProgress2.value 		:= 0
 			,ui.opsTowerButton.opt("background" cfg.themeButtonReadyColor)
@@ -305,10 +298,9 @@ restartTower(*) {
 	ui.opsProgress2.value := 0
 	Loop 2
 	{
-		this_window := "ahk_id " ui.Win%A_Index%Hwnd
-		if (cfg.win%A_Index%Enabled)
+		if (cfg.win%A_Index%Enabled) && winExist(this_window := "ahk_id " ui.win%a_index%hwnd)
 		{
-			WinActivate(this_window)
+			winActivate(this_window)
 		
 			CoordMode("Mouse","Client")
 			WinGetPos(&WinX,&WinY,&WinW,&WinH,this_window)
@@ -420,26 +412,6 @@ runAfkRoutine(*) {
 	}	
 }
 
-
-		; if WinExist("ahk_id " ui.win2Hwnd) {
-			; Loop read, cfg.AfkDataFile
-			; {
-				; if !(ui.afkEnabled) 
-					; return
-
-				; currRow := strSplit( A_LoopReadLine,',')
-				; if (currRow[1] == ui.win2ClassDDL.text) {
-					; attackWin(2,currRow[3],currRow[4])
-					; Sleep(currRow[4])
-				; }
-				; if !(ui.afkEnabled) 
-					; return
-			; }	
-		; }
-			
-	
-
-
 autoFire(WinNumber := GetWinNumber()) {
 	if (WinNumber == 0) {
 		debugLog("Couldn't Identify Window to Enable")
@@ -447,7 +419,6 @@ autoFire(WinNumber := GetWinNumber()) {
 	}
 	if (A_TimeIdlePhysical > 2500 and A_TimeIdleMouse > 2500) && (ui.afkEnabled)
 	{
-		;debugLog("Enabling AutoFire on Win" WinNumber)
 		ui.autoFireWin%WinNumber%Button.Opt("Background" cfg.ThemeButtonOnColor)
 		ui.autoFireWin%WinNumber%Button.Value := "./Img/button_autoFire" WinNumber "_on.png"
 
@@ -456,25 +427,25 @@ autoFire(WinNumber := GetWinNumber()) {
 		WinGetPos(&WinX,&WinY,&WinW,&WinH,"ahk_id " ui.Win%WinNumber%Hwnd)
 		MouseMove(WinW-50,WinH-120)
 		MouseClick("Left",WinW-50,WinH-120)
-		
-		if (WinGetProcessName("ahk_id " ui.Win%WinNumber%Hwnd) == "RobloxPlayerBeta.exe")
-		{	
-			; debugLog("RobloxPlayerBeta AutoFire Start")
-			MouseClick("Left",WinW-50,WinH-120)
-			Sleep(250)
-			Send("{LButton Down}")
-			Sleep(250)
-			Send("!{Tab}")
-			Sleep(250)
-			Send("{LButton Up}")
-			Sleep(250)
-			Send("!{Tab}")	
-		} else {
-			Sleep(250)
-			Sleep(250)
-			MouseClickDrag("Left",WinW-50,WinH-120,WinW+50,WinH-120,5)
-		}
-		WinActivate("ahk_id " ui.Win%WinNumber%Hwnd)
+		if winExist("ahk_id " ui.win%winNumber%hwnd)	
+			if (WinGetProcessName("ahk_id " ui.Win%WinNumber%Hwnd) == "RobloxPlayerBeta.exe")
+			{	
+				MouseClick("Left",WinW-50,WinH-120)
+				Sleep(250)
+				Send("{LButton Down}")
+				Sleep(250)
+				Send("!{Tab}")
+				Sleep(250)
+				Send("{LButton Up}")
+				Sleep(250)
+				Send("!{Tab}")	
+			} else {
+				Sleep(250)
+				Sleep(250)
+				MouseClickDrag("Left",WinW-50,WinH-120,WinW+50,WinH-120,5)
+			}
+		if (winExist("ahk_id " ui.win%winNumber%hwnd))
+			WinActivate("ahk_id " ui.Win%WinNumber%Hwnd)
 	}
 }
  ;End Primary AFK Action Functions
@@ -483,16 +454,17 @@ autoFire(WinNumber := GetWinNumber()) {
 	attackWin(WinNumber,Command,duration := 150) {
 		CoordMode("Mouse","Client")
 
+		ui.Win%WinNumber%AfkStatus.SetFont("s14 c"  cfg.themeFont2Color,"Calibri")
 		ui.Win%WinNumber%AfkIcon.value := "./Img/sleep_icon.png"
 		ui.Win%WinNumber%AfkStatus.text := ""		
 		ui.opsWin%WinNumber%AfkIcon.value := "./Img/sleep_icon.png"
 		ui.opsWin%WinNumber%AfkStatus.text := ""
 
-		if (A_TimeIdlePhysical > 2500 and A_TimeIdleMouse > 2500) && (ui.afkEnabled)
+		if (A_TimeIdlePhysical > 2500 and A_TimeIdleMouse > 2500) 
+		&& (ui.afkEnabled)
+		&& (ui.win%winNumber%enabled)
+		&& WinExist("ahk_id " ui.win%winNumber%hwnd) 		
 		{
-			ui.Win%WinNumber%AfkStatus.SetFont("s14 c00FFFF","Calibri")
-			CurrentHwnd := ui.Win%WinNumber%Hwnd
-			
 			ui.Win%WinNumber%AfkIcon.value := "./Img/attack_icon.png"
 			ui.Win%WinNumber%AfkStatus.SetFont("c" cfg.ThemeFont2Color)
 			ui.Win%WinNumber%AfkStatus.text := "  " Command
@@ -500,9 +472,9 @@ autoFire(WinNumber := GetWinNumber()) {
 			ui.opsWin%WinNumber%AfkStatus.SetFont("c" cfg.ThemeFont2Color)
 			ui.opsWin%WinNumber%AfkStatus.text := "  " Command
 
-			WinActivate("ahk_id " CurrentHwnd)
-			WinGetPos(&WinX,&WinY,&WinW,&WinH,"ahk_id " CurrentHwnd)
-			if (WinGetProcessName("ahk_id " CurrentHwnd) == "RobloxPlayerBeta.exe") {
+			WinActivate("ahk_id " ui.win%winNumber%hwnd)
+			WinGetPos(&WinX,&WinY,&WinW,&WinH,"ahk_id " ui.win%winNumber%hwnd)
+			if (WinGetProcessName("ahk_id " ui.win%winNumber%hwnd) == "RobloxPlayerBeta.exe") {
 				MouseClick("Left",WinW-50,WinH-120,3)
 			} else {
 				MouseClick("Left",WinW-50,WinH-120,2)
@@ -573,15 +545,21 @@ afkBeta(*) {
 	while (ui.afkEnabled) {
 			ui.currStepNum += 1
 			;debugLog("afk step: " ui.currStepNum)
-			if (ui.currStepNum <= win1afk.steps.length) {
-				debugLog("| win: 1 | step: " ui.currStepNum " | Action: " win1afk.steps[ui.currStepNum] " | wait: " win2afk.waits[ui.currStepNum] " |")
+			if (ui.currStepNum <= win1afk.steps.length) && ui.win1enabled {
+				debugStep := (win1afk.steps.length >= ui.currStepNum) ? (win1afk.steps[ui.currStepNum]) : ("--")
+				debugWait := (win1afk.waits.length >= ui.currStepNum) ? (win1afk.waits[ui.currStepNum]) : ("--")
+				debugLog("| win: 1 | step: " ui.currStepNum " | Action: " debugStep " | wait: " debugWait " |")
 				attackWin(1,win1afk.steps[ui.currStepNum])
 				sleep(win1afk.waits[ui.currStepNum])
-			} else 
+			} else {
 				finishedLoop := true
-
-			if (ui.currStepNum <= win2afk.steps.length) {
-				debugLog("| win: 2 | step: " ui.currStepNum " | Action: " win1afk.steps[ui.currStepNum] " | wait: " win2afk.waits[ui.currStepNum] " |")
+			}
+			
+			
+			if (ui.currStepNum <= win2afk.steps.length) && ui.win2enabled {
+				debugStep := (win2afk.steps.length >= ui.currStepNum) ? (win2afk.steps[ui.currStepNum]) : ("--")
+				debugWait := (win2afk.waits.length >= ui.currStepNum) ? (win2afk.waits[ui.currStepNum]) : ("--")
+				debugLog("| win: 2 | step: " ui.currStepNum " | Action: " debugStep " | wait: " debugWait " |")
 				attackWin(2,win2afk.steps[ui.currStepNum])
 				sleep(win2afk.waits[ui.currStepNum])
 			} else
@@ -599,28 +577,28 @@ afkWin1ClassChange(*) {
 	global
 	cfg.win1class	:= ui.afkWin1classDDL.value
 	ui.win1ClassDDL.text := ui.afkWin1ClassDDL.text
-	reload()
+	refreshafkRoutine()	
 }
 
 afkWin2ClassChange(*) {
 	global
 	cfg.win2class	:= ui.afkWin2ClassDDL.value
 	ui.win2classDDL.text := ui.afkWin2ClassDDL.text
-	reload()
+	refreshAfkRoutine()
 }
 
 opsWin1ClassChange(*) {
 	global
 	cfg.win1class	:= ui.win1ClassDDL.value
 	ui.afkWin1ClassDDL.text := ui.win1classDDL.text
-	reload()
+	refreshAfkRoutine()
 }
 
 opsWin2ClassChange(*) {
 	global
 	cfg.win2class	:= ui.win2classDDL.value
 	ui.afkWin2classDDL.text := ui.win2classDDL.text
-	reload()
+	RefreshAfkRoutine()
 }
 
 RefreshAfkRoutine(*) {
@@ -629,6 +607,8 @@ RefreshAfkRoutine(*) {
 	win1afk.waits			:= array()
 	win2afk.steps			:= array()
 	win2afk.waits			:= array()
+	win1afk.routine.text 	:= ""
+	win2afk.routine.text 	:= ""
 
 	Loop read, cfg.AfkDataFile
 	{

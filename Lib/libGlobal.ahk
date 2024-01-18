@@ -8,19 +8,18 @@ if (InStr(A_LineFile,A_ScriptFullPath)){
 	Return
 }
 
-initTrayMenu(&ThisTray) {
-	ThisTray := A_TrayMenu
-	ThisTray.Delete
-	ThisTray.Add
-	ThisTray.Add("Show Window", ShowGui)
-	ThisTray.Add("Hide Window", HideGui)
-	ThisTray.Add("Reset Window Position",ResetWindowPosition)
-	ThisTray.Add("Toggle Dock", DockApps)
-	ThisTray.Add()
-	ThisTray.Add("Toggle Log Window",toggleConsole)
-	ThisTray.Add()
-	ThisTray.Add("Exit App",KillMe)
-	ThisTray.Default := "Show Window"
+initTrayMenu(*) {
+	A_TrayMenu.Delete
+	A_TrayMenu.Add
+	A_TrayMenu.Add("Show Window", ShowGui)
+	A_TrayMenu.Add("Hide Window", HideGui)
+	A_TrayMenu.Add("Reset Window Position",ResetWindowPosition)
+	A_TrayMenu.Add("Toggle Dock", DockApps)
+	A_TrayMenu.Add()
+	A_TrayMenu.Add("Toggle Log Window",toggleConsole)
+	A_TrayMenu.Add()
+	A_TrayMenu.Add("Exit App",KillMe)
+	A_TrayMenu.Default := "Show Window"
 	Try
 		persistLog("Tray Initialized")
 }
@@ -48,7 +47,7 @@ preAutoExec(InstallDir,ConfigFileName) {
 					SetWorkingDir(InstallDir)
 				} catch {
 					persistLog("Couldn't create install location")
-					MsgBox("Cannot Create Folder at the Install Location. Suspect permissions issue with the desired install location")
+					pbNotify("Cannot Create Folder at the Install Location. `nSuspect permissions issue with the desired install location",3000)
 					ExitApp
 				}
 				persistLog("Successfully created install location at " InstallDir)
@@ -58,20 +57,42 @@ preAutoExec(InstallDir,ConfigFileName) {
 				FileCopy(A_ScriptFullPath, InstallDir "/" A_AppName ".exe", true)
 			}
 
-			; if !(FileExist(InstallDir "/nControl.ini"))
-			; {
-				; if !(MsgBox("Previous install detected. Attempt to preserve your existing settings?",, "YesNo"))
-				; {
-					; FileInstall("./nControl.ini",InstallDir "./nControl.ini",1)
-					
-					; FileInstall("./AfkData.csv",InstallDir "/AfkData.csv",true)
-				; } else {
-					; cfg.ThemeFont1Color := "00FFFF"
-					; NotifyOSD("Using Existing Configuration Files`nIf you encounter issues, please retry and choose [Replace Existing Config]",3000)
-					; if !(FileExist("/AfkData.csv"))
-						; FileInstall("./AfkData.csv",InstallDir "/AfkData.csv",true)
-				; }
-			; }
+			if (FileExist(InstallDir "/nControl.ini"))
+			{
+				msgBoxResult := MsgBox("Previous install detected. `nAttempt to preserve your existing settings?",, "Y/N T10")
+				
+				switch msgBoxResult {
+					case "No": 
+					{
+						pbNotify("Replacing existing configuration files with updated and clean files",3000)
+						FileInstall("./nControl.ini",InstallDir "/nControl.ini",1)
+						FileInstall("./nControl.themes",InstallDir "/nControl.themes",1)
+						FileInstall("./AfkData.csv",InstallDir "/AfkData.csv",1)
+					} 
+					case "Yes": 
+					{
+						cfg.ThemeFont1Color := "00FFFF"
+						pbNotify("Using Existing Configuration Files`n`nIf you encounter issues,`nTry installing again and `nchoose 'No' when prompted to `npreserve your existing files.",3000)
+						if !(FileExist(InstallDir "/AfkData.csv"))
+							FileInstall("./AfkData.csv",InstallDir "/AfkData.csv",1)
+						if !(FileExist(InstallDir "/nControl.themes"))
+							FileInstall("./nControl.themes",InstallDir "/nControl.themes",1)
+					}
+					case "Timeout":
+					{
+						pbNotify("Timed out waiting for your response. `nExiting program",5000)
+						Sleep(5000)
+						exitApp
+					}
+				}
+			} else {
+				pbNotify("This seems to be the first time you're running nControl. `nA fresh install to [YourUserProfilePath]\Documents\nControl is being performed.")
+
+						FileInstall("./nControl.ini",InstallDir "/nControl.ini",1)
+						FileInstall("./nControl.themes",InstallDir "/nControl.themes",1)
+						FileInstall("./AfkData.csv",InstallDir "/AfkData.csv",1)
+
+			}
 			if !(DirExist(InstallDir "\lib"))
 			{
 				DirCreate(InstallDir "\lib")
@@ -80,13 +101,17 @@ preAutoExec(InstallDir,ConfigFileName) {
 			{
 				DirCreate(InstallDir "\Img")
 			}
+			if !(DirExist(InstallDir "\Redist"))
+			{
+				DirCreate(InstallDir "\Redist")
+			}
 			persistLog("Created Img folder")
 			
 			; if (FileExist(InstallDir "nControl.ini")) 
 			; || (FileExist(InstallDir "/nControl.themes"))
 			; || (FileExist(InstallDir "/AfkData.csv"))
 			; {
-				; NotifyOSD("
+				; pbNotify("
 				; (
 				; Data files have been found from previous 
 				; installations and can usually be used 
@@ -94,25 +119,28 @@ preAutoExec(InstallDir,ConfigFileName) {
 				; )"
 				; ,3000)
 			; }
-				
+			; Sleep(3000)
 			; if (FileExist(InstallDir "nControl.ini")) 
-			; && (FileFound("nControl.ini","General Settings")) {
+			; && (FileFound("./nControl.ini",InstallDir "/nControl.ini","General Settings")) {
 				; FileInstall("./nControl.ini",InstallDir "./nControl.ini",1)
 			; }
 				
 			; if (FileExist(InstallDir "/nControl.themes")) 
-			; && (FileFound("nControl.themes","Color Theme Data")) {
+			; && (FileFound("./nControl.themes",InstallDir "/nControl.themes","Color Theme Data")) {
 				; FileInstall("./nControl.themes",InstallDir "/nControl.themes",1)
 			; }
 			
 			; if (FileExist(InstallDir "/AfkData.csv"))
-			; && (FileFound("AfkData.csv","AFK Automation Data")) {
+			; && (FileFound("./AfkData.csv",InstallDir "/afkData.csv","AFK Automation Data")) {
 				; FileInstall("./AfkData.csv",InstallDir "/afkData.csv",1)
 			; }
 		
-			FileInstall("./nControl.ini",InstallDir "./nControl.ini",1)
-			FileInstall("./nControl.themes",InstallDir "/nControl.themes",1)
-			FileInstall("./AfkData.csv",InstallDir "/afkData.csv",1)
+			; FileInstall("./nControl.ini",InstallDir "./nControl.ini",1)
+			; FileInstall("./nControl.themes",InstallDir "/nControl.themes",1)
+			; FileInstall("./AfkData.csv",InstallDir "/afkData.csv",1)
+			
+			FileInstall("./Img/keyboard_key_up.png",InstallDir "/img/keyboard_key_up.png",1)
+			FileInstall("./Img/keyboard_key_down.png",InstallDir "/img/keyboard_key_down.png",1)
 			FileInstall("./Img/button_ready.png",InstallDir "/Img/button_ready.png",1)
 			FileInstall("./Img/button_on.png",InstallDir "/Img/button_on.png",1)
 			FileInstall("./Img/button_plus.png",InstallDir "/Img/button_plus.png",1)
@@ -162,6 +190,8 @@ preAutoExec(InstallDir,ConfigFileName) {
 			FileInstall("./Img/button_minus_on.png",InstallDir "/Img/button_minus_on.png",true)
 			FileInstall("./Img/button_OpsDock.png",InstallDir "/Img/button_OpsDock.png",true)
 			FileInstall("./Img/color_swatches.png",InstallDir "/Img/color_swatches.png",1)
+			FileInstall("./Img/towerToggle_celestial.png",InstallDir "/Img/towerToggle_celestial.png",1)
+			FileInstall("./Img/towerToggle_infinite.png",InstallDir "/Img/towerToggle_infinite.png",1)
 			FileInstall("./Img/toggle_off.png",InstallDir "/Img/toggle_off.png",1)
 			FileInstall("./Img/toggle_on.png",InstallDir "/Img/toggle_on.png",1)
 			FileInstall("./Img/toggle_left.png",InstallDir "/Img/toggle_left.png",1)
@@ -193,12 +223,14 @@ preAutoExec(InstallDir,ConfigFileName) {
 			FileInstall("./Img/button_help_on.png",InstallDir "/Img/button_help_on.png",1)			
 			FileInstall("./Img/button_console_ready.png",InstallDir "/Img/button_console_ready.png",1)
 			FileInstall("./Img/button_console_on.png",InstallDir "/Img/button_console_on.png",1)
-			FileInstall("./lib/ColorChooser.exe",InstallDir "./lib/ColorChooser.exe",1)
-			FileInstall("./Redist/nircmd.exe",InstallDir "./Redist/nircmd.exe",1)
-			FileInstall("./Img/button_power.png",InstallDir "./Img/button_power.png",1)
-			FileInstall("./Img/button_power_on.png",InstallDir "./Img/button_power_on.png",1)
-			FileInstall("./Img/button_power_ready.png",InstallDir "./Img/button_power_ready.png",1)
-			FileInstall("./nControl_currentBuild.dat",InstallDir "./nControl_currentBuild.dat",1)
+			FileInstall("./lib/ColorChooser.exe",InstallDir "/lib/ColorChooser.exe",1)
+			FileInstall("./Redist/nircmd.exe",InstallDir "/Redist/nircmd.exe",1)
+			FileInstall("./Img/button_power.png",InstallDir "/Img/button_power.png",1)
+			FileInstall("./Img/button_power_on.png",InstallDir "/Img/button_power_on.png",1)
+			FileInstall("./Img/button_power_ready.png",InstallDir "/Img/button_power_ready.png",1)
+			FileInstall("./nControl_currentBuild.dat",InstallDir "/nControl_currentBuild.dat",1)
+			FileInstall("./Img/keyboard_key_up.png",InstallDir "/img/keyboard_key_up.png",1)
+			FileInstall("./Img/keyboard_key_down.png",InstallDir "/img/keyboard_key_down.png",1)
 			
 			persistLog("Copied Assets to: " InstallDir)
 			
@@ -214,27 +246,29 @@ preAutoExec(InstallDir,ConfigFileName) {
 	}
 }
 
-; FileFound(fileName,fileDescription) {
-	; PreserveData := NotifyOSD('
-	; (
-	; ' fileName ' - (' fileDescription ')
-	; from previous installation found. 
-	; Would you like to preserve it?
-	; )'
-	; ,,"YN")
+FileFound(fileName,destination,fileDescription) {
+	source := fileName
+	dest := destination
+	PreserveData := pbNotify('
+	(
+	' fileName ' - (' fileDescription ')
+	from previous installation found. 
+	Would you like to preserve it?
+	)'
+	,,1)
 	
-	; if !(PreserveData) {
-		; FileInstall("./" %fileName%, InstallDir %fileName% ",1")
-	; } else {
-		; NotifyOSD('
-		; (
-			; If you encounter any issues with your saved data
-			; please re-run this install and answer "No" when
-			; asked if you would like to preserve the file.
-		; )'
-		; ,3000)
-	; }
-; }
+	if !(PreserveData) {
+		MsgBox("FileInstall('" source "','" dest "',1)")
+	} else {
+		pbNotify('
+		(
+			If you encounter any issues with your saved data
+			please re-run this install and answer "No" when
+			asked if you would like to preserve the file.
+		)'
+		,3000)
+	}
+}
 			
 persistLog(LogMsg) {
 	Global
@@ -278,6 +312,8 @@ cfgLoad(&cfg, &ui) {
 	ui.win2Hwnd				:= ""
 	ui.pipEnabled			:= false
 	ui.pauseAlwaysRun		:= false
+	ui.inGameChat			:= false
+	ui.reloading			:= false
 	
 	afk						:= object()
 	ui.profileList			:= array()
@@ -297,10 +333,8 @@ cfgLoad(&cfg, &ui) {
 	win1afk.currStepNum		:= ""
 	win2afk.currStepNum 	:= ""
 	
-	ui.runKey				:= "CapsLock"
 	ui.dividerGui			:= gui()
 	
-	cfg.holdToScopeEnabled 	:= IniRead(cfg.file,"Game","cs2holdToScopeEnabled",false)
 	cfg.MainGui				:= IniRead(cfg.file,"System","MainGui","MainGui")
 	cfg.InstallDir			:= IniRead(cfg.file,"System","InstallDir", A_MyDocuments "\nControl")
 	cfg.MainScriptName		:= IniRead(cfg.file,"System","MainScriptName", "nControl")
@@ -330,13 +364,14 @@ cfgLoad(&cfg, &ui) {
 
 	cfg.AutoDetectGame			:= IniRead(cfg.file,"Game","AutoDetectGame",true)
 	cfg.GameList				:= StrSplit(IniRead(cfg.file,"Game","GameList","Roblox,Rocket League"),",")
+	cfg.mainTabList				:= strSplit(IniRead(cfg.file,"Interface","MainTabList","Sys,AFK,Game,Dock,Setup,Audio"),",")
 	cfg.game					:= IniRead(cfg.file,"Game","Game","2")
 	cfg.HwndSwapEnabled			:= IniRead(cfg.file,"Game","HwndSwapEnabled",false)
-	cfg.win1Enabled 			:= IniRead(cfg.file,"Game","Win1Enabled",true)
-	cfg.win2Enabled 			:= IniRead(cfg.file,"Game","Win2Enabled",true)	
-	cfg.win1Disabled 			:= IniRead(cfg.file,"Game","Win1Disabled",true)
-	cfg.win2Disabled 			:= IniRead(cfg.file,"Game","Win2Disabled",true)
-	
+	ui.win1enabled 			:= IniRead(cfg.file,"Game","Win1Enabled",true)
+	ui.win2enabled 			:= IniRead(cfg.file,"Game","Win2Enabled",true)	
+	cfg.win1Disabled 			:= IniRead(cfg.file,"Game","win1disabled",false)
+	cfg.win2Disabled 			:= IniRead(cfg.file,"Game","win2disabled",false)
+	cfg.w0DualPerkSwapEnabled	:= IniRead(cfg.file,"Game","w0DualPerkSwap",true)
 	cfg.AfkDataFile				:= IniRead(cfg.file,"AFK","AfkDataFile","./AfkData.csv")
 	cfg.Profile					:= IniRead(cfg.file,"AFK","Profile","1")
 	cfg.win1Class				:= IniRead(cfg.file,"AFK","Win1Class",1)
@@ -394,9 +429,13 @@ cfgLoad(&cfg, &ui) {
 	cfg.ThemeButtonOnColor	:= IniRead(cfg.themeFile,cfg.Theme,"ThemeButtonOnColor","FF01FF")
 	cfg.ThemeButtonReadyColor	:= IniRead(cfg.themeFile,cfg.Theme,"ThemeButtonReadyColor","1FFFF0")
 	
-	cfg.holdToCrouchEnabled 			:= IniRead(cfg.file,"game","HoldToCrouch",true)
-	cfg.alwaysRunEnabled	:= IniRead(cfg.file,"Game","AlwaysRun",true)
-	cfg.alwaysRun_runKey	:= IniRead(cfg.file,"Game","AlwaysRunKey","CapsLock")
+	cfg.holdToCrouchEnabled := IniRead(cfg.file,"game","HoldToCrouch",true)
+	cfg.cs2HoldToScopeEnabled	:= IniRead(cfg.file,"game","cs2HoldToScopeEnabled",true)
+	cfg.d2AlwaysRunEnabled	:= IniRead(cfg.file,"Game","d2AlwaysRun",false)
+	cfg.d2SprintKey			:= IniRead(cfg.file,"Game","d2SprintHoldKey","<UNSET")
+	cfg.d2CrouchKey			:= IniRead(cfg.file,"Game","d2CrouchKey","<UNSET>")
+	cfg.activeMainTab		:= IniRead(cfg.file,"Interface","activeMainTab",1)
+	cfg.activeGameTab  		:= IniRead(cfg.file,"Interface","ActiveGameTab",1)
 }
 
 WriteConfig() {
@@ -418,12 +457,12 @@ WriteConfig() {
 	}
 	IniWrite(tmpGameList,cfg.file,"Game","GameList")
 	IniWrite(ui.gameDDL.value,cfg.file,"Game","Game")
-	IniWrite(cfg.win1Enabled,cfg.file,"Game","Win1Enabled")
-	IniWrite(cfg.win2Enabled,cfg.file,"Game","Win2Enabled")	
-	IniWrite(cfg.win1Disabled,cfg.file,"Game","Win1Disabled")
-	IniWrite(cfg.win2Disabled,cfg.file,"Game","Win2Disabled")
+	IniWrite(ui.win1enabled,cfg.file,"Game","Win1Enabled")
+	IniWrite(ui.win2enabled,cfg.file,"Game","Win2Enabled")	
+	IniWrite(cfg.win1disabled,cfg.file,"Game","win1disabled")
+	IniWrite(cfg.win2disabled,cfg.file,"Game","win2disabled")
 	IniWrite(cfg.hwndSwapEnabled,cfg.file,"Game","HwndSwapEnabled")
-	IniWrite(cfg.holdToScopeEnabled,cfg.file,"Game","cs2HoldToScope")
+	IniWrite(cfg.cs2HoldToScopeEnabled,cfg.file,"Game","cs2HoldToScope")
 	IniWrite(cfg.nControlMonitor,cfg.file,"nControl","nControlMonitor")
 	IniWrite(cfg.dockHeight,cfg.file,"nControl","DockHeight")
 	IniWrite(cfg.dockMarginSize,cfg.file,"nControl","DockMarginSize")
@@ -481,8 +520,16 @@ WriteConfig() {
 		IniWrite(cfg.themeButtonReadyColor,cfg.themeFile,"Custom","ThemeButtonReadyColor")
 		IniWrite(cfg.themeButtonAlertColor,cfg.themeFile,"Custom","ThemeButtonAlertColor")
 		IniWrite(cfg.holdToCrouchEnabled,cfg.file,"game","HoldToCrouch")
-		IniWrite(cfg.alwaysRunEnabled,cfg.file,"Game","AlwaysRun")
-		IniWrite(cfg.alwaysRun_runKey,cfg.file,"Game","AlwaysRunKey")
+		IniWrite(cfg.d2AlwaysRunEnabled,cfg.file,"Game","d2AlwaysRunEnabled")
+		IniWrite(cfg.d2SprintKey,cfg.file,"Game","d2SprintHoldKey")
+		IniWrite(cfg.d2CrouchKey,cfg.file,"Game","d2CrouchKey")
+		IniWrite(cfg.activeMainTab,cfg.file,"Interface","ActiveMainTab")
+		IniWrite(cfg.activeGameTab,cfg.file,"Interface","ActiveGameTab")
+		ui.mainTabListString := ""
+		loop cfg.mainTabList.length {
+			ui.mainTabListString .= cfg.mainTabList[a_index] ','
+		}
+		IniWrite(rtrim(ui.mainTabListString,","),cfg.file,"Interface","MainTabList")
 	}
 	
 	ui.MainGui.GetPos(&GuiX,&GuiY,,)
@@ -625,7 +672,7 @@ NotifyOSD(NotifyMsg,Duration := 10,YN := "")
 	ui.notifyGui			:= Gui()
 	ui.notifyGui.Title 	:= "Notify"
 
-	ui.notifyGui.Opt("+AlwaysOnTop -Caption +ToolWindow Owner" ui.MainGui.Hwnd)  ; +ToolWindow avoids a taskbar button and an alt-tab menu item.
+	ui.notifyGui.Opt("+AlwaysOnTop -Caption +ToolWindow +Owner" ui.mainGui.hwnd)  ; +ToolWindow avoids a taskbar button and an alt-tab menu item.
 	ui.notifyGui.BackColor := cfg.ThemePanel2Color  ; Can be any RGB color (it will be made transparent below).
 	ui.notifyGui.SetFont("s16")  ; Set a large font size (32-point).
 	ui.notifyGui.AddText("c" cfg.ThemeFont2Color " BackgroundTrans",NotifyMsg)  ; XX & YY serve to 00auto-size the window.
@@ -655,9 +702,58 @@ NotifyOSD(NotifyMsg,Duration := 10,YN := "")
 	}
 }
 
+pbNotify(NotifyMsg,Duration := 10,YN := "")
+{
+	Transparent := 250
+
+	try
+		debugLog(NotifyMsg)
+	
+	ui.notifyGui			:= Gui()
+	ui.notifyGui.Title 	:= "Notify"
+
+	ui.notifyGui.Opt("+AlwaysOnTop -Caption +ToolWindow")  ; +ToolWindow avoids a taskbar button and an alt-tab menu item.
+	ui.notifyGui.BackColor := "353535" ; Can be any RGB color (it will be made transparent below).
+	ui.notifyGui.SetFont("s16")  ; Set a large font size (32-point).
+	ui.notifyGui.AddText("c00FFFF center BackgroundTrans",NotifyMsg)  ; XX & YY serve to 00auto-size the window.
+	ui.notifyGui.AddText("xs hidden")
+	
+	if (YN) {
+		ui.notifyGui.AddText("xs hidden")
+		ui.notifyGui.SetFont("s10")
+		ui.notifyYesButton := ui.notifyGui.AddButton("ys section w60 h25","Yes")
+		ui.notifyYesButton.OnEvent("Click",notifyConfirm)
+		ui.notifyNoButton := ui.notifyGui.AddButton("xs w60 h25","No")
+		ui.notifyNoButton.OnEvent("Click",notifyCancel)
+	}
+	
+	ui.notifyGui.Show("AutoSize")
+	winGetPos(&x,&y,&w,&h,ui.notifyGui.hwnd)
+	drawOutline(ui.notifyGui,0,0,w,h,"202020","808080",3)
+	drawOutline(ui.notifyGui,5,5,w-10,h-10,"BBBBBB","DDDDDD",2)
+	if !(YN) {
+		Sleep(5000)
+		FadeOSD()
+	} else {
+		SetTimer(pbWaitOSD,-10000)
+	}
+	
+	notifyConfirm(*) {
+		return 1
+	}
+	notifyCancel(*) {
+		return 0
+	}
+}
+
 WaitOSD() {
-	ui.notifyOSD.destroy()
+	ui.notifyGui.destroy()
 	notifyOSD("Timed out waiting for response.`nPlease try your action again",-1000)
+}
+
+pbWaitOSD() {
+	ui.notifyGui.destroy()
+	pbNotify("Timed out waiting for response.`nPlease try your action again",-1000)
 }
 
 FadeOSD() {

@@ -84,11 +84,15 @@ GuiSetupTab(&ui,&cfg)
 		ui.toggleCelestialTower.Opt((cfg.CelestialTowerEnabled := !cfg.CelestialTowerEnabled) ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor))
 		ui.toggleCelestialTower.Redraw()
 	}
-	ui.toggleCelestialTower := ui.MainGui.AddPicture("xs w60 h25 section vCelestialTower " (cfg.CelestialTowerEnabled ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor)),((cfg.CelestialTowerEnabled) ? (cfg.toggleOn) : (cfg.toggleOff)))
-	ui.toggleCelestialTower.OnEvent("Click", toggleChanged)
-	ui.toggleCelestialTower.ToolTip := "Switches Tower AFK to Celestial."
-	ui.labelCelestialTower:= ui.MainGui.AddText("x+3 ys+3","Celestial Tower")	
+	ui.toggleCelestialTower := ui.MainGui.AddPicture("xs w60 h25 section vCelestialTower " (cfg.CelestialTowerEnabled ? ("Background" cfg.ThemeButtonAlertColor) : ("Background" cfg.ThemeButtonAlertColor)),((cfg.CelestialTowerEnabled) ? "./img/towerToggle_celestial.png" : "./img/towerToggle_infinite.png"))
+	ui.toggleCelestialTower.OnEvent("Click", towerToggleChanged)
+	ui.toggleCelestialTower.ToolTip := "Toggles between Infinite and Celestial Towers."
+	ui.labelCelestialTower:= ui.MainGui.AddText("x+3 ys+3","Tower Settings")	
 	
+	
+	ui.towerIntervalSlider := ui.mainGui.addSlider("xs w160 h20 section Range1-50 Left ToolTipTop",cfg.towerInterval)
+	ui.towerIntervalSlider.OnEvent("Change",towerIntervalChanged)
+	ui.towerIntervalSlider.ToolTip := "Tower Restart Interval"
 	ToggleHoldToCrouch(*)
 	{
 		ui.toggleHoldToCrouch.Opt((cfg.holdToCrouch := !cfg.holdToCrouchEnabled) ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor))
@@ -193,6 +197,9 @@ GuiSetupTab(&ui,&cfg)
 		Reload
 	}
   
+	towerIntervalChanged(*) {
+		cfg.towerInterval := ui.towerIntervalSlider.Value
+	}
   	AutoClickerSpeedChanged(*) {
 		
 	cfg.AutoClickerSpeed := (ui.AutoClickerSpeedSlider.Value/0.128)

@@ -21,137 +21,235 @@ loop cfg.gameList.length {
 
 	ui.gameSettingsGui := Gui()
 	ui.gameSettingsGui.Name := "nControl Game Settings"
-	ui.gameSettingsGui.BackColor := cfg.ThemeBackgroundColor
+	ui.gameSettingsGui.BackColor := cfg.themeBackgroundColor
 	ui.gameSettingsGui.Color := ui.TransparentColor
 	ui.gameSettingsGui.MarginX := 5
-	ui.gameSettingsGui.Opt("-Caption -Border +AlwaysOnTop +ToolWindow +0x4000000 +Owner" ui.MainGui.Hwnd)
+	ui.gameSettingsGui.Opt("-Caption -Border +AlwaysOnTop +ToolWindow +Owner" ui.MainGui.Hwnd)
 	ui.gameSettingsGui.SetFont("s14 c" cfg.ThemeFont1Color,"Calibri")
 	WinSetTransparent(0,ui.gameSettingsGui)
-	ui.gameTabs := ui.gameSettingsGui.addTab3("x5 y5 w480 h165 bottom buttons",cfg.gameList)
+	ui.gameTabs := ui.gameSettingsGui.addTab3("x5 y5 w480 h165 bottom buttons 0x8000 choose" cfg.activeGameTab " background" cfg.themeBackgroundColor,cfg.gameList)
+	ui.gameTabs.choose(cfg.gameList[cfg.activeGameTab])
 	ui.gameTabs.setFont("s12")
+	ui.gameTabs.onEvent("Change",gameTabChanged)
 	ui.MainGui.GetPos(&winX,&winY,,)
 	ui.gameSettingsGui.show("x" winx+35 " y" winy+35 " w" 400 " h" 170)
-		; Loop cfg.gameList.length {
-		; try {
-			; runWait("./lib/lib" cfg.gameList[a_index])
-			; ui.gameTabs.value([cfg.gameList[a_index]])
-			; ui.gameTabs.useTab(cfg.gameList[a_index])
-		; }
-	; }
+
+ Loop cfg.gameList.length {
+		try {
+			runWait("./lib/lib" cfg.gameList[a_index])
+			ui.gameTabs.value([cfg.gameList[a_index]])
+			ui.gameTabs.useTab(cfg.gameList[a_index])
+		}
+	}
 } ;End Game Profile List Modal Gui
  
 
-	ui.osd := gui()
-	ui.osd.opt("-caption +alwaysOnTop -Border 0x4000000 +owner" ui.MainGui.Hwnd)
-	ui.osd.color := "020301"
-	ui.osd.backColor := "020301"
-	ui.osdText := ui.osd.addText("w110 r9 background020301" ,"Text Here")
-	ui.osdText.setFont("c00FFFF")
-	ui.pauseIcon := ui.osd.addText("x108 y6 w10 h10 background880000"," ")
-	ui.pauseIcon := ui.osd.addText("x108 y6 w10 h10 background880000"," ")
-	WinSetTransColor("020301",ui.osd.hwnd)
-	winSetTransparent(100,ui.osd.hwnd)
-	ui.osd.show("x10 y" A_ScreenHeight/2 "w130 noActivate")
-	ui.osdHidden := false
-	toggleOSD()
-	drawOutlineNamed("alwaysRunStatus",ui.osd,2,2,120,126,"FF55bb","BB00fF",2)
-	drawOutlineNamed("gameSettingsExterior",ui.gameSettingsGui,5,0,485,170,cfg.themeBorderDarkColor,cfg.themeBorderLightColor,2)	
-	osdMsg(msgText) {
-		
-	}
-
-	statusText := "`n`n`n`n`n`n`n`n`n"
-	tmpStatusText := ""
-	
+	; ui.osd := gui()
+	; ui.osd.opt("-caption +alwaysOnTop -Border 0x4000000 +owner" ui.MainGui.Hwnd)
+	; ui.osd.color := "020301"
+	; ui.osd.backColor := "020301"
+	; ui.osdText := ui.osd.addText("w110 r9 background020301" ,"Text Here")
+	; ui.osdText.setFont("c00FFFF")
+	; ui.pauseIcon := ui.osd.addText("x108 y6 w10 h10 background880000"," ")
+	; ui.pauseIcon.onEvent("Click",toggleOSD)
+	; WinSetTransColor("020301",ui.osd.hwnd)
+	; winSetTransparent(100,ui.osd.hwnd)
+	; ui.osd.show("x10 y" A_ScreenHeight/2 "w130 noActivate")
+	; ui.osdHidden := false
+	; toggleOSD()
+	; ui.osdText.text := "`n`n`n`n`n`n`n`n`n"
+	; tmpStatusText := ""
 
 
-	ui.gameSettingsGui.show()
+	ui.gameTabs.useTab("Roblox")
+	ui.gameSettingsGui.setFont("s10")
+	ui.worldZeroBox := ui.gameSettingsGui.AddGroupBox("x5 y+-2 section 	w200 h80","World//Zero")
+	ui.w0dualPerkSwap := ui.gameSettingsGui.addPicture("x+5 y+-40 section w60 h25 section "
+		((cfg.w0DualPerkSwapEnabled)
+			? ("Background" cfg.ThemeButtonOnColor)
+				: ("Background" cfg.themeButtonReadyColor)),((cfg.w0DualPerkSwapEnabled)
+			? (cfg.toggleOn)
+				: (cfg.toggleOff)))
+				
+	ui.w0dualPerkSwap.onEvent("Click",toggleChanged)
+	ui.w0DualPerkSwap.toolTip := "Ctrl+Alt+LeftClick swaps effective perks between weapons (dual wielders only)"
+	ui.w0DualPerkSwapLabel := ui.gameSettingsGui.addText("ys w80 backgroundTrans","Perk Swap")
+
 	ui.gameTabs.useTab("Destiny2") 
-	
-	ui.alwaysRunToggle := ui.gameSettingsGui.addPicture("x5 y5 w60 h25 section vAlwaysRun " 
-		((cfg.alwaysRunEnabled) 
+
+	ui.d2Sliding := false
+	ui.d2HoldingRun := false
+
+	UI.alwaysRunGb := ui.gameSettingsGui.addGroupbox("x10 y0 w210 h120","Always Run")
+	ui.d2AlwaysRun := ui.gameSettingsGui.addPicture("x20 y20 w60 h25 section vd2AlwaysRun " 
+		((cfg.d2AlwaysRunEnabled) 
 			? ("Background" cfg.ThemeButtonOnColor) 
-				: ("Background" cfg.themeButtonReadyColor)),((cfg.alwaysRunEnabled) 
+				: ("Background" cfg.themeButtonReadyColor)),
+		((cfg.d2AlwaysRunEnabled) 
 			? (cfg.toggleOn) 
 				: (cfg.toggleOff)))
 
-	ui.alwaysRunToggle.OnEvent("Click", toggleChanged)
-	ui.alwaysRunToggle.ToolTip := "Toggles holdToCrouch"
-	ui.labelToolTips := ui.gameSettingsGui.AddText("x+3 ys-1 BackgroundTrans","Always Run")	
 
-alwaysRunStatus(key) {
-		global
-		tmpStatusText := statusText
-		statusText := SubStr(tmpStatusText, InStr(tmpStatusText,"`n") + 1)
-		ui.osdText.text := key
-	}
+	ui.d2SprintKey				:= ui.gameSettingsGui.AddPicture("xs+65 ys-5 w60 h30 section","./img/keyboard_key_up.png")
+	ui.d2SprintKeyData 			:= ui.gameSettingsGui.addText("xs y+-28 w60 h20 center c" cfg.themeFont3Color " backgroundTrans",strUpper(cfg.d2SprintKey))
+	ui.d2SprintKeyLabel			:= ui.gameSettingsGui.addText("xs-2 y+10 w60 h20 center c" cfg.themeFont1Color " backgroundTrans","Sprint")
+	ui.d2CrouchKey				:= ui.gameSettingsGui.addPicture("x+2 ys w60 h30 section","./img/keyboard_key_up.png")
+	ui.d2CrouchKeyData 			:= ui.gameSettingsGui.addText("xs y+-28 w60 h20 center c" cfg.themeFont3Color " backgroundTrans",strUpper(cfg.d2CrouchKey))
+	ui.d2CrouchKeyLabel 		:= ui.gameSettingsGui.addText("xs-2 y+10 w60 h20 center c" cfg.themeFont1Color " backgroundTrans","Crouch")
+
+	ui.d2AlwaysRun.ToolTip := "Toggles holdToCrouch"
+	ui.d2SprintKey.ToolTip 		:= "Click to Assign"
+	ui.d2SprintKeyData.ToolTip  := "Click to Assign"
+	ui.d2SprintKeyLabel.ToolTip	:= "Click to Assign"
+	ui.d2CrouchKey.ToolTip		:= "Click to Assign"
+	ui.d2CrouchKeyData.ToolTip  := "Click to Assign"
+	ui.d2CrouchKeyLabel.ToolTip	:= "Click to Assign"
+
+	ui.d2CrouchKeyData.setFont("s13")
+	ui.d2SprintKeyData.setFont("s13")
+	ui.d2CrouchKeyLabel.setFont("s12")
+	ui.d2SprintKeyLabel.setFont("s12")
 	
-	#HotIf (WinGetProcessName("ahk_id " winGetID("A")) == "destiny2.exe") && (cfg.alwaysRunEnabled)
-	setCapsLockState("AlwaysOff")
-	enter::
+	ui.d2AlwaysRun.OnEvent("Click", toggleChanged)
+	ui.d2CrouchKey.onEvent("click",d2CrouchKeyClicked)
+	ui.d2SprintKey.onEvent("click",d2SprintKeyClicked)
+	ui.d2CrouchKeyData.onEvent("click",d2CrouchKeyClicked)
+	ui.d2SprintKeyData.onEvent("click",d2SprintKeyClicked)
+
+
+d2SprintKeyClicked(*) {
+	DialogBox('Press Key or Button Assigned for:`n"Hold to Sprint"`nin Destiny2')
+	Sleep(750)
+	d2SprintInput := InputHook("L1", "{LControl}{RControl}{LAlt}{RAlt}{LShift}{RShift}{LWin}{RWin}{AppsKey}{F1}{F2}{F3}{F4}{F5}{F6}{F7}{F8}{F9}{F10}{F11}{F12}{Left}{Right}{Up}{Down}{Home}{End}{PgUp}{PgDn}{Del}{Ins}{BS}{CapsLock}{NumLock}{PrintScreen}{Pause}")
+	d2SprintInput.start()
+	d2SprintInput.wait()
+	cfg.d2SprintKey := d2SprintInput.input
+	ui.d2SprintKeyData.text := strUpper(cfg.d2SprintKey)
+
+	if (cfg.d2SprintKey == 0) {
+		DialogBoxClose()
+		DialogBox('Timed Out Waiting for:`nDestiny2 Sprint Key Bind`nPlease Try Again')
+	}
+	DialogBoxClose()
+}
+
+d2CrouchKeyClicked(*) {
+	DialogBox('Press Key or Button Assigned for:`n"Hold to Crouch"`nin Destiny2')
+	Sleep(750)
+	d2CrouchInput := InputHook("L1", "{LControl}{RControl}{LAlt}{RAlt}{LShift}{RShift}{LWin}{RWin}{AppsKey}{F1}{F2}{F3}{F4}{F5}{F6}{F7}{F8}{F9}{F10}{F11}{F12}{Left}{Right}{Up}{Down}{Home}{End}{PgUp}{PgDn}{Del}{Ins}{BS}{CapsLock}{NumLock}{PrintScreen}{Pause}")
+	d2CrouchInput.start()
+	d2CrouchInput.wait()
+	cfg.d2CrouchKey := d2CrouchInput.input
+	ui.d2CrouchKeyData.text := strUpper(cfg.d2CrouchKey)
+
+	if (cfg.d2CrouchKey == 0) {
+		DialogBoxClose()
+		DialogBox('Timed Out Waiting for:`nDestiny2 Crouch Key Bind`nPlease Try Again')
+	}
+	DialogBoxClose()	
+}
+
+#HotIf (WinGetProcessName("ahk_id " winGetID("A")) == "destiny2.exe") && (cfg.d2AlwaysRunEnabled)
+
+	w::
 	{
-		(ui.pauseAlwaysRun := !ui.pauseAlwaysRun) ? pauseAlwaysRun() : unpauseAlwaysRun()
-		send("{Enter}") 
+		global
+		send("{w down}")
+		send("{z Down}")
+	}
 		
-		pauseAlwaysRun() {
-			ui.pauseIcon.opt("-hidden")
-		}
-		unpauseAlwaysRun() {
-			ui.pauseIcon.opt("hidden") 
-		}
+	
+	w up::
+	{
+		global
+		send("{z}")
+		send("{w up}")
+		
 	}
 	
 	r::
 	{
-		ui.pauseAlwaysRun := true
-		SetTimer () => ui.pauseAlwaysRun := false,-2000
+		send("{r}")
+		ui.reloading := true
+		setTimer () => ui.reloading := false, -2000
 	}
+	#HotIf		
 	
-	w::
-	{
-		d2holdRun()
-	}
-	d2holdRun() {
-		global
-		if !(ui.pauseAlwaysRun) {
-			alwaysRunStatus("`ninput: w-down")
-			send("{w down}")
-			alwaysRunStatus("`ninjecting: " ui.runKey " down")
-			send("{" ui.runKey " down}")
-			keywait("w")
-			alwaysRunStatus("`ninput: w-up")
-			send("{" UI.runKey " up}")
-			alwaysRunStatus("`ninjecting: " ui.runKey)
-			send("{w up}")
-		} else {
-			alwaysRunStatus("alwaysRun is paused. using default key behavior")
-			send("{w}")
-		}
-	}
+	; enter::
+	; {
+		; global
+		; (ui.inGameChat := !ui.inGameChat)
+		; send("{Enter}") 
+	; }
+	
+	
+	
+	; ~l up::
+	; {
+		; global
+		; ui.pauseAlwaysRun := false
+		; if getKeyState("w") {
+			; send("{w up}")
+			; sleep(200)
+			; send("{w down}")
+		; }
+	; }
+	
+	; r::
+	; {
+		; global
+		; send("{r}")
+		; ui.pauseAlwaysRun := true
+		; SetTimer () => ui.pauseAlwaysRun := false,-2000
+	; }
+	
+	; ~w down::
+	; {
+		; global
+		; if !(ui.pauseAlwaysRun) && !(ui.d2HoldingRun)
+		; {
+			; ui.d2HoldingRun := true
+			; send("{w down}")
+			; send("{LShift Down}")
+			; osdMessage("input: w-down")
+			; osdMessage("injecting: " cfg.d2SprintHoldKey " Down")
+		; }
+			
+	; }
+	
+	; ~w up::
+	; {
+		; global
+		; if (ui.d2HoldingRun) {
+			; osdMessage("input: w-up")
+			; osdMessage("injecting: " cfg.d2SprintHoldKey)
+			; send("{LShift Up}")
+			; send("{w Up}")
+			; ui.d2HoldingRun := false
+			; SetCapsLockState("Off")
+		; } else {
+			; send("{w wup}")
+		; }
+	; }
 
-	LShift::
-	{
-		global
-		if !(ui.pauseAlwaysRun)
-		{
-			;notifyOSD("received: crouch`ninjecting: wait 300ms + " ui.runkey)
-			send("{LShift Down}")
-			statusText .= "`ninput: shift-down"
-			alwaysRunStatus(statusText)
-			keyWait("LShift")
-			statusText .= "`ninput: shift-up"
-			alwaysRunStatus(statusText)
-			send("{LShift Up}")
-			sleep(300)
-			send("{" ui.runKey "}")
-			statusText .= "`ninjecting: " ui.runKey
-			alwaysRunStatus(statusText)
-		} else {
-			send("{LShift}")
-		}
+
+
 		
-	}
-	#HotIf
+	; }
+	
+	; ~LShift Up::
+	; {
+		; global
+		; if (ui.d2Sliding) {
+			; send("{LShift Up}")
+			; send("{" cfg.d2SprintHoldKey " Down}")
+			; ui.d2HoldingRun := true
+			; ui.d2Sliding := false
+		; } else {
+			; send("{LShift Up}")
+		; }
+	; }
+
 	
 	ui.gameTabs.useTab("Fortnite")
 	ui.holdToCrouchToggle := ui.gameSettingsGui.AddPicture("x5 y5 w60 h25 section vHoldToCrouch " ((cfg.holdToCrouchEnabled) 
@@ -167,22 +265,29 @@ alwaysRunStatus(key) {
 
 	ui.gameTabs.useTab("CounterStrike2")
 	ui.cs2holdScope := ui.gameSettingsGui.addPicture("x5 y5 w60 h25 section vAholdScope " 
-		((cfg.alwaysRunEnabled) 
+		((cfg.d2AlwaysRunEnabled) 
 			? ("Background" cfg.ThemeButtonOnColor) 
-				: ("Background" cfg.themeButtonReadyColor)),((cfg.holdToScopeEnabled) 
+				: ("Background" cfg.themeButtonReadyColor)),((cfg.cs2holdToScopeEnabled) 
 			? (cfg.toggleOn) 
 				: (cfg.toggleOff)))
 
 	ui.cs2holdScope.OnEvent("Click", toggleChanged)
 	ui.cs2holdScope.ToolTip := "Toggles holdToScope"
 	ui.labelToolTips := ui.gameSettingsGui.AddText("x+3 ys-1 BackgroundTrans","Hold to Scope")	
+
+; drawOutlineNamed("osdMessage",ui.osd,2,2,120,126,"FF55bb","BB00fF",2)
+drawOutlineNamed("gameSettingsExterior",ui.gameSettingsGui,5,0,485,170,cfg.themeBorderDarkColor,cfg.themeBorderLightColor,2)	
 	
-^+d::
-{
+osdMessage(msgText) {
 	global
-	toggleOSD()
+	tmpOsdText := SubStr(ui.osdText.text, InStr(ui.osdText.text,"`n") + 1)
+	ui.osdText.text := tmpOsdText "`n" msgText
 }
 
-toggleOSD() {
+toggleOSD(*) {
 	(ui.osdHidden := !ui.osdHidden) ? winSetTransparent(0,ui.osd) : (winSetTransparent(255,ui.osd),WinSetTransColor("020301",ui.osd))
+}
+
+gameTabChanged(*) {
+	cfg.activeGameTab := ui.gametabs.value
 }
