@@ -285,7 +285,7 @@ autoUpdate(*) {
 
 		if (msgBoxAnswer == "Yes")
 		{ 
-			Download("https://github.com/obcache/nControl/releases/download/v" substr(latestVersion,1,1) "." substr(latestVersion,2,1) "." substr(latestVersion,3,1) "." substr(latestVersion,4,1) "/nControl_" latestVersion ".exe",a_MyDocuments "/nControl/")
+			Download("https://github.com/obcache/nControl/releases/download/v" substr(latestVersion,1,1) "." substr(latestVersion,2,1) "." substr(latestVersion,3,1) "." substr(latestVersion,4,1) "/nControl_" latestVersion ".exe",a_MyDocuments "/nControl/nControl_" latestVersion ".exe")
 			
 			run(a_mydocuments "/nControl/nControl_" latestVersion ".exe")
 		}
