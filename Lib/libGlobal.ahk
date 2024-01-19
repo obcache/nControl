@@ -281,7 +281,7 @@ autoUpdate(*) {
 
 	if (latestVersion > currentVersion) 
 	{
-		msgBoxAnswer := MsgBox("A newer version is available.`nYou currently have: " currentVersion "`nBut the newest is: " latestVersion "`nWould you like to update now?","YN")
+		msgBoxAnswer := MsgBox("A newer version is available.`nYou currently have: " currentVersion "`nBut the newest is: " latestVersion "`nWould you like to update now?",,"YN")
 
 		if (msgBoxAnswer == "Yes")
 		{ 
@@ -302,7 +302,7 @@ checkForUpdates(*) {
 
 	if (latestVersion > currentVersion) 
 	{
-		msgBoxAnswer := MsgBox("A newer version is available.`nYou currently have: " currentVersion "`nBut the newest is: " latestVersion "`nWould you like to update now?","YN")
+		msgBoxAnswer := MsgBox("A newer version is available.`nYou currently have: " currentVersion "`nBut the newest is: " latestVersion "`nWould you like to update now?",,"YN")
 
 		if (msgBoxAnswer == "Yes")
 		{ 
