@@ -138,6 +138,7 @@ preAutoExec(InstallDir,ConfigFileName) {
 			; FileInstall("./nControl.ini",InstallDir "./nControl.ini",1)
 			; FileInstall("./nControl.themes",InstallDir "/nControl.themes",1)
 			; FileInstall("./AfkData.csv",InstallDir "/afkData.csv",1)
+			FileInstall("./Img/button_update.png",InstallDir "/img/button_update.png",1)
 			FileInstall("./Img/button_exit_gaming.png",InstallDir "/img/button_exit_gaming.png",1)
 			FileInstall("./Img/keyboard_key_up.png",InstallDir "/img/keyboard_key_up.png",1)
 			FileInstall("./Img/keyboard_key_down.png",InstallDir "/img/keyboard_key_down.png",1)
@@ -268,6 +269,51 @@ FileFound(fileName,destination,fileDescription) {
 		)'
 		,3000)
 	}
+}
+
+autoUpdate(*) {	
+	whr := comObject("winHttp.winHttpRequest.5.1")
+	whr.open("get","https://raw.githubusercontent.com/obcache/nControl/main/nControl_currentBuild.dat")
+	whr.send()
+	whr.waitForResponse()
+	latestVersion := whr.responseText
+	currentVersion := FileRead("./nControl_currentBuild.dat")
+
+	if (latestVersion > currentVersion) 
+	{
+		msgBoxAnswer := MsgBox("A newer version is available.`nYou currently have: " currentVersion "`nBut the newest is: " latestVersion "`nWould you like to update now?","YN")
+
+		if (msgBoxAnswer == "Yes")
+		{ 
+			Download("https://github.com/obcache/nControl/releases/download/v" substr(latestVersion,1,1) "." substr(latestVersion,2,1) "." substr(latestVersion,3,1) "." substr(latestVersion,4,1) "/nControl_" latestVersion ".exe",a_MyDocuments "/nControl/")
+			
+			run(a_mydocuments "/nControl/nControl_" latestVersion ".exe")
+		}
+	} 
+
+}
+checkForUpdates(*) {	
+	whr := comObject("winHttp.winHttpRequest.5.1")
+	whr.open("get","https://raw.githubusercontent.com/obcache/nControl/main/nControl_currentBuild.dat")
+	whr.send()
+	whr.waitForResponse()
+	latestVersion := whr.responseText
+	currentVersion := FileRead("./nControl_currentBuild.dat")
+
+	if (latestVersion > currentVersion) 
+	{
+		msgBoxAnswer := MsgBox("A newer version is available.`nYou currently have: " currentVersion "`nBut the newest is: " latestVersion "`nWould you like to update now?","YN")
+
+		if (msgBoxAnswer == "Yes")
+		{ 
+			Download("https://github.com/obcache/nControl/releases/download/v" substr(latestVersion,1,1) "." substr(latestVersion,2,1) "." substr(latestVersion,3,1) "." substr(latestVersion,4,1) "/nControl_" latestVersion ".exe",a_MyDocuments "/nControl/")
+			
+			run(a_mydocuments "/nControl/nControl_" latestVersion ".exe")
+		}
+	} else {
+		msgBox("You have the latest version already.`nInstalled Version: " currentVersion "`nLatestVersion: " latestVersion)
+	}
+
 }
 			
 persistLog(LogMsg) {

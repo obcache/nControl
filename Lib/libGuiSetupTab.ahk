@@ -29,9 +29,13 @@ GuiSetupTab(&ui,&cfg)
 	
 	ui.releaseChannelLabel := ui.mainGui.addText("x85 y40 w50","Release")
 	ui.releaseChannelDDL := ui.mainGui.AddDDL("x145 y35 w80 r3 choose" cfg.releaseChannel " background" cfg.themeBackgroundColor,["Dev","Beta","Stable"])
-
+	ui.checkForUpdatesButton := ui.mainGui.addPicture("x85 y65 w30 h30 section background" cfg.themeButtonReadyColor,"./img/button_update.png")
+	ui.checkForUpdatesButton.onEvent("Click",checkForUpdates)
+	ui.checkForUpdatesButton.Tooltip := "Checks to see if a more recent version is available"
+	ui.checkForUpdatesLabel := ui.mainGui.addText("ys+3 X+5 w120","Update Now")
 	
-	ui.toggleToolTips := ui.MainGui.AddPicture("x85 y70 w60 h25 section vToolTips " ((cfg.ToolTipsEnabled) ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor)),((cfg.ToolTipsEnabled) ? (cfg.toggleOn) : (cfg.toggleOff)))
+	
+	ui.toggleToolTips := ui.MainGui.AddPicture("x85 y100 w60 h25 section vToolTips " ((cfg.ToolTipsEnabled) ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor)),((cfg.ToolTipsEnabled) ? (cfg.toggleOn) : (cfg.toggleOff)))
 	ui.toggleToolTips.OnEvent("Click", toggleChanged)
 	ui.toggleToolTips.ToolTip := "Toggles ToolTips"
 	ui.labelToolTips := ui.MainGui.AddText("x+3 ys+3 BackgroundTrans","ToolTips")
