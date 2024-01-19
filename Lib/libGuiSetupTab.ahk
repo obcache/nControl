@@ -24,12 +24,14 @@ GuiSetupTab(&ui,&cfg)
 	ui.MainGui.SetFont("s10")
 	drawOutlineMainGui(39,31,499,182,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,2)
 	
-	ui.MainGui.SetFont("s10")
+	ui.MainGui.SetFont("s12")
 	
 	
+	ui.releaseChannelLabel := ui.mainGui.addText("x85 y40 w50","Release")
+	ui.releaseChannelDDL := ui.mainGui.AddDDL("x145 y35 w80 r3 choose" cfg.releaseChannel " background" cfg.themeBackgroundColor,["Dev","Beta","Stable"])
+
 	
-	
-	ui.toggleToolTips := ui.MainGui.AddPicture("x85 y35 w60 h25 section vToolTips " ((cfg.ToolTipsEnabled) ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor)),((cfg.ToolTipsEnabled) ? (cfg.toggleOn) : (cfg.toggleOff)))
+	ui.toggleToolTips := ui.MainGui.AddPicture("x85 y70 w60 h25 section vToolTips " ((cfg.ToolTipsEnabled) ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor)),((cfg.ToolTipsEnabled) ? (cfg.toggleOn) : (cfg.toggleOff)))
 	ui.toggleToolTips.OnEvent("Click", toggleChanged)
 	ui.toggleToolTips.ToolTip := "Toggles ToolTips"
 	ui.labelToolTips := ui.MainGui.AddText("x+3 ys+3 BackgroundTrans","ToolTips")
@@ -47,15 +49,7 @@ GuiSetupTab(&ui,&cfg)
 	ui.toggleAfkSnap.ToolTip := "Toggles Afk Screen Snapping"
 	ui.labelAfkSnap:= ui.MainGui.AddText("x+3 ys+3","AFK Snapping")
 
-	ToggleSilentIdle(*)
-	{
-		ui.toggleSilentIdle.Opt((cfg.SilentIdleEnabled := !cfg.SilentIdleEnabled) ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor))
-		ui.toggleSilentIdle.Redraw()
-	}
-	ui.toggleSilentIdle := ui.MainGui.AddPicture("xs w60 h25 section vSilentIdle " (cfg.SilentIdleEnabled ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor)),((cfg.SilentIdleEnabled) ? (cfg.toggleOn) : (cfg.toggleOff)))
-	ui.toggleSilentIdle.OnEvent("Click", toggleChanged)
-	ui.toggleSilentIdle.ToolTip := "Minimizes Roblox Windows While Anti-Idling"
-	ui.labelSilentIdle:= ui.MainGui.AddText("x+3 ys+3","Silent AntiIdle")
+
 
 	ToggleAlwaysOnTop(*)
 	{
@@ -79,25 +73,7 @@ GuiSetupTab(&ui,&cfg)
 	ui.toggleAnimations.ToolTip := "Keeps this app on top of all other windows."
 	ui.labelAnimations:= ui.MainGui.AddText("x+3 ys+3","Animations")	
 	
-	ToggleCelestialTower(*)
-	{
-		ui.toggleCelestialTower.Opt((cfg.CelestialTowerEnabled := !cfg.CelestialTowerEnabled) ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor))
-		ui.toggleCelestialTower.Redraw()
-	}
-	ui.toggleCelestialTower := ui.MainGui.AddPicture("xs w60 h25 section vCelestialTower " (cfg.CelestialTowerEnabled ? ("Background" cfg.ThemeButtonAlertColor) : ("Background" cfg.ThemeButtonAlertColor)),((cfg.CelestialTowerEnabled) ? "./img/towerToggle_celestial.png" : "./img/towerToggle_infinite.png"))
-	ui.toggleCelestialTower.OnEvent("Click", towerToggleChanged)
-	ui.toggleCelestialTower.ToolTip := "Toggles between Infinite and Celestial Towers."
-	ui.labelCelestialTower:= ui.MainGui.AddText("x+3 ys+3","Tower Settings")	
-	
-	
-	ui.towerIntervalSlider := ui.mainGui.addSlider("xs w160 h20 section Range1-50 Left ToolTipTop",cfg.towerInterval)
-	ui.towerIntervalSlider.OnEvent("Change",towerIntervalChanged)
-	ui.towerIntervalSlider.ToolTip := "Tower Restart Interval"
-	ToggleHoldToCrouch(*)
-	{
-		ui.toggleHoldToCrouch.Opt((cfg.holdToCrouch := !cfg.holdToCrouchEnabled) ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor))
-		ui.ToggleHoldToCrouch.Redraw()
-	}
+
 	
 	; ui.holdToCrouch := ui.MainGui.AddPicture("xs w60 h25 section vHoldToCrouch " (cfg.holdToCrouchEnabled ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor)),((cfg.holdToCrouchEnabled) ? (cfg.toggleOn) : (cfg.toggleOff)))
 	; ui.holdToCrouch.OnEvent("Click", toggleChanged)
@@ -197,9 +173,6 @@ GuiSetupTab(&ui,&cfg)
 		Reload
 	}
   
-	towerIntervalChanged(*) {
-		cfg.towerInterval := ui.towerIntervalSlider.Value
-	}
   	AutoClickerSpeedChanged(*) {
 		
 	cfg.AutoClickerSpeed := (ui.AutoClickerSpeedSlider.Value/0.128)

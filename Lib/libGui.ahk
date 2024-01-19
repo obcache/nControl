@@ -432,7 +432,74 @@ hideAfkGui(*) {
 }
 
 exitButtonPushed(*) {
-	ExitApp
+	exitMenuShow()
+	keyWait("LButton")
+	mouseGetPos(,,,&ctrlUnderMouse,2)
+	
+	switch ctrlUnderMouse
+	{
+		case ui.startGamingButton.hwnd:
+			ui.exitMenuGui.destroy()
+			startGaming()
+		case ui.stopGamingButton.hwnd:
+			ui.exitMenuGui.destroy()
+			stopGaming()
+		case ui.exitButton.hwnd:
+			ui.exitMenuGui.destroy()
+			exitApp()
+		default: 
+			ui.exitMenuGui.destroy()
+	}
+}
+
+stopGaming(*) {
+	try
+		winKill("ahk_exe foobar2000.exe")
+	try
+		processClose("discord.exe")
+	try
+		winKill("ahk_exe destiny2.exe")
+	try
+		winKill("ahk_exe shatterline.exe")
+	try
+		winKill("ahk_exe rocketleague.exe")
+	try
+		processClose("steam.exe")
+	try
+		processClose("epicGamesLauncher.exe")
+}
+
+startGaming(*) {
+	try
+		run("C:\Users\cashm\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\5) Utilities\Discord.lnk")
+	try
+		run("E:\Music\foobar2000\foobar2000.exe")
+	try
+		run("C:\Program Files (x86)\Steam\steam.exe")
+	try
+		run("C:\Program Files (x86)\Epic Games\Launcher\Portal\Binaries\Win32\EpicGamesLauncher.exe")
+}
+
+exitMenuShow() {
+	winGetPos(&tbX,&tbY,,,ui.titleBarButtonGui)
+	ui.exitMenuGui := gui()
+	ui.exitMenuGui.Opt("-caption -border AlwaysOnTop Owner" ui.mainGui.hwnd)
+	ui.exitMenuGui.BackColor := ui.transparentColor
+
+	ui.gamingModeLabel := ui.exitMenuGui.addText("x0 y0 w70 h15 backgroundTrans c" cfg.themeFont2Color,"Gaming Mode")
+	ui.gamingModeLabel.setFont("s8")
+	ui.gamingLabels := ui.exitMenuGui.addText("x0 y15 w70 h20 backgroundTrans c" cfg.themeFont1Color,"Stop   Start")
+	ui.gamingLabels.setFont("s10")
+	ui.stopGamingButton := ui.exitMenuGui.addPicture("x0 y35 section w35 h35 background" cfg.themeButtonReadyColor,"./img/button_quit.png")
+	ui.startGamingButton := ui.exitMenuGui.addPicture("x+0 ys w35 h35 background" cfg.themeButtonReadyColor,"./img/button_exit_gaming.png")
+	ui.stopGamingButton.onEvent("Click",exitAppCallback)
+	ui.startGamingButton.onEvent("Click",stopGaming)
+	WinSetTransColor(ui.transparentColor,ui.exitMenuGui)
+	ui.exitMenuGui.show("x" tbX+491 " y" tbY-70 " AutoSize noActivate")
+	
+	exitAppCallback(*) {
+		ExitApp
+	}
 }
 
 hideGui(*) {

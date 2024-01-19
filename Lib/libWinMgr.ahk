@@ -80,6 +80,35 @@ WM_MOUSEMOVE(wParam, lParam, msg, Hwnd) {
         prevHwnd := Hwnd
     }
 }
+	; (hwnd != prevHwnd) 
+		; ? (Hnwd == ui.stopGamingButton.hwnd 
+			; ? stopGamingButtonHover() 
+			; : stopGamingButtonNormal()) 
+		; : doNothing()
+	
+	; (hwnd != prevHwnd)
+		; ? (Hnwd == ui.startGamingButton.hwnd 
+			; ? startGamingButtonHover() 
+			; : startGamingButtonNormal()) 
+		; : doNothing()
+		
+; }
+; stopGamingButtonHover() {
+	; ui.stopGamingButton.opt("background" cfg.themeButtonAlertColor)
+; }
+; stopGamingButtonNormal() {
+	; ui.stopGamingButton.opt("background" cfg.themeButtonReadyColor)
+; }
+; startGamingButtonHover() {
+	; ui.startGamingButton.opt("background" cfg.themeButtonAlertColor)
+; }
+; startGamingButtonNormal() {
+	; ui.startGamingButton.opt("background" cfg.themeButtonReadyColor)
+; }
+; doNothing() {
+; }
+
+
 
 togglePIP()
 {

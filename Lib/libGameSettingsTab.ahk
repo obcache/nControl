@@ -14,21 +14,22 @@ if (InStr(A_LineFile,A_ScriptFullPath))
 GuiGameTab(&ui,&cfg)
 {
 global
-loop cfg.gameList.length {
-	if fileExist("./lib/lib" cfg.gameList[A_Index])
-		runWait("./lib/lib" cfg.gameList[A_Index])
+loop cfg.gameModuleList.length {
+	if fileExist("./lib/lib" cfg.gameModuleList[A_Index])
+		runWait("./lib/lib" cfg.gameModuleList[A_Index])
 }
 
 	ui.gameSettingsGui := Gui()
 	ui.gameSettingsGui.Name := "nControl Game Settings"
 	ui.gameSettingsGui.BackColor := cfg.themeBackgroundColor
-	ui.gameSettingsGui.Color := ui.TransparentColor
+	ui.gameSettingsGui.Color := cfg.themeBackgroundColor
 	ui.gameSettingsGui.MarginX := 5
 	ui.gameSettingsGui.Opt("-Caption -Border +AlwaysOnTop +ToolWindow +Owner" ui.MainGui.Hwnd)
 	ui.gameSettingsGui.SetFont("s14 c" cfg.ThemeFont1Color,"Calibri")
+	winSetTransColor(ui.transparentColor,ui.gameSettingsGui)
 	WinSetTransparent(0,ui.gameSettingsGui)
-	ui.gameTabs := ui.gameSettingsGui.addTab3("x5 y5 w480 h165 bottom buttons 0x8000 choose" cfg.activeGameTab " background" cfg.themeBackgroundColor,cfg.gameList)
-	ui.gameTabs.choose(cfg.gameList[cfg.activeGameTab])
+	ui.gameTabs := ui.gameSettingsGui.addTab3("x5 y0 w490 h173 bottom c" cfg.themeFont2Color " choose" cfg.activeGameTab,cfg.gameModuleList)
+	ui.gameTabs.choose(cfg.gameModuleList[cfg.activeGameTab])
 	ui.gameTabs.setFont("s12")
 	ui.gameTabs.onEvent("Change",gameTabChanged)
 	ui.MainGui.GetPos(&winX,&winY,,)
@@ -61,22 +62,8 @@ loop cfg.gameList.length {
 	; tmpStatusText := ""
 
 
-	ui.gameTabs.useTab("Roblox")
-	ui.gameSettingsGui.setFont("s10")
-	ui.worldZeroBox := ui.gameSettingsGui.AddGroupBox("x5 y+-2 section 	w200 h80","World//Zero")
-	ui.w0dualPerkSwap := ui.gameSettingsGui.addPicture("x+5 y+-40 section w60 h25 section "
-		((cfg.w0DualPerkSwapEnabled)
-			? ("Background" cfg.ThemeButtonOnColor)
-				: ("Background" cfg.themeButtonReadyColor)),((cfg.w0DualPerkSwapEnabled)
-			? (cfg.toggleOn)
-				: (cfg.toggleOff)))
-				
-	ui.w0dualPerkSwap.onEvent("Click",toggleChanged)
-	ui.w0DualPerkSwap.toolTip := "Ctrl+Alt+LeftClick swaps effective perks between weapons (dual wielders only)"
-	ui.w0DualPerkSwapLabel := ui.gameSettingsGui.addText("ys w80 backgroundTrans","Perk Swap")
 
 	ui.gameTabs.useTab("Destiny2") 
-
 	ui.d2Sliding := false
 	ui.d2HoldingRun := false
 
@@ -213,7 +200,7 @@ d2CrouchKeyClicked(*) {
 			; send("{w down}")
 			; send("{LShift Down}")
 			; osdMessage("input: w-down")
-			; osdMessage("injecting: " cfg.d2SprintHoldKey " Down")
+			; osdMessage("injecting: " cfg.d2SprintKey " Down")
 		; }
 			
 	; }
@@ -223,7 +210,7 @@ d2CrouchKeyClicked(*) {
 		; global
 		; if (ui.d2HoldingRun) {
 			; osdMessage("input: w-up")
-			; osdMessage("injecting: " cfg.d2SprintHoldKey)
+			; osdMessage("injecting: " cfg.d2SprintKey)
 			; send("{LShift Up}")
 			; send("{w Up}")
 			; ui.d2HoldingRun := false
@@ -243,7 +230,7 @@ d2CrouchKeyClicked(*) {
 		; global
 		; if (ui.d2Sliding) {
 			; send("{LShift Up}")
-			; send("{" cfg.d2SprintHoldKey " Down}")
+			; send("{" cfg.d2SprintKey " Down}")
 			; ui.d2HoldingRun := true
 			; ui.d2Sliding := false
 		; } else {
@@ -253,7 +240,7 @@ d2CrouchKeyClicked(*) {
 
 	
 	ui.gameTabs.useTab("Fortnite")
-	ui.holdToCrouchToggle := ui.gameSettingsGui.AddPicture("x5 y5 w60 h25 section vHoldToCrouch " ((cfg.holdToCrouchEnabled) 
+	ui.holdToCrouchToggle := ui.gameSettingsGui.AddPicture("x15 y15 w60 h25 section vHoldToCrouch " ((cfg.holdToCrouchEnabled) 
 		? ("Background" cfg.ThemeButtonOnColor) 
 			: ("Background" cfg.ThemeButtonReadyColor)),((cfg.holdToCrouchEnabled) 
 		? (cfg.toggleOn) 
@@ -262,10 +249,15 @@ d2CrouchKeyClicked(*) {
 	ui.holdToCrouchToggle.OnEvent("Click", toggleChanged)
 	ui.holdToCrouchToggle.ToolTip := "Toggles holdToCrouch"
 	ui.leeabelToolTips := ui.gameSettingsGui.AddText("x+3 ys+3 BackgroundTrans","Hold to Crouch")
+	ToggleHoldToCrouch(*)
+	{
+		ui.toggleHoldToCrouch.Opt((cfg.holdToCrouch := !cfg.holdToCrouchEnabled) ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor))
+		ui.ToggleHoldToCrouch.Redraw()
+	}
 
 
-	ui.gameTabs.useTab("CounterStrike2")
-	ui.cs2holdScope := ui.gameSettingsGui.addPicture("x5 y5 w60 h25 section vAholdScope " 
+	ui.gameTabs.useTab("CS2")
+	ui.cs2holdScope := ui.gameSettingsGui.addPicture("x15 y15 w60 h25 section vAholdScope " 
 		((cfg.d2AlwaysRunEnabled) 
 			? ("Background" cfg.ThemeButtonOnColor) 
 				: ("Background" cfg.themeButtonReadyColor)),((cfg.cs2holdToScopeEnabled) 
@@ -277,18 +269,73 @@ d2CrouchKeyClicked(*) {
 	ui.labelToolTips := ui.gameSettingsGui.AddText("x+3 ys-1 BackgroundTrans","Hold to Scope")	
 
 ; drawOutlineNamed("osdMessage",ui.osd,2,2,120,126,"FF55bb","BB00fF",2)
-drawOutlineNamed("gameSettingsExterior",ui.gameSettingsGui,5,0,485,170,cfg.themeBorderDarkColor,cfg.themeBorderLightColor,2)	
+; drawOutlineNamed("gameSettingsExterior",ui.gameSettingsGui,5,0,485,170,cfg.themeBorderDarkColor,cfg.themeBorderLightColor,2)	
 	
-osdMessage(msgText) {
-	global
-	tmpOsdText := SubStr(ui.osdText.text, InStr(ui.osdText.text,"`n") + 1)
-	ui.osdText.text := tmpOsdText "`n" msgText
-}
+; osdMessage(msgText) {
+	; global
+	; tmpOsdText := SubStr(ui.osdText.text, InStr(ui.osdText.text,"`n") + 1)
+	; ui.osdText.text := tmpOsdText "`n" msgText
+; }
 
-toggleOSD(*) {
-	(ui.osdHidden := !ui.osdHidden) ? winSetTransparent(0,ui.osd) : (winSetTransparent(255,ui.osd),WinSetTransColor("020301",ui.osd))
-}
+; toggleOSD(*) {
+	; (ui.osdHidden := !ui.osdHidden) ? winSetTransparent(0,ui.osd) : (winSetTransparent(255,ui.osd),WinSetTransColor("020301",ui.osd))
+; }
 
 gameTabChanged(*) {
 	cfg.activeGameTab := ui.gametabs.value
-}
+}	
+;ui.gameTabs.useTab("")
+;drawOutlineNamed("GameSettingsOutline",ui.gameSettingsGui,5,0,485,173,cfg.themeFont3Color,cfg.themeFont3Color,3)
+	ui.gameTabs.useTab("World//Zero")
+
+	ui.gameSettingsGui.setFont("s10")
+	ui.w0dualPerkSwap := ui.gameSettingsGui.addPicture("x20 y15 w60 h25 section "
+		((cfg.w0DualPerkSwapEnabled)
+			? ("Background" cfg.ThemeButtonOnColor)
+				: ("Background" cfg.themeButtonReadyColor)),((cfg.w0DualPerkSwapEnabled)
+			? (cfg.toggleOn)
+				: (cfg.toggleOff)))
+				
+	ui.w0dualPerkSwap.onEvent("Click",PerkSwapToggleChanged)
+	ui.w0DualPerkSwap.toolTip := "Ctrl+Alt+LeftClick swaps effective perks between weapons (dual wielders only)"
+	ui.labelW0DualPerkSwap := ui.gameSettingsGui.addText("ys w80 backgroundTrans","Perk Swap")
+	
+	perkSwapToggleChanged(toggleControl,*) {
+		toggleControl.value := 
+			(cfg.w0DualPerkSwapEnabled := !cfg.w0DualPerkSwapEnabled)
+				? (toggleControl.Opt("Background" cfg.ThemeButtonOnColor),cfg.toggleOn)
+				: (toggleControl.Opt("Background" cfg.ThemeButtonReadyColor),cfg.toggleOff)
+		
+	}	
+	ui.toggleCelestialTower := ui.gameSettingsGui.AddPicture("xs  w60 h25 section vCelestialTower " (cfg.CelestialTowerEnabled ? ("Background" cfg.ThemeButtonAlertColor) : ("Background" cfg.ThemeButtonAlertColor)),((cfg.CelestialTowerEnabled) ? "./img/towerToggle_celestial.png" : "./img/towerToggle_infinite.png"))
+	ui.toggleCelestialTower.OnEvent("Click", towerToggleChanged)
+	ui.toggleCelestialTower.ToolTip := "Toggles between Infinite and Celestial Towers."
+	ui.labelCelestialTower:= ui.gameSettingsGui.AddText("x+3 ys+3 backgroundTrans","Tower Settings")	
+	
+	
+	ui.towerIntervalSlider := ui.gameSettingsGui.addSlider("xs y+10 w160 h20 Range1-50  Left background" ui.transparentColor " ToolTipTop",cfg.towerInterval)
+	ui.towerIntervalSlider.OnEvent("Change",towerIntervalChanged)
+	ui.towerIntervalSlider.ToolTip := "Tower Restart Interval"
+	ToggleCelestialTower(*)
+	{
+		ui.toggleCelestialTower.Opt((cfg.CelestialTowerEnabled := !cfg.CelestialTowerEnabled) ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor))
+		ui.toggleCelestialTower.Redraw()
+	}
+		towerIntervalChanged(*) {
+		cfg.towerInterval := ui.towerIntervalSlider.Value
+	}
+
+	
+	
+
+
+	ToggleSilentIdle(*)
+	{
+		ui.toggleSilentIdle.Opt((cfg.SilentIdleEnabled := !cfg.SilentIdleEnabled) ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor))
+		ui.toggleSilentIdle.Redraw()
+	}
+	ui.toggleSilentIdle := ui.gameSettingsGui.AddPicture("xs w60 h25 section vSilentIdle " (cfg.SilentIdleEnabled ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor)),((cfg.SilentIdleEnabled) ? (cfg.toggleOn) : (cfg.toggleOff)))
+	ui.toggleSilentIdle.OnEvent("Click", toggleChanged)
+	ui.toggleSilentIdle.ToolTip := "Minimizes Roblox Windows While Anti-Idling"
+	ui.labelSilentIdle:= ui.gameSettingsGui.AddText("x+3 ys+3 backgroundTrans","Silent AntiIdle")
+	

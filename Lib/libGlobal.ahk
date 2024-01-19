@@ -138,7 +138,7 @@ preAutoExec(InstallDir,ConfigFileName) {
 			; FileInstall("./nControl.ini",InstallDir "./nControl.ini",1)
 			; FileInstall("./nControl.themes",InstallDir "/nControl.themes",1)
 			; FileInstall("./AfkData.csv",InstallDir "/afkData.csv",1)
-			
+			FileInstall("./Img/button_exit_gaming.png",InstallDir "/img/button_exit_gaming.png",1)
 			FileInstall("./Img/keyboard_key_up.png",InstallDir "/img/keyboard_key_up.png",1)
 			FileInstall("./Img/keyboard_key_down.png",InstallDir "/img/keyboard_key_down.png",1)
 			FileInstall("./Img/button_ready.png",InstallDir "/Img/button_ready.png",1)
@@ -281,6 +281,26 @@ persistLog(LogMsg) {
 	FileAppend(A_YYYY A_MM A_DD " [" A_Hour ":" A_Min ":" A_Sec "] " LogMsg "`n",InstallDir "/Logs/persist.log")
 }
 
+whr := comObject("winHttp.winHttpRequest.5.1")
+whr.open("get","https://raw.githubusercontent.com/obcache/nControl/main/nControl_currentBuild.dat")
+whr.send()
+whr.waitForResponse()
+latestVersion := whr.responseText
+currentVersion := FileRead("./nControl_currentBuild.dat")
+
+if (latestVersion > currentVersion) 
+{
+	msgBoxAnswer := MsgBox("A newer version is available.`nYou currently have: " currentVersion "`nBut the newest is: " latestVersion "`nWould you like to update now?","YN")
+
+	if (msgBoxAnswer == "Yes")
+	{ 
+		Download("https://github.com/obcache/nControl/releases/download/v" substr(latestVersion,1,1) "." substr(latestVersion,2,1) "." substr(latestVersion,3,1) "." substr(latestVersion,4,1) "/nControl_" latestVersion ".exe",a_MyDocuments "/nControl/")
+		
+		run(a_mydocuments "/nControl/nControl_" latestVersion ".exe")
+	}
+}
+
+
 cfgLoad(&cfg, &ui) {
 	global
 	ui.gameWindowsList 		:= array()
@@ -340,9 +360,12 @@ cfgLoad(&cfg, &ui) {
 	cfg.MainScriptName		:= IniRead(cfg.file,"System","MainScriptName", "nControl")
 	cfg.debugEnabled		:= IniRead(cfg.file,"System","debugEnabled",false)
 	cfg.consoleVisible		:= IniRead(cfg.file,"System","consoleVisible",false)
+	cfg.ToolTipsEnabled 	:= IniRead(cfg.file,"System","ToolTipsEnabled",true)
+	cfg.releaseChannel		:= IniRead(cfg.file,"System","ReleaseChannel","Stable")
 	cfg.toggleOn			:= IniRead(cfg.file,"Interface","ToggleOnImage","./Img/toggle_on.png")
 	cfg.toggleOff			:= IniRead(cfg.file,"Interface","ToggleOffImage","./Img/toggle_off.png")
-	cfg.ToolTipsEnabled 	:= IniRead(cfg.file,"System","ToolTipsEnabled",true)
+	cfg.activeMainTab		:= IniRead(cfg.file,"Interface","activeMainTab",1)
+	cfg.activeGameTab  		:= IniRead(cfg.file,"Interface","ActiveGameTab",1)
 	cfg.AlwaysOnTopEnabled	:= IniRead(cfg.file,"Interface","AlwaysOnTopEnabled",true)
 	cfg.AnimationsEnabled	:= IniRead(cfg.file,"Interface","AnimationsEnabled",true)
 	cfg.ColorPickerEnabled 	:= IniRead(cfg.file,"Interface","ColorPickerEnabled",true)
@@ -362,13 +385,15 @@ cfgLoad(&cfg, &ui) {
 	cfg.AfkSnapEnabled			:= IniRead(cfg.file,"Interface","AfkSnapEnabled",false)
 	cfg.GuiSnapEnabled			:= IniRead(cfg.file,"Interface","GuiSnapEnabled",true)
 
+
 	cfg.AutoDetectGame			:= IniRead(cfg.file,"Game","AutoDetectGame",true)
+	cfg.gameModuleList			:= strSplit(iniRead(cfg.file,"Game","GameModuleList","World//Zero,Destiny2,CS2,Fortnite"),",")
 	cfg.GameList				:= StrSplit(IniRead(cfg.file,"Game","GameList","Roblox,Rocket League"),",")
 	cfg.mainTabList				:= strSplit(IniRead(cfg.file,"Interface","MainTabList","Sys,AFK,Game,Dock,Setup,Audio"),",")
 	cfg.game					:= IniRead(cfg.file,"Game","Game","2")
 	cfg.HwndSwapEnabled			:= IniRead(cfg.file,"Game","HwndSwapEnabled",false)
-	ui.win1enabled 			:= IniRead(cfg.file,"Game","Win1Enabled",true)
-	ui.win2enabled 			:= IniRead(cfg.file,"Game","Win2Enabled",true)	
+	ui.win1enabled 				:= IniRead(cfg.file,"Game","Win1Enabled",true)
+	ui.win2enabled 				:= IniRead(cfg.file,"Game","Win2Enabled",true)	
 	cfg.win1Disabled 			:= IniRead(cfg.file,"Game","win1disabled",false)
 	cfg.win2Disabled 			:= IniRead(cfg.file,"Game","win2disabled",false)
 	cfg.w0DualPerkSwapEnabled	:= IniRead(cfg.file,"Game","w0DualPerkSwap",true)
@@ -418,26 +443,23 @@ cfgLoad(&cfg, &ui) {
 	cfg.ThemeDark1Color			:= IniRead(cfg.themeFile,cfg.Theme,"ThemeDark1Color","FFFFFF")
 	cfg.ThemeBorderLightColor	:= IniRead(cfg.themeFile,cfg.Theme,"ThemeBorderLightColor","888888")
 	cfg.ThemeBorderDarkColor	:= IniRead(cfg.themeFile,cfg.Theme,"ThemeBorderDarkColor","333333")
-	cfg.ThemePanel1Color	:= IniRead(cfg.themeFile,cfg.Theme,"ThemePanel1Color","204040")
-	cfg.ThemePanel2Color	:= IniRead(cfg.themeFile,cfg.Theme,"ThemePanel2Color","804001")
-	cfg.ThemePanel3Color	:= IniRead(cfg.themeFile,cfg.Theme,"ThemePanel3Color","204040")
-	cfg.ThemePanel4Color	:= IniRead(cfg.themeFile,cfg.Theme,"ThemePanel4Color","804001")
-	cfg.ThemeEditboxColor	:= IniRead(cfg.themeFile,cfg.Theme,"ThemeEditboxColor","292929")
-	cfg.ThemeProgressColor	:= IniRead(cfg.themeFile,cfg.Theme,"ThemeProgressColor","292929")
-	cfg.ThemeDisabledColor	:= IniRead(cfg.themeFile,cfg.Theme,"ThemeDisabledColor","212121")
+	cfg.ThemePanel1Color		:= IniRead(cfg.themeFile,cfg.Theme,"ThemePanel1Color","204040")
+	cfg.ThemePanel2Color		:= IniRead(cfg.themeFile,cfg.Theme,"ThemePanel2Color","804001")
+	cfg.ThemePanel3Color		:= IniRead(cfg.themeFile,cfg.Theme,"ThemePanel3Color","204040")
+	cfg.ThemePanel4Color		:= IniRead(cfg.themeFile,cfg.Theme,"ThemePanel4Color","804001")
+	cfg.ThemeEditboxColor		:= IniRead(cfg.themeFile,cfg.Theme,"ThemeEditboxColor","292929")
+	cfg.ThemeProgressColor		:= IniRead(cfg.themeFile,cfg.Theme,"ThemeProgressColor","292929")
+	cfg.ThemeDisabledColor		:= IniRead(cfg.themeFile,cfg.Theme,"ThemeDisabledColor","212121")
 	cfg.ThemeButtonAlertColor	:= IniRead(cfg.themeFile,cfg.Theme,"ThemeButtonAlertColor","3C3C3C")
-	cfg.ThemeButtonOnColor	:= IniRead(cfg.themeFile,cfg.Theme,"ThemeButtonOnColor","FF01FF")
+	cfg.ThemeButtonOnColor		:= IniRead(cfg.themeFile,cfg.Theme,"ThemeButtonOnColor","FF01FF")
 	cfg.ThemeButtonReadyColor	:= IniRead(cfg.themeFile,cfg.Theme,"ThemeButtonReadyColor","1FFFF0")
 	
-	cfg.holdToCrouchEnabled := IniRead(cfg.file,"game","HoldToCrouch",true)
+	cfg.holdToCrouchEnabled 	:= IniRead(cfg.file,"game","HoldToCrouch",true)
 	cfg.cs2HoldToScopeEnabled	:= IniRead(cfg.file,"game","cs2HoldToScopeEnabled",true)
-	cfg.d2AlwaysRunEnabled	:= IniRead(cfg.file,"Game","d2AlwaysRun",false)
-	cfg.d2SprintKey			:= IniRead(cfg.file,"Game","d2SprintHoldKey","<UNSET")
-	cfg.d2CrouchKey			:= IniRead(cfg.file,"Game","d2CrouchKey","<UNSET>")
-	cfg.activeMainTab		:= IniRead(cfg.file,"Interface","activeMainTab",1)
-	cfg.activeGameTab  		:= IniRead(cfg.file,"Interface","ActiveGameTab",1)
+	cfg.d2AlwaysRunEnabled		:= IniRead(cfg.file,"Game","d2AlwaysRunEnabled",false)
+	cfg.d2SprintKey				:= IniRead(cfg.file,"Game","d2SprintKey","<UNSET>")
+	cfg.d2CrouchKey				:= IniRead(cfg.file,"Game","d2CrouchKey","<UNSET>")
 }
-
 WriteConfig() {
 	Global
 	tmpGameList := ""
@@ -447,15 +469,9 @@ WriteConfig() {
 	IniWrite(cfg.mainScriptName,cfg.file,"System","ScriptName")
 	IniWrite(cfg.installDir,cfg.file,"System","InstallDir")
 	IniWrite(cfg.mainGui,cfg.file,"System","MainGui")
-	
-	Loop cfg.gameList.Length
-	{
-		if !(tmpGameList)
-			tmpGameList := cfg.gameList[A_Index]
-		else
-			tmpGameList := tmpGameList "," cfg.gameList[A_Index]
-	}
-	IniWrite(tmpGameList,cfg.file,"Game","GameList")
+	IniWrite(ui.releaseChannelDDL.value,cfg.file,"System","ReleaseChannel")
+	IniWrite(arr2str(cfg.gameModuleList),cfg.file,"Game","GameModuleList")
+	IniWrite(arr2str(cfg.gameList),cfg.file,"Game","GameList")
 	IniWrite(ui.gameDDL.value,cfg.file,"Game","Game")
 	IniWrite(ui.win1enabled,cfg.file,"Game","Win1Enabled")
 	IniWrite(ui.win2enabled,cfg.file,"Game","Win2Enabled")	
@@ -492,12 +508,7 @@ WriteConfig() {
 		ui.themeResetSchedule := false
 	} else {
 		IniWrite(ui.themeDDL.text,cfg.file,"Interface","Theme")
-		themeListString := ""
-		Loop cfg.themeList.Length {
-			themeListString .= cfg.themeList[A_Index] ","
-		}
-		themeListString := rtrim(themeListString,",")
-		IniWrite(themeListString,cfg.themeFile,"Interface","ThemeList")
+		IniWrite(arr2str(cfg.themeList),cfg.themeFile,"Interface","ThemeList")
 		IniWrite(cfg.themeBright2Color,cfg.themeFile,"Custom","ThemeBright2Color")
 		IniWrite(cfg.themeBright1Color,cfg.themeFile,"Custom","ThemeBright1Color")
 		IniWrite(cfg.themeDark2Color,cfg.themeFile,"Custom","ThemeDark2Color")
@@ -521,7 +532,7 @@ WriteConfig() {
 		IniWrite(cfg.themeButtonAlertColor,cfg.themeFile,"Custom","ThemeButtonAlertColor")
 		IniWrite(cfg.holdToCrouchEnabled,cfg.file,"game","HoldToCrouch")
 		IniWrite(cfg.d2AlwaysRunEnabled,cfg.file,"Game","d2AlwaysRunEnabled")
-		IniWrite(cfg.d2SprintKey,cfg.file,"Game","d2SprintHoldKey")
+		IniWrite(cfg.d2SprintKey,cfg.file,"Game","d2SprintKey")
 		IniWrite(cfg.d2CrouchKey,cfg.file,"Game","d2CrouchKey")
 		IniWrite(cfg.activeMainTab,cfg.file,"Interface","ActiveMainTab")
 		IniWrite(cfg.activeGameTab,cfg.file,"Interface","ActiveGameTab")
@@ -805,4 +816,10 @@ restartApp(*) {
 	reload()
 }
 
-
+arr2str(arrayName) {
+	loop arrayName.Length
+	{
+		stringFromArray .= arrayName[a_index] ","
+	}
+	return rtrim(stringFromArray,",")
+}

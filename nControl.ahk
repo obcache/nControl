@@ -1,4 +1,4 @@
-A_FileVersion := "3.3.0.9"
+A_FileVersion := "3.3.1.4"
 A_AppName := "nControl"
 ;@Ahk2Exe-Let FileVersion=%A_PriorLine~U)^(.+"){1}(.+)".*$~$2% 
 
@@ -82,6 +82,10 @@ debugLog("Console Initialized")
 	; toggleConsole()
 ; }																																																				
 RefreshWinHwnd()
-ui.gameTabs.choose(cfg.gameList[cfg.activeGameTab])
+ui.gameTabs.choose(cfg.gameModuleList[1])
 ui.mainGuiTabs.choose(cfg.mainTabList[cfg.activeMainTab])
+
+ui.gameTabs.choose(cfg.gameModuleList[2])
+ui.gameTabs.choose(cfg.gameModuleList[cfg.activeGameTab])
+
 tabsChanged()

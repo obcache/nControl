@@ -298,7 +298,7 @@ restartTower(*) {
 	ui.opsProgress2.value := 0
 	Loop 2
 	{
-		if (cfg.win%A_Index%Enabled) && winExist(this_window := "ahk_id " ui.win%a_index%hwnd)
+		if (ui.win%A_Index%Enabled) && winExist(this_window := "ahk_id " ui.win%a_index%hwnd)
 		{
 			winActivate(this_window)
 		
