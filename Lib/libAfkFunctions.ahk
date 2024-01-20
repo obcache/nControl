@@ -237,17 +237,10 @@ antiIdle1Off() {
 
  ;Primary AFK Action Function
 
-	toggleTower(*) {
+toggleTower(*) {
 	global
-	
-	if !((ui.win1enabled && WinExist("ahk_id " ui.win1Hwnd)) 
-			|| (ui.win2enabled && WinExist("ahk_id " ui.win2Hwnd))) {
-				debugLog("AutoTower: Failed to start. No game windows found.")
-				Return
-			} else {
-				;debugLog("AutoTower: Starting")
-			}
-			
+
+	if (!cfg.win1disabled && WinExist("ahk_id " ui.win1Hwnd)) || (!cfg.win2disabled && !WinExist("ahk_id " ui.win2Hwnd)) {
 		(ui.towerEnabled := ! ui.towerEnabled)
 		? (
 			(cfg.celestialTowerEnabled)
@@ -287,64 +280,80 @@ antiIdle1Off() {
 			,ui.opsTowerButton.Value	:= "./img/button_tower_ready.png"
 			,ui.buttonTower.Value		:= "./img/button_tower_ready.png"
 		)
-	
+	} else {
+		debugLog("AutoTower: Failed to start. No game windows found.")
+		notifyOSD("AutoTower Failed: No valid game windows found.",3000)
+		Return
 	}
+}
 
 restartTower(*) {
 	global
-	stopAfk()
-	ui.afkProgress.value := 0
-	ui.opsProgress1.value := 0
-	ui.opsProgress2.value := 0
-	Loop 2
-	{
-		if (ui.win%A_Index%Enabled) && winExist(this_window := "ahk_id " ui.win%a_index%hwnd)
+	
+	if (!cfg.win1disabled && WinExist("ahk_id " ui.win1Hwnd)) || (!cfg.win2disabled && !WinExist("ahk_id " ui.win2Hwnd)) {	
+		stopAfk()
+		ui.afkProgress.value := 0
+		ui.opsProgress1.value := 0
+		ui.opsProgress2.value := 0
+		Loop 2
 		{
-			winActivate(this_window)
-		
-			CoordMode("Mouse","Client")
-			WinGetPos(&WinX,&WinY,&WinW,&WinH,this_window)
-			InfTowerButtonX := (WinW*.43)
-			InfTowerButtonY := (WinH*.675)
-			CelestialTowerX := (WinW*.6)
-			CelestialTowerY := (WinH*.675)
-			
-			; StartButtonX 	:= (WinW/2)+240
-			; StartButtonY 	:= (WinH/2)+130
-						
-			StartButtonX 	:= (WinW*.59)
-			StartButtonY 	:= (WinH*.72)
-			
-			if (WinGetProcessName(this_window) == "ApplicationFrameHost.exe")
+			if (ui.win%A_Index%Enabled) && winExist(this_window := "ahk_id " ui.win%a_index%hwnd)
 			{
-				InfTowerButtonY += 35
-				CelestialTowerY += 35
-				StartButtonY 	+= 35
+				winActivate(this_window)
+			
+				CoordMode("Mouse","Client")
+				WinGetPos(&WinX,&WinY,&WinW,&WinH,this_window)
+				InfTowerButtonX := (WinW*.43)
+				InfTowerButtonY := (WinH*.675)
+				CelestialTowerX := (WinW*.6)
+				CelestialTowerY := (WinH*.675)
+				
+				; StartButtonX 	:= (WinW/2)+240
+				; StartButtonY 	:= (WinH/2)+130
+							
+				StartButtonX 	:= (WinW*.59)
+				StartButtonY 	:= (WinH*.72)
+				
+				if (WinGetProcessName(this_window) == "ApplicationFrameHost.exe")
+				{
+					InfTowerButtonY += 35
+					CelestialTowerY += 35
+					StartButtonY 	+= 35
+				}
+			
+				Sleep(250)
+				Send("{V}")
+				Sleep(1200)
+				if (cfg.celestialTowerEnabled)
+				{
+					Mouse(CelestialTowerX,CelestialTowerY)
+				} else {
+					Mouse(InfTowerButtonX,InfTowerButtonY)
+				}
+				Sleep(1000)
+				Mouse(StartButtonX,StartButtonY)
+				Sleep(1500)
+				Send("{V}")
+				Sleep(1000)
 			}
-		
-			Sleep(250)
-			Send("{V}")
-			Sleep(1200)
-			if (cfg.celestialTowerEnabled)
-			{
-				Mouse(CelestialTowerX,CelestialTowerY)
-			} else {
-				Mouse(InfTowerButtonX,InfTowerButtonY)
-			}
-			Sleep(1000)
-			Mouse(StartButtonX,StartButtonY)
-			Sleep(1500)
-			Send("{V}")
-			Sleep(1000)
 		}
+	startAFK()
+	} else {
+		debugLog("AutoTower: Failed to start. No game windows found.")
+		notifyOSD("AutoTower Failed: No valid game windows found.",3000)
+		Return
 	}
-startAFK()
 }
 
 toggleAFK(*) {
+	if (!cfg.win1disabled && WinExist("ahk_id " ui.win1Hwnd)) || (!cfg.win2disabled && !WinExist("ahk_id " ui.win2Hwnd)) {	
 		(ui.afkEnabled := !ui.afkEnabled) ? StartAFK() : StopAFK()
-
+	} else {
+		debugLog("AFK Failed to start. No game windows found.")
+		notifyOSD("AFK Failed: No valid game windows found.",3000)
+		Return
 	}
+}
 
 
 startAFK(*) {
@@ -545,7 +554,7 @@ afkBeta(*) {
 	while (ui.afkEnabled) {
 			ui.currStepNum += 1
 			;debugLog("afk step: " ui.currStepNum)
-			if (ui.currStepNum <= win1afk.steps.length) && ui.win1enabled {
+			if (ui.currStepNum <= win1afk.steps.length) && !cfg.win1disabled && winExist("ahk_id " ui.win1hwnd) {
 				debugStep := (win1afk.steps.length >= ui.currStepNum) ? (win1afk.steps[ui.currStepNum]) : ("--")
 				debugWait := (win1afk.waits.length >= ui.currStepNum) ? (win1afk.waits[ui.currStepNum]) : ("--")
 				debugLog("| win: 1 | step: " ui.currStepNum " | Action: " debugStep " | wait: " debugWait " |")
@@ -556,7 +565,7 @@ afkBeta(*) {
 			}
 			
 			
-			if (ui.currStepNum <= win2afk.steps.length) && ui.win2enabled {
+			if (ui.currStepNum <= win2afk.steps.length) && !cfg.win2disabled && winExist("ahk_id " ui.win2hwnd) {
 				debugStep := (win2afk.steps.length >= ui.currStepNum) ? (win2afk.steps[ui.currStepNum]) : ("--")
 				debugWait := (win2afk.waits.length >= ui.currStepNum) ? (win2afk.waits[ui.currStepNum]) : ("--")
 				debugLog("| win: 2 | step: " ui.currStepNum " | Action: " debugStep " | wait: " debugWait " |")

@@ -270,51 +270,6 @@ FileFound(fileName,destination,fileDescription) {
 		,3000)
 	}
 }
-
-autoUpdate(*) {	
-	whr := comObject("winHttp.winHttpRequest.5.1")
-	whr.open("get","https://raw.githubusercontent.com/obcache/nControl/main/nControl_currentBuild.dat")
-	whr.send()
-	whr.waitForResponse()
-	latestVersion := whr.responseText
-	currentVersion := FileRead("./nControl_currentBuild.dat")
-
-	if (latestVersion > currentVersion) 
-	{
-		msgBoxAnswer := MsgBox("A newer version is available.`nYou currently have: " currentVersion "`nBut the newest is: " latestVersion "`nWould you like to update now?",,"YN")
-
-		if (msgBoxAnswer == "Yes")
-		{ 
-			Download("https://github.com/obcache/nControl/releases/download/v" substr(latestVersion,1,1) "." substr(latestVersion,2,1) "." substr(latestVersion,3,1) "." substr(latestVersion,4,1) "/nControl_" latestVersion ".exe",a_MyDocuments "/nControl/nControl_" latestVersion ".exe")
-			
-			run(a_mydocuments "/nControl/nControl_" latestVersion ".exe")
-		}
-	} 
-
-}
-checkForUpdates(*) {	
-	whr := comObject("winHttp.winHttpRequest.5.1")
-	whr.open("get","https://raw.githubusercontent.com/obcache/nControl/main/nControl_currentBuild.dat")
-	whr.send()
-	whr.waitForResponse()
-	latestVersion := whr.responseText
-	currentVersion := FileRead("./nControl_currentBuild.dat")
-
-	if (latestVersion > currentVersion) 
-	{
-		msgBoxAnswer := MsgBox("A newer version is available.`nYou currently have: " currentVersion "`nBut the newest is: " latestVersion "`nWould you like to update now?",,"YN")
-
-		if (msgBoxAnswer == "Yes")
-		{ 
-			Download("https://github.com/obcache/nControl/releases/download/v" substr(latestVersion,1,1) "." substr(latestVersion,2,1) "." substr(latestVersion,3,1) "." substr(latestVersion,4,1) "/nControl_" latestVersion ".exe",a_MyDocuments "/nControl/")
-			
-			run(a_mydocuments "/nControl/nControl_" latestVersion ".exe")
-		}
-	} else {
-		msgBox("You have the latest version already.`nInstalled Version: " currentVersion "`nLatestVersion: " latestVersion)
-	}
-
-}
 			
 persistLog(LogMsg) {
 	Global
@@ -327,24 +282,56 @@ persistLog(LogMsg) {
 	FileAppend(A_YYYY A_MM A_DD " [" A_Hour ":" A_Min ":" A_Sec "] " LogMsg "`n",InstallDir "/Logs/persist.log")
 }
 
-whr := comObject("winHttp.winHttpRequest.5.1")
-whr.open("get","https://raw.githubusercontent.com/obcache/nControl/main/nControl_currentBuild.dat")
-whr.send()
-whr.waitForResponse()
-latestVersion := whr.responseText
-currentVersion := FileRead("./nControl_currentBuild.dat")
+CheckForUpdates(*) {
+	whr := comObject("winHttp.winHttpRequest.5.1")
+	whr.open("get","https://raw.githubusercontent.com/obcache/nControl/main/nControl_currentBuild.dat")
+	whr.send()
+	whr.waitForResponse()
+	latestVersion := whr.responseText
+	currentVersion := FileRead("./nControl_currentBuild.dat")
 
-if (latestVersion > currentVersion) 
-{
-	msgBoxAnswer := MsgBox("A newer version is available.`nYou currently have: " currentVersion "`nBut the newest is: " latestVersion "`nWould you like to update now?","YN")
+	if (latestVersion > currentVersion) 
+	{
+		msgBoxAnswer := MsgBox("A newer version is available.`nYou currently have: " currentVersion "`nBut the newest is: " latestVersion "`nWould you like to update now?",,"YN")
 
-	if (msgBoxAnswer == "Yes")
-	{ 
-		Download("https://github.com/obcache/nControl/releases/download/v" substr(latestVersion,1,1) "." substr(latestVersion,2,1) "." substr(latestVersion,3,1) "." substr(latestVersion,4,1) "/nControl_" latestVersion ".exe",a_MyDocuments "/nControl/")
+		if (msgBoxAnswer == "Yes")
+		{ 
+			if !(DirExist(InstallDir "/versions"))
+				DirCreate(InstallDir "/versions")
 		
-		run(a_mydocuments "/nControl/nControl_" latestVersion ".exe")
+			download "https://raw.githubusercontent.com/obcache/nControl/main/Bin/nControl_" latestVersion ".exe",InstallDir "/versions/nControl_" latestVersion ".exe"
+			
+			run(InstallDir "/versions/nControl_" latestVersion ".exe")
+		}
+	} else {
+		msgBox("You have the latest version already.`nInstalled Version: " currentVersion "`nLatestVersion: " latestVersion)
 	}
 }
+
+AutoUpdate(*) {
+	whr := comObject("winHttp.winHttpRequest.5.1")
+	whr.open("get","https://raw.githubusercontent.com/obcache/nControl/main/nControl_currentBuild.dat")
+	whr.send()
+	whr.waitForResponse()
+	latestVersion := whr.responseText
+	currentVersion := FileRead("./nControl_currentBuild.dat")
+
+	if (latestVersion > currentVersion) 
+	{
+		msgBoxAnswer := MsgBox("A newer version is available.`nYou currently have: " currentVersion "`nBut the newest is: " latestVersion "`nWould you like to update now?",,"YN")
+
+		if (msgBoxAnswer == "Yes")
+		{ 
+			if !(DirExist(InstallDir "/versions"))
+				DirCreate(InstallDir "/versions")
+		
+			download "https://raw.githubusercontent.com/obcache/nControl/main/Bin/nControl_" latestVersion ".exe",InstallDir "/versions/nControl_" latestVersion ".exe"
+			
+			run(InstallDir "/versions/nControl_" latestVersion ".exe")
+		}
+	}
+}
+
 
 
 cfgLoad(&cfg, &ui) {
@@ -666,7 +653,6 @@ getClick(&clickX,&clickY,&activeWindow) {
 		fileAppend("Window: [" activeWindow "] " WinGetTitle("ahk_id " activeWindow) " `nx: " clickX " y: " clickY "`nColor: " pixelColor "`n`n", "./capturedPixels.txt")
 		debugLog("Window: [" activeWindow "] " WinGetTitle("ahk_id " activeWindow) ", x: " clickX " y: " clickY ", Color: " pixelColor)
 	}
-
 }
 
 GetWinNumber() {
@@ -718,16 +704,12 @@ DialogBoxClose(*)
 	Global
 	ui.dialogBoxGui.Destroy()
 }
-
 NotifyOSD(NotifyMsg,Duration := 10,YN := "")
 {
 	Transparent := 250
-
-	try
-		debugLog(NotifyMsg)
 	
 	ui.notifyGui			:= Gui()
-	ui.notifyGui.Title 	:= "Notify"
+	ui.notifyGui.Title 		:= "Notify"
 
 	ui.notifyGui.Opt("+AlwaysOnTop -Caption +ToolWindow +Owner" ui.mainGui.hwnd)  ; +ToolWindow avoids a taskbar button and an alt-tab menu item.
 	ui.notifyGui.BackColor := cfg.ThemePanel2Color  ; Can be any RGB color (it will be made transparent below).
@@ -735,39 +717,54 @@ NotifyOSD(NotifyMsg,Duration := 10,YN := "")
 	ui.notifyGui.AddText("c" cfg.ThemeFont2Color " BackgroundTrans",NotifyMsg)  ; XX & YY serve to 00auto-size the window.
 	ui.notifyGui.AddText("xs hidden")
 	
+	WinSetTransparent(0,ui.notifyGui)
+	ui.notifyGui.Show("NoActivate Autosize")  ; NoActivate avoids deactivating the currently active window.
+	ui.notifyGui.GetPos(&x,&y,&w,&h)
+	
+	ui.MainGui.GetPos(&GuiX,&GuiY,&GuiW,&GuiH)
+	ui.notifyGui.Show("x" (GuiX+(GuiW/2)-(w/2)) " y" GuiY+(100-(h/2)) " NoActivate")
+	drawOutlineNotifyGui(0,0,w,h,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,3)
+	drawOutlineNotifyGui(5,5,w-10,h-10,cfg.ThemeBright1Color,cfg.ThemeBright2Color,2)
+	
 	if (YN) {
 		ui.notifyGui.AddText("xs hidden")
 		ui.notifyYesButton := ui.notifyGui.AddPicture("ys x30 y30","./Img/button_yes.png")
 		ui.notifyYesButton.OnEvent("Click",notifyConfirm)
 		ui.notifyNoButton := ui.notifyGui.AddPicture("ys","/Img/button_no.png")
 		ui.notifyNoButton.OnEvent("Click",notifyCancel)
-	}
-	
-	WinSetTransparent(0,ui.notifyGui)
-	ui.notifyGui.Show("NoActivate")  ; NoActivate avoids deactivating the currently active window.
-	ui.notifyGui.GetPos(&x,&y,&w,&h)
-	
-	ui.MainGui.GetPos(&GuiX,&GuiY,&GuiW,&GuiH)
-	ui.notifyGui.Show("x" (GuiX+(GuiW/2)-(w/2)) " y" GuiY+((GuiH/2)-(h/2)))
-	drawOutlineNotifyGui(0,0,w,h,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,3)
-	drawOutlineNotifyGui(5,5,w-10,h-10,cfg.ThemeBright1Color,cfg.ThemeBright2Color,2)
-	if !(YN) {
-		Sleep(500)
-		FadeOSD()
+		SetTimer(waitOSD,-10000)
 	} else {
-		SetTimer(WaitOSD,-10000)
+		ui.Transparent := 250
+		WinSetTransparent(ui.Transparent,ui.notifyGui)
+		sleep(duration)
+		fadeOSD()
 	}
+
+	waitOSD() {
+		ui.notifyGui.destroy()
+		notifyOSD("Timed out waiting for response.`nPlease try your action again",-1000)
+	}
+
+
+
+}
+
+fadeOSD() {
+	ui.transparent := 250
+	While ui.Transparent > 10 { 	
+		WinSetTransparent(ui.Transparent,ui.notifyGui)
+		ui.Transparent -= 3
+		Sleep(1)
+	}
+	ui.Transparent := ""
+	ui.notifyGui.Destroy()
 }
 
 pbNotify(NotifyMsg,Duration := 10,YN := "")
 {
 	Transparent := 250
-
-	try
-		debugLog(NotifyMsg)
-	
 	ui.notifyGui			:= Gui()
-	ui.notifyGui.Title 	:= "Notify"
+	ui.notifyGui.Title 		:= "Notify"
 
 	ui.notifyGui.Opt("+AlwaysOnTop -Caption +ToolWindow")  ; +ToolWindow avoids a taskbar button and an alt-tab menu item.
 	ui.notifyGui.BackColor := "353535" ; Can be any RGB color (it will be made transparent below).
@@ -802,27 +799,9 @@ pbNotify(NotifyMsg,Duration := 10,YN := "")
 		return 0
 	}
 }
-
-WaitOSD() {
-	ui.notifyGui.destroy()
-	notifyOSD("Timed out waiting for response.`nPlease try your action again",-1000)
-}
-
 pbWaitOSD() {
 	ui.notifyGui.destroy()
 	pbNotify("Timed out waiting for response.`nPlease try your action again",-1000)
-}
-
-FadeOSD() {
-	Transparent := 250
-	WinSetTransparent(Transparent,ui.notifyGui)
-	While Transparent > 10 { 	
-		WinSetTransparent(Transparent,ui.notifyGui)
-		Transparent -= 3
-		Sleep(1)
-	}
-	Transparent := ""
-	ui.notifyGui.Destroy()
 }
 
 hasVal(haystack, needle) {

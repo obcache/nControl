@@ -68,7 +68,7 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 	ui.ButtonDebug.OnEvent("Click",toggleConsole)		
 
 	ui.RefreshWindowHandlesButton := ui.MainGui.AddPicture("x+1 ys section w27 h27 Background" cfg.ThemeFont1Color, "./Img/button_refresh.png")	
-	ui.RefreshWindowHandlesButton.OnEvent("Click",restartApp)
+	ui.RefreshWindowHandlesButton.OnEvent("Click",refreshWinHwnd)
 	ui.RefreshWindowHandlesButton.ToolTip := "Rescan for windows matching the selected game profile."
 
 	ui.ButtonHelp := ui.MainGui.AddPicture("ys w27 h27 section Background" cfg.ThemeButtonReadyColor,"./Img/button_help_ready.png")
@@ -182,9 +182,6 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 
 		ui.Win2EnabledToggle.OnEvent("Click",ToggleGame2Status)
 		ui.Win2EnabledToggle.ToolTip := "Toggle to have this window ignored by nControl"
-		
-
-
 
 		drawOpsOutlines()
 		;msgbox(cfg.win1class '`n' cfg.win2class)
@@ -196,281 +193,247 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 	} ;End GameWindow Gui Controls
 }
 
-{ ;Functions
+ToggleHelp(*) {
+	(ui.helpActive := !ui.helpActive) ? ShowHelp() : CloseHelp()
+}
 
+ShowHelp() {
+	ui.MainGui.GetPos(&GuiX,&GuiY,&GuiW,&GuiH)
+	ui.DisableGui := Gui()
+	ui.DisableGui.Opt("-Caption AlwaysOnTop Owner" ui.MainGui.Hwnd)
+	ui.DisableGui.Color := "303030"
+	ui.DisableGui.BackColor := "303030"
+	ui.CloseHelp := ui.DisableGui.AddPicture("x40 y173 w40 h40 Background" cfg.ThemeButtonReadyColor,"./Img/button_help_ready.png")
+	ui.CloseHelp.OnEvent("Click",ToggleHelp)		
 
-
-
-
-
-
-
-	ToggleHelp(*) {
-		(ui.helpActive := !ui.helpActive) ? ShowHelp() : CloseHelp()
-	}
-
-	ShowHelp() {
-		ui.MainGui.GetPos(&GuiX,&GuiY,&GuiW,&GuiH)
-		ui.DisableGui := Gui()
-		ui.DisableGui.Opt("-Caption AlwaysOnTop Owner" ui.MainGui.Hwnd)
-		ui.DisableGui.Color := "303030"
-		ui.DisableGui.BackColor := "303030"
-		ui.CloseHelp := ui.DisableGui.AddPicture("x40 y173 w40 h40 Background" cfg.ThemeButtonReadyColor,"./Img/button_help_ready.png")
-		ui.CloseHelp.OnEvent("Click",ToggleHelp)		
-
-		ui.HelpGui := Gui()
-		ui.HelpGui.BackColor := "353535"
-		ui.HelpGui.Title := "Help for nControl " A_FileVersion
-		ui.HelpGui.Color := "353535"
-		ui.HelpPng := ui.HelpGui.AddPicture("x0 y0","./Img/Help.png")
-		ui.HelpPng.OnEvent("Click",ToggleHelp)
-		ui.HelpGui.Opt("-Caption AlwaysOnTop +Owner" ui.MainGui.Hwnd)
-		ui.MainGui.Opt("Disabled")
-		WinSetTransparent(200,ui.DisableGui)
-		
-		
-		ui.BuildNumber :=ui.HelpGui.AddText("x900 y15 w300 h25 BackgroundTrans","Build: " A_FileVersion)
-		ui.buildNumber.setFont("s10 cbbaa99")
-		ui.DisableGui.Show("x" GuiX " y" GuiY-3 " w" GuiW " h" GuiH+3)
-		ui.HelpGui.Show("w1000 h454")
-	}
-
-	CloseHelp(*) {
-		ui.DisableGui.Destroy()
-		ui.HelpGui.Destroy()
-		ui.MainGui.Opt("-Disabled")
-	}
-
-
-	autoFireWin1(*) {
-		autoFire(1)
-	}
+	ui.HelpGui := Gui()
+	ui.HelpGui.BackColor := "353535"
+	ui.HelpGui.Title := "Help for nControl " A_FileVersion
+	ui.HelpGui.Color := "353535"
+	ui.HelpPng := ui.HelpGui.AddPicture("x0 y0","./Img/Help.png")
+	ui.HelpPng.OnEvent("Click",ToggleHelp)
+	ui.HelpGui.Opt("-Caption AlwaysOnTop +Owner" ui.MainGui.Hwnd)
+	ui.MainGui.Opt("Disabled")
+	WinSetTransparent(200,ui.DisableGui)
 	
-	autoFireWin2(*) {
-		autoFire(2)
-	}
 	
-	toggleHwndSwap(*) {
-		ui.buttonSwapHwnd.Value := ((cfg.HwndSwapEnabled := !cfg.HwndSwapEnabled) ? (ui.buttonSwapHwnd.Opt("Background" cfg.ThemeButtonOnColor), "./Img/button_swapHwnd_enabled.png") : (ui.buttonSwapHwnd.Opt("Background" cfg.ThemeBackgroundColor), "./Img/button_swapHwnd_disabled.png"))
-		tmpGame2StatusDisabled := cfg.win2disabled
-		cfg.win2disabled := cfg.win1disabled
-		cfg.win1disabled := tmpGame2Statusdisabled
+	ui.BuildNumber :=ui.HelpGui.AddText("x900 y15 w300 h25 BackgroundTrans","Build: " A_FileVersion)
+	ui.buildNumber.setFont("s10 cbbaa99")
+	ui.DisableGui.Show("x" GuiX " y" GuiY-3 " w" GuiW " h" GuiH+3)
+	ui.HelpGui.Show("w1000 h454")
+}
+
+CloseHelp(*) {
+	ui.DisableGui.Destroy()
+	ui.HelpGui.Destroy()
+	ui.MainGui.Opt("-Disabled")
+}
+
+
+autoFireWin1(*) {
+	autoFire(1)
+}
+
+autoFireWin2(*) {
+	autoFire(2)
+}
+
+toggleHwndSwap(*) {
+	ui.buttonSwapHwnd.Value := ((cfg.HwndSwapEnabled := !cfg.HwndSwapEnabled) ? (ui.buttonSwapHwnd.Opt("Background" cfg.ThemeButtonOnColor), "./Img/button_swapHwnd_enabled.png") : (ui.buttonSwapHwnd.Opt("Background" cfg.ThemeBackgroundColor), "./Img/button_swapHwnd_disabled.png"))
+	tmpGame2StatusDisabled := cfg.win2disabled
+	cfg.win2disabled := cfg.win1disabled
+	cfg.win1disabled := tmpGame2Statusdisabled
+
 	
-		
-		ui.win1hwnd := ""
-		ui.win2hwnd := ""
-		Loop 2 {
-			ui.win%a_index%enabledToggle.Opt("+Disabled Background" cfg.ThemeDisabledColor)
-			ui.win%a_index%enabledToggle.Value := cfg.toggleOff
-		}
-		RefreshWinHwnd()
+	ui.win1hwnd := ""
+	ui.win2hwnd := ""
+	Loop 2 {
+		ui.win%a_index%enabledToggle.Opt("+Disabled Background" cfg.ThemeDisabledColor)
+		ui.win%a_index%enabledToggle.Value := cfg.toggleOff
+	}
+	RefreshWinHwnd()
+
+}
+
+setTimerTime(*) {
+	MsgBox("This feature has not`nyet been implemented")
+}
+
+viewClock(*) {
+	ui.ClockMode := "Clock"
+	ui.OpsClockModeLabel.Text := "Clock"
+	ui.OpsClock.Text := FormatTime(,"hh:mm:ss") " "
+}
+
+viewStopwatch(*) {
+	ui.ClockMode := "Stopwatch"
+	ui.OpsClockModeLabel.Text := "Stop`nWatch"
+	ui.OpsClock.Text := ui.StopwatchTime " "
+}
+
+viewTimer(*) {
+	ui.ClockMode := "Timer"
+	ui.OpsClockModeLabel.Text := "Timer"
+	ui.OpsClock.Text := "Timer N/A"
+}
+
+showClockMenu(*) {
+	ClockMenu := Menu()
+	ClockMenu.Add("View Current Time",ViewClock)
+	ClockMenu.Add("View Stopwatch",ViewStopwatch)
+	ClockMenu.Add("Start/Stop Stopwatch (Ctrl-Click)",StopwatchToggle)
+	ClockMenu.Add()
+	ClockMenu.Add("[Click] to Toggle Clock/Stopwatch",HelpScreen)
+	ClockMenu.Add("[Ctrl-Click] to Start/Stop Timer",HelpScreen)
+	ClockMenu.Disable("[Click] to Toggle Clock/Stopwatch")
+	ClockMenu.Disable("[Ctrl-Click] to Start/Stop Timer")
+	MouseGetPos(&MouseX,&MouseY)
+	ClockMenu.Show(MouseX,MouseY)
+}
+
+helpScreen(*) {
+
+}
+
+changeClockMode(*) {
+	if (GetKeyState("Ctrl"))
+	{
+		ViewStopwatch()
+		StopwatchToggle()
+	} else {
 	
-	}
-
-	setTimerTime(*) {
-		MsgBox("This feature has not`nyet been implemented")
-	}
-
-	viewClock(*) {
-		ui.ClockMode := "Clock"
-		ui.OpsClockModeLabel.Text := "Clock"
-		ui.OpsClock.Text := FormatTime(,"hh:mm:ss") " "
-	}
-
-	viewStopwatch(*) {
-		ui.ClockMode := "Stopwatch"
-		ui.OpsClockModeLabel.Text := "Stop`nWatch"
-		ui.OpsClock.Text := ui.StopwatchTime " "
-	}
-
-	viewTimer(*) {
-		ui.ClockMode := "Timer"
-		ui.OpsClockModeLabel.Text := "Timer"
-		ui.OpsClock.Text := "Timer N/A"
-	}
-
-	showClockMenu(*) {
-		ClockMenu := Menu()
-		ClockMenu.Add("View Current Time",ViewClock)
-		ClockMenu.Add("View Stopwatch",ViewStopwatch)
-		ClockMenu.Add("Start/Stop Stopwatch (Ctrl-Click)",StopwatchToggle)
-		ClockMenu.Add()
-		ClockMenu.Add("[Click] to Toggle Clock/Stopwatch",HelpScreen)
-		ClockMenu.Add("[Ctrl-Click] to Start/Stop Timer",HelpScreen)
-		ClockMenu.Disable("[Click] to Toggle Clock/Stopwatch")
-		ClockMenu.Disable("[Ctrl-Click] to Start/Stop Timer")
-		MouseGetPos(&MouseX,&MouseY)
-		ClockMenu.Show(MouseX,MouseY)
-	}
-
-	helpScreen(*) {
-
-	}
-
-	changeClockMode(*) {
-		if (GetKeyState("Ctrl"))
-		{
-			ViewStopwatch()
-			StopwatchToggle()
-		} else {
-		
-			Switch
-			{
-				case ui.ClockMode == "Clock":
-				{
-					ViewStopwatch()
-				}
-				case ui.ClockMode == "Stopwatch":
-				{
-					ViewTimer()
-				}
-				Default:
-				{
-					ViewClock()
-				}
-			}
-		}
-	}
-
-	opsClickTimeUpdate(*) {
-		ui.ClockTime := FormatTime("T12","Time")
-		if (ui.ClockMode == "Clock")
-			ui.OpsClock.Value := ui.ClockTime " "
-	}
-
-	stopwatchToggle(*) {
-		Global
 		Switch
 		{
-			case ui.StopwatchState == "Stopped":
+			case ui.ClockMode == "Clock":
 			{
-				ui.StopwatchState := "Running"
-				StopwatchStart()
+				ViewStopwatch()
 			}
-			case ui.StopwatchState == "Running":
+			case ui.ClockMode == "Stopwatch":
 			{
-				ui.StopwatchState := "Stopped"
-				StopwatchStop()
+				ViewTimer()
+			}
+			Default:
+			{
+				ViewClock()
 			}
 		}
 	}
+}
 
-	stopwatchStart(*) {
-		ui.StartTime := A_NowUTC
-		SetTimer(StopwatchTimer,1000)
-	}
+opsClickTimeUpdate(*) {
+	ui.ClockTime := FormatTime("T12","Time")
+	if (ui.ClockMode == "Clock")
+		ui.OpsClock.Value := ui.ClockTime " "
+}
 
-	stopwatchStop(*) {
-		SetTimer(StopwatchTimer,0)
-	}
-
-	stopwatchReset(*) {
-		ui.OpsClock.Value := FormatTime(0,"hh:mm:ss") " "
-	}
-
-	stopwatchTimer(*) {
-		Global
-		SecondsElapsed := DateDiff(A_NowUTC,ui.StartTime,"Seconds")
-		ui.StopwatchTime := Format("{:02}:{:02}", SecondsElapsed//60, Mod(SecondsElapsed,60))
-		if (ui.ClockMode == "Stopwatch")
+stopwatchToggle(*) {
+	Global
+	Switch
+	{
+		case ui.StopwatchState == "Stopped":
 		{
-			ui.OpsClock.Text := ui.StopwatchTime " "
+			ui.StopwatchState := "Running"
+			StopwatchStart()
 		}
-	}
-
-	toggleGame1Status(*) {
-		if !(winExist("ahk_id " ui.win1hwnd))
-			return
-		ui.Win1EnabledToggle.Value := 												;Property in which ternary output will be stored
-			!(cfg.win1disabled := !cfg.win1disabled) 									;Toggles the bit for the Win1Enabled variable
-			? (																		;IF (after being toggled) it is true
-				ui.Win1EnabledToggle.Opt("Background" cfg.ThemeButtonOnColor)		;Set BG color of the control to theme's Button-On
-				,cfg.toggleOn														;Returns png path for toggle's On state			
-			) : (																	;ELSE
-				ui.Win1EnabledToggle.Opt("Background" cfg.ThemeButtonReadyColor)	;Set BG color of the control to theme's Button-Off
-				,cfg.toggleOff 														;Returns png path for toggle's Off state
-			)																		
-		RefreshWinHwnd()
-	}	
-				
-	toggleGame2Status(*) {
-		if !(winExist("ahk_id " ui.win2hwnd))
-			return
-		ui.Win2EnabledToggle.Value := 												;Property in which ternary output will be stored
-			!(cfg.win2disabled := !cfg.win2disabled)									;Toggles the bit for the Win1Enabled variable
-			? (																		;IF (after being toggled) it is true
-				ui.Win2EnabledToggle.Opt("Background" cfg.ThemeButtonOnColor)		;Set BG color of the control to theme's Button-On
-				,cfg.toggleOn														;Returns png path for toggle's On state			
-			) : (																	;ELSE
-				ui.Win2EnabledToggle.Opt("Background" cfg.ThemeButtonReadyColor)	;Set BG color of the control to theme's Button-Off
-				,cfg.toggleOff 														;Returns png path for toggle's Off state
-			)																		
-		RefreshWinHwnd()
-	}			
-
-	toggleWinEnabled(toggleControl,instance,*) {
-		toggleControl.Value := 												;Property in which ternary output will be stored
-			!(ui.win1enabled := !ui.win1enabled) 									;Toggles the bit for the Win1Enabled variable
-			? (																		;IF (after being toggled) it is true
-				toggleControl.Opt("Background" cfg.ThemeButtonOnColor)		;Set BG color of the control to theme's Button-On
-				,cfg.toggleOn														;Returns png path for toggle's On state			
-			) : (																	;ELSE
-				toggleControl.Opt("Background" cfg.ThemeButtonReadyColor)	;Set BG color of the control to theme's Button-Off
-				,cfg.toggleOff 														;Returns png path for toggle's Off state
-			)																		
-	}	
-	
-	changeGameDDL(*) {
-		debugLog("Game Profile Changed to: " ui.GameDDL.Text)
-		;If !(WinExist("ahk_id " ui.Win1Hwnd) || WinExist("ahk_id " ui.Win2Hwnd))
-			RefreshWinHwnd()
-	}
-
-	refreshWin(WinNumber) {
-		Thread("NoTimers")
-		debugLog("Refreshing Game Window HWND IDs")
-		
-		if !(tmpHwnd := WinExist("ahk_exe " ui.Win%WinNumber%ProcessName))
+		case ui.StopwatchState == "Running":
 		{
-			RefreshWinHwnd()
-		} else {
-			ui.Win%WinNumber%Hwnd := tmpHwnd
-			ui.Win%WinNumber%HwndText.Text := "  " tmpHwnd "  "
-			ui.Win%WinNumber%Name.Text := "  " WinGetTitle("ahk_id " tmpHwnd) "  "
-			ui.Win%WinNumber%ProcessName.Text := "  " WinGetProcessName("ahk_id " tmpHwnd) "  "
-	
-			if (ui.win%winNumber%enabled)
-			{
-				ui.Win%WinNumber%ProcessName.Opt("-Disabled Background" cfg.ThemePanel2Color)
-				ui.Win%WinNumber%HwndText.Opt("-Disabled Background" cfg.ThemePanel2Color)
-				ui.Win%WinNumber%Name.Opt("-Disabled Background" cfg.ThemePanel2Color)
-				ui.Win%WinNumber%ClassDDL.Opt("-Disabled")
-				ui.afkWin%WinNumber%ClassDDL.opt("-disabled")
-				ui.autoFireWin%WinNumber%Button.Opt("-Disabled Background" cfg.ThemeButtonReadyColor)
-				ui.autoFireWin%WinNumber%Button.Value := "./Img/button_autoFire" A_WinNumber "_ready.png"
-				;ui.Win%WinNumber%EnabledToggle.ToolTip := ((WinNumber == 1) ? "[Left]" : "[Right]") " [" WinGetTitle("ahk_id " ui.Win%WinNumber%Hwnd) "] [" ui.Win%WinNumber%Hwnd "] [" WinGetProcessName("ahk_id " ui.Win%WinNumber%Hwnd) "]"
-
-			} else {
-				ui.Win%WinNumber%ProcessName.Opt("+Disabled Background" cfg.ThemePanel4Color)
-				ui.Win%WinNumber%HwndText.Opt("+Disabled Background" cfg.ThemePanel4Color)
-				ui.Win%WinNumber%Name.Opt("+Disabled Background" cfg.ThemePanel4Color)
-				ui.Win%WinNumber%ClassDDL.Opt("+Disabled")
-				ui.afkWin%winNumber%ClassDDL.opt("+Disabled")
-				ui.autoFireWin%WinNumber%Button.Opt("Disabled Background" cfg.ThemeButtonDisabledColor)
-				ui.autoFireWin%WinNumber%Button.Value := "./Img/button_autoFire" A_WinNumber "_disabled.png"
-			}
+			ui.StopwatchState := "Stopped"
+			StopwatchStop()
 		}
-		;drawGridLines()
 	}
-		
-	refreshWinHwnd(*) { ;Performs Window Discovery, Game Identification and Gui Data Updates
-	 Thread("NoTimers")
-		debugLog("Refreshing Game Window HWND IDs")
+}
+
+stopwatchStart(*) {
+	ui.StartTime := A_NowUTC
+	SetTimer(StopwatchTimer,1000)
+}
+
+stopwatchStop(*) {
+	SetTimer(StopwatchTimer,0)
+}
+
+stopwatchReset(*) {
+	ui.OpsClock.Value := FormatTime(0,"hh:mm:ss") " "
+}
+
+stopwatchTimer(*) {
+	Global
+	SecondsElapsed := DateDiff(A_NowUTC,ui.StartTime,"Seconds")
+	ui.StopwatchTime := Format("{:02}:{:02}", SecondsElapsed//60, Mod(SecondsElapsed,60))
+	if (ui.ClockMode == "Stopwatch")
+	{
+		ui.OpsClock.Text := ui.StopwatchTime " "
+	}
+}
+
+toggleGame1Status(*) {
+	if !(winExist("ahk_id " ui.win1hwnd))
+		return
+	ui.Win1EnabledToggle.Value := 												;Property in which ternary output will be stored
+		!(cfg.win1disabled := !cfg.win1disabled) 									;Toggles the bit for the Win1Enabled variable
+		? (																		;IF (after being toggled) it is true
+			ui.Win1EnabledToggle.Opt("Background" cfg.ThemeButtonOnColor)		;Set BG color of the control to theme's Button-On
+			,cfg.toggleOn														;Returns png path for toggle's On state			
+		) : (																	;ELSE
+			ui.Win1EnabledToggle.Opt("Background" cfg.ThemeButtonReadyColor)	;Set BG color of the control to theme's Button-Off
+			,cfg.toggleOff 														;Returns png path for toggle's Off state
+		)																		
+	RefreshWinHwnd()
+}	
+			
+toggleGame2Status(*) {
+	if !(winExist("ahk_id " ui.win2hwnd))
+		return
+	ui.Win2EnabledToggle.Value := 												;Property in which ternary output will be stored
+		!(cfg.win2disabled := !cfg.win2disabled)									;Toggles the bit for the Win1Enabled variable
+		? (																		;IF (after being toggled) it is true
+			ui.Win2EnabledToggle.Opt("Background" cfg.ThemeButtonOnColor)		;Set BG color of the control to theme's Button-On
+			,cfg.toggleOn														;Returns png path for toggle's On state			
+		) : (																	;ELSE
+			ui.Win2EnabledToggle.Opt("Background" cfg.ThemeButtonReadyColor)	;Set BG color of the control to theme's Button-Off
+			,cfg.toggleOff 														;Returns png path for toggle's Off state
+		)																		
+	RefreshWinHwnd()
+}			
+
+toggleWinEnabled(toggleControl,instance,*) {
+	toggleControl.Value := 												;Property in which ternary output will be stored
+		!(ui.win1enabled := !ui.win1enabled) 									;Toggles the bit for the Win1Enabled variable
+		? (																		;IF (after being toggled) it is true
+			toggleControl.Opt("Background" cfg.ThemeButtonOnColor)		;Set BG color of the control to theme's Button-On
+			,cfg.toggleOn														;Returns png path for toggle's On state			
+		) : (																	;ELSE
+			toggleControl.Opt("Background" cfg.ThemeButtonReadyColor)	;Set BG color of the control to theme's Button-Off
+			,cfg.toggleOff 														;Returns png path for toggle's Off state
+		)																		
+}	
+
+changeGameDDL(*) {
+	debugLog("Game Profile Changed to: " ui.GameDDL.Text)
+	;If !(WinExist("ahk_id " ui.Win1Hwnd) || WinExist("ahk_id " ui.Win2Hwnd))
+		RefreshWinHwnd()
+}
+
+monitorGameWindows(*) {
+	if (!winExist("ahk_id " ui.win1hwnd)) {
+		if (winGetList(ui.gameDDL.text).length > 0)
+			refreshWinHwnd(1)
+	}
+	if (!winExist("ahk_id " ui.win2hwnd)) {
+		if (winGetList(ui.gameDDL.text).length > 0)
+			refreshWinHwnd(2)
+	}
+}
+
+refreshWinHwnd(*) { ;Performs Window Discovery, Game Identification and Gui Data Updates
+	Thread("NoTimers")
+	debugLog("Refreshing Game Window HWND IDs")
+	winNum := 0
+	ui.GameWindowsListBox.Delete()
+	ui.AllGameWindowsList := WinGetList(ui.GameDDL.Text)
+	ui.FilteredGameWindowsList := Array()
 	
-		ui.GameWindowsListBox.Delete()
-		ui.AllGameWindowsList := WinGetList(ui.GameDDL.Text)
-		ui.FilteredGameWindowsList := Array()
-		
+	if (winNum == 0) {
 		Loop 2
 		{
 			ui.Win%A_Index%Name.Text := "  Game  "
@@ -534,8 +497,7 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 			ui.win%WinNumber%HwndText.Text := "  " ui.Win%WinNumber%Hwnd "  "
 			ui.win%WinNumber%Name.Text := "  " WinGetTitle("ahk_id " ui.FilteredGameWindowsList[A_Index]) "  "
 			ui.win%WinNumber%ProcessName.Text := "  " WinGetProcessName("ahk_id " ui.Win%WinNumber%Hwnd) "  "
-	
-	
+		
 			if !(winExist("ahk_id " ui.win%winNumber%hwnd)) {
 				ui.win%WinNumber%enabledToggle.Opt("+Disabled Background" cfg.ThemeDisabledColor)
 				ui.win%WinNumber%enabledToggle.Value := cfg.toggleOff
@@ -557,6 +519,114 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 					ui.win%WinNumber%%opsTextControls[A_Index]%.setFont("c" cfg.themeFont2Color)
 					ui.win%WinNumber%%opsTextControls[A_Index]%.opt("Background" cfg.themePanel2Color)
 					ui.win%WinNumber%%opsTextControls[A_Index]%.redraw()
+				}
+				ui.win%WinNumber%ClassDDL.Opt("-Disabled")
+				ui.afkWin%WinNumber%ClassDDL.Opt("-Disabled")
+				ui.Win%WinNumber%ClassDDL.SetFont("c" cfg.ThemeFont1Color)
+				ui.afkWin%WinNumber%ClassDDl.setFont("c" cfg.themeFont1Color)
+				ui.autoFireWin%WinNumber%Button.Opt("-Disabled Background" cfg.ThemeButtonReadyColor)
+				ui.autoFireWin%WinNumber%Button.Value := "./Img/button_autoFire" WinNumber "_ready.png"				
+				ui.win%WinNumber%enabledToggle.Opt("-Disabled Background" cfg.ThemeButtonOnColor)
+				ui.win%WinNumber%enabledToggle.Value := cfg.toggleOn
+			} else {
+				ui.Win%WinNumber%ProcessName.SetFont("c" cfg.ThemeFont4Color)
+				ui.Win%WinNumber%Name.SetFont("c" cfg.ThemeFont4Color)
+				ui.Win%WinNumber%HwndText.SetFont("c" cfg.ThemeFont4Color)
+
+				ui.Win%WinNumber%ProcessName.Opt("Background" cfg.ThemePanel4Color)
+				ui.Win%WinNumber%HwndText.Opt("Background" cfg.ThemePanel4Color)
+				ui.Win%WinNumber%Name.Opt("Background" cfg.ThemePanel4Color)
+	
+				ui.autoFireWin%WinNumber%Button.Opt("Disabled Background" cfg.ThemePanel4Color)
+				ui.autoFireWin%WinNumber%Button.Value := "./Img/button_autoFire" WinNumber "_disabled.png"
+			}
+		}
+		ui.buttonSwapHwnd.Value := cfg.HwndSwapEnabled ? "./Img/button_swapHwnd_enabled.png" : "./Img/button_swapHwnd_disabled.png"
+		ui.buttonSwapHwnd.Redraw()
+	} else {
+		ui.Win%winNum%Name.Text := "  Game  "
+		ui.Win%winNum%Name.SetFont("c" cfg.ThemeFont4Color)
+		ui.Win%winNum%Name.Opt("Background" cfg.ThemePanel4Color)
+		ui.Win%winNum%ProcessName.Text := "  Not  "
+		ui.Win%winNum%ProcessName.SetFont("c" cfg.ThemeFont4Color)
+		ui.Win%winNum%ProcessName.Opt("Background" cfg.ThemePanel4Color)
+		ui.Win%winNum%HwndText.Text := "  Found  "
+		ui.Win%winNum%HwndText.SetFont("c" cfg.ThemeFont4Color)
+		ui.Win%winNum%HwndText.Opt("Background" cfg.ThemePanel4Color)
+		ui.autoFireWin%winNum%Button.Opt("Background" cfg.ThemePanel4Color)
+		ui.autoFireWin%winNum%Button.Value := "./Img/button_autoFire" winNum "_on.png"
+
+		Loop ui.AllGameWindowsList.Length {
+			if (WinGetProcessName("ahk_id " ui.AllGameWindowsList[winNum]) != "Windows10Universal.exe") 
+			&& (WinGetProcessName("ahk_id " ui.AllGameWindowsList[winNum]) != "explorer.exe") 
+			&& (WinGetProcessName("ahk_id " ui.AllGameWindowsList[winNum]) != "RobloxPlayerLauncher.exe")
+			&& (WinGetProcessName("ahk_id " ui.AllGameWindowsList[winNum]) != "RobloxPlayerInstaller.exe") 
+			&& (WinGetProcessName("ahk_id " ui.AllGameWindowsList[winNum]) != "Chrome.exe") 
+			&& (WinGetProcessName("ahk_id " ui.AllGameWindowsList[winNum]) != "msedge.exe") 
+			{
+				ui.FilteredGameWindowsList.Push(ui.AllGameWindowsList[winNum])
+			}
+		}
+		Win1X := "",		Win2X := 999999
+		Win1Y := "",		Win2Y := ""
+		Win1W := "",		Win2W := ""
+		Win1H := "",		Win2H := ""
+	
+		textList := ""
+		Loop ui.FilteredGameWindowsList.Length {
+			textList .= ui.FilteredGameWindowsList[winNum] ", "
+		}
+		
+		debugLog("Found the following matching HWNDs: " rtrim(textList,", "))		
+		
+		Loop ui.FilteredGameWindowsList.Length {
+			WinGetPos(&Win%winNum%X,&Win%winNum%Y,&Win%winNum%W,&Win%winNum%H,"ahk_id " ui.FilteredGameWindowsList[winNum])
+		}
+
+		Loop ui.FilteredGameWindowsList.Length
+		{	
+			winNumber := 
+				(Win1X >  Win2X) 
+				? ((winNum == 1) 
+					? 2 
+					: 1) 
+				: winNum
+			
+			winNumber := 
+				(cfg.hwndSwapEnabled) 
+				? ((winNumber == 1) 
+					? 2 
+					: 1) 
+				: winNumber			
+
+			ui.win%winNumber%enabled := true
+			ui.win%WinNumber%Hwnd := ui.FilteredGameWindowsList[winNum]
+			ui.win%WinNumber%HwndText.Text := "  " ui.Win%WinNumber%Hwnd "  "
+			ui.win%WinNumber%Name.Text := "  " WinGetTitle("ahk_id " ui.FilteredGameWindowsList[winNum]) "  "
+			ui.win%WinNumber%ProcessName.Text := "  " WinGetProcessName("ahk_id " ui.Win%WinNumber%Hwnd) "  "
+	
+	
+			if !(winExist("ahk_id " ui.win%winNumber%hwnd)) {
+				ui.win%WinNumber%enabledToggle.Opt("+Disabled Background" cfg.ThemeDisabledColor)
+				ui.win%WinNumber%enabledToggle.Value := cfg.toggleOff
+			} else {
+				if !cfg.win%winNumber%disabled
+				{
+					ui.win%WinNumber%enabledToggle.Opt("+Disabled Background" cfg.ThemeButtonOnColor)
+					ui.win%WinNumber%enabledToggle.Value := cfg.toggleOn			
+				}
+			}
+			if !(cfg.win%winNumber%disabled) && (winExist("ahk_id " ui.win%winNumber%hwnd)) {
+				ui.win%WinNumber%EnabledToggle.Opt("Background" cfg.themeButtonOnColor)
+				ui.win%WinNumber%EnabledToggle.Value := cfg.toggleOn
+
+				opsTextControls 	:= array()
+				opsTextControls 	:= ["ProcessName","Name","HwndText"]
+				
+				Loop opsTextControls.Length {
+					ui.win%WinNumber%%opsTextControls[winNum]%.setFont("c" cfg.themeFont2Color)
+					ui.win%WinNumber%%opsTextControls[winNum]%.opt("Background" cfg.themePanel2Color)
+					ui.win%WinNumber%%opsTextControls[winNum]%.redraw()
 				}
 				
 				ui.win%WinNumber%ClassDDL.Opt("-Disabled")
@@ -587,58 +657,44 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 		ui.buttonSwapHwnd.Value := cfg.HwndSwapEnabled ? "./Img/button_swapHwnd_enabled.png" : "./Img/button_swapHwnd_disabled.png"
 		ui.buttonSwapHwnd.Redraw()
 
-		; Loop 2 {
-			 ; Try
-				 ; ui.Win%A_Index%EnabledToggle.Value := 
-					; (cfg.Win%A_Index%Enabled && ui.Win%A_Index%Hwnd) 
-					; ? (ui.Win%A_Index%EnabledToggle.Opt("Background" cfg.ThemeButtonOnColor)
-						; , cfg.toggleOn) 
-					; : cfg.toggleOff
-		
-		; }
-		
 	}
+}
+
+addGame(*) {
+	Global
+	ui.NewGameGui := Gui(,"Add Game Profile")
+	ui.NewGameGui.BackColor := "505050"
+	ui.NewGameGui.Color := "212121"
+	ui.NewGameGui.Opt("-Caption -Border +AlwaysOnTop -DPIScale")
+	ui.NewGameGui.SetFont("s16 cFF00FF", "Calibri Bold")
 	
+	ui.NewGameGui.AddText("x10 y10 section","Enter New Game Name")
+	cfg.NewGameEdit := ui.NewGameGui.AddEdit("xs section w180","")
+	cfg.NewGameOkButton := ui.NewGameGui.AddPicture("x+-7 ys w60 h34","./Img/button_add.png")
+	cfg.NewGameOkButton.OnEvent("Click",AddGameProfile)
+	ui.NewGameGui.Show("w260 h110 NoActivate")
+	drawOutlineNewGameGui(5,5,250,100,cfg.ThemeBright2Color,cfg.ThemeBright1Color,2)	;New App Profile Modal Outline
 
-	{ ;Functions for Game Profile List Management (Including Modal Pop-up Interaces)
-		addGame(*) {
-			Global
-			ui.NewGameGui := Gui(,"Add Game Profile")
-			ui.NewGameGui.BackColor := "505050"
-			ui.NewGameGui.Color := "212121"
-			ui.NewGameGui.Opt("-Caption -Border +AlwaysOnTop -DPIScale")
-			ui.NewGameGui.SetFont("s16 cFF00FF", "Calibri Bold")
-			
-			ui.NewGameGui.AddText("x10 y10 section","Enter New Game Name")
-			cfg.NewGameEdit := ui.NewGameGui.AddEdit("xs section w180","")
-			cfg.NewGameOkButton := ui.NewGameGui.AddPicture("x+-7 ys w60 h34","./Img/button_add.png")
-			cfg.NewGameOkButton.OnEvent("Click",AddGameProfile)
-			ui.NewGameGui.Show("w260 h110 NoActivate")
-			drawOutlineNewGameGui(5,5,250,100,cfg.ThemeBright2Color,cfg.ThemeBright1Color,2)	;New App Profile Modal Outline
+	addGameProfile(*) {
+		Global
+		cfg.GameList.Push(cfg.NewGameEdit.Value)
+		currentGame := cfg.Game
+		ui.GameDDL.Delete()
+		ui.GameDDL.Add(cfg.GameList)
+		ui.GameDDL.Choose(1)
+		ui.NewGameGui.Destroy()
+	}
+}
 
-			addGameProfile(*) {
-				Global
-				cfg.GameList.Push(cfg.NewGameEdit.Value)
-				currentGame := cfg.Game
-				ui.GameDDL.Delete()
-				ui.GameDDL.Add(cfg.GameList)
-				ui.GameDDL.Choose(1)
-				ui.NewGameGui.Destroy()
-			}
-		}
+removeGame(*) {
+	Global
+	cfg.GameList.RemoveAt(cfg.Game)
+	ui.GameDDL.Delete()
+	ui.GameDDL.Add(cfg.GameList)
+	ui.GameDDL.Choose(1)
+}
 
-		removeGame(*) {
-			Global
-			cfg.GameList.RemoveAt(cfg.Game)
-			ui.GameDDL.Delete()
-			ui.GameDDL.Add(cfg.GameList)
-			ui.GameDDL.Choose(1)
-		}
-	} ;End Game Profile List Modal Gui
-
-
-} ;End Functions
-		
+	
 
 	
 	
