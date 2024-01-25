@@ -372,21 +372,18 @@ dockApps(*) {
 	}
 }
 
-drawDivider() { 
+drawDivider(DockY) { 
 	MonitorGetWorkArea(cfg.nControlMonitor, &Left, &Top, &Right, &Bottom)
 	WorkAreaHeightWhenDocked :=  (Bottom - Top - cfg.DockHeight)
-	ui.dividerGui.opt("-caption")
+	ui.dividerGui.opt("-caption +alwaysOnTop +ToolWindow +0x4000000")
 	ui.dividerGui.backColor := cfg.themeButtonAlertColor
-	ui.dividerGui.show("x" Left " y" Top " w" Right-Left " h8")
-	winSetTransparent(200,ui.dividerGui)
+	ui.dividerGui.show("x" Left " y" DockY-8 " w" Right-Left " h12 NoActivate")
+	winSetTransparent(255,ui.dividerGui)
 }
-resizeDockedApps() {
-	winGetPos(&divX,&divY,&divW,&divH,ui.dividerGui)
-	
-}
+
 nControl(Status,&cfg)
 {
-	drawDivider()
+
 	hwndActiveWin := WinActive("A")
 
 	if (cfg.nControlMonitor > MonitorGetCount())
@@ -449,11 +446,14 @@ nControl(Status,&cfg)
 		WinActivate("ahk_exe " ui.app2filename.text)
 		SetWinDelay(150)
 
+
 		Send "^+{PgDn}"
 		WinRedraw("ahk_exe " ui.app2filename.text)
 		WinMove(DockX,DockY-4,DockW,DockH+4, "ahk_exe " ui.app2filename.text)
+		drawDivider(DockY)
 	} else {
 		debugLog("Undocking Apps")
+		ui.dividerGui.hide()
 		DockX := Left
 		DockY := Top
 		DockW := 1600
@@ -490,6 +490,7 @@ nControl(Status,&cfg)
 			WinMove(WorkAreaX,WorkAreaY,WorkAreaW,WorkAreaH)
 		}
 	}
+	
 
 	if (hwndActiveWin)
 	{
@@ -498,7 +499,6 @@ nControl(Status,&cfg)
 	}
 	Return 0
 }
-
 
 StartNonRunningApps()
 {

@@ -235,11 +235,7 @@ preAutoExec(InstallDir,ConfigFileName) {
 			
 			persistLog("Copied Assets to: " InstallDir)
 			
-			if !(DirExist(InstallDir "\Redist"))
-			{
-				DirCreate(InstallDir "\Redist")
-				persistLog("Created Redist Folder")
-			}
+
 			Run(InstallDir "\" A_AppName ".exe")
 		ExitApp
 		
@@ -336,6 +332,17 @@ AutoUpdate(*) {
 
 cfgLoad(&cfg, &ui) {
 	global
+
+	cfg.gamingStopProcString	:= "foobar2000.exe,discord.exe,shatterline.exe,rocketLeague.exe,destiny2.exe,robloxPlayerBeta.exe,applicationFrameHost.exe,steam.exe,epicGamesLauncher.exe"
+
+	cfg.gamingStartProcString 	:= "E:\Music\foobar2000\foobar2000.exe,C:\Users\cashm\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\5) Utilities\Discord.lnk,C:\Program Files (x86)\Steam\steam.exe,C:\Program Files (x86)\Epic Games\Launcher\Portal\Binaries\Win32\EpicGamesLauncher.exe"
+		
+	cfg.gamingStartProc 	:= strSplit(IniRead(cfg.file,"System","GamingStartProcesses",cfg.gamingStartProcString),",")
+	cfg.gamingStopProc 	:= strSplit(IniRead(cfg.file,"System","GamingStopProcesses",cfg.gamingStopProcString),",")
+	ui.d2AlwaysRunPaused 	:= false
+	ui.d2Running			:= false
+	ui.d2Sliding			:= false
+	ui.d2Reloading			:= false
 	ui.gameWindowsList 		:= array()
 	cfg.gameWindowsList 	:= array()
 	cfg.mainGui				:= IniRead(cfg.file,"System","MainGui","MainGui")
@@ -497,6 +504,15 @@ WriteConfig() {
 	Global
 	tmpGameList := ""
 
+	loop cfg.gamingStartProc.length {
+		cfg.gamingStartProcString .= cfg.gamingStartProc[a_index] ","
+	}
+
+	loop cfg.gamingStopProc.length {
+		cfg.gamingStopProcString .= cfg.gamingStopProc[a_index] ","
+	}
+	iniWrite(rtrim(cfg.gamingStartProcString,","),cfg.file,"System","GamingStartProcesses")
+	iniWrite(rtrim(cfg.gamingStopProcString,","),cfg.file,"System","GamingStopProcesses")
 	IniWrite(cfg.autoDetectGame,cfg.file,"Game","AutoDetectGame")
 	IniWrite(cfg.game,cfg.file,"Game","Game")
 	IniWrite(cfg.mainScriptName,cfg.file,"System","ScriptName")

@@ -55,9 +55,24 @@ WM_LBUTTONDOWN_callback(*) {
 ;###########MOUSE EVENTS##############
 WM_LBUTTONDOWN(wParam, lParam, msg, Hwnd) {
 	;ShowMouseClick()
-	if (Hwnd = ui.MainGui.hwnd) || (Hwnd = ui.titleBarButtonGui.Hwnd) || (hwnd == ui.dividerGui.hwnd) 
+	if (Hwnd = ui.MainGui.hwnd) || (Hwnd = ui.titleBarButtonGui.Hwnd) || (hwnd == ui.dividerGui.hwnd)
 		PostMessage("0xA1",2)
+
+	if (hwnd == ui.dividerGui.hwnd)
+	{
+	keyWait("LButton")
+	MonitorGetWorkArea(cfg.nControlMonitor, &Left, &Top, &Right, &Bottom)
+	coordMode("mouse","screen")
+	MouseGetPos(&mX,&mY,&currWin)
+	winMove(,mY,,Bottom-mY+8,"ahk_exe " ui.app2filename.text)
+	winMove(,Top,,mY-Top,"ahk_exe " ui.app1filename.text)
+	winActivate(ui.dividerGui)
+	}
 }
+
+; WM_LBUTTONUP(wParam, lParam, msg, Hwnd) {
+
+; }	
 
 wmAfkLButtonDown(wParam, lParam, msg, hwnd) {
 	if !(ui.AfkAnchoredToGui)
@@ -66,13 +81,11 @@ wmAfkLButtonDown(wParam, lParam, msg, hwnd) {
 
 WM_MOUSEMOVE(wParam, lParam, msg, Hwnd) {
 	static prevHwnd := 0
-    if (Hwnd != PrevHwnd)
-    {
+    if (Hwnd != PrevHwnd) {
         text := ""
 		toolTip()
         currControl := GuiCtrlFromHwnd(Hwnd)
-		if cfg.toolTipsEnabled && currControl.hasProp("ToolTip")
-        {
+		if cfg.toolTipsEnabled && currControl.hasProp("ToolTip") {
             text := currControl.ToolTip
             setTimer () => toolTip(text), -400
             setTimer () => toolTip(), -5500

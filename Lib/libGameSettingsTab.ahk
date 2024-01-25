@@ -28,7 +28,7 @@ loop cfg.gameModuleList.length {
 	ui.gameSettingsGui.SetFont("s14 c" cfg.ThemeFont1Color,"Calibri")
 	winSetTransColor(ui.transparentColor,ui.gameSettingsGui)
 	WinSetTransparent(0,ui.gameSettingsGui)
-	ui.gameTabs := ui.gameSettingsGui.addTab3("x5 y0 w490 h173 bottom c" cfg.themeFont2Color " choose" cfg.activeGameTab,cfg.gameModuleList)
+	ui.gameTabs := ui.gameSettingsGui.addTab3("x0 y0 w493 h175 bottom c" cfg.themeFont2Color " choose" cfg.activeGameTab,cfg.gameModuleList)
 	ui.gameTabs.choose(cfg.gameModuleList[cfg.activeGameTab])
 	ui.gameTabs.setFont("s12")
 	ui.gameTabs.onEvent("Change",gameTabChanged)
@@ -68,7 +68,7 @@ loop cfg.gameModuleList.length {
 	ui.d2HoldingRun := false
 
 	ui.gameSettingsGui.setFont("s12")
-	UI.alwaysRunGb := ui.gameSettingsGui.addGroupbox("x10 y0 w210 h70","Always Run")
+	UI.alwaysRunGb := ui.gameSettingsGui.addGroupbox("x10 y0 w270 h70","Always Run")
 	ui.d2AlwaysRun := ui.gameSettingsGui.addPicture("x20 y20 w60 h26 section vd2AlwaysRun " 
 		((cfg.d2AlwaysRunEnabled) 
 			? ("Background" cfg.ThemeButtonOnColor) 
@@ -78,12 +78,12 @@ loop cfg.gameModuleList.length {
 				: (cfg.toggleOff)))
 
 
-	ui.d2SprintKey				:= ui.gameSettingsGui.AddPicture("xs+67 ys+1 w60 h25 section backgroundTrans","./img/keyboard_key_up.png")
-	ui.d2SprintKeyData 			:= ui.gameSettingsGui.addText("xs y+-24 w60 h20 center c" cfg.themeFont3Color " backgroundTrans",strUpper(cfg.d2SprintKey))
-	ui.d2SprintKeyLabel			:= ui.gameSettingsGui.addText("xs-2 y+3 w60 h20 center c" cfg.themeFont1Color " backgroundTrans","Sprint")
-	ui.d2CrouchKey				:= ui.gameSettingsGui.addPicture("x+8 ys w60 h25 section backgroundTrans","./img/keyboard_key_up.png")
-	ui.d2CrouchKeyData 			:= ui.gameSettingsGui.addText("xs y+-24 w60 h20 center c" cfg.themeFont3Color " backgroundTrans",strUpper(cfg.d2CrouchKey))
-	ui.d2CrouchKeyLabel 		:= ui.gameSettingsGui.addText("xs-2 y+3 w60 h20 center c" cfg.themeFont1Color " backgroundTrans","Crouch")
+	ui.d2SprintKey				:= ui.gameSettingsGui.AddPicture("xs+67 ys+1 w90 h25 section backgroundTrans","./img/keyboard_key_up.png")
+	ui.d2SprintKeyData 			:= ui.gameSettingsGui.addText("xs y+-24 w90 h20 center c" cfg.themeFont3Color " backgroundTrans",strUpper(cfg.d2SprintKey))
+	ui.d2SprintKeyLabel			:= ui.gameSettingsGui.addText("xs-2 y+3 w90 h20 center c" cfg.themeFont1Color " backgroundTrans","Sprint")
+	ui.d2CrouchKey				:= ui.gameSettingsGui.addPicture("x+8 ys w90 h25 section backgroundTrans","./img/keyboard_key_up.png")
+	ui.d2CrouchKeyData 			:= ui.gameSettingsGui.addText("xs y+-24 w90 h20 center c" cfg.themeFont3Color " backgroundTrans",strUpper(cfg.d2CrouchKey))
+	ui.d2CrouchKeyLabel 		:= ui.gameSettingsGui.addText("xs-2 y+3 w90 h20 center c" cfg.themeFont1Color " backgroundTrans","Crouch")
 
 	ui.d2AlwaysRun.ToolTip := "Toggles holdToCrouch"
 	ui.d2SprintKey.ToolTip 		:= "Click to Assign"
@@ -107,11 +107,16 @@ loop cfg.gameModuleList.length {
 
 d2SprintKeyClicked(*) {
 	DialogBox('Press Key or Button Assigned for:`n"Hold to Sprint"`nin Destiny2')
-	Sleep(750)
-	d2SprintInput := InputHook("L1", "{LControl}{RControl}{LAlt}{RAlt}{LShift}{RShift}{LWin}{RWin}{AppsKey}{F1}{F2}{F3}{F4}{F5}{F6}{F7}{F8}{F9}{F10}{F11}{F12}{Left}{Right}{Up}{Down}{Home}{End}{PgUp}{PgDn}{Del}{Ins}{BS}{CapsLock}{NumLock}{PrintScreen}{Pause}")
+	Sleep(100)
+	d2SprintInput := InputHook("L1", "{All}{LControl}{RControl}{LAlt}{RAlt}{LShift}{RShift}{LWin}{RWin}{AppsKey}{F1}{F2}{F3}{F4}{F5}{F6}{F7}{F8}{F9}{F10}{F11}{F12}{Left}{Right}{Up}{Down}{Home}{End}{PgUp}{PgDn}{Del}{Ins}{BS}{CapsLock}{NumLock}{PrintScreen}{Pause}","+V")
 	d2SprintInput.start()
 	d2SprintInput.wait()
-	cfg.d2SprintKey := d2SprintInput.input
+	if (d2SprintInput.input)
+	{
+		cfg.d2SprintKey := d2SprintInput.input
+	} else {
+		cfg.d2SprintKey := d2SprintInput.endKey
+	}
 	ui.d2SprintKeyData.text := strUpper(cfg.d2SprintKey)
 
 	if (cfg.d2SprintKey == 0) {
@@ -123,47 +128,68 @@ d2SprintKeyClicked(*) {
 
 d2CrouchKeyClicked(*) {
 	DialogBox('Press Key or Button Assigned for:`n"Hold to Crouch"`nin Destiny2')
-	Sleep(750)
-	d2CrouchInput := InputHook("L1", "{LControl}{RControl}{LAlt}{RAlt}{LShift}{RShift}{LWin}{RWin}{AppsKey}{F1}{F2}{F3}{F4}{F5}{F6}{F7}{F8}{F9}{F10}{F11}{F12}{Left}{Right}{Up}{Down}{Home}{End}{PgUp}{PgDn}{Del}{Ins}{BS}{CapsLock}{NumLock}{PrintScreen}{Pause}")
+	Sleep(100)
+	d2CrouchInput := InputHook("L1", "{All}{LControl}{RControl}{LAlt}{RAlt}{LShift}{RShift}{LWin}{RWin}{AppsKey}{F1}{F2}{F3}{F4}{F5}{F6}{F7}{F8}{F9}{F10}{F11}{F12}{Left}{Right}{Up}{Down}{Home}{End}{PgUp}{PgDn}{Del}{Ins}{BS}{CapsLock}{NumLock}{PrintScreen}{Pause}","+V")
 	d2CrouchInput.start()
 	d2CrouchInput.wait()
-	cfg.d2CrouchKey := d2CrouchInput.input
+	IF (cfg.d2CrouchInput.input)
+	{
+		cfg.d2CrouchKey := d2CrouchInput.input
+	} else {
+		cfg.d2CrouchKey := d2CrouchInput.endKey
+	}
 	ui.d2CrouchKeyData.text := strUpper(cfg.d2CrouchKey)
 
 	if (cfg.d2CrouchKey == 0) {
 		DialogBoxClose()
 		DialogBox('Timed Out Waiting for:`nDestiny2 Crouch Key Bind`nPlease Try Again')
 	}
-	DialogBoxClose()	
+	DialogBoxClose()
 }
 
-#HotIf (WinGetProcessName("ahk_id " winGetID("A")) == "destiny2.exe") && (cfg.d2AlwaysRunEnabled)
+#HotIf ui.d2Running
+w up::
+{
+	ui.d2Running := false
+	send("{" cfg.d2SprintKey " up}{w up}")
+	;send("{w up}")	
+}
+	
+; LShift::
+; {
+	; ui.d2Sliding := true
+	; send("{" cfg.d2CrouchKey " Down}")
+	; sleep(400)
+	; send("{" cfg.d2CrouchKey " Up}")
 
-	w::
-	{
-		global
-		send("{w down}")
-		send("{z Down}")
-	}
-		
-	
-	w up::
-	{
-		global
-		send("{z}")
-		send("{w up}")
-		
-	}
-	
-	r::
-	{
-		send("{r}")
-		ui.reloading := true
-		setTimer () => ui.reloading := false, -2000
-	}
-	#HotIf		
-	
-	; enter::
+	; if getKeyState("w") {
+		; Send("{" cfg.d2sprintKey " up}{w up}")
+		; ui.d2Running := false
+		; send("{w down}{" cfg.d2sprintKey " down}")
+		; ui.d2Running := true
+	; }
+	; ui.d2Sliding := false
+; }	
+#HotIf
+
+#HotIf winActive("ahk_exe destiny2.exe") && cfg.d2AlwaysRunEnabled && !ui.d2Running && !ui.d2Sliding && !ui.d2reloading
+w::
+{
+	global
+	ui.d2Running := true
+	send("{w down}{" cfg.d2sprintKey " down}")
+}
+
+
+#HotIf winActive("ahk_exe destiny.exe")  && cfg.d2AlwaysRunEnabled		
+r::
+{
+	send("{r}")
+	ui.d2Reloading := true
+	setTimer () => ui.d2Reloading := false, -1500
+}	
+#HotIf
+; enter::
 	; {
 		; global
 		; (ui.inGameChat := !ui.inGameChat)

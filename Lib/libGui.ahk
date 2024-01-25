@@ -67,7 +67,7 @@ initGui(&cfg, &ui) {
 			ui.gvConsole.Add([A_LoopReadLine])
 		}
 		FileDelete("./Logs/persist.log")
-	}
+		}
 	WinSetTransparent(0,ui.MainGui)
 	WinSetTransparent(0,ui.titleBarButtonGui)
 	
@@ -97,10 +97,11 @@ initGui(&cfg, &ui) {
 	
 	debugLog("Interface Initialized")
 	ui.MainGuiTabs.UseTab("")
-OnMessage(0x0200, WM_MOUSEMOVE)
-OnMessage(0x0201, WM_LBUTTONDOWN)
-OnMessage(0x47, WM_WINDOWPOSCHANGED)
 
+	OnMessage(0x0200, WM_MOUSEMOVE)
+	OnMessage(0x0201, WM_LBUTTONDOWN)
+	;OnMessage(0x0202, WM_LBUTTONUP)
+	OnMessage(0x47, WM_WINDOWPOSCHANGED)
 }
 
 
@@ -189,8 +190,6 @@ initOSDGui() {
 	ui.afkProgress := ui.AfkGui.AddProgress("x97 y106 w147 h29 c" cfg.ThemeBright2Color " vTimerProgress Smooth Range0-" cfg.towerInterval " Background" cfg.themeBackgroundColor " ",0)
 	ui.AfkGui.Opt("+LastFound")
 	WinSetTransparent(210)
-	 
-	OnMessage(0x0201, wmAfkLButtonDown)
 
 	ui.AfkAnchoredToGui := true
 	ui.HandlebarAfkGui := ui.AfkGui.AddPicture("x270 y35 w30 h106 section +Hidden","./Img/handlebar_vertical.png")
@@ -453,31 +452,27 @@ exitButtonPushed(*) {
 }
 
 stopGaming(*) {
+	while a_index <= cfg.gamingStopProc.length {
+		try	
+			processClose(cfg.gamingStopProc[a_index])
+		processIndex := a_index
+	}
 	try
-		winKill("ahk_exe foobar2000.exe")
-	try
-		processClose("discord.exe")
-	try
-		winKill("ahk_exe destiny2.exe")
-	try
-		winKill("ahk_exe shatterline.exe")
-	try
-		winKill("ahk_exe rocketleague.exe")
-	try
-		processClose("steam.exe")
-	try
-		processClose("epicGamesLauncher.exe")
+		winWaitClose("ahk_exe " cfg.gamingStopProc[processIndex],,5)
+	exitApp()
 }
-
+	
 startGaming(*) {
-	try
-		run("C:\Users\cashm\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\5) Utilities\Discord.lnk")
-	try
-		run("E:\Music\foobar2000\foobar2000.exe")
-	try
-		run("C:\Program Files (x86)\Steam\steam.exe")
-	try
-		run("C:\Program Files (x86)\Epic Games\Launcher\Portal\Binaries\Win32\EpicGamesLauncher.exe")
+	while a_index <= cfg.gamingStartProc.length {
+		try
+			run(cfg.gamingStartProc[a_index])
+	}
+	
+	try {
+		run('./redist/nircmd setdefaultsounddevice "Microphone"')
+		run('./redist/nircmd setdefaultsounddevice "Speakers"')
+		run('./redist/nircmd setdefaultsounddevice "Headphones"')
+	}	
 }
 
 exitMenuShow() {

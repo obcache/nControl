@@ -340,7 +340,7 @@ stopwatchToggle(*) {
 			ui.StopwatchState := "Stopped"
 			StopwatchStop()
 		}
-	}
+		}
 }
 
 stopwatchStart(*) {

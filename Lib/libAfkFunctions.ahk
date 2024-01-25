@@ -548,35 +548,40 @@ mouse(clickX,clickY,clickButton := "Left", ClickDirection := "") {
 
 afkBeta(*) {
 	global
-	finishedLoop := false
+	win1LoopFinished := false
+	win2LoopFinished := false
 	ui.currStepNum := 0
+	
 	debugLog("afk loop starting")
 	while (ui.afkEnabled) {
 			ui.currStepNum += 1
 			;debugLog("afk step: " ui.currStepNum)
-			if (ui.currStepNum <= win1afk.steps.length) && !cfg.win1disabled && winExist("ahk_id " ui.win1hwnd) {
+			if (ui.currStepNum <= win1afk.steps.length) && !cfg.win1disabled && ui.win1enabled && winExist("ahk_id " ui.win1hwnd) {
 				debugStep := (win1afk.steps.length >= ui.currStepNum) ? (win1afk.steps[ui.currStepNum]) : ("--")
 				debugWait := (win1afk.waits.length >= ui.currStepNum) ? (win1afk.waits[ui.currStepNum]) : ("--")
 				debugLog("| win: 1 | step: " ui.currStepNum " | Action: " debugStep " | wait: " debugWait " |")
 				attackWin(1,win1afk.steps[ui.currStepNum])
 				sleep(win1afk.waits[ui.currStepNum])
+				win1LoopFinished := false
 			} else {
-				finishedLoop := true
+				win1LoopFinished := true
 			}
 			
 			
-			if (ui.currStepNum <= win2afk.steps.length) && !cfg.win2disabled && winExist("ahk_id " ui.win2hwnd) {
+			if (ui.currStepNum <= win2afk.steps.length) && !cfg.win2disabled && ui.win2enabled && winExist("ahk_id " ui.win2hwnd) {
 				debugStep := (win2afk.steps.length >= ui.currStepNum) ? (win2afk.steps[ui.currStepNum]) : ("--")
 				debugWait := (win2afk.waits.length >= ui.currStepNum) ? (win2afk.waits[ui.currStepNum]) : ("--")
 				debugLog("| win: 2 | step: " ui.currStepNum " | Action: " debugStep " | wait: " debugWait " |")
 				attackWin(2,win2afk.steps[ui.currStepNum])
 				sleep(win2afk.waits[ui.currStepNum])
+				win2LoopFinished := false
 			} else
-				finishedLoop := true
+				win2LoopFinished := true
 
-			if (finishedLoop) {
+			if (win1LoopFinished && win2LoopFinished) {
 				updateTimer()
-				finishedLoop := False
+				win1LoopFinished := false
+				win2LoopFinished := false
 				ui.currStepNum := 0
 			}
 	}
