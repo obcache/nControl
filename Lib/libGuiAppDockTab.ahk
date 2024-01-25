@@ -23,12 +23,12 @@ GuiDockTab(&ui)
 {
 	ui.MainGuiTabs.UseTab("Dock")
 	
-	ui.SetMonitorButton := ui.MainGui.AddPicture("x35 y40 w60 h20 section","./Img/Button_Change.png")
+	ui.SetMonitorButton := ui.MainGui.AddPicture("x45 y50 w60 h20 section","./Img/Button_Change.png")
 	ui.SetMonitorButton.OnEvent("Click", SetMonitorButtonPush)
 	ui.SetMonitorButton.ToolTip := "Selects secondary monitor to display docked apps while gaming"
 	
 	ui.MainGui.SetFont("s14 c" cfg.ThemeFont2Color,"Calibri")
-	cfg.nControlMonitorLabel := ui.MainGui.AddText("ys-2 w35 Center","Monitor")
+	cfg.nControlMonitorLabel := ui.MainGui.AddText("x+5 ys-2 w35 Center","Monitor")
 	cfg.nControlMonitorLabel.OnEvent("Click", SetMonitorButtonPush)
 	cfg.nControlMonitorLabel.ToolTip := "Selects secondary monitor to display docked apps while gaming"
 	
@@ -36,55 +36,55 @@ GuiDockTab(&ui)
 	ui.nControlMonitorText.OnEvent("Click", SetMonitorButtonPush)
 	ui.nControlMonitorText.ToolTip := "Monitor currently selected to display docked apps while gaming"
 	
-	drawOutlineMainGui(165,39,30,25,cfg.ThemeBright1Color,cfg.ThemeBright2Color,2)
+	drawOutlineMainGui(180,49,30,25,cfg.ThemeBright1Color,cfg.ThemeBright2Color,2)
 	ui.MainGui.SetFont("s14 c" cfg.ThemeFont2Color, "Calibri Bold")
 	ui.nControlMonitorUpdatedText := ui.MainGui.AddText("ys+2 w130","")
 	
 	ui.MainGui.SetFont("s14 c" cfg.ThemeFont2Color,"Calibri Bold")
-	ui.SetDockFileButton := ui.MainGui.AddPicture("x35 y90 w60 h20 section", "./Img/Button_Select.png")
+	ui.SetDockFileButton := ui.MainGui.AddPicture("x45 y90 w60 h20 section", "./Img/Button_Select.png")
 	ui.SetDockFileButton.OnEvent("Click", app2browse)
 	ui.SetDockFileButton.ToolTip := "Assigns app to dock above taskbar"
 	ui.MainGui.SetFont("s12 c" cfg.ThemeFont2Color,"Calibri")
-	ui.MainGui.AddText("ys-2","Dock App")
+	ui.MainGui.AddText("ys-2 x+5","Dock App")
 	ui.MainGui.SetFont("s12 c" cfg.ThemeFont1Color, "Calibri")
-	ui.app2filename := ui.MainGui.AddText("x167 ys+0 w195 h20 Background" cfg.ThemeEditboxColor,"")
-	drawOutlineMainGui(165,87,200,25,cfg.ThemeBright1Color,cfg.ThemeBright2Color,2)
+	ui.app2filename := ui.MainGui.AddText("x177 ys+0 w252 h20 Background" cfg.ThemeEditboxColor,"")
+	drawOutlineMainGui(175,87,257,25,cfg.ThemeBright1Color,cfg.ThemeBright2Color,2)
 	ui.MainGui.SetFont("s12 c" cfg.ThemeFont2Color,"Calibri")
 	ui.MainGui.AddText("xs+3 y+5 w100 section","Path")
 	ui.MainGui.SetFont("s10 c" cfg.ThemeFont1Color, "Calibri")
-	ui.app2path := ui.MainGui.AddText("x74 ys+1 w288 h20 Background" cfg.ThemeEditboxColor,"")
-	drawOutlineMainGui(72,115,293,25,cfg.ThemeBright1Color,cfg.ThemeBright2Color,2)
+	ui.app2path := ui.MainGui.AddText("x85 ys+1 w345 h20 Background" cfg.ThemeEditboxColor,"")
+	drawOutlineMainGui(82,115,350,25,cfg.ThemeBright1Color,cfg.ThemeBright2Color,2)
 
 	ui.MainGui.SetFont("s14 c" cfg.ThemeFont2Color,"Calibri")
-	ui.SetWorkFileButton := ui.MainGui.AddPicture("x35 y+5 w60 h20 section", "./Img/Button_Select.png")
+	ui.SetWorkFileButton := ui.MainGui.AddPicture("x45 y+5 w60 h20 section", "./Img/Button_Select.png")
 	ui.SetWorkFileButton.OnEvent("Click", app1browse)
 	ui.SetWorkFileButton.ToolTip := "Assigns app to fill remainder of screen"
 	ui.MainGui.SetFont("s12 c" cfg.ThemeFont2Color,"Calibri")
-	ui.MainGui.AddText("ys-2","Dock App")
+	ui.MainGui.AddText("ys-2 x+5","Main App")
 	ui.MainGui.SetFont("s12 c" cfg.ThemeFont1Color, "Calibri")
-	ui.app1filename := ui.MainGui.AddText("x167 ys+0 w195 h20 Background" cfg.ThemeEditboxColor,"")
-	drawOutlineMainGui(165,143,200,25,cfg.ThemeBright1Color,cfg.ThemeBright2Color,2)
+	ui.app1filename := ui.MainGui.AddText("x177 ys+0 w252 h20 Background" cfg.ThemeEditboxColor,"")
+	drawOutlineMainGui(175,143,257,25,cfg.ThemeBright1Color,cfg.ThemeBright2Color,2)
 	ui.MainGui.SetFont("s12 c" cfg.ThemeFont2Color,"Calibri")
 	ui.MainGui.AddText("xs+3 y+5 w100 section","Path")
 	ui.MainGui.SetFont("s10 c" cfg.ThemeFont1Color, "Calibri")
-	ui.app1path := ui.MainGui.AddText("x74 ys+1 w288 h20 Background" cfg.ThemeEditboxColor,"")
-	drawOutlineMainGui(72,170,293,25,cfg.ThemeBright1Color,cfg.ThemeBright2Color,2)
+	ui.app1path := ui.MainGui.AddText("x85 ys+1 w345 h20 Background" cfg.ThemeEditboxColor,"")
+	drawOutlineMainGui(82,171,350,25,cfg.ThemeBright1Color,cfg.ThemeBright2Color,2)
 	; ui.button_app1select := ui.MainGui.AddPicture("ys w60 h25","./Img/button_select.png")
 	; ui.button_app1select.OnEvent("Click",app1browse)
 	; ui.button_app1select.ToolTip := "Browse for file"
 	
 	ui.MainGui.SetFont("s12 c" cfg.ThemeFont1Color,"Calibri")
-	TextDockApps := ui.MainGui.AddText("x355 y40 w140 Right section","GameDash ")
+	TextDockApps := ui.MainGui.AddText("x418 y40 w80 Right section","Dock ")
 	
 
-	ui.ButtonDockApps := ui.MainGui.AddPicture("ys+1 w30 h20","./Img/button_up.png")
+	ui.ButtonDockApps := ui.MainGui.AddPicture("ys+1 w30 h20 section ","./Img/button_up.png")
 	ui.ButtonDockApps.OnEvent("Click",DockApps)
-ui.MainGui.AddText("xs+40 y+3 section w100 Right","Toggle Caption ")
+	ui.MainGui.AddText("xs-60 y+3 section w60 Right","Titlebar ")
 	ui.toggleCaption := ui.MainGui.AddPicture("ys+1 w30 h20","./Img/button_up.png")
 	ui.toggleCaption.toolTip := "Enable/Disable the caption bar on any window."
 	ui.toggleCaption.OnEvent("Click",toggleCaption)
 	
-	ui.MainGui.AddText("xs y+4 section w100 Right","Toggle OnTop ")
+	ui.MainGui.AddText("xs y+4 section w60 Right","OnTop ")
 	ui.universalOnTop := ui.MainGui.AddPicture("ys+1 w30 h20","")
 	ui.universalOnTop.OnEvent("Click",universalOnTop)
 	ui.universalOnTop.Value := "./Img/button_up.png"

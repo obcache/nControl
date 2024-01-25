@@ -21,25 +21,12 @@ GuiSetupTab(&ui,&cfg)
 	
 	ui.AutoClickerSpeedSlider.OnEvent("Change",AutoClickerSpeedChanged)
 	
-	ui.MainGui.SetFont("s10")
+	ui.MainGui.SetFont("s10 c" cfg.themeFont1Color)
 	drawOutlineMainGui(39,31,499,182,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,2)
 	
 	ui.MainGui.SetFont("s12")
 	
 	
-	ui.releaseChannelLabel := ui.mainGui.addText("x85 y40 w50","Release")
-	ui.releaseChannelDDL := ui.mainGui.AddDDL("x145 y35 w80 r3 choose" cfg.releaseChannel " background" cfg.themeBackgroundColor,["Dev","Beta","Stable"])
-	ui.checkForUpdatesButton := ui.mainGui.addPicture("x85 y65 w30 h30 section background" cfg.themeButtonReadyColor,"./img/button_update.png")
-	ui.checkForUpdatesButton.onEvent("Click",checkForUpdates)
-	ui.checkForUpdatesButton.Tooltip := "Checks to see if a more recent version is available"
-	ui.checkForUpdatesLabel := ui.mainGui.addText("ys+3 X+5 w120","Update Now")
-	
-	
-	ui.toggleToolTips := ui.MainGui.AddPicture("x85 y100 w60 h25 section vToolTips " ((cfg.ToolTipsEnabled) ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor)),((cfg.ToolTipsEnabled) ? (cfg.toggleOn) : (cfg.toggleOff)))
-	ui.toggleToolTips.OnEvent("Click", toggleChanged)
-	ui.toggleToolTips.ToolTip := "Toggles ToolTips"
-	ui.labelToolTips := ui.MainGui.AddText("x+3 ys+3 BackgroundTrans","ToolTips")
-
 
 	
 	ToggleAfkSnap(*)
@@ -48,11 +35,16 @@ GuiSetupTab(&ui,&cfg)
 		ui.toggleAfkSnap.Redraw()
 	}
 	
-	ui.toggleAfkSnap := ui.MainGui.AddPicture("xs w60 h25 section vAfkSnap " (cfg.AfkSnapEnabled ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor)),((cfg.AfkSnapEnabled) ? (cfg.toggleOn) : (cfg.toggleOff)))
+	ui.toggleAfkSnap := ui.MainGui.AddPicture("x85 y20 w60 h1 section hidden vAfkSnap " (cfg.AfkSnapEnabled ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor)),((cfg.AfkSnapEnabled) ? (cfg.toggleOn) : (cfg.toggleOff)))
 	ui.toggleAfkSnap.OnEvent("Click", toggleChanged)
 	ui.toggleAfkSnap.ToolTip := "Toggles Afk Screen Snapping"
-	ui.labelAfkSnap:= ui.MainGui.AddText("x+3 ys+3","AFK Snapping")
+	ui.labelAfkSnap:= ui.MainGui.AddText("x+3 ys+3 hidden","AFK Snapping")
 
+
+	ui.toggleToolTips := ui.MainGui.AddPicture("xs w60 h25 section vToolTips " ((cfg.ToolTipsEnabled) ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor)),((cfg.ToolTipsEnabled) ? (cfg.toggleOn) : (cfg.toggleOff)))
+	ui.toggleToolTips.OnEvent("Click", toggleChanged)
+	ui.toggleToolTips.ToolTip := "Toggles ToolTips"
+	ui.labelToolTips := ui.MainGui.AddText("x+3 ys+3 BackgroundTrans","ToolTips")
 
 
 	ToggleAlwaysOnTop(*)
@@ -75,7 +67,21 @@ GuiSetupTab(&ui,&cfg)
 	ui.toggleAnimations := ui.MainGui.AddPicture("xs w60 h25 section vAnimations " (cfg.AnimationsEnabled ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor)),((cfg.AnimationsEnabled) ? (cfg.toggleOn) : (cfg.toggleOff)))
 	ui.toggleAnimations.OnEvent("Click", toggleChanged)
 	ui.toggleAnimations.ToolTip := "Keeps this app on top of all other windows."
-	ui.labelAnimations:= ui.MainGui.AddText("x+3 ys+3","Animations")	
+	ui.labelAnimations:= ui.MainGui.AddText("x+3 ys+3","Animations")
+	
+
+	ui.checkForUpdatesButton := ui.mainGui.addPicture("xs y+20 w30 h30 section background" cfg.themeButtonReadyColor,"./img/button_update.png")
+	ui.checkForUpdatesButton.onEvent("Click",checkForUpdates)
+	ui.checkForUpdatesButton.Tooltip := "Checks to see if a more recent version is available"	
+	ui.checkForUpdatesLabel := ui.mainGui.addText("ys-4 x+5 section w70 backgroundTrans","Update Now")
+	ui.releaseChannelLabel := ui.mainGui.addText("ys+21 x+-50 w100 right backgroundTrans","Release Channel")
+	ui.releaseChannelDDL := ui.mainGui.AddDDL("xs-35 y+-20 w155 r3 choose" cfg.releaseChannel " background" cfg.themeBackgroundColor,["Dev","Beta","Stable"])
+
+	ui.releaseChannelLabel.setFont("s10")
+	ui.checkForUpdatesLabel.setFont("s10")
+
+	
+	
 	
 
 	
@@ -90,17 +96,17 @@ GuiSetupTab(&ui,&cfg)
 	; ui.ThemeDDLlabel.SetFont("s10 c" cfg.ThemeFont2Color)	
 	;ui.ColorSelectorHeader := ui.MainGui.AddText("x115 ym+30 section w80 r1"," Color Selector")
 
-	ui.ColorSelectorLabel2 := ui.MainGui.AddText("x230 y35 h25 section w75 BackgroundTrans c"
+	ui.ColorSelectorLabel2 := ui.MainGui.AddText("x226 y37 h21 section w75 BackgroundTrans c"
 		((cfg.ColorPickerEnabled) 
-			? cfg.ThemeButtonReadyColor 
-			: cfg.ThemeButtonAlertColor)
+			? cfg.ThemeFont4Color " background" cfg.themeFont3Color 
+			: cfg.ThemeFont3Color " background" cfg.themeFont4Color) 
 		,((cfg.ColorPickerEnabled) 
-			? ("Color App") 
+			? (" Color App") 
 			: (" Swatches ")))
 	
-	ui.ColorSelectorLabel2.SetFont("s13")
+	ui.ColorSelectorLabel2.setFont("s12","calibri bold")
 
-	ui.toggleColorSelector := ui.MainGui.AddPicture("ys section w55 h24 ", (cfg.ColorPickerEnabled) ? ("./Img/toggle_right.png") : ("./Img/toggle_left.png"))
+	ui.toggleColorSelector := ui.MainGui.AddPicture("ys-2 section w60 h23 ", (cfg.ColorPickerEnabled) ? ("./Img/toggle_right.png") : ("./Img/toggle_left.png"))
 	ui.toggleColorSelector.OnEvent("Click", ToggleColorSelector)
 	ui.toggleColorSelector.ToolTip := "Select color picking method for theming features"
 
@@ -109,12 +115,12 @@ GuiSetupTab(&ui,&cfg)
 	{
 		ui.toggleColorSelector.Value := 
 			(cfg.ColorPickerEnabled := !cfg.ColorPickerEnabled) 
-				? (ui.ColorSelectorLabel2.Opt("c" cfg.ThemeButtonReadyColor)
-					,ui.ColorSelectorLabel2.Text := "Color App"
+				? (ui.ColorSelectorLabel2.Opt("c" cfg.ThemeFont4Color " background" cfg.themeFont3Color)
+					,ui.ColorSelectorLabel2.Text := " Color App "
 					,"./Img/toggle_right.png")
-				: (ui.ColorSelectorLabel2.Opt("c" cfg.ThemeButtonAlertColor)
+				: (ui.ColorSelectorLabel2.Opt("c" cfg.ThemeFont3Color " background" cfg.ThemeFont4Color)
 					,ui.ColorSelectorLabel2.Text := " Swatches "
-					,"./Img/toggle_left.png")
+					,"./Img/toggle_left.png") 
 		ui.toggleColorSelector.Redraw()
 	}
 	ui.buttonNewTheme := ui.MainGui.AddPicture("ys+1  section w23 h22 Background" cfg.ThemeButtonReadyColor,"./Img/button_plus_ready.png")
@@ -125,12 +131,14 @@ GuiSetupTab(&ui,&cfg)
 	ui.ThemeDDL.OnEvent("Change",ThemeChanged)
 	ui.ThemeDDL.OnEvent("Focus",RepaintThemeDDL)
 	ui.ThemeDDL.OnEvent("LoseFocus",RepaintThemeDDL)
-
+	ui.MainGui.SetFont("s09")
 	ui.ThemeDDL.ToolTip := "Select Theme Preset"
 	ui.buttonDelTheme := ui.MainGui.AddPicture("ys+1 x+-2 w23 h22 Background" cfg.ThemeButtonReadyColor,"./Img/button_minus_ready.png")	
 	ui.buttonDelTheme.OnEvent("Click",removeTheme)
-	drawOutlineNamed("ThemeOutline",ui.MainGui,305,34,222,27,cfg.ThemeBorderLightColor,cfg.ThemeBorderLightColor,3)
-	drawOutlineNamed("ThemeOutlineShadow",ui.MainGui,305,34,222,27,cfg.ThemeBorderDarkColor,cfg.ThemeBorderDarkColor,2)
+	drawOutlineNamed("ThemeOutline",ui.MainGui,223,34,302,27,cfg.ThemeBorderLightColor,cfg.ThemeBorderLightColor,3)
+	drawOutlineNamed("ThemeOutlineShadow",ui.MainGui,223,34,302,27,cfg.ThemeBorderDarkColor,cfg.ThemeBorderDarkColor,2)
+	drawOutlineNamed("ThemeOutline",ui.MainGui,223,34,302,27,cfg.ThemeBorderLightColor,cfg.ThemeBorderLightColor,3)
+	drawOutlineNamed("ThemeOutlineShadow",ui.MainGui,223,34,302,27,cfg.ThemeBorderDarkColor,cfg.ThemeBorderDarkColor,2)
 	ui.ThemeDDL.Choose(1)
 	Loop cfg.ThemeList.Length {
 		if (cfg.ThemeList[A_Index] == cfg.Theme) {

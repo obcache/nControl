@@ -286,8 +286,11 @@ CheckForUpdates(*) {
 	latestVersion := whr.responseText
 	currentVersion := FileRead("./nControl_currentBuild.dat")
 
+	ui.prevAlwaysOnTop := cfg.alwaysOnTopEnabled
+	winSetAlwaysOnTop(0,ui.mainGui.hwnd)
 	if (latestVersion > currentVersion) 
 	{
+		WinSetAlwaysOnTop(0,ui.mainGui)
 		msgBoxAnswer := MsgBox("A newer version is available.`nYou currently have: " currentVersion "`nBut the newest is: " latestVersion "`nWould you like to update now?",,"YN")
 
 		if (msgBoxAnswer == "Yes")
@@ -299,9 +302,12 @@ CheckForUpdates(*) {
 			
 			run(InstallDir "/versions/nControl_" latestVersion ".exe")
 		}
+		
 	} else {
 		msgBox("You have the latest version already.`nInstalled Version: " currentVersion "`nLatestVersion: " latestVersion)
 	}
+	winSetAlwaysOnTop(cfg.alwaysOnTopEnabled,ui.mainGui)
+
 }
 
 AutoUpdate(*) {
@@ -637,10 +643,10 @@ WriteConfig() {
 		DirCreate("./Logs")
 	}
 	
-	if (cfg.ConsoleVisible)
-	{
-		FileAppend(ui.gvConsole.Value,"./Logs/gvLog_" A_YYYY A_MM A_DD A_Hour A_Min A_Sec ".txt")
-	}
+	; if (cfg.ConsoleVisible)
+	; {
+		; FileAppend(ui.gvConsole.Value,"./Logs/gvLog_" A_YYYY A_MM A_DD A_Hour A_Min A_Sec ".txt")
+	; }
 	ui.MainGui.Destroy()
 	BlockInput("Off")
 }
@@ -687,41 +693,12 @@ debugLog(LogMsg) {
 }
 
 
-DialogBox(DialogText, DialogTitle := "")
+DialogBox(Msg,Alignment := "Left")
 {
 	Global
-	ui.dialogBoxGui := Gui()
-	ui.dialogBoxGui.Name := "DialogBox"
-	ui.dialogBoxGui.BackColor := cfg.ThemeBackgroundColor
-	ui.dialogBoxGui.Color := cfg.ThemeFont1Color
-	ui.dialogBoxGui.Opt("-Caption -Border +AlwaysOnTop +Owner" ui.MainGui.Hwnd)
-	ui.dialogBoxGui.SetFont("s16 c" cfg.ThemeFont2Color, "Calibri Bold")
-	ui.dialogBoxText := ui.dialogBoxGui.AddText("y6 w300 r4 +Center section","")
-	drawOutlineDialogBoxGui(5,5,330,125,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,2)
-
-	ui.dialogBoxGui.Title := DialogTitle
-	WinSetTransparent(0,ui.dialogBoxGui)
-	ui.DialogBoxText.Text := DialogText
-	ui.MainGui.GetPos(&MainGuiX,&MainGuiY,&MainGuiW,&MainGuiH)
-	
-	ui.dialogBoxGui.Show("x" (MainGuiX + 80) " y" MainGuiY + 45 " w340 h130 NoActivate")	
-	
-	Transparency := 0
-	
-	While Transparency < 253
-	{
-		Transparency += 5
-		WinSetTransparent(Round(Transparency),ui.dialogBoxGui)
-	}
-}
-
-DialogBoxClose(*)
-{
-	Global
-	ui.dialogBoxGui.Destroy()
-}
-NotifyOSD(NotifyMsg,Duration := 10,YN := "")
-{
+	if !InStr("LeftRightCenter",Alignment)
+		Alignment := "Left"
+		
 	Transparent := 250
 	
 	ui.notifyGui			:= Gui()
@@ -730,7 +707,47 @@ NotifyOSD(NotifyMsg,Duration := 10,YN := "")
 	ui.notifyGui.Opt("+AlwaysOnTop -Caption +ToolWindow +Owner" ui.mainGui.hwnd)  ; +ToolWindow avoids a taskbar button and an alt-tab menu item.
 	ui.notifyGui.BackColor := cfg.ThemePanel2Color  ; Can be any RGB color (it will be made transparent below).
 	ui.notifyGui.SetFont("s16")  ; Set a large font size (32-point).
-	ui.notifyGui.AddText("c" cfg.ThemeFont2Color " BackgroundTrans",NotifyMsg)  ; XX & YY serve to 00auto-size the window.
+	ui.notifyGui.AddText("c" cfg.ThemeFont2Color " " Alignment " BackgroundTrans",Msg)  ; XX & YY serve to 00auto-size the window.
+	ui.notifyGui.AddText("xs hidden")
+	
+	WinSetTransparent(0,ui.notifyGui)
+	ui.notifyGui.Show("NoActivate Autosize")  ; NoActivate avoids deactivating the currently active window.
+	ui.notifyGui.GetPos(&x,&y,&w,&h)
+	
+	ui.MainGui.GetPos(&GuiX,&GuiY,&GuiW,&GuiH)
+	ui.notifyGui.Show("x" (GuiX+(GuiW/2)-(w/2)) " y" GuiY+(100-(h/2)) " NoActivate")
+	drawOutlineNotifyGui(0,0,w,h,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,3)
+	drawOutlineNotifyGui(5,5,w-10,h-10,cfg.ThemeBright1Color,cfg.ThemeBright2Color,2)
+	
+	Transparency := 0
+	
+	While Transparency < 253
+	{
+		Transparency += 5
+		WinSetTransparent(Round(Transparency),ui.notifyGui)
+	}
+}
+
+DialogBoxClose(*)
+{
+	Global
+	ui.notifyGui.Destroy()
+}
+
+NotifyOSD(NotifyMsg,Duration := 10,Alignment := "Left",YN := "")
+{
+	if !InStr("LeftRightCenter",Alignment)
+		Alignment := "Left"
+		
+	Transparent := 250
+	
+	ui.notifyGui			:= Gui()
+	ui.notifyGui.Title 		:= "Notify"
+
+	ui.notifyGui.Opt("+AlwaysOnTop -Caption +ToolWindow +Owner" ui.mainGui.hwnd)  ; +ToolWindow avoids a taskbar button and an alt-tab menu item.
+	ui.notifyGui.BackColor := cfg.ThemePanel2Color  ; Can be any RGB color (it will be made transparent below).
+	ui.notifyGui.SetFont("s16")  ; Set a large font size (32-point).
+	ui.notifyGui.AddText("c" cfg.ThemeFont2Color " " Alignment " BackgroundTrans",NotifyMsg)  ; XX & YY serve to 00auto-size the window.
 	ui.notifyGui.AddText("xs hidden")
 	
 	WinSetTransparent(0,ui.notifyGui)
@@ -819,6 +836,7 @@ pbWaitOSD() {
 	ui.notifyGui.destroy()
 	pbNotify("Timed out waiting for response.`nPlease try your action again",-1000)
 }
+
 
 hasVal(haystack, needle) {
 	if !(IsObject(haystack)) || (haystack.Length() = 0)

@@ -68,8 +68,10 @@ loop cfg.gameModuleList.length {
 	ui.d2HoldingRun := false
 
 	ui.gameSettingsGui.setFont("s12")
-	UI.alwaysRunGb := ui.gameSettingsGui.addGroupbox("x10 y0 w270 h70","Always Run")
-	ui.d2AlwaysRun := ui.gameSettingsGui.addPicture("x20 y20 w60 h26 section vd2AlwaysRun " 
+	drawOutlineNamed("d2AlwaysRunOutline",ui.gameSettingsGui,10,10,270,60,cfg.themeBright1Color,cfg.themeBright2Color,2)
+	ui.gameSettingsGui.addText("x20 y2 w80 h20 c" cfg.themeFont1Color " background" cfg.themeBackgroundColor," Always Run")
+	;UI.alwaysRunGb := ui.gameSettingsGui.addGroupbox("x10 y0 w270 h70","Always Run")
+	ui.d2AlwaysRun := ui.gameSettingsGui.addPicture("x20 y25 w60 h26 section vd2AlwaysRun " 
 		((cfg.d2AlwaysRunEnabled) 
 			? ("Background" cfg.ThemeButtonOnColor) 
 				: ("Background" cfg.themeButtonReadyColor)),
@@ -79,10 +81,10 @@ loop cfg.gameModuleList.length {
 
 
 	ui.d2SprintKey				:= ui.gameSettingsGui.AddPicture("xs+67 ys+1 w90 h25 section backgroundTrans","./img/keyboard_key_up.png")
-	ui.d2SprintKeyData 			:= ui.gameSettingsGui.addText("xs y+-24 w90 h20 center c" cfg.themeFont3Color " backgroundTrans",strUpper(cfg.d2SprintKey))
+	ui.d2SprintKeyData 			:= ui.gameSettingsGui.addText("xs y+-24 w90 h20 center c" cfg.themeButtonAlertColor " backgroundTrans",strUpper(cfg.d2SprintKey))
 	ui.d2SprintKeyLabel			:= ui.gameSettingsGui.addText("xs-2 y+3 w90 h20 center c" cfg.themeFont1Color " backgroundTrans","Sprint")
 	ui.d2CrouchKey				:= ui.gameSettingsGui.addPicture("x+8 ys w90 h25 section backgroundTrans","./img/keyboard_key_up.png")
-	ui.d2CrouchKeyData 			:= ui.gameSettingsGui.addText("xs y+-24 w90 h20 center c" cfg.themeFont3Color " backgroundTrans",strUpper(cfg.d2CrouchKey))
+	ui.d2CrouchKeyData 			:= ui.gameSettingsGui.addText("xs y+-24 w90 h20 center c" cfg.themeButtonAlertColor " backgroundTrans",strUpper(cfg.d2CrouchKey))
 	ui.d2CrouchKeyLabel 		:= ui.gameSettingsGui.addText("xs-2 y+3 w90 h20 center c" cfg.themeFont1Color " backgroundTrans","Crouch")
 
 	ui.d2AlwaysRun.ToolTip := "Toggles holdToCrouch"
@@ -106,43 +108,44 @@ loop cfg.gameModuleList.length {
 
 
 d2SprintKeyClicked(*) {
-	DialogBox('Press Key or Button Assigned for:`n"Hold to Sprint"`nin Destiny2')
+	DialogBox('Press "Hold to Sprint" Key`n Bound in Destiny 2',"Center")
 	Sleep(100)
-	d2SprintInput := InputHook("L1", "{All}{LControl}{RControl}{LAlt}{RAlt}{LShift}{RShift}{LWin}{RWin}{AppsKey}{F1}{F2}{F3}{F4}{F5}{F6}{F7}{F8}{F9}{F10}{F11}{F12}{Left}{Right}{Up}{Down}{Home}{End}{PgUp}{PgDn}{Del}{Ins}{BS}{CapsLock}{NumLock}{PrintScreen}{Pause}","+V")
+	d2SprintInput := InputHook("L1 T6", "{All}{LControl}{RControl}{LAlt}{RAlt}{LShift}{RShift}{LWin}{RWin}{AppsKey}{F1}{F2}{F3}{F4}{F5}{F6}{F7}{F8}{F9}{F10}{F11}{F12}{Left}{Right}{Up}{Down}{Home}{End}{PgUp}{PgDn}{Del}{Ins}{BS}{CapsLock}{NumLock}{PrintScreen}{Pause}{Tab}{Enter}","+V")
 	d2SprintInput.start()
 	d2SprintInput.wait()
-	if (d2SprintInput.input)
-	{
-		cfg.d2SprintKey := d2SprintInput.input
-	} else {
-		cfg.d2SprintKey := d2SprintInput.endKey
-	}
-	ui.d2SprintKeyData.text := strUpper(cfg.d2SprintKey)
-
-	if (cfg.d2SprintKey == 0) {
+	if (d2SprintInput.endKey == "" && d2SprintInput.input =="") {
 		DialogBoxClose()
-		DialogBox('Timed Out Waiting for:`nDestiny2 Sprint Key Bind`nPlease Try Again')
+		notifyOSD('No Key Detected.`nPlease Try Again.',2000,"Center")
+	} else {
+		if (d2SprintInput.input)
+		{
+			cfg.d2SprintKey := d2SprintInput.input
+		} else {
+			cfg.d2SprintKey := d2SprintInput.endKey
+		}
+		ui.d2SprintKeyData.text := strUpper(cfg.d2SprintKey)
 	}
+
 	DialogBoxClose()
 }
 
 d2CrouchKeyClicked(*) {
-	DialogBox('Press Key or Button Assigned for:`n"Hold to Crouch"`nin Destiny2')
+	DialogBox('Press "Hold to Crouch" Key`nBound in Destiny 2',"Center")
 	Sleep(100)
-	d2CrouchInput := InputHook("L1", "{All}{LControl}{RControl}{LAlt}{RAlt}{LShift}{RShift}{LWin}{RWin}{AppsKey}{F1}{F2}{F3}{F4}{F5}{F6}{F7}{F8}{F9}{F10}{F11}{F12}{Left}{Right}{Up}{Down}{Home}{End}{PgUp}{PgDn}{Del}{Ins}{BS}{CapsLock}{NumLock}{PrintScreen}{Pause}","+V")
+	d2CrouchInput := InputHook("L1 T6", "{All}{LControl}{RControl}{LAlt}{RAlt}{LShift}{RShift}{LWin}{RWin}{AppsKey}{F1}{F2}{F3}{F4}{F5}{F6}{F7}{F8}{F9}{F10}{F11}{F12}{Left}{Right}{Up}{Down}{Home}{End}{PgUp}{PgDn}{Del}{Ins}{BS}{CapsLock}{NumLock}{PrintScreen}{Pause}{Tab}","+V")
 	d2CrouchInput.start()
 	d2CrouchInput.wait()
-	IF (cfg.d2CrouchInput.input)
-	{
-		cfg.d2CrouchKey := d2CrouchInput.input
-	} else {
-		cfg.d2CrouchKey := d2CrouchInput.endKey
-	}
-	ui.d2CrouchKeyData.text := strUpper(cfg.d2CrouchKey)
-
-	if (cfg.d2CrouchKey == 0) {
+	if (d2CrouchInput.endKey == "" && d2CrouchInput.input == "") {
 		DialogBoxClose()
-		DialogBox('Timed Out Waiting for:`nDestiny2 Crouch Key Bind`nPlease Try Again')
+		notifyOSD('No Key Detected.`nPlease Try Again.',2000,"Center")
+	} else {
+		if (d2CrouchInput.input)
+		{
+			cfg.d2CrouchKey := d2CrouchInput.input
+		} else {
+			cfg.d2CrouchKey := d2CrouchInput.endKey
+		}
+		ui.d2CrouchKeyData.text := strUpper(cfg.d2CrouchKey)
 	}
 	DialogBoxClose()
 }

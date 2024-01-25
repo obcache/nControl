@@ -541,7 +541,7 @@ showGui(*) {
 	ui.AfkDocked := false
 	guiVis(ui.mainGui,true)
 	guiVis(ui.titleBarButtonGui,true)
-	guiVis(ui.gameSettingsGui,true)
+	tabsChanged()
 	debugLog("Showing Interface")
 }
 
