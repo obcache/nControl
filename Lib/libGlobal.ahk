@@ -300,6 +300,7 @@ CheckForUpdates(*) {
 		
 			download "https://raw.githubusercontent.com/obcache/nControl/main/Bin/nControl_" latestVersion ".exe",InstallDir "/versions/nControl_" latestVersion ".exe"
 			run(InstallDir "/versions/nControl_" latestVersion ".exe")
+			reload()
 		}
 		
 	} else {
@@ -329,6 +330,7 @@ AutoUpdate(*) {
 			download "https://raw.githubusercontent.com/obcache/nControl/main/Bin/nControl_" latestVersion ".exe",InstallDir "/versions/nControl_" latestVersion ".exe"
 			
 			run(InstallDir "/versions/nControl_" latestVersion ".exe")
+			winClose("nControl.exe")
 		}
 	}
 }
@@ -860,7 +862,7 @@ exitFunc(ExitReason,ExitCode) {
 	debugLog("Exit Command Received")
 	ui.MainGui.Opt("-AlwaysOnTop")
 
-	If !InStr("Logoff Shutdown Reload Single",ExitReason)
+	If !InStr("Logoff Shutdown Reload Single Close",ExitReason)
 	{
 		Result := MsgBox("Are you sure you want to`nTERMINATE nControl?",,4)
 		if Result = "No"
