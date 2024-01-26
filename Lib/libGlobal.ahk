@@ -299,7 +299,6 @@ CheckForUpdates(*) {
 				DirCreate(InstallDir "/versions")
 		
 			download "https://raw.githubusercontent.com/obcache/nControl/main/Bin/nControl_" latestVersion ".exe",InstallDir "/versions/nControl_" latestVersion ".exe"
-			
 			run(InstallDir "/versions/nControl_" latestVersion ".exe")
 		}
 		

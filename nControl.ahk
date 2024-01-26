@@ -19,7 +19,7 @@ SetWorkingDir(A_ScriptDir)
 cfg				:= Object()
 ui 				:= Object()
 InstallDir 		:= A_MyDocuments "\nControl"
-ConfigFileName := "nControl.ini"
+ConfigFileName 	:= "nControl.ini"
 ThemeFileName	:= "nControl.themes"
 ErrorLevel 		:= 0 
 

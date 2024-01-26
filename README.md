@@ -11,7 +11,7 @@ Companion App for various video games and generic AFK routines
 
 ## Deployment
 
-To install this app, execute the compiled binary found in the bin folder
+To install this app, execute the compiled binary
 
 
 
