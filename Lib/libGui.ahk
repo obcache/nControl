@@ -452,6 +452,7 @@ exitButtonPushed(*) {
 }
 
 stopGaming(*) {
+	ui.dividerGui.hide()
 	while a_index <= cfg.gamingStopProc.length {
 		try	
 			processClose(cfg.gamingStopProc[a_index])
@@ -459,6 +460,7 @@ stopGaming(*) {
 	}
 	try
 		winWaitClose("ahk_exe " cfg.gamingStopProc[processIndex],,5)
+	
 	exitApp()
 }
 	

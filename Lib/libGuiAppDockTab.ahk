@@ -376,7 +376,7 @@ drawDivider(DockY) {
 	MonitorGetWorkArea(cfg.nControlMonitor, &Left, &Top, &Right, &Bottom)
 	WorkAreaHeightWhenDocked :=  (Bottom - Top - cfg.DockHeight)
 	ui.dividerGui.opt("-caption +alwaysOnTop +ToolWindow +0x4000000")
-	ui.dividerGui.backColor := cfg.themeButtonAlertColor
+	ui.dividerGui.backColor := cfg.themeBright1Color
 	ui.dividerGui.show("x" Left " y" DockY-8 " w" Right-Left " h12 NoActivate")
 	winSetTransparent(255,ui.dividerGui)
 }
@@ -435,7 +435,7 @@ nControl(Status,&cfg)
 			 Sleep(500)
 
 		 }
-		WinMove(WorkAreaX,WorkAreaY,WorkAreaW,WorkAreaH, "ahk_exe " ui.app1filename.text)
+		WinMove(WorkAreaX,WorkAreaY,WorkAreaW,WorkAreaH-8, "ahk_exe " ui.app1filename.text)
 
 		If (WinGetMinMax("ahk_exe " ui.app2filename.text) = 1 or WinGetMinMax("ahk_exe " ui.app2filename.text) = -1)
 		{

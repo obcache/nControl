@@ -9,6 +9,53 @@ if (InStr(A_LineFile,A_ScriptFullPath))
 	Return
 }
 
+
+
+
+!+F::
+{
+	keyWait("F")
+	if getKeyState("D") {
+		run('C:\Users\cashm\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\5) Utilities\Discord.lnk')
+		launchSuccessful := false
+		timeoutCount := 0
+		while !launchSuccessful and timeoutCount < 60 {
+			timeoutCount += 1
+			sleep(1000)
+			if winExist("ahk_exe discord.exe")
+				launchSuccessful := true
+		}
+		if (launchSuccessful) {
+			winActivate("ahk_exe discord.exe")
+		} else {
+			notifyOSD("Problems launching Discord",2000)
+			Return
+		}
+	}	
+	
+	run('E:\Music\foobar2000\foobar2000.exe')
+	launchSuccessful := false
+	timeoutCount := 0
+	while !launchSuccessful and timeoutCount < 60 {
+		timeoutCount += 1
+		sleep(1000)
+		if winExist("ahk_exe foobar2000.exe") {
+			launchSuccessful := true
+		}
+	}
+	if (launchSuccessful) {
+		winActivate("ahk_exe foobar2000.exe")
+
+	} else {
+		notifyOSD("Problems launching Foobar2000",2000)
+		Return
+	}
+	if winExist("ahk_exe discord.exe") && winExist("ahk_exe foobar2000.exe")
+		dockApps()
+		
+}		
+
+
 !^Backspace::
 {
 ui.MainGui.Move(30,A_ScreenHeight-ui.TaskbarHeight-GuiH)
@@ -94,3 +141,4 @@ ToggleGuiCollapse()
 	; }
 ; }
 ; HotIfWinActive
+
