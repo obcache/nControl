@@ -401,7 +401,7 @@ cfgLoad(&cfg, &ui) {
 	win2afk.currStepNum 	:= ""
 	
 	ui.dividerGui			:= gui()
-	
+	cfg.excludedApps		:= IniRead(cfg.file,"System","ExcludedApps","Windows10Universal.exe,explorer.exe,RobloxPlayerInstaller.exe,RobloxPlayerLauncher.exe,Chrome.exe,msedge.exe")
 	cfg.MainGui				:= IniRead(cfg.file,"System","MainGui","MainGui")
 	cfg.InstallDir			:= IniRead(cfg.file,"System","InstallDir", A_MyDocuments "\nControl")
 	cfg.MainScriptName		:= IniRead(cfg.file,"System","MainScriptName", "nControl")
@@ -521,6 +521,7 @@ WriteConfig() {
 	iniWrite(rtrim(cfg.gamingStartProcString,","),cfg.file,"System","GamingStartProcesses")
 	iniWrite(rtrim(cfg.gamingStopProcString,","),cfg.file,"System","GamingStopProcesses")
 	IniWrite(cfg.autoDetectGame,cfg.file,"Game","AutoDetectGame")
+	iniWrite(cfg.excludedApps,cfg.file,"System","ExcludedApps")
 	IniWrite(cfg.game,cfg.file,"Game","Game")
 	IniWrite(cfg.mainScriptName,cfg.file,"System","ScriptName")
 	IniWrite(cfg.installDir,cfg.file,"System","InstallDir")
