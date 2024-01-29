@@ -379,7 +379,10 @@ toggleGame1Status(*) {
 		) : (																	;ELSE
 			ui.Win1EnabledToggle.Opt("Background" cfg.ThemeButtonReadyColor)	;Set BG color of the control to theme's Button-Off
 			,cfg.toggleOff 														;Returns png path for toggle's Off state
-		)																		
+		)
+	if !(ui.win1Hwnd) {
+		ui.win1enabledToggle.opt("background" cfg.themeDisabledColor)
+	}
 	RefreshWinHwnd()
 }	
 			
@@ -395,6 +398,9 @@ toggleGame2Status(*) {
 			ui.Win2EnabledToggle.Opt("Background" cfg.ThemeButtonReadyColor)	;Set BG color of the control to theme's Button-Off
 			,cfg.toggleOff 														;Returns png path for toggle's Off state
 		)																		
+	if !(ui.win2Hwnd) {
+		ui.win2enabledToggle.opt("background" cfg.themeDisabledColor)
+	}
 	RefreshWinHwnd()
 }			
 

@@ -179,18 +179,35 @@ w up::
 w::
 {
 	global
-	ui.d2Running := true
-	send("{w down}{" cfg.d2sprintKey " down}")
+	if !(getKeyState("LButton")) {
+		ui.d2Running := true
+		send("{w down}{" cfg.d2sprintKey " down}")
+	} else {
+		send("{w down}")
+		keyWait("w")
+		send("{w}")
+	}
 }
 
 
+#HotIf
 #HotIf winActive("ahk_exe destiny.exe")  && cfg.d2AlwaysRunEnabled		
+
+LShift::
+{
+	send("{LShift}")
+	if ui.d2Running {
+		sleep(1000)
+		Send("{" cfg.d2sprintKey "}{" cfg.d2SprintKey " down}")
+	}
+}
 r::
 {
 	send("{r}")
 	ui.d2Reloading := true
 	setTimer () => ui.d2Reloading := false, -1500
-}	
+}
+
 #HotIf
 ; enter::
 	; {

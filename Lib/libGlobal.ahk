@@ -345,7 +345,7 @@ cfgLoad(&cfg, &ui) {
 	cfg.gamingStartProcString 	:= "E:\Music\foobar2000\foobar2000.exe,C:\Users\cashm\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\5) Utilities\Discord.lnk,C:\Program Files (x86)\Steam\steam.exe,C:\Program Files (x86)\Epic Games\Launcher\Portal\Binaries\Win32\EpicGamesLauncher.exe"
 		
 	cfg.gamingStartProc 	:= strSplit(IniRead(cfg.file,"System","GamingStartProcesses",cfg.gamingStartProcString),",")
-	cfg.gamingStopProc 	:= strSplit(IniRead(cfg.file,"System","GamingStopProcesses",cfg.gamingStopProcString),",")
+	cfg.gamingStopProc 		:= strSplit(IniRead(cfg.file,"System","GamingStopProcesses",cfg.gamingStopProcString),",")
 	ui.d2AlwaysRunPaused 	:= false
 	ui.d2Running			:= false
 	ui.d2Sliding			:= false
