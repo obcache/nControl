@@ -1,4 +1,4 @@
-A_FileVersion := "3.5.5.2"
+A_FileVersion := "3.5.5.5"
 A_AppName := "nControl"
 ;@Ahk2Exe-Let FileVersion=%A_PriorLine~U)^(.+"){1}(.+)".*$~$2% 
 
@@ -92,3 +92,5 @@ ui.gameTabs.choose(cfg.gameModuleList[cfg.activeGameTab])
 
 tabsChanged()
 autoUpdate()
+if (cfg.startMinimizedEnabled)
+	hideGui()

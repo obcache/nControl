@@ -353,6 +353,7 @@ cfgLoad(&cfg, &ui) {
 	ui.gameWindowsList 		:= array()
 	cfg.gameWindowsList 	:= array()
 	cfg.mainGui				:= IniRead(cfg.file,"System","MainGui","MainGui")
+	cfg.startMinimizedEnabled	:= iniRead(cfg.file,"System","StartMinimizedEnabled",false)
 	ui.guiH					:= 220  	;430 for Console Mode
 	ui.clockTimerStarted 	:= false
 	ui.clockMode			:= "Clock"
@@ -366,7 +367,7 @@ cfgLoad(&cfg, &ui) {
 	ui.previousTab			:= "Sys"
 	ui.activeTab			:= "Sys"
 	ui.lastWindowHwnd		:= 0
-	ui.colorChanged 		:= false
+	ui.colorChanged 		:= false 
 	ui.guiCollapsed			:= false
 	ui.afkDocked 			:= false
 	ui.afkAnchoredToGui 	:= true
@@ -510,11 +511,11 @@ cfgLoad(&cfg, &ui) {
 WriteConfig() {
 	Global
 	tmpGameList := ""
-
+	cfg.gamingStartProcString := ""
 	loop cfg.gamingStartProc.length {
 		cfg.gamingStartProcString .= cfg.gamingStartProc[a_index] ","
 	}
-
+	cfg.gamingStopProcString := ""
 	loop cfg.gamingStopProc.length {
 		cfg.gamingStopProcString .= cfg.gamingStopProc[a_index] ","
 	}
@@ -526,6 +527,7 @@ WriteConfig() {
 	IniWrite(cfg.mainScriptName,cfg.file,"System","ScriptName")
 	IniWrite(cfg.installDir,cfg.file,"System","InstallDir")
 	IniWrite(cfg.mainGui,cfg.file,"System","MainGui")
+	iniWrite(cfg.startMinimizedEnabled,cfg.file,"System","StartMinimizedEnabled")
 	IniWrite(ui.releaseChannelDDL.value,cfg.file,"System","ReleaseChannel")
 	IniWrite(arr2str(cfg.gameModuleList),cfg.file,"Game","GameModuleList")
 	IniWrite(arr2str(cfg.gameList),cfg.file,"Game","GameList")

@@ -69,8 +69,18 @@ GuiSetupTab(&ui,&cfg)
 	ui.toggleAnimations.ToolTip := "Keeps this app on top of all other windows."
 	ui.labelAnimations:= ui.MainGui.AddText("x+3 ys+3","Animations")
 	
+	ToggleStartMinimized(*)
+	{
+		ui.toggleStartMinimized.Opt((cfg.StartMinimizedEnabled := !cfg.StartMinimizedEnabled) ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor))
+		ui.toggleStartMinimized.Redraw()
+	}
+	ui.toggleStartMinimized := ui.MainGui.AddPicture("xs w60 h25 section vStartMinimized " (cfg.StartMinimizedEnabled ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor)),((cfg.StartMinimizedEnabled) ? (cfg.toggleOn) : (cfg.toggleOff)))
+	ui.toggleStartMinimized.OnEvent("Click", toggleChanged)
+	ui.toggleStartMinimized.ToolTip := "Keeps this app on top of all other windows."
+	ui.labelStartMinimized:= ui.MainGui.AddText("x+3 ys+3","Start Minimized")
+	
 
-	ui.checkForUpdatesButton := ui.mainGui.addPicture("xs y+20 w30 h30 section background" cfg.themeButtonReadyColor,"./img/button_update.png")
+	ui.checkForUpdatesButton := ui.mainGui.addPicture("xs y+5 w30 h30 section background" cfg.themeButtonReadyColor,"./img/button_update.png")
 	ui.checkForUpdatesButton.onEvent("Click",checkForUpdates)
 	ui.checkForUpdatesButton.Tooltip := "Checks to see if a more recent version is available"	
 	ui.checkForUpdatesLabel := ui.mainGui.addText("ys-4 x+5 section w70 backgroundTrans","Update Now")
