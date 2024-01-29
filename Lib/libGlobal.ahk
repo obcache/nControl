@@ -232,6 +232,7 @@ preAutoExec(InstallDir,ConfigFileName) {
 			FileInstall("./nControl_currentBuild.dat",InstallDir "/nControl_currentBuild.dat",1)
 			FileInstall("./Img/keyboard_key_up.png",InstallDir "/img/keyboard_key_up.png",1)
 			FileInstall("./Img/keyboard_key_down.png",InstallDir "/img/keyboard_key_down.png",1)
+			FileInstall("./nControl_updater.exe",InstallDir "/nControl_updater.exe",1)
 			
 			persistLog("Copied Assets to: " InstallDir)
 			
@@ -328,9 +329,8 @@ AutoUpdate(*) {
 				DirCreate(InstallDir "/versions")
 		
 			download "https://raw.githubusercontent.com/obcache/nControl/main/Bin/nControl_" latestVersion ".exe",InstallDir "/versions/nControl_" latestVersion ".exe"
-			
-			run(InstallDir "/versions/nControl_" latestVersion ".exe")
-			winClose("nControl.exe")
+			run("./nControl_updater.exe ./versions/nControl_" latestVersion ".exe")
+
 		}
 	}
 }

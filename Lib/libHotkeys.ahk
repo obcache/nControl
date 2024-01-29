@@ -11,6 +11,16 @@ if (InStr(A_LineFile,A_ScriptFullPath))
 
 
 
+^+/::
+{
+	mx := 0
+	coodMode("mouse","screen")
+	while (mx < a_screenwidth) {
+		mouseMove(mx,-10,2)
+		mx += 10
+		sleep(100)
+	}
+}
 
 !+F::
 {
