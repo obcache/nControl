@@ -280,36 +280,51 @@ persistLog(LogMsg) {
 }
 
 CheckForUpdates(*) {
-	whr := comObject("winHttp.winHttpRequest.5.1")
-	whr.open("get","https://raw.githubusercontent.com/obcache/nControl/main/nControl_currentBuild.dat")
-	whr.send()
-	whr.waitForResponse()
-	msgBox(whr.responseText)
-	latestVersion := whr.responseText
-	currentVersion := FileRead("./nControl_currentBuild.dat")
 
-	ui.prevAlwaysOnTop := cfg.alwaysOnTopEnabled
-	winSetAlwaysOnTop(0,ui.mainGui.hwnd)
-	if (latestVersion > currentVersion) 
-	{
-		WinSetAlwaysOnTop(0,ui.mainGui)
-		msgBoxAnswer := MsgBox("A newer version is available.`nYou currently have: " currentVersion "`nBut the newest is: " latestVersion "`nWould you like to update now?",,"YN")
+	if fileExist("/nControl_latestBuild.dat")
+		fileDelete("/nControl_latestBuild.dat")
 
-		if (msgBoxAnswer == "Yes")
-		{ 
-			if !(DirExist(InstallDir "/versions"))
-				DirCreate(InstallDir "/versions")
-		
-			download "https://raw.githubusercontent.com/obcache/nControl/main/Bin/nControl_" latestVersion ".exe",InstallDir "/versions/nControl_" latestVersion ".exe"
-			run(InstallDir "/versions/nControl_" latestVersion ".exe")
-			reload()
-		}
-		
-	} else {
-		msgBox("You have the latest version already.`nInstalled Version: " currentVersion "`nLatestVersion: " latestVersion)
+	download "https://raw.githubusercontent.com/obcache/nControl/main/nControl_currentBuild.dat",InstallDir "/nControl_latestBuild.dat"
+	
+	timeOutCount := 0
+	while !fileExist("./nControl_latestBuild.dat") && timeOutCount < 30 {
+		timeOutCount += 1
+		sleep(500)
 	}
-	winSetAlwaysOnTop(cfg.alwaysOnTopEnabled,ui.mainGui)
+	
+	if timeOutCount > 29 {
+		pbNotify("Couldn't retrieve latest version from repository")
+	} else {
+		if fileExist("./nControl_latestBuild.dat")
+		{
+			currentVersion := fileRead("./nControl_currentBuild.dat")
+			latestVersion := fileRead("./nControl_latestBuild.dat")
+			ui.prevAlwaysOnTop := cfg.alwaysOnTopEnabled
+			winSetAlwaysOnTop(0,ui.mainGui.hwnd)
+			if (latestVersion > currentVersion) 
+			{
+				WinSetAlwaysOnTop(0,ui.mainGui)
+				msgBoxAnswer := MsgBox("A newer version is available.`nYou currently have: " currentVersion "`nBut the newest is: " latestVersion "`nWould you like to update now?",,"YN")
 
+				if (msgBoxAnswer == "Yes")
+				{ 
+					if !(DirExist(InstallDir "/versions"))
+						DirCreate(InstallDir "/versions")
+				
+					download "https://raw.githubusercontent.com/obcache/nControl/main/Bin/nControl_" latestVersion ".exe",InstallDir "/versions/nControl_" latestVersion ".exe"
+					run(InstallDir "/versions/nControl_" latestVersion ".exe")
+					reload()
+				}
+				
+			} else {
+				msgBox("You have the latest version already.`nInstalled Version: " currentVersion "`nLatestVersion: " latestVersion)
+			}
+			winSetAlwaysOnTop(cfg.alwaysOnTopEnabled,ui.mainGui)
+
+} else { 
+			pbNotify("Couldn't retrieve latest version from repository")
+		}
+	}
 }
 
 AutoUpdate(*) {
