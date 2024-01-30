@@ -1,4 +1,4 @@
-A_FileVersion := "1.1.2.5"
+A_FileVersion := "1.1.2.6"
 A_AppName := "nControl_updater"
 ;@Ahk2Exe-Let FileVersion=%A_PriorLine~U)^(.+"){1}(.+)".*$~$2% 
 
@@ -24,19 +24,19 @@ if (A_Args.length > 0) && FileExist("./versions/" A_Args[1]) {
 	exitApp
 } else {
 	if (DirExist("./versions")) {
-		fileList := ""  
+		fileList := array()  
 
 		Loop files, "./versions/*.exe"
 		{
-			fileList .= A_LoopFileName ","
+			fileList.push(A_LoopFileName)
 		}
-		fileList := Sort(FileList, "R")
-		currentBuildExe := rtrim(fileList[1],",")		
+		currentBuildExe := fileList[fileList.length]		
+		
 		if (fileExist(currentBuildExe))
-		{	run(currentBuildExe)
-			exitApp
+		{	
+			winWaitClose("ahk_exe nControl.exe")
+			run(currentBuildExe)
 		}
 	}
-
-exitApp
+	exitApp
 }

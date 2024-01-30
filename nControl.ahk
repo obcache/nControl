@@ -1,7 +1,9 @@
-A_FileVersion := "3.5.5.5"
-A_AppName := "nControl"
+A_FileVersion := "3.5.5.6"
 ;@Ahk2Exe-Let FileVersion=%A_PriorLine~U)^(.+"){1}(.+)".*$~$2% 
 
+A_AppName := "nControl"
+if (fileExist("./nControl_currentBuild.dat"))
+	A_FileVersion := FileRead("./nControl_currentBuild.dat")
 ;@Ahk2Exe-SetName nControl
 ;@Ahk2Exe-SetVersion %U_FileVersion%
 ;@Ahk2Exe-SetFileVersion %U_FileVersion%
