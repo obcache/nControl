@@ -284,6 +284,7 @@ CheckForUpdates(*) {
 	whr.open("get","https://raw.githubusercontent.com/obcache/nControl/main/nControl_currentBuild.dat")
 	whr.send()
 	whr.waitForResponse()
+	msgBox(whr.responseText)
 	latestVersion := whr.responseText
 	currentVersion := FileRead("./nControl_currentBuild.dat")
 

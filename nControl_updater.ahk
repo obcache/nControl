@@ -1,4 +1,4 @@
-A_FileVersion := "1.1.2.7"
+A_FileVersion := "1.1.2.8"
 A_AppName := "nControl_updater"
 ;@Ahk2Exe-Let FileVersion=%A_PriorLine~U)^(.+"){1}(.+)".*$~$2% 
 
@@ -35,6 +35,8 @@ if (A_Args.length > 0) && FileExist("./versions/" A_Args[1]) {
 		if (fileExist(currentBuildExe))
 		{	
 			winWaitClose("ahk_exe nControl.exe")
+			fileDelete("./nControl.exe")
+			fileDelete("./nControl_currentBuild.dat")
 			run(currentBuildExe)
 		}
 	}
