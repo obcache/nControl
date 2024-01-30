@@ -1,4 +1,4 @@
-A_FileVersion := "3.5.6.0"
+A_FileVersion := "3.5.6.1"
 ;@Ahk2Exe-Let FileVersion=%A_PriorLine~U)^(.+"){1}(.+)".*$~$2% 
 
 A_AppName := "nControl"
@@ -54,6 +54,7 @@ MonitorGetWorkArea(MonitorGetPrimary(),
 ui.TaskbarHeight := PrimaryMonitorBottom - PrimaryWorkAreaBottom
 
 CfgLoad(&cfg, &ui)
+autoUpdate()
 InitGui(&cfg, &ui)
 InitConsole(&ui)
 
@@ -93,6 +94,6 @@ ui.gameTabs.choose(cfg.gameModuleList[2])
 ui.gameTabs.choose(cfg.gameModuleList[cfg.activeGameTab])
 
 tabsChanged()
-autoUpdate()
+
 if (cfg.startMinimizedEnabled)
 	hideGui()
