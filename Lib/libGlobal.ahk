@@ -9,19 +9,19 @@ if (InStr(A_LineFile,A_ScriptFullPath)){
 }
 
 initTrayMenu(*) {
-	; A_TrayMenu.Delete
-	; A_TrayMenu.Add
-	; A_TrayMenu.Add("Show Window", ShowGui)
-	; A_TrayMenu.Add("Hide Window", HideGui)
-	; A_TrayMenu.Add("Reset Window Position",ResetWindowPosition)
-	; A_TrayMenu.Add("Toggle Dock", DockApps)
-	; A_TrayMenu.Add()
-	; A_TrayMenu.Add("Toggle Log Window",toggleConsole)
-	; A_TrayMenu.Add()
-	; A_TrayMenu.Add("Exit App",KillMe)
-	; A_TrayMenu.Default := "Show Window"
-	; Try
-		; persistLog("Tray Initialized")
+	A_TrayMenu.Delete
+	A_TrayMenu.Add
+	A_TrayMenu.Add("Show Window", ShowGui)
+	A_TrayMenu.Add("Hide Window", HideGui)
+	A_TrayMenu.Add("Reset Window Position",ResetWindowPosition)
+	A_TrayMenu.Add("Toggle Dock", DockApps)
+	A_TrayMenu.Add()
+	A_TrayMenu.Add("Toggle Log Window",toggleConsole)
+	A_TrayMenu.Add()
+	A_TrayMenu.Add("Exit App",KillMe)
+	A_TrayMenu.Default := "Show Window"
+	Try
+		persistLog("Tray Initialized")
 }
 
 preAutoExec(InstallDir,ConfigFileName) {
@@ -283,53 +283,39 @@ CheckForUpdates(*) {
 
 	if fileExist("/nControl_latestBuild.dat")
 		fileDelete("/nControl_latestBuild.dat")
-
-	download "https://raw.githubusercontent.com/obcache/nControl/main/nControl_currentBuild.dat",InstallDir "/nControl_latestBuild.dat"
 	
-	timeOutCount := 0
-	while !fileExist("./nControl_latestBuild.dat") && timeOutCount < 30 {
-		timeOutCount += 1
-		sleep(500)
-	}
-	
-	if timeOutCount > 29 {
-		pbNotify("Couldn't retrieve latest version from repository")
-	} else {
-		if fileExist("./nControl_latestBuild.dat")
-		{
-			currentVersion := fileRead("./nControl_currentBuild.dat")
-			latestVersion := fileRead("./nControl_latestBuild.dat")
-			ui.prevAlwaysOnTop := cfg.alwaysOnTopEnabled
-			winSetAlwaysOnTop(0,ui.mainGui.hwnd)
-			if (latestVersion > currentVersion) 
-			{
-				WinSetAlwaysOnTop(0,ui.mainGui)
-				msgBoxAnswer := MsgBox("A newer version is available.`nYou currently have: " currentVersion "`nBut the newest is: " latestVersion "`nWould you like to update now?",,"YN")
+	whr := ComObject("WinHttp.WinHttpRequest.5.1")
+	whr.Open("GET", "https://raw.githubusercontent.com/obcache/nControl/main/nControl_currentBuild.dat", true)
+	whr.Send()
+	whr.WaitForResponse()
+	latestVersion := whr.ResponseText
+	currentVersion := fileRead("./nControl_currentBuild.dat")
+	ui.prevAlwaysOnTop := cfg.alwaysOnTopEnabled
+	winSetAlwaysOnTop(0,ui.mainGui.hwnd)
+	if (latestVersion > currentVersion) 
+	{
+		WinSetAlwaysOnTop(0,ui.mainGui)
+		msgBoxAnswer := MsgBox("A newer version is available.`nYou currently have: " currentVersion "`nBut the newest is: " latestVersion "`nWould you like to update now?",,"YN")
 
-				if (msgBoxAnswer == "Yes")
-				{ 
-					if !(DirExist(InstallDir "/versions"))
-						DirCreate(InstallDir "/versions")
-				
-					download "https://raw.githubusercontent.com/obcache/nControl/main/Bin/nControl_" latestVersion ".exe",InstallDir "/versions/nControl_" latestVersion ".exe"
-					run(InstallDir "/versions/nControl_" latestVersion ".exe")
-					reload()
-				}
-				
-			} else {
-				msgBox("You have the latest version already.`nInstalled Version: " currentVersion "`nLatestVersion: " latestVersion)
-			}
-			winSetAlwaysOnTop(cfg.alwaysOnTopEnabled,ui.mainGui)
-
-} else { 
-			pbNotify("Couldn't retrieve latest version from repository")
+		if (msgBoxAnswer == "Yes")
+		{ 
+			if !(DirExist(InstallDir "/versions"))
+				DirCreate(InstallDir "/versions")
+		
+			download "https://raw.githubusercontent.com/obcache/nControl/main/Bin/nControl_" latestVersion ".exe",InstallDir "/versions/nControl_" latestVersion ".exe"
+			run(InstallDir "/versions/nControl_" latestVersion ".exe")
+			reload()
 		}
+		
+	} else {
+		msgBox("You have the latest version already.`nInstalled Version: " currentVersion "`nLatestVersion: " latestVersion)
 	}
-}
+	winSetAlwaysOnTop(cfg.alwaysOnTopEnabled,ui.mainGui)
+} 
 
 AutoUpdate(*) {
 	whr := comObject("winHttp.winHttpRequest.5.1")
-	whr.open("get","https://raw.githubusercontent.com/obcache/nControl/main/nControl_currentBuild.dat")
+	whr.open("get","https://raw.githubusercontent.com/obcache/nControl/main/nControl_currentBuild.dat",true)
 	whr.send()
 	whr.waitForResponse()
 	latestVersion := whr.responseText
