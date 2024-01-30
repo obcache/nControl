@@ -68,9 +68,10 @@ loop cfg.gameModuleList.length {
 	ui.d2HoldingRun := false
 
 	ui.gameSettingsGui.setFont("s12")
-	drawOutlineNamed("d2AlwaysRunOutline",ui.gameSettingsGui,10,10,270,60,cfg.themeBright1Color,cfg.themeBright2Color,2)
+	drawOutlineNamed("d2AlwaysRunOutline",ui.gameSettingsGui,10,10,470,60,cfg.themeBright1Color,cfg.themeBright2Color,2)
 	ui.gameSettingsGui.addText("x20 y2 w80 h20 c" cfg.themeFont1Color " background" cfg.themeBackgroundColor," Always Run")
 	;UI.alwaysRunGb := ui.gameSettingsGui.addGroupbox("x10 y0 w270 h70","Always Run")
+	
 	ui.d2AlwaysRun := ui.gameSettingsGui.addPicture("x20 y25 w60 h26 section vd2AlwaysRun " 
 		((cfg.d2AlwaysRunEnabled) 
 			? ("Background" cfg.ThemeButtonOnColor) 
@@ -86,6 +87,12 @@ loop cfg.gameModuleList.length {
 	ui.d2CrouchKey				:= ui.gameSettingsGui.addPicture("x+8 ys w90 h25 section backgroundTrans","./img/keyboard_key_up.png")
 	ui.d2CrouchKeyData 			:= ui.gameSettingsGui.addText("xs y+-24 w90 h20 center c" cfg.themeButtonAlertColor " backgroundTrans",strUpper(cfg.d2CrouchKey))
 	ui.d2CrouchKeyLabel 		:= ui.gameSettingsGui.addText("xs-2 y+3 w90 h20 center c" cfg.themeFont1Color " backgroundTrans","Crouch")
+	ui.d2ToggleWalkKey			:= ui.gameSettingsGui.addPicture("x+8 ys w90 h25 section backgroundTrans","./img/keyboard_key_up.png")
+	ui.d2ToggleWalkKeyData 		:= ui.gameSettingsGui.addText("xs y+-24 w90 h20 center c" cfg.themeButtonAlertColor " backgroundTrans",strUpper(cfg.d2ToggleWalkKey))
+	ui.d2ToggleWalkKeyLabel		:= ui.gameSettingsGui.addText("xs-2 y+3 w90 h20 center c" cfg.themeFont1Color " backgroundTrans","Toggle Walk")
+	ui.d2HoldWalkKey			:= ui.gameSettingsGui.addPicture("x+8 ys w90 h25 section backgroundTrans","./img/keyboard_key_up.png")
+	ui.d2HoldWalkKeyData 		:= ui.gameSettingsGui.addText("xs y+-24 w90 h20 center c" cfg.themeButtonAlertColor " backgroundTrans",strUpper(cfg.d2HoldWalkKey))
+	ui.d2HoldWalkKeyLabel		:= ui.gameSettingsGui.addText("xs-2 y+3 w90 h20 center c" cfg.themeFont1Color " backgroundTrans","Hold to Walk")
 
 	ui.d2AlwaysRun.ToolTip := "Toggles holdToCrouch"
 	ui.d2SprintKey.ToolTip 		:= "Click to Assign"
@@ -94,17 +101,31 @@ loop cfg.gameModuleList.length {
 	ui.d2CrouchKey.ToolTip		:= "Click to Assign"
 	ui.d2CrouchKeyData.ToolTip  := "Click to Assign"
 	ui.d2CrouchKeyLabel.ToolTip	:= "Click to Assign"
+	ui.d2ToggleWalkKey.ToolTip		:= "Click to Assign"
+	ui.d2ToggleWalkKeyData.ToolTip  := "Click to Assign"
+	ui.d2ToggleWalkKeyLabel.ToolTip	:= "Click to Assign"
+	ui.d2HoldWalkKey.ToolTip		:= "Click to Assign"
+	ui.d2HoldWalkKeyData.ToolTip  := "Click to Assign"
+	ui.d2HoldWalkKeyLabel.ToolTip	:= "Click to Assign"
 
 	ui.d2CrouchKeyData.setFont("s13")
 	ui.d2SprintKeyData.setFont("s13")
+	ui.d2ToggleWalkKeyData.setFont("s13")
+	ui.d2ToggleWalkKeyData.setFont("s13")
 	ui.d2CrouchKeyLabel.setFont("s12")
 	ui.d2SprintKeyLabel.setFont("s12")
+	ui.d2ToggleWalkKeyLabel.setFont("s12")
+	ui.d2HoldWalkKeyLabel.setFont("s12")
 	
 	ui.d2AlwaysRun.OnEvent("Click", toggleChanged)
 	ui.d2CrouchKey.onEvent("click",d2CrouchKeyClicked)
 	ui.d2SprintKey.onEvent("click",d2SprintKeyClicked)
+	ui.d2ToggleWalkKey.onEvent("click",d2ToggleWalkKeyClicked)
+	ui.d2HoldWalkKey.onEvent("click",d2HoldWalkKeyClicked)
 	ui.d2CrouchKeyData.onEvent("click",d2CrouchKeyClicked)
 	ui.d2SprintKeyData.onEvent("click",d2SprintKeyClicked)
+	ui.d2ToggleWalkKeyData.onEvent("click",d2ToggleWalkKeyClicked)
+	ui.d2HoldWalkKeyData.onEvent("click",d2HoldWalkKeyClicked)
 
 
 d2SprintKeyClicked(*) {
@@ -150,142 +171,101 @@ d2CrouchKeyClicked(*) {
 	DialogBoxClose()
 }
 
+d2ToggleWalkKeyClicked(*) {
+	DialogBox('Press Key to Assign to: `n"Toggle Walk"',"Center")
+	Sleep(100)
+	d2ToggleWalkInput := InputHook("L1 T6", "{All}{LControl}{RControl}{LAlt}{RAlt}{LShift}{RShift}{LWin}{RWin}{AppsKey}{F1}{F2}{F3}{F4}{F5}{F6}{F7}{F8}{F9}{F10}{F11}{F12}{Left}{Right}{Up}{Down}{Home}{End}{PgUp}{PgDn}{Del}{Ins}{BS}{CapsLock}{NumLock}{PrintScreen}{Pause}{Tab}","+V")
+	d2ToggleWalkInput.start()
+	d2ToggleWalkInput.wait()
+	if (d2ToggleWalkInput.endKey == "" && d2ToggleWalkInput.input == "") {
+		DialogBoxClose()
+		notifyOSD('No Key Detected.`nPlease Try Again.',2000,"Center")
+	} else {
+		if (d2ToggleWalkInput.input)
+		{
+			cfg.d2ToggleWalkKey := d2ToggleWalkInput.input
+		} else {
+			cfg.d2ToggleWalkKey := d2ToggleWalkInput.endKey
+		}
+		ui.d2ToggleWalkKeyData.text := strUpper(cfg.d2ToggleWalkKey)
+	}
+	DialogBoxClose()
+}
+
+d2HoldWalkKeyClicked(*) {
+	DialogBox('Press Key to Assign to: `n"Hold to Walk"',"Center")
+	Sleep(100)
+	d2HoldWalkInput := InputHook("L1 T6", "{All}{LControl}{RControl}{LAlt}{RAlt}{LShift}{RShift}{LWin}{RWin}{AppsKey}{F1}{F2}{F3}{F4}{F5}{F6}{F7}{F8}{F9}{F10}{F11}{F12}{Left}{Right}{Up}{Down}{Home}{End}{PgUp}{PgDn}{Del}{Ins}{BS}{CapsLock}{NumLock}{PrintScreen}{Pause}{Tab}","+V")
+	d2HoldWalkInput.start()
+	d2HoldWalkInput.wait()
+	if (d2HoldWalkInput.endKey == "" && d2HoldWalkInput.input == "") {
+		DialogBoxClose()
+		notifyOSD('No Key Detected.`nPlease Try Again.',2000,"Center")
+	} else {
+		if (d2HoldWalkInput.input)
+		{
+			cfg.d2HoldWalkKey := d2HoldWalkInput.input
+		} else {
+			cfg.d2HoldWalkKey := d2HoldWalkInput.endKey
+		}
+		ui.d2HoldWalkKeyData.text := strUpper(cfg.d2HoldWalkKey)
+	}
+	DialogBoxClose()
+}
+
 #HotIf ui.d2Running
+LAlt::
+{
+send("{" strLower(cfg.d2SprintKey) " up}")
+send("{LAlt}")
+keyWait("LAlt")
+send("{LAlt Up}")
+send("{" strLower(cfg.d2SprintKey) " down}")
+}
+
 w up::
 {
 	ui.d2Running := false
-	send("{" cfg.d2SprintKey " up}{w up}")
-	;send("{w up}")	
+	send("{" strLower(cfg.d2SprintKey) " up}{w up}")
 }
-	
-; LShift::
-; {
-	; ui.d2Sliding := true
-	; send("{" cfg.d2CrouchKey " Down}")
-	; sleep(400)
-	; send("{" cfg.d2CrouchKey " Up}")
-
-	; if getKeyState("w") {
-		; Send("{" cfg.d2sprintKey " up}{w up}")
-		; ui.d2Running := false
-		; send("{w down}{" cfg.d2sprintKey " down}")
-		; ui.d2Running := true
-	; }
-	; ui.d2Sliding := false
-; }	
 #HotIf
 
-#HotIf winActive("ahk_exe destiny2.exe") && cfg.d2AlwaysRunEnabled && !ui.d2Running && !ui.d2Sliding && !ui.d2reloading
+#HotIf winActive("ahk_exe destiny2.exe") && cfg.d2AlwaysRunEnabled && !ui.d2Running && !ui.d2reloading
 w::
 {
 	global
-	if !(getKeyState("LButton")) {
+	if !getKeyState("LButton") && !getKeyState(cfg.d2HoldWalkKey) && !ui.d2ToggleWalkEnabled {
 		ui.d2Running := true
-		send("{w down}{" cfg.d2sprintKey " down}")
+		send("{w down}{" strLower(cfg.d2sprintKey) " down}")
+
 	} else {
 		send("{w down}")
 		keyWait("w")
 		send("{w}")
 	}
 }
-
-
 #HotIf
+
 #HotIf winActive("ahk_exe destiny.exe")  && cfg.d2AlwaysRunEnabled		
 
-LShift::
+CapsLock::
 {
-	send("{LShift}")
-	if ui.d2Running {
-		sleep(1000)
-		Send("{" cfg.d2sprintKey "}{" cfg.d2SprintKey " down}")
-	}
+	(ui.d2ToggleWalkEnabled := !ui.d2ToggleWalkEnabled)
+	send("{CapsLock}")
+	keyWait("CapsLock")
+	send("{CapsLock Up}")
+	SetCapsLockState("Off")
 }
+
 r::
 {
 	send("{r}")
 	ui.d2Reloading := true
-	setTimer () => ui.d2Reloading := false, -1500
+	setTimer () => ui.d2Reloading := false, -2000
 }
-
 #HotIf
-; enter::
-	; {
-		; global
-		; (ui.inGameChat := !ui.inGameChat)
-		; send("{Enter}") 
-	; }
 	
-	
-	
-	; ~l up::
-	; {
-		; global
-		; ui.pauseAlwaysRun := false
-		; if getKeyState("w") {
-			; send("{w up}")
-			; sleep(200)
-			; send("{w down}")
-		; }
-	; }
-	
-	; r::
-	; {
-		; global
-		; send("{r}")
-		; ui.pauseAlwaysRun := true
-		; SetTimer () => ui.pauseAlwaysRun := false,-2000
-	; }
-	
-	; ~w down::
-	; {
-		; global
-		; if !(ui.pauseAlwaysRun) && !(ui.d2HoldingRun)
-		; {
-			; ui.d2HoldingRun := true
-			; send("{w down}")
-			; send("{LShift Down}")
-			; osdMessage("input: w-down")
-			; osdMessage("injecting: " cfg.d2SprintKey " Down")
-		; }
-			
-	; }
-	
-	; ~w up::
-	; {
-		; global
-		; if (ui.d2HoldingRun) {
-			; osdMessage("input: w-up")
-			; osdMessage("injecting: " cfg.d2SprintKey)
-			; send("{LShift Up}")
-			; send("{w Up}")
-			; ui.d2HoldingRun := false
-			; SetCapsLockState("Off")
-		; } else {
-			; send("{w wup}")
-		; }
-	; }
-
-
-
-		
-	; }
-	
-	; ~LShift Up::
-	; {
-		; global
-		; if (ui.d2Sliding) {
-			; send("{LShift Up}")
-			; send("{" cfg.d2SprintKey " Down}")
-			; ui.d2HoldingRun := true
-			; ui.d2Sliding := false
-		; } else {
-			; send("{LShift Up}")
-		; }
-	; }
-
-	
-	ui.gameTabs.useTab("Fortnite")
+ui.gameTabs.useTab("Fortnite")
 	ui.holdToCrouchToggle := ui.gameSettingsGui.AddPicture("x15 y15 w60 h25 section vHoldToCrouch " ((cfg.holdToCrouchEnabled) 
 		? ("Background" cfg.ThemeButtonOnColor) 
 			: ("Background" cfg.ThemeButtonReadyColor)),((cfg.holdToCrouchEnabled) 

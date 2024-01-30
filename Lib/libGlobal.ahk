@@ -9,19 +9,19 @@ if (InStr(A_LineFile,A_ScriptFullPath)){
 }
 
 initTrayMenu(*) {
-	A_TrayMenu.Delete
-	A_TrayMenu.Add
-	A_TrayMenu.Add("Show Window", ShowGui)
-	A_TrayMenu.Add("Hide Window", HideGui)
-	A_TrayMenu.Add("Reset Window Position",ResetWindowPosition)
-	A_TrayMenu.Add("Toggle Dock", DockApps)
-	A_TrayMenu.Add()
-	A_TrayMenu.Add("Toggle Log Window",toggleConsole)
-	A_TrayMenu.Add()
-	A_TrayMenu.Add("Exit App",KillMe)
-	A_TrayMenu.Default := "Show Window"
-	Try
-		persistLog("Tray Initialized")
+	; A_TrayMenu.Delete
+	; A_TrayMenu.Add
+	; A_TrayMenu.Add("Show Window", ShowGui)
+	; A_TrayMenu.Add("Hide Window", HideGui)
+	; A_TrayMenu.Add("Reset Window Position",ResetWindowPosition)
+	; A_TrayMenu.Add("Toggle Dock", DockApps)
+	; A_TrayMenu.Add()
+	; A_TrayMenu.Add("Toggle Log Window",toggleConsole)
+	; A_TrayMenu.Add()
+	; A_TrayMenu.Add("Exit App",KillMe)
+	; A_TrayMenu.Default := "Show Window"
+	; Try
+		; persistLog("Tray Initialized")
 }
 
 preAutoExec(InstallDir,ConfigFileName) {
@@ -356,8 +356,8 @@ AutoUpdate(*) {
 cfgLoad(&cfg, &ui) {
 	global
 
-	cfg.gamingStopProcString	:= "foobar2000.exe,discord.exe,shatterline.exe,rocketLeague.exe,destiny2.exe,robloxPlayerBeta.exe,applicationFrameHost.exe,steam.exe,epicGamesLauncher.exe"
 
+	cfg.gamingStopProcString	:= "foobar2000.exe,discord.exe,shatterline.exe,rocketLeague.exe,destiny2.exe,robloxPlayerBeta.exe,applicationFrameHost.exe,steam.exe,epicGamesLauncher.exe"
 	cfg.gamingStartProcString 	:= "E:\Music\foobar2000\foobar2000.exe,C:\Users\cashm\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\5) Utilities\Discord.lnk,C:\Program Files (x86)\Steam\steam.exe,C:\Program Files (x86)\Epic Games\Launcher\Portal\Binaries\Win32\EpicGamesLauncher.exe"
 		
 	cfg.gamingStartProc 	:= strSplit(IniRead(cfg.file,"System","GamingStartProcesses",cfg.gamingStartProcString),",")
@@ -366,6 +366,7 @@ cfgLoad(&cfg, &ui) {
 	ui.d2Running			:= false
 	ui.d2Sliding			:= false
 	ui.d2Reloading			:= false
+	ui.d2ToggleWalkEnabled	:= false
 	ui.gameWindowsList 		:= array()
 	cfg.gameWindowsList 	:= array()
 	cfg.mainGui				:= IniRead(cfg.file,"System","MainGui","MainGui")
@@ -523,6 +524,8 @@ cfgLoad(&cfg, &ui) {
 	cfg.d2AlwaysRunEnabled		:= IniRead(cfg.file,"Game","d2AlwaysRunEnabled",false)
 	cfg.d2SprintKey				:= IniRead(cfg.file,"Game","d2SprintKey","<UNSET>")
 	cfg.d2CrouchKey				:= IniRead(cfg.file,"Game","d2CrouchKey","<UNSET>")
+	cfg.d2ToggleWalkKey			:= IniRead(cfg.file,"Game","d2ToggleWalkKey","<UNSET>")
+	cfg.d2HoldWalkKey			:= IniRead(cfg.file,"Game","d2HoldWalkKey","<UNSET>")
 }
 WriteConfig() {
 	Global
@@ -609,6 +612,8 @@ WriteConfig() {
 		IniWrite(cfg.d2AlwaysRunEnabled,cfg.file,"Game","d2AlwaysRunEnabled")
 		IniWrite(cfg.d2SprintKey,cfg.file,"Game","d2SprintKey")
 		IniWrite(cfg.d2CrouchKey,cfg.file,"Game","d2CrouchKey")
+		IniWrite(cfg.d2ToggleWalkKey,cfg.file,"Game","d2ToggleWalkKey")
+		IniWrite(cfg.d2HoldWalkKey,cfg.file,"Game","d2HoldWalkKey")
 		IniWrite(cfg.activeMainTab,cfg.file,"Interface","ActiveMainTab")
 		IniWrite(cfg.activeGameTab,cfg.file,"Interface","ActiveGameTab")
 		ui.mainTabListString := ""

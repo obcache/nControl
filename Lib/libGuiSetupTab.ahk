@@ -90,22 +90,6 @@ GuiSetupTab(&ui,&cfg)
 	ui.releaseChannelLabel.setFont("s10")
 	ui.checkForUpdatesLabel.setFont("s10")
 
-	
-	
-	
-
-	
-	; ui.holdToCrouch := ui.MainGui.AddPicture("xs w60 h25 section vHoldToCrouch " (cfg.holdToCrouchEnabled ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor)),((cfg.holdToCrouchEnabled) ? (cfg.toggleOn) : (cfg.toggleOff)))
-	; ui.holdToCrouch.OnEvent("Click", toggleChanged)
-	; ui.holdToCrouch.ToolTip := "Hold Left Shit to Crouch/Slide."
-	; ui.holdToCrouch:= ui.MainGui.AddText("x+3 ys+3","Hold To Crouch")	
-	
-
-
-	; ui.ThemeDDLlabel := ui.MainGui.AddText("x100 y33 w60 BackgroundTrans","Theme")
-	; ui.ThemeDDLlabel.SetFont("s10 c" cfg.ThemeFont2Color)	
-	;ui.ColorSelectorHeader := ui.MainGui.AddText("x115 ym+30 section w80 r1"," Color Selector")
-
 	ui.ColorSelectorLabel2 := ui.MainGui.AddText("x226 y37 h21 section w75 BackgroundTrans c"
 		((cfg.ColorPickerEnabled) 
 			? cfg.ThemeFont4Color " background" cfg.themeFont3Color 

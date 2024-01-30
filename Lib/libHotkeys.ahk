@@ -133,24 +133,5 @@ ToggleGuiCollapse()
 	toggleOSD()
 }
 
-; HotIfWinActive("ahk_exe FortniteClient-Win64-Shipping.exe")
-; hotkey("{LCtrl}", crouchDown)
 
-; hotkey("{LCtrl Up}", crouchUp)
-; crouchDown(*) {
-	; if (cfg.holdToCrouchEnabled)
-	; {
-		; send("{LShift}")
-		; keyWait("{LShift}")
-		; Return
-	; }
-; }
-; crouchUp(*) {
-	; if (cfg.holdToCrouchEnabled)
-	; {
-		; send("{LShift}")
-		; Return
-	; }
-; }
-; HotIfWinActive
 

@@ -470,11 +470,11 @@ startGaming(*) {
 			run(cfg.gamingStartProc[a_index])
 	}
 	
-	try {
-		run('./redist/nircmd setdefaultsounddevice "Microphone"')
-		run('./redist/nircmd setdefaultsounddevice "Speakers"')
-		run('./redist/nircmd setdefaultsounddevice "Headphones"')
-	}	
+	; try {
+		; run('./redist/nircmd setdefaultsounddevice "Microphone"')
+		; run('./redist/nircmd setdefaultsounddevice "Speakers"')
+		; run('./redist/nircmd setdefaultsounddevice "Headphones"')
+	; }	
 }
 
 exitMenuShow() {
