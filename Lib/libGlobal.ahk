@@ -278,9 +278,11 @@ persistLog(LogMsg) {
 
 	FileAppend(A_YYYY A_MM A_DD " [" A_Hour ":" A_Min ":" A_Sec "] " LogMsg "`n",InstallDir "/Logs/persist.log")
 }
+autoUpdate() {
+	checkForUpdates(0)
+}
 
-CheckForUpdates(*) {
-
+CheckForUpdates(msg,*) {
 	if fileExist("/nControl_latestBuild.dat")
 		fileDelete("/nControl_latestBuild.dat")
 	
@@ -289,55 +291,28 @@ CheckForUpdates(*) {
 	whr.Send()
 	whr.WaitForResponse()
 	latestVersion := whr.ResponseText
+	if fileExist("./nControl_latestBuild.dat")
+		fileDelete("./nControl_latestBuild.dat")
+	fileAppend("./nControl_latestBuild.dat",latestVersion)
 	currentVersion := fileRead("./nControl_currentBuild.dat")
-	ui.prevAlwaysOnTop := cfg.alwaysOnTopEnabled
-	winSetAlwaysOnTop(0,ui.mainGui.hwnd)
 	if (latestVersion > currentVersion) 
 	{
-		WinSetAlwaysOnTop(0,ui.mainGui)
+		ui.prevAlwaysOnTop := cfg.alwaysOnTopEnabled
+		winSetAlwaysOnTop(0,ui.mainGui.hwnd)
 		msgBoxAnswer := MsgBox("A newer version is available.`nYou currently have: " currentVersion "`nBut the newest is: " latestVersion "`nWould you like to update now?",,"YN")
 
 		if (msgBoxAnswer == "Yes")
-		{ 
-			if !(DirExist(InstallDir "/versions"))
-				DirCreate(InstallDir "/versions")
-		
-			download "https://raw.githubusercontent.com/obcache/nControl/main/Bin/nControl_" latestVersion ".exe",InstallDir "/versions/nControl_" latestVersion ".exe"
-			run(InstallDir "/versions/nControl_" latestVersion ".exe")
-			reload()
+		{ 	pbNotify("Upgrading nControl to version " latestVersion)
+			run("./nControl_updater.exe")
+		} else {
+			pbNotify("Skipping upgrade. You can re-trigger it from the setup tab`nWhenever you are ready to upgrade.",2500)
 		}
-		
 	} else {
-		msgBox("You have the latest version already.`nInstalled Version: " currentVersion "`nLatestVersion: " latestVersion)
+		if (msg)
+			msgBox("You have the latest version already.`nInstalled Version: " currentVersion "`nLatestVersion: " latestVersion)
 	}
 	winSetAlwaysOnTop(cfg.alwaysOnTopEnabled,ui.mainGui)
 } 
-
-AutoUpdate(*) {
-	whr := comObject("winHttp.winHttpRequest.5.1")
-	whr.open("get","https://raw.githubusercontent.com/obcache/nControl/main/nControl_currentBuild.dat",true)
-	whr.send()
-	whr.waitForResponse()
-	latestVersion := whr.responseText
-	currentVersion := FileRead("./nControl_currentBuild.dat")
-
-	if (latestVersion > currentVersion) 
-	{
-		msgBoxAnswer := MsgBox("A newer version is available.`nYou currently have: " currentVersion "`nBut the newest is: " latestVersion "`nWould you like to update now?",,"YN")
-
-		if (msgBoxAnswer == "Yes")
-		{ 
-			if !(DirExist(InstallDir "/versions"))
-				DirCreate(InstallDir "/versions")
-		
-			download "https://raw.githubusercontent.com/obcache/nControl/main/Bin/nControl_" latestVersion ".exe",InstallDir "/versions/nControl_" latestVersion ".exe"
-			run("./nControl_updater.exe ./versions/nControl_" latestVersion ".exe")
-
-		}
-	}
-}
-
-
 
 cfgLoad(&cfg, &ui) {
 	global
