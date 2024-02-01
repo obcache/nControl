@@ -1,4 +1,4 @@
-A_FileVersion := "3.5.7.1"
+A_FileVersion := "3.5.7.5"
 ;@Ahk2Exe-Let FileVersion=%A_PriorLine~U)^(.+"){1}(.+)".*$~$2% 
 
 A_AppName := "nControl"
@@ -87,13 +87,17 @@ debugLog("Console Initialized")
 ;setTimer(monitorGameWindows,2500)
 refreshWinHwnd()
 ui.gameTabs.choose(cfg.gameModuleList[1])
-ui.mainGuiTabs.choose(cfg.mainTabList[cfg.activeMainTab])
+;ui.mainGuiTabs.choose(cfg.mainTabList[cfg.activeMainTab])
 
 ui.gameTabs.choose(cfg.gameModuleList[2])
 ui.gameTabs.choose(cfg.gameModuleList[cfg.activeGameTab])
 
-tabsChanged()
+
 autoUpdate()
 
 if (cfg.startMinimizedEnabled)
 	hideGui()
+ui.mainGui.getPos(&MainGuiX,&MainGuiY,,)
+fadeIn()
+tabsChanged()
+controlFocus(ui.d2AlwaysRun)

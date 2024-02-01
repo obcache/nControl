@@ -26,14 +26,13 @@ loop cfg.gameModuleList.length {
 	ui.gameSettingsGui.MarginX := 5
 	ui.gameSettingsGui.Opt("-Caption -Border +AlwaysOnTop +ToolWindow +Owner" ui.MainGui.Hwnd)
 	ui.gameSettingsGui.SetFont("s14 c" cfg.ThemeFont1Color,"Calibri")
-	winSetTransColor(ui.transparentColor,ui.gameSettingsGui)
-	WinSetTransparent(0,ui.gameSettingsGui)
-	ui.gameTabs := ui.gameSettingsGui.addTab3("x0 y0 w493 h175 bottom c" cfg.themeFont2Color " choose" cfg.activeGameTab,cfg.gameModuleList)
+;	winSetTransColor(ui.transparentColor,ui.gameSettingsGui)
+	ui.gameTabs := ui.gameSettingsGui.addTab3("x2 y-5 w490 h181 bottom c" cfg.themeFont2Color " choose" cfg.activeGameTab,cfg.gameModuleList)
+	drawOutlineNamed("gameSettingsOutline",ui.gameSettingsGui,0,170,488,6,cfg.themeBorderDarkColor,cfg.themeBorderLightColor,3)
 	ui.gameTabs.choose(cfg.gameModuleList[cfg.activeGameTab])
 	ui.gameTabs.setFont("s12")
 	ui.gameTabs.onEvent("Change",gameTabChanged)
 	ui.MainGui.GetPos(&winX,&winY,,)
-	ui.gameSettingsGui.show("x" winx+35 " y" winy+35 " w" 400 " h" 170)
 
  Loop cfg.gameList.length {
 		try {
@@ -68,11 +67,11 @@ loop cfg.gameModuleList.length {
 	ui.d2HoldingRun := false
 
 	ui.gameSettingsGui.setFont("s12")
-	drawOutlineNamed("d2AlwaysRunOutline",ui.gameSettingsGui,10,10,470,60,cfg.themeBright1Color,cfg.themeBright2Color,2)
-	ui.gameSettingsGui.addText("x20 y2 w80 h20 c" cfg.themeFont1Color " background" cfg.themeBackgroundColor," Always Run")
+	drawOutlineNamed("d2AlwaysRunOutline",ui.gameSettingsGui,10,5,470,65,cfg.themeBright1Color,cfg.themeBright2Color,2)
+	ui.gameSettingsGui.addText("x20 y-5 w80 h20 c" cfg.themeFont1Color " background" cfg.themeBackgroundColor," Always Run")
 	;UI.alwaysRunGb := ui.gameSettingsGui.addGroupbox("x10 y0 w270 h70","Always Run")
 	
-	ui.d2AlwaysRun := ui.gameSettingsGui.addPicture("x20 y25 w60 h26 section vd2AlwaysRun " 
+	ui.d2AlwaysRun := ui.gameSettingsGui.addPicture("x20 y20 w60 h26 section vd2AlwaysRun " 
 		((cfg.d2AlwaysRunEnabled) 
 			? ("Background" cfg.ThemeButtonOnColor) 
 				: ("Background" cfg.themeButtonReadyColor)),
@@ -93,6 +92,8 @@ loop cfg.gameModuleList.length {
 	ui.d2HoldWalkKey			:= ui.gameSettingsGui.addPicture("x+8 ys w90 h25 section backgroundTrans","./img/keyboard_key_up.png")
 	ui.d2HoldWalkKeyData 		:= ui.gameSettingsGui.addText("xs y+-24 w90 h20 center c" cfg.themeButtonAlertColor " backgroundTrans",strUpper(cfg.d2HoldWalkKey))
 	ui.d2HoldWalkKeyLabel		:= ui.gameSettingsGui.addText("xs-2 y+3 w90 h20 center c" cfg.themeFont1Color " backgroundTrans","Hold to Walk")
+	ui.d2LaunchDIMbutton		:= ui.gameSettingsGui.addPicture("xs-370 y+10 section w140 h60","./Img/button_launchDIM.png")
+	ui.d2LaunchLightGGbutton	:= ui.gameSettingsGui.addPicture("ys w140 h60","./Img/button_launchLightGG.png")
 
 	ui.d2AlwaysRun.ToolTip := "Toggles holdToCrouch"
 	ui.d2SprintKey.ToolTip 		:= "Click to Assign"
@@ -126,8 +127,22 @@ loop cfg.gameModuleList.length {
 	ui.d2SprintKeyData.onEvent("click",d2SprintKeyClicked)
 	ui.d2ToggleWalkKeyData.onEvent("click",d2ToggleWalkKeyClicked)
 	ui.d2HoldWalkKeyData.onEvent("click",d2HoldWalkKeyClicked)
+	ui.d2LaunchDIMbutton.onEvent("click",d2launchDIMbuttonClicked)
+	ui.d2LaunchLightGGbutton.onEvent("click",d2launchLightGGbuttonClicked)
+	
 
+d2LaunchDIMButtonClicked(*) {
+	ui.d2LaunchDIMbutton.value := "./Img/button_launchDIM_down.png"
+	setTimer () => ui.d2LaunchDIMbutton.value := "./Img/button_launchDIM.png",-400
+	
+	run("chrome.exe http://app.destinyitemmanager.com")
+}
 
+d2LaunchLightGGbuttonClicked(*) {
+	ui.d2LaunchLightGGbutton.value := "./Img/button_launchLightGG_down.png"
+	setTimer () => ui.d2LaunchLightGGbutton.value := "./Img/button_launchLightGG.png",-400
+	run("chrome.exe http://www.light.gg")	
+}
 d2SprintKeyClicked(*) {
 	DialogBox('Press "Hold to Sprint" Key`n Bound in Destiny 2',"Center")
 	Sleep(100)

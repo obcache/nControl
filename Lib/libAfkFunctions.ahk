@@ -77,10 +77,8 @@ if (InStr(A_LineFile,A_ScriptFullPath))
 			ui.opsStatus1.opt("Background" cfg.ThemeButtonOnColor)
 			ui.OpsAntiIdle1Button.Value := "./Img/button_antiIdle_on.png"
 			ui.OpsAntiIdle1Button.Opt("Background" cfg.ThemeButtonOnColor)
-			ui.OpsAntiIdle1Button.Redraw()
 			ui.buttonAntiIdle1.Value := "./Img/button_antiIdle_on.png"
 			ui.buttonAntiIdle1.Opt("Background" cfg.ThemeButtonOnColor)
-			ui.buttonAntiIdle1.Redraw()
 			ui.buttonTower.ToolTip := "Tower timer disabled while AntiIdle is running."
 			AntiIdle(1)
 		}
@@ -193,7 +191,8 @@ antiIdle1Off() {
 			ui.buttonAntiIdle1.Redraw()
 			ui.buttonTower.OnEvent("Click",ToggleTower)
 			ui.afkProgress.value := 0
-			ui.Opsprogress.value := 0
+			ui.Opsprogress1.value := 0
+			ui.opsProgress2.vaule := 0
 		}
 
 		antiIdleBothOn() {
@@ -223,9 +222,6 @@ antiIdle1Off() {
 			ui.OpsAntiIdle2Button.Value := "./Img/button_antiIdle_on.png"
 			ui.OpsAntiIdle2Button.Opt("Background" cfg.ThemeButtonOnColor)
 			ui.OpsAntiIdle2Button.Redraw()
-			ui.buttonAntiIdle2.Value := "./Img/button_antiIdle_on.png"
-			ui.buttonAntiIdle2.Opt("Background" cfg.ThemeButtonOnColor)
-			ui.buttonAntiIdle2.Redra.w()
 			ui.buttonTower.ToolTip := "Tower timer disabled while AntiIdle is running."
 			AntiIdle(0)
 		}
@@ -364,8 +360,8 @@ startAFK(*) {
 	ui.opsAfkButton.Value := "./Img/button_afk_on.png"
 	ui.buttonStartAFK.Opt("Background" cfg.ThemeButtonOnColor)
 	ui.buttonStartAfk.value := "./Img/button_afk_on.png"
-	ui.OpsAfkButton.Redraw()
-	ui.buttonStartAFK.Redraw()	
+	; ui.OpsAfkButton.Redraw()
+	; ui.buttonStartAFK.Redraw()	
 	setTimer(afkBeta,-100)
 	; SetTimer(runAfkRoutine,4000)
 	; runAfkRoutine()
@@ -589,9 +585,9 @@ afkBeta(*) {
 
 afkWin1ClassChange(*) {
 	global
-	cfg.win1class	:= ui.afkWin1classDDL.value
-	ui.win1ClassDDL.text := ui.afkWin1ClassDDL.text
-	refreshafkRoutine()	
+	cfg.win1class			:= ui.afkWin1classDDL.value
+	ui.win1ClassDDL.text 	:= ui.afkWin1ClassDDL.text
+	refreshAfkRoutine()	
 }
 
 afkWin2ClassChange(*) {

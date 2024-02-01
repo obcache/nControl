@@ -233,6 +233,10 @@ preAutoExec(InstallDir,ConfigFileName) {
 			FileInstall("./Img/keyboard_key_up.png",InstallDir "/img/keyboard_key_up.png",1)
 			FileInstall("./Img/keyboard_key_down.png",InstallDir "/img/keyboard_key_down.png",1)
 			FileInstall("./nControl_updater.exe",InstallDir "/nControl_updater.exe",1)
+			FileInstall("./Img/button_launchLightGG.png",InstallDir "/Img/button_launchLightGG.png",1)
+			FileInstall("./Img/button_launchLightGG_down.png",InstallDir "/Img/button_launchLightGG_down.png",1)
+			FileInstall("./Img/button_launchDIM.png",InstallDir "/Img/button_launchDIM.png",1)
+			FileInstall("./Img/button_launchDIM_down.png",InstallDir "/Img/button_launchDIM_down.png",1)
 			
 			persistLog("Copied Assets to: " InstallDir)
 			
@@ -283,35 +287,20 @@ autoUpdate() {
 }
 
 CheckForUpdates(msg,*) {
-	if fileExist("/nControl_latestBuild.dat")
-		fileDelete("/nControl_latestBuild.dat")
-	
-	whr := ComObject("WinHttp.WinHttpRequest.5.1")
-	whr.Open("GET", "https://raw.githubusercontent.com/obcache/nControl/main/nControl_currentBuild.dat", true)
-	whr.Send()
-	whr.WaitForResponse()
-	latestVersion := whr.ResponseText
-	if fileExist("./nControl_latestBuild.dat")
-		fileDelete("./nControl_latestBuild.dat")
-	fileAppend("./nControl_latestBuild.dat",latestVersion)
-	currentVersion := fileRead("./nControl_currentBuild.dat")
-	if (latestVersion > currentVersion) 
-	{
-		ui.prevAlwaysOnTop := cfg.alwaysOnTopEnabled
 		winSetAlwaysOnTop(0,ui.mainGui.hwnd)
-		msgBoxAnswer := MsgBox("A newer version is available.`nYou currently have: " currentVersion "`nBut the newest is: " latestVersion "`nWould you like to update now?",,"YN")
-
-		if (msgBoxAnswer == "Yes")
-		{ 	pbNotify("Upgrading nControl to version " latestVersion)
+		whr := ComObject("WinHttp.WinHttpRequest.5.1")
+		whr.Open("GET", "https://raw.githubusercontent.com/obcache/nControl/main/nControl_currentBuild.dat", true)
+		whr.Send()
+		whr.WaitForResponse()
+		latestVersion := whr.ResponseText
+		currentVersion := fileRead("./nControl_currentBuild.dat")
+		if (currentVersion < latestVersion) {
 			run("./nControl_updater.exe")
 		} else {
-			pbNotify("Skipping upgrade. You can re-trigger it from the setup tab`nWhenever you are ready to upgrade.",2500)
+			 if(msg)
+				pbNotify("No upgraded needed`nCurrent Version: " currentVersion "`nLatest Version: " latestVersion,3000)
 		}
-	} else {
-		if (msg)
-			msgBox("You have the latest version already.`nInstalled Version: " currentVersion "`nLatestVersion: " latestVersion)
-	}
-	winSetAlwaysOnTop(cfg.alwaysOnTopEnabled,ui.mainGui)
+		winSetAlwaysOnTop(cfg.AlwaysOnTopEnabled,ui.mainGui.hwnd)
 } 
 
 cfgLoad(&cfg, &ui) {
@@ -342,8 +331,8 @@ cfgLoad(&cfg, &ui) {
 	ui.antiIdle1_enabled 	:= false
 	ui.antiIdle2_enabled 	:= false
 	ui.antiIdleInterval		:= 900000
-	ui.previousTab			:= "Sys"
-	ui.activeTab			:= "Sys"
+	ui.previousTab			:= ""
+	ui.activeTab			:= ""
 	ui.lastWindowHwnd		:= 0
 	ui.colorChanged 		:= false 
 	ui.guiCollapsed			:= false

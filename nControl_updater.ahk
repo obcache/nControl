@@ -42,8 +42,8 @@ if (A_Args.length > 0) && FileExist("./versions/" A_Args[1]) {
 		msgBoxAnswer := MsgBox("A newer version is available.`nYou currently have: " currentVersion "`nBut the newest is: " latestVersion "`nWould you like to update now?",,"YN")
 
 		if (msgBoxAnswer == "Yes")
-		{ 	pbNotify("Upgrading nControl to version " latestVersion)
-
+		{ 	
+			pbNotify("Upgrading nControl to version " latestVersion)
 			run("curl https://raw.githubusercontent.com/obcache/nControl/main/Bin/nControl_" latestVersion ".exe -o " A_ScriptDir  "/versions/nControl_" latestVersion ".exe ")
 			if winExist("ahk_exe nControl.exe")
 				processClose("nControl.exe")
@@ -53,13 +53,13 @@ if (A_Args.length > 0) && FileExist("./versions/" A_Args[1]) {
 				run("./versions/nControl_" latestVersion ".exe")
 			else 
 				pbNotify("Problem downloading or running the updated version. `nCheck your antivirus to ensure that it is not being blocked.")
-			
 		} else {
 			pbNotify("Skipping upgrade. You can re-trigger it from the setup tab`nWhenever you are ready to upgrade.",2500)
 		}
-	}
+	} else {
+		if ()
+		pbNotify }
 }
-
 
 
 pbNotify(NotifyMsg,Duration := 10,YN := "")

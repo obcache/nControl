@@ -28,8 +28,8 @@ WM_WINDOWPOSCHANGED(wParam, lParam, msg, Hwnd)
 			if (Hwnd = ui.MainGui.Hwnd)
 			{
 				ui.MainGui.GetPos(&winX,&winY,,)
-				ui.AfkGui.Move(winX+40,winY+35,,)
-				ui.titleBarButtonGui.Move(winX+1,WinY-5)
+				ui.AfkGui.Move(winX+45,winY+35,,)
+				ui.titleBarButtonGui.Move(winX,WinY-3)
 				ui.gameSettingsGui.move(winx+35,winy+35)
 				; ui.opsGui.Move(winX,winY)
 			} 

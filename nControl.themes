@@ -2,7 +2,7 @@
 ThemeList=Modern Class,Cold Steel,Militarized,Neon,Ocean
 [Modern Class]
 ThemeBorderLightColor=C0C0C0
-ThemeBorderDarkColor=333333
+ThemeBorderDarkColor=454545
 ThemeBright1Color=8DC7C7
 ThemeBright2Color=408080
 ThemeBackgroundColor=D2C35
@@ -116,7 +116,7 @@ ThemeBright2Color=408080
 ThemeBright1Color=8DC7C7
 ThemeDark2Color=C0C0C0
 ThemeDark1Color=FFFFFF
-ThemeBorderDarkColor=333333
+ThemeBorderDarkColor=454545
 ThemeBorderLightColor=C0C0C0
 ThemeBackgroundColor=D2C35
 ThemeFont1Color=6DB6B6
