@@ -1,4 +1,4 @@
-A_FileVersion := "1.1.3.4"
+A_FileVersion := "1.1.3.8"
 A_AppName := "nControl_updater"
 ;@Ahk2Exe-Let FileVersion=%A_PriorLine~U)^(.+"){1}(.+)".*$~$2% 
 
@@ -43,12 +43,20 @@ if (A_Args.length > 0) && FileExist("./versions/" A_Args[1]) {
 
 		if (msgBoxAnswer == "Yes")
 		{ 	
-			pbNotify("Upgrading nControl to version " latestVersion)
-			run("curl https://raw.githubusercontent.com/obcache/nControl/main/Bin/nControl_" latestVersion ".exe -o " A_ScriptDir  "/versions/nControl_" latestVersion ".exe ")
+			winClose("ahk_exe nControl.exe")
 			if winExist("ahk_exe nControl.exe")
+			{
 				processClose("nControl.exe")
-			sleep(3000)
-			
+			}
+			pbNotify("Upgrading nControl to version " latestVersion)
+	
+			sleep(2000)
+			runWait("curl https://raw.githubusercontent.com/obcache/nControl/main/Bin/nControl_" latestVersion ".exe -o " A_ScriptDir  "/versions/nControl_" latestVersion ".exe ")
+
+			if winExist("ahk_exe nControl.exe")
+			{
+				processClose("nControl.exe")
+			}			
 			if fileExist("./versions/nControl_" latestVersion ".exe")
 				run("./versions/nControl_" latestVersion ".exe")
 			else 
@@ -56,11 +64,9 @@ if (A_Args.length > 0) && FileExist("./versions/" A_Args[1]) {
 		} else {
 			pbNotify("Skipping upgrade. You can re-trigger it from the setup tab`nWhenever you are ready to upgrade.",2500)
 		}
-	} else {
-		if ()
-		pbNotify }
+	} 
+	
 }
-
 
 pbNotify(NotifyMsg,Duration := 10,YN := "")
 {
