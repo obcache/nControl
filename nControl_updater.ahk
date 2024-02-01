@@ -1,4 +1,4 @@
-A_FileVersion := "1.1.3.9"
+A_FileVersion := "1.1.4.4"
 A_AppName := "nControl_updater"
 ;@Ahk2Exe-Let FileVersion=%A_PriorLine~U)^(.+"){1}(.+)".*$~$2% 
 
@@ -48,12 +48,12 @@ if (A_Args.length > 0) && FileExist("./versions/" A_Args[1]) {
 			}			
 			pbNotify("Upgrading nControl to version " latestVersion)
 	
-			sleep(2000)
-			runWait("curl https://raw.githubusercontent.com/obcache/nControl/main/Bin/nControl_" latestVersion ".exe -o " A_ScriptDir  "/versions/nControl_" latestVersion ".exe ")
-
+	
+			runWait("cmd /C start /b /wait curl.exe https://raw.githubusercontent.com/obcache/nControl/main/Bin/nControl_" latestVersion ".exe -o " A_ScriptDir  "/versions/nControl_" latestVersion ".exe")
+			sleep(3000)
 			if winExist("ahk_exe nControl.exe")
 			{
-				processClose("nControl.exe")
+				processClose("nControl.exe") 
 				sleep(2000)
 			}			
 			if fileExist("./versions/nControl_" latestVersion ".exe")
