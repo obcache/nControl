@@ -1,4 +1,4 @@
-A_FileVersion := "1.1.3.8"
+A_FileVersion := "1.1.3.9"
 A_AppName := "nControl_updater"
 ;@Ahk2Exe-Let FileVersion=%A_PriorLine~U)^(.+"){1}(.+)".*$~$2% 
 
@@ -43,11 +43,9 @@ if (A_Args.length > 0) && FileExist("./versions/" A_Args[1]) {
 
 		if (msgBoxAnswer == "Yes")
 		{ 	
-			winClose("ahk_exe nControl.exe")
-			if winExist("ahk_exe nControl.exe")
-			{
-				processClose("nControl.exe")
-			}
+			if winExist("ahk_exe nControl.exe")	{
+				winClose("ahk_exe nControl.exe")
+			}			
 			pbNotify("Upgrading nControl to version " latestVersion)
 	
 			sleep(2000)
@@ -56,6 +54,7 @@ if (A_Args.length > 0) && FileExist("./versions/" A_Args[1]) {
 			if winExist("ahk_exe nControl.exe")
 			{
 				processClose("nControl.exe")
+				sleep(2000)
 			}			
 			if fileExist("./versions/nControl_" latestVersion ".exe")
 				run("./versions/nControl_" latestVersion ".exe")
