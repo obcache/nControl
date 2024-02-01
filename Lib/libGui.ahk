@@ -661,8 +661,9 @@ tabsChanged(*) {
 		}
 		case (ui.activeTab == "Game"):
 		{
-			winSetTransparent(255,ui.gameSettingsGui)
-			ui.gameSettingsGui.show("x" cfg.GuiX+35 " y" cfg.GuiY+35 " w490 h172")
+			winGetPos(&tmpX,&tmpY,,,ui.mainGui)
+			ui.gameSettingsGui.show("x" tmpX+35 " y" tmpY+35 " w490 h172")
+			;winSetTransparent(255,ui.gameSettingsGui)
 		}
 	}
 	

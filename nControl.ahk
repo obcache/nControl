@@ -1,4 +1,4 @@
-A_FileVersion := "3.5.8.2"
+A_FileVersion := "3.5.8.3"
 ;@Ahk2Exe-Let FileVersion=%A_PriorLine~U)^(.+"){1}(.+)".*$~$2% 
 
 A_AppName := "nControl"
@@ -99,5 +99,7 @@ if (cfg.startMinimizedEnabled)
 	hideGui()
 ui.mainGui.getPos(&MainGuiX,&MainGuiY,,)
 fadeIn()
+guiVis(ui.afkGui,(ui.activeTab == "AFK") ? true : false)
+guiVis(ui.gameSettingsGui,(ui.activeTab = "Game") ? true : false)	
 tabsChanged()
 controlFocus(ui.d2AlwaysRun)
