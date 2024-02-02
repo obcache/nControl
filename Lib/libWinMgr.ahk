@@ -21,30 +21,31 @@ GetTaskbarHeight()
 WM_WINDOWPOSCHANGED(wParam, lParam, msg, Hwnd)
 {
 	try {
-		if ((ui.AfkDocked) || !(ui.AfkAnchoredToGui)) && (Hwnd == ui.AfkGui.Hwnd) {
-			WinGetPos(&AfkGuiX,&AfkGuiY,,,ui.afkGui)
-			ui.titleBarButtonGui.Move(AfkGuiX+187,AfkGuiY-5)
-		} else {
-			if (Hwnd = ui.MainGui.Hwnd)
-			{
+		switch hwnd {
+			case ui.mainGui.hwnd:
 				ui.MainGui.GetPos(&winX,&winY,,)
 				ui.AfkGui.Move(winX+45,winY+35,,)
 				ui.titleBarButtonGui.Move(winX,WinY-3)
 				ui.gameSettingsGui.move(winx+35,winy+35)
-				; ui.opsGui.Move(winX,winY)
-			} 
-		
-			if (Hwnd == ui.dividerGui.hwnd) {
-				MonitorGetWorkArea(cfg.nControlMonitor, &Left, &Top, &Right, &Bottom)
-				winGetPos(&divX,&divY,&divW,&divH,ui.dividerGui)
-				ui.dividerGui.move(Left,,Right-Left,)	
+			case ui.titleBarButtonGui.hwnd:
+				winGetPos(&winX,&winY,,,ui.titleBarButtonGui)
+				ui.mainGui.move(winX,winY+3,,)
+			case ui.dividerGui.hwnd:
+				if (Hwnd == ui.dividerGui.hwnd) {
+					MonitorGetWorkArea(cfg.nControlMonitor, &Left, &Top, &Right, &Bottom)
+					winGetPos(&divX,&divY,&divW,&divH,ui.dividerGui)
+					ui.dividerGui.move(Left,,Right-Left,)	
 
-				winMove(,,,divY,"ahk exe " ui.app1filename.text)
-				winMove(,divY,,,"ahk_exe " ui.app2filename.text)
-			}
+					winMove(,,,divY,"ahk exe " ui.app1filename.text)
+					winMove(,divY,,,"ahk_exe " ui.app2filename.text)
+				}
+			case ui.afkGui.hwnd:
+				if (ui.afkdocked || !ui.afkAnchoredToGui) {
+					winGetPos(&AfkGuiX,&AfkGuiY,,,ui.afkGui)
+					ui.titleBarButtonGui.move(afkGuiX+187,afkGuiY-5)
+				}
+		} 
 			
-			
-		}
 	}
 }
 

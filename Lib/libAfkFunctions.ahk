@@ -236,34 +236,40 @@ antiIdle1Off() {
 toggleTower(*) {
 	global
 
-	if (!cfg.win1disabled && WinExist("ahk_id " ui.win1Hwnd)) || (!cfg.win2disabled && !WinExist("ahk_id " ui.win2Hwnd)) {
-		(ui.towerEnabled := ! ui.towerEnabled)
-		? (
-			(cfg.celestialTowerEnabled)
-			? (
-				ui.afkStatus1.value 	:= "./Img/label_celestial_tower.png"
-				,ui.opsStatus1.value 	:= "./Img/label_celestial_tower.png"
-				,ui.opsStatus2.value 	:= "./Img/label_celestial_tower.png"
-				,ui.opsTowerButton.Opt("background" cfg.themeButtonOnColor)
-				,ui.opsTowerButton.value := "./img/button_tower_on.png"
-				,ui.buttonTower.opt("Background" cfg.ThemeButtonOnColor)
-				,ui.buttonTower.value := "./img/button_tower_on.png"
-				,restartTower()
-			 ) : (
-				ui.afkStatus1.value		:= "./Img/label_infinite_tower.png"
-				,ui.opsStatus1.value 	:= "./Img/label_infinite_tower.png"
-				,ui.opsStatus2.value 	:= "./Img/label_infinite_tower.png"
-				,ui.opsTowerButton.value := "./img/button_tower_on.png"
-				,ui.opsTowerButton.opt("Background" cfg.ThemeButtonOnColor)
-				,ui.buttonTower.Opt("Background" cfg.ThemeButtonOnColor)
-				;,setTimer(restartTower,cfg.towerInterval,100)
-				; ,setTimer(updateTimer,1000)
-				; ,sleep(200)
-				; ,setTimer(updateTimerWin1,1000)
-				; ,sleep(200)
-				; ,setTimer(updateTimerWin2,1000)
-				,restartTower()
-			)			
+	((!cfg.win1disabled && WinExist("ahk_id " ui.win1Hwnd)) 
+	|| (!cfg.win2disabled && WinExist("ahk_id " ui.win2Hwnd)) 
+	|| (ui.towerEnabled))
+		? (ui.towerEnabled := ! ui.towerEnabled)
+			? ((cfg.celestialTowerEnabled)
+				? (
+					ui.afkStatus1.value 	:= "./Img/label_celestial_tower.png"
+					,ui.opsStatus1.value 	:= "./Img/label_celestial_tower.png"
+					,ui.opsStatus2.value 	:= "./Img/label_celestial_tower.png"
+					,ui.opsTowerButton.Opt("background" cfg.themeButtonOnColor)
+					,ui.opsTowerButton.value := "./img/button_tower_on.png"
+					,ui.buttonTower.opt("Background" cfg.ThemeButtonOnColor)
+					,ui.buttonTower.value := "./img/button_tower_on.png"
+					,restartTower()
+				) : (
+					ui.afkStatus1.value		:= "./Img/label_infinite_tower.png"
+					,ui.opsStatus1.value 	:= "./Img/label_infinite_tower.png"
+					,ui.opsStatus2.value 	:= "./Img/label_infinite_tower.png"
+					,ui.opsTowerButton.value := "./img/button_tower_on.png"
+					,ui.opsTowerButton.opt("Background" cfg.ThemeButtonOnColor)
+					,ui.buttonTower.Opt("Background" cfg.ThemeButtonOnColor)
+					,restartTower()
+				)			
+			) : (
+				ui.afkProgress.value 		:= 0
+				,ui.opsProgress1.value 		:= 0
+				,ui.opsProgress2.value 		:= 0
+				,ui.opsTowerButton.opt("background" cfg.themeButtonReadyColor)
+				,ui.buttonTower.opt("background" cfg.themeButtonReadyColor)
+				,ui.afkStatus1.value 		:= "./Img/label_timer_off.png"
+				,ui.opsStatus1.value 		:= "./Img/label_timer_off.png"
+				,ui.opsStatus2.value 		:= "./Img/label_timer_off.png"
+				,ui.opsTowerButton.Value	:= "./img/button_tower_ready.png"
+				,ui.buttonTower.Value		:= "./img/button_tower_ready.png"
 		) : (
 			ui.afkProgress.value 		:= 0
 			,ui.opsProgress1.value 		:= 0
@@ -275,13 +281,12 @@ toggleTower(*) {
 			,ui.opsStatus2.value 		:= "./Img/label_timer_off.png"
 			,ui.opsTowerButton.Value	:= "./img/button_tower_ready.png"
 			,ui.buttonTower.Value		:= "./img/button_tower_ready.png"
+			,debugLog("AutoTower: Failed to start. No game windows found.")
+			,notifyOSD("AutoTower Failed: No valid game windows found.",3000)
 		)
-	} else {
-		debugLog("AutoTower: Failed to start. No game windows found.")
-		notifyOSD("AutoTower Failed: No valid game windows found.",3000)
-		Return
-	}
+
 }
+
 
 restartTower(*) {
 	global

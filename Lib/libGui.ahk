@@ -261,47 +261,46 @@ toggleGuiCollapse(*) {
 	static activeMainTab := ui.mainGuiTabs.value
 		
 	(ui.GuiCollapsed := !ui.GuiCollapsed) 
-		? CollapseGui(&activeMainTab) 
-		: UncollapseGui(&activeMainTab)
+		? CollapseGui() 
+		: UncollapseGui()
 }
 
 
-CollapseGui(&activeMainTab) {
-;		guiVis(ui.titleBarButtonGui,false)
-;		ui.MainGuiTabs.Choose(cfg.mainTabList[1])
-		if (cfg.AnimationsEnabled) {
-			GuiWidth := cfg.GuiW
-			While GuiWidth > 5 {
-				redrawGuis(GuiWidth)
-				GuiWidth -= 30
-				sleep(20)
-			}	
-		}
-		ui.MainGui.Move(,,35,)
+CollapseGui() {
+	winGetPos(&mainX,&mainY,&mainW,&mainH,ui.mainGui)
+	GuiWidth := mainW
+	guiVis(ui.titleBarButtonGui,false)
+	if (cfg.AnimationsEnabled) {
+		While GuiWidth > 5 {
+			redrawGuis(GuiWidth,mainX,mainY)
+			GuiWidth -= 30
+			sleep(20)
+		}	
+	}
+	ui.MainGui.Move(mainX,mainY,35,)
 }
 
-redrawGuis(GuiWidth) {
-	ui.MainGui.Move(,,GuiWidth,)
-
-	ui.mainGui.getPos(&mainX,&mainY,&mainW,&mainH)
-	if guiWidth < 350
-		ui.afkGui.move(mainX+40,mainY+35,guiWidth-35,)
+redrawGuis(GuiWidth,mainX,mainY) {
+	ui.MainGui.Move(mainX,mainY,GuiWidth,)
+	if guiWidth < 310
+		ui.afkGui.move(mainX+45,mainY+35,guiWidth-35,)
 	ui.gameSettingsGui.move(mainX+35,mainY+35,guiWidth-35,)
-	ui.titleBarButtonGui.move(mainX-(565-guiWidth),mainY-3,guiWidth,)
 }
 
-UncollapseGui(&activeMainTab) {
+UncollapseGui() {
+	winGetPos(&mainX,&mainY,&mainW,&mainH,ui.mainGui)
 	GuiWidth := 0
+	guiVis(ui.titleBarButtonGui,false)
 	if (cfg.AnimationsEnabled) {
 		While GuiWidth < 575 {
-			redrawGuis(GuiWidth)
+			redrawGuis(GuiWidth,mainX,mainY)
 			GuiWidth += 30
 			sleep(20)
 		}
 	}
 	ui.mainGui.getPos(&mainX,&mainY,&mainW,&mainH)
 	ui.gameSettingsGui.move(mainX+35,mainY+35,495,)
-	ui.afkGui.move(mainX+40,mainY+35,275,)
+	ui.afkGui.move(mainX+45,mainY+35,275,)
 	;guiVis(ui.titleBarButtonGui,true)
 	; guiVis(ui.gameSettingsGui,true)
 	; guiVis(ui.afkGui,true)
@@ -634,8 +633,6 @@ tabsChanged(*) {
 	ui.activeTab := ui.mainGuiTabs.Text
 	cfg.activeMainTab := ui.mainGuiTabs.value
 
-	;guiVis(ui.mainGui,true)
-	;guiVis(ui.titleBarButtonGui,true)
 	guiVis(ui.afkGui,(ui.activeTab == "AFK") ? true : false)
 	guiVis(ui.gameSettingsGui,(ui.activeTab = "Game") ? true : false)	
 	Switch {
@@ -666,8 +663,8 @@ tabsChanged(*) {
 			;winSetTransparent(255,ui.gameSettingsGui)
 		}
 	}
-	
 	ui.previousTab := ui.activeTab
+	controlFocus(ui.buttonAfkHide)
 }
 
 { ;Draw Outline Functions
@@ -740,7 +737,7 @@ tabsChanged(*) {
 drawAfkOutlines() {	
 ui.mainGuiTabs.UseTab("AFK")
 	drawOutlineNamed("afkOutline1",ui.afkGui,96,105,150,32,cfg.themeBright1Color,cfg.themeBright2Color,2)
-	drawOutlineNamed("afkOutline2",ui.afkGui,178,38,67,58,cfg.themeBright1Color,cfg.themeBright2Color,2)
+;	drawOutlineNamed("afkOutline2",ui.afkGui,178,38,67,58,cfg.themeBright1Color,cfg.themeBright2Color,2)
 ;	drawOutlineNamed("afkOutline3",ui.afkGui,240,40,67,58,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,2)
 	drawOutlineNamed("afkGuiOutline",ui.afkGui,0,2,182,32,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,1)
 	drawOutlineNamed("mainOutline1",ui.mainGui,346,35,180,80,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,2)
@@ -751,16 +748,13 @@ ui.mainGuiTabs.UseTab("AFK")
 drawMainOutlines() {
 ui.mainGuiTabs.useTab("")
 
-
-
-
-	;drawOutlineNamed("consolePanelOutline",ui.mainGui,35,150,498,6,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,3) 	;Log Panel Outline
-	;drawOutlineNamed("consolePanelOutline2",ui.mainGui,35,220,498,184,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,1)		;Log Panel 3D Effect
+	drawOutlineNamed("consolePanelOutline",ui.mainGui,35,150,498,6,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,3) 	;Log Panel Outline
+	drawOutlineNamed("consolePanelOutline2",ui.mainGui,35,220,498,184,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,1)		;Log Panel 3D Effect
 }
 drawOpsOutlines() {
-ui.mainGuiTabs.useTab("")
-	drawOutlineNamed("bottomLine",ui.mainGui,37,208,492,6,cfg.themeBorderDarkColor,cfg.themeDisabledColor,3)
-ui.mainGuiTabs.useTab("Sys")
+	ui.mainGuiTabs.useTab("")
+	drawOutlineNamed("bottomLine",ui.mainGui,37,208,492,4,cfg.themeBorderDarkColor,cfg.themeBorderLightColor,2)
+	ui.mainGuiTabs.useTab("Sys")
 	drawGridlines()
 	drawOutlineNamed("tabsUnderline",ui.MainGui,35,29,502,3,cfg.ThemeBackgroundColor,cfg.ThemeBackgroundColor,2)
 	drawOutlineNamed("opsClock",ui.mainGui,66,33,171,28,cfg.ThemeBorderDarkColor,cfg.ThemeBorderDarkColor,1)		;Ops Clock
@@ -777,9 +771,9 @@ ui.mainGuiTabs.useTab("Sys")
 
 drawGridLines() {
 ui.MainGuiTabs.UseTab("Sys")
-	;drawOutline(ui.MainGui,103,77,158,15,cfg.ThemeFont4Color,cfg.ThemeFont4Color,1)				;Win1 Info Gridlines  
-	;drawOutline(ui.MainGui,305,77,157,15,cfg.ThemeFont4Color,cfg.ThemeFont4Color,1)				;Win2 Info Gridlines
-	drawOutline(ui.MainGui,305,62,157,76,cfg.ThemeBorderLightColor,cfg.ThemeBorderLightColor,2)	;WIn2 Info Frame
-	drawOutline(ui.MainGui,103,62,158,76,cfg.ThemeBorderLightColor,cfg.ThemeBorderLightColor,2) ;Win1 Info Frame
+	; drawOutline(ui.MainGui,102,77,158,15,cfg.ThemeBright2Color,cfg.ThemeBright2Color,1)				;Win1 Info Gridlines  
+	; drawOutline(ui.MainGui,305,77,156,15,cfg.ThemeBright2Color,cfg.ThemeBright2Color,1)				;Win2 Info Gridlines
+	drawOutline(ui.MainGui,305,62,156,76,cfg.ThemeBright1Color,cfg.ThemeBright1Color,2)	;WIn2 Info Frame
+	drawOutline(ui.MainGui,103,62,158,76,cfg.ThemeBright1Color,cfg.ThemeBright1Color,2) ;Win1 Info Frame
 
 }
