@@ -39,8 +39,8 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 	global
 	refreshAfkRoutine()
 	ui.MainGuiTabs.UseTab("Sys")
-	ui.win1GridLines := ui.mainGui.addText("x35 y0 w250 h180 background" cfg.themeDark2color,"")
-	ui.win2GridLines := ui.mainGui.addText("x285 y0 w250 h180 background" cfg.themeDark2color,"")
+	ui.win1GridLines := ui.mainGui.addText("x35 y0 w250 h150 background" cfg.themeDark2color,"")
+	ui.win2GridLines := ui.mainGui.addText("x285 y0 w250 h150 background" cfg.themeDark2color,"")
 	ui.MainGui.SetFont("s14","Calibri Thin")
 
 	ui.OpsDockButton := ui.MainGui.AddPicture("x38 y35 w27 h27 section Background" cfg.ThemeButtonReadyColor,"./Img/button_dockLeft_ready.png")
@@ -130,7 +130,7 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 		ui.opsWin1AfkStatus.setFont("s14")
 		ui.opsWin1AfkIcon := ui.MainGui.AddPicture("ys section w25 h30 Background" cfg.ThemePanel1Color,"./Img/sleep_icon.png")
 
-		ui.Win1ClassDDL := ui.MainGui.AddDDL("ys-1 x+2 w156 r6 AltSubmit choose" cfg.win1class " Background" cfg.ThemeEditBoxColor, ui.ProfileList)
+		ui.Win1ClassDDL := ui.MainGui.AddDDL("ys-1 x+3 w156 r6 AltSubmit choose" cfg.win1class " Background" cfg.ThemeEditBoxColor, ui.ProfileList)
 		ui.Win1ClassDDL.SetFont("s14")
 		ui.Win1ClassDDL.OnEvent("Change",opsWin1ClassChange)
 		PostMessage("0x153", -1, 26,, "AHK_ID " ui.Win1ClassDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153
@@ -422,6 +422,8 @@ changeGameDDL(*) {
 	debugLog("Game Profile Changed to: " ui.GameDDL.Text)
 	;If !(WinExist("ahk_id " ui.Win1Hwnd) || WinExist("ahk_id " ui.Win2Hwnd))
 		RefreshWinHwnd()
+		controlFocus(ui.buttonSwapHwnd,ui.mainGui)
+		
 }
 
 monitorGameWindows(*) {
@@ -457,6 +459,9 @@ refreshWinHwnd(*) { ;Performs Window Discovery, Game Identification and Gui Data
 			ui.Win%A_Index%HwndText.Opt("Background" cfg.ThemePanel4Color)
 			ui.autoFireWin%A_Index%Button.Opt("Background" cfg.ThemePanel4Color)
 			ui.autoFireWin%A_Index%Button.Value := "./Img/button_autoFire" A_Index "_on.png"
+			ui.gameDDL.setFont("c" cfg.themeFont2color,"calibri bold")
+			ui.gameDDL.opt("background" cfg.themeButtonAlertColor)
+			ui.gameDDL.redraw()
 		}
 
 		Loop ui.AllGameWindowsList.Length {
@@ -502,6 +507,8 @@ refreshWinHwnd(*) { ;Performs Window Discovery, Game Identification and Gui Data
 					: 1) 
 				: winNumber			
 
+			ui.gameDDL.opt("background" cfg.themeEditBoxColor)
+			ui.gameDDL.setFont("c" cfg.themeFont1Color)
 			ui.win%winNumber%enabled := true
 			ui.win%WinNumber%Hwnd := ui.FilteredGameWindowsList[A_Index]
 			ui.win%WinNumber%HwndText.Text := "  " ui.Win%WinNumber%Hwnd "  "

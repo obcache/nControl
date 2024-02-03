@@ -472,7 +472,7 @@ autoFire(WinNumber := GetWinNumber()) {
 
 		if (A_TimeIdlePhysical > 2500 and A_TimeIdleMouse > 2500) 
 		&& (ui.afkEnabled)
-		&& (ui.win%winNumber%enabled)
+		&& !(cfg.win%winNumber%disabled)
 		&& WinExist("ahk_id " ui.win%winNumber%hwnd) 		
 		{
 			ui.Win%WinNumber%AfkIcon.value := "./Img/attack_icon.png"
@@ -490,10 +490,10 @@ autoFire(WinNumber := GetWinNumber()) {
 				MouseClick("Left",WinW-50,WinH-120,2)
 			}
 			;debugLog("activating win: " winNumber)
-			Sleep(400)
+			Sleep(150)
 			;debugLog("sending: " command " to win: " winNumber)
 			SendEvent("{" Command " Down}")
-			sleep(250)
+			sleep(duration)
 			SendEvent("{" Command " Up}")
 
 			if InStr(ui.Win%WinNumber%ClassDDL.Text,"Summoner") || InStr(ui.Win%WinNumber%ClassDDL.Text,"Archer") 
@@ -561,8 +561,7 @@ afkBeta(*) {
 				debugStep := (win1afk.steps.length >= ui.currStepNum) ? (win1afk.steps[ui.currStepNum]) : ("--")
 				debugWait := (win1afk.waits.length >= ui.currStepNum) ? (win1afk.waits[ui.currStepNum]) : ("--")
 				debugLog("| win: 1 | step: " ui.currStepNum " | Action: " debugStep " | wait: " debugWait " |")
-				attackWin(1,win1afk.steps[ui.currStepNum])
-				sleep(win1afk.waits[ui.currStepNum])
+				attackWin(1,win1afk.steps[ui.currStepNum],win1afk.waits[ui.currStepNum])
 				win1LoopFinished := false
 			} else {
 				win1LoopFinished := true
@@ -573,8 +572,7 @@ afkBeta(*) {
 				debugStep := (win2afk.steps.length >= ui.currStepNum) ? (win2afk.steps[ui.currStepNum]) : ("--")
 				debugWait := (win2afk.waits.length >= ui.currStepNum) ? (win2afk.waits[ui.currStepNum]) : ("--")
 				debugLog("| win: 2 | step: " ui.currStepNum " | Action: " debugStep " | wait: " debugWait " |")
-				attackWin(2,win2afk.steps[ui.currStepNum])
-				sleep(win2afk.waits[ui.currStepNum])
+				attackWin(2,win2afk.steps[ui.currStepNum],win2afk.waits[ui.currStepNum])
 				win2LoopFinished := false
 			} else
 				win2LoopFinished := true
@@ -592,6 +590,7 @@ afkWin1ClassChange(*) {
 	global
 	cfg.win1class			:= ui.afkWin1classDDL.value
 	ui.win1ClassDDL.text 	:= ui.afkWin1ClassDDL.text
+	controlFocus(ui.buttonStartAfk,ui.mainGui)
 	refreshAfkRoutine()	
 }
 
@@ -599,6 +598,7 @@ afkWin2ClassChange(*) {
 	global
 	cfg.win2class	:= ui.afkWin2ClassDDL.value
 	ui.win2classDDL.text := ui.afkWin2ClassDDL.text
+		controlFocus(ui.buttonStartAfk,ui.mainGui)
 	refreshAfkRoutine()
 }
 
@@ -606,6 +606,7 @@ opsWin1ClassChange(*) {
 	global
 	cfg.win1class	:= ui.win1ClassDDL.value
 	ui.afkWin1ClassDDL.text := ui.win1classDDL.text
+		controlFocus(ui.win1name,ui.mainGui)
 	refreshAfkRoutine()
 }
 
@@ -613,6 +614,7 @@ opsWin2ClassChange(*) {
 	global
 	cfg.win2class	:= ui.win2classDDL.value
 	ui.afkWin2classDDL.text := ui.win2classDDL.text
+		controlFocus(ui.win2name,ui.mainGui)
 	RefreshAfkRoutine()
 }
 
