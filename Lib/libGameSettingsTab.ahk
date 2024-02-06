@@ -245,11 +245,12 @@ w up::
 }
 #HotIf
 
-#HotIf winActive("ahk_exe destiny2.exe") && cfg.d2AlwaysRunEnabled && !ui.d2Running && !ui.d2reloading
+#HotIf winActive("ahk_exe destiny2.exe") && cfg.d2AlwaysRunEnabled 
 w::
 {
 	global
-	if !getKeyState("LButton") && !getKeyState("RButton") && !getKeyState(cfg.d2HoldWalkKey) && !ui.d2ToggleWalkEnabled {
+	;msgbox(getKeyState("Lbutton") "`n" getkeyState("rButton"))
+	if !ui.d2Running && !getKeyState("LButton") && !getKeyState("RButton") && !getKeyState(cfg.d2HoldWalkKey) && !ui.d2ToggleWalkEnabled {
 		ui.d2Running := true
 		send("{w down}{" strLower(cfg.d2sprintKey) " down}")
 
