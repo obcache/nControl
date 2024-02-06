@@ -249,7 +249,7 @@ w up::
 w::
 {
 	global
-	if !getKeyState("LButton") && !getKeyState(cfg.d2HoldWalkKey) && !ui.d2ToggleWalkEnabled {
+	if !getKeyState("LButton") && !getKeyState("RButton") && !getKeyState(cfg.d2HoldWalkKey) && !ui.d2ToggleWalkEnabled {
 		ui.d2Running := true
 		send("{w down}{" strLower(cfg.d2sprintKey) " down}")
 

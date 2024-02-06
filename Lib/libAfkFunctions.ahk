@@ -618,37 +618,3 @@ opsWin2ClassChange(*) {
 	RefreshAfkRoutine()
 }
 
-RefreshAfkRoutine(*) {
-	global
-	win1afk.steps 			:= array()
-	win1afk.waits			:= array()
-	win2afk.steps			:= array()
-	win2afk.waits			:= array()
-	win1afk.routine.text 	:= ""
-	win2afk.routine.text 	:= ""
-
-	Loop read, cfg.AfkDataFile
-	{
-		if ui.profileList.length < cfg.win1class {
-			cfg.win1class :=1 
-		} 
-		if (StrSplit(a_loopReadLine,',')[1] == ui.profileList[cfg.win1class]) 
-		{
-			win1afk.routine.text .= "  " A_LoopReadLine "`n"
-			win1afk.steps.push(StrSplit(a_LoopReadLine,',')[3])
-			win1afk.waits.push(StrSplit(a_loopReadLine,',')[4])
-		}
-		if ui.profileList.length < cfg.win2class {
-			cfg.win2class :=1 
-		} 
-		if (StrSplit(a_loopReadLine,',')[1] == ui.profileList[cfg.win2class])
-		{
-			win2afk.routine.text .= "  " A_LoopReadLine "`n"
-			win2afk.steps.push(StrSplit(a_LoopReadLine,',')[3])
-			win2afk.waits.push(StrSplit(a_loopReadLine,',')[4])
-		}
-		
-	}
-	debugLog("Finished Reading AfkData File")
-	; reload()
-}

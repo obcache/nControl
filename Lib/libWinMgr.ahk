@@ -29,6 +29,8 @@ WM_WINDOWPOSCHANGED(wParam, lParam, msg, Hwnd)
 				ui.gameSettingsGui.move(winx+35,winy+35)
 			case ui.titleBarButtonGui.hwnd:
 				winGetPos(&winX,&winY,,,ui.titleBarButtonGui)
+				ui.gameSettingsGui.move(winx+35,winy+38)
+				ui.afkGui.move(winX+45,winY+38,,)
 				ui.mainGui.move(winX,winY+3,,)
 			case ui.dividerGui.hwnd:
 				if (Hwnd == ui.dividerGui.hwnd) {

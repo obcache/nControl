@@ -1,4 +1,4 @@
-A_FileVersion := "3.5.8.6"
+A_FileVersion := "3.5.8.7"
 ;@Ahk2Exe-Let FileVersion=%A_PriorLine~U)^(.+"){1}(.+)".*$~$2% 
 
 A_AppName := "nControl"
@@ -50,7 +50,7 @@ MonitorGetWorkArea(MonitorGetPrimary(),
 	&PrimaryWorkAreaTop,
 	&PrimaryWorkAreaRight,
 	&PrimaryWorkAreaBottom)
-	
+
 ui.TaskbarHeight := PrimaryMonitorBottom - PrimaryWorkAreaBottom
 
 CfgLoad(&cfg, &ui)
@@ -60,8 +60,8 @@ InitConsole(&ui)
 #include <libGui>
 #include <libWinMgr>
 #include <libGlobal>
-#include <libGuiAFKTab>
 #include <libGuiOperationsTab>
+#include <libGuiAFKTab>
 #include <libAfkFunctions>
 #include <libGuiSetupTab>
 #include <libGuiAppDockTab>
@@ -72,6 +72,7 @@ InitConsole(&ui)
 #include <libHotkeys>
 #include <libRoutines>
 #include <Class_SQLiteDB>
+#include <libThemeCreator>
 
 
 debugLog("Interface Initialized")
@@ -102,4 +103,5 @@ fadeIn()
 guiVis(ui.afkGui,(ui.activeTab == "AFK") ? true : false)
 guiVis(ui.gameSettingsGui,(ui.activeTab = "Game") ? true : false)	
 tabsChanged()
+changeGameDDL()
 controlFocus(ui.d2AlwaysRun)

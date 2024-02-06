@@ -51,15 +51,19 @@ initGui(&cfg, &ui) {
 	ui.rightHandlebarImage2 := ui.mainGui.AddPicture("x527 w35 y0 h216 section","./Img/handlebar_vertical.png")
 
 	ui.handleBarImage.OnEvent("DoubleClick",ToggleGuiCollapse)
+	ui.rightHandleBarImage.OnEvent("DoubleClick",ToggleGuiCollapse)
 	ui.handleBarImage.OnEvent("Click",WM_LBUTTONDOWN_callback)
+	ui.rightHandleBarImage.OnEvent("Click",WM_LBUTTONDOWN_callback)
+	
 
 	ui.gvConsole := ui.MainGui.AddListBox("x35 y220 w500 h192 +Background" cfg.ThemePanel1Color)
 	ui.gvConsole.Color := cfg.ThemeBright1Color	
 
 	afk 						:= Object()
-	populateClassList()
+
 	GuiAFKTab(&ui,&afk)
 	GuiOperationsTab(&ui,&cfg,&afk)	
+
 	GuiDockTab(&ui)
 	GuiSetupTab(&ui,&cfg)
 	GuiAudioTab(&ui,&cfg,&audio)
@@ -270,6 +274,8 @@ CollapseGui() {
 	winGetPos(&mainX,&mainY,&mainW,&mainH,ui.mainGui)
 	GuiWidth := mainW
 	guiVis(ui.titleBarButtonGui,false)
+	guiVis(ui.afkGui,false)
+	guiVis(ui.gameSettingsGui,false)
 	if (cfg.AnimationsEnabled) {
 		While GuiWidth > 5 {
 			redrawGuis(GuiWidth,mainX,mainY)
@@ -282,9 +288,9 @@ CollapseGui() {
 
 redrawGuis(GuiWidth,mainX,mainY) {
 	ui.MainGui.Move(mainX,mainY,GuiWidth,)
-	if guiWidth < 310
-		ui.afkGui.move(mainX+45,mainY+35,guiWidth-35,)
-	ui.gameSettingsGui.move(mainX+35,mainY+35,guiWidth-35,)
+	; if guiWidth < 310
+		; ui.afkGui.move(mainX+45,mainY+35,guiWidth-35,)
+	;ui.gameSettingsGui.move(mainX+35,mainY+35,guiWidth-35,)
 }
 
 UncollapseGui() {
@@ -301,9 +307,8 @@ UncollapseGui() {
 	ui.mainGui.getPos(&mainX,&mainY,&mainW,&mainH)
 	ui.gameSettingsGui.move(mainX+35,mainY+35,495,)
 	ui.afkGui.move(mainX+45,mainY+35,275,)
-	;guiVis(ui.titleBarButtonGui,true)
-	; guiVis(ui.gameSettingsGui,true)
-	; guiVis(ui.afkGui,true)
+	guiVis(ui.titleBarButtonGui,true)
+	tabsChanged()
 }
 
 toggleAfkDock(*) {
@@ -315,18 +320,17 @@ toggleAfkDock(*) {
 
 dockAfkGui(*) {
 	; guiVis(ui.opsGui,false)
-
-
+	ui.AfkGui.Move(-35,A_ScreenHeight-ui.TaskbarHeight-140,265,140)	
+	ui.titleBarButtonGui.Opt("Owner" ui.AfkGui.Hwnd)
+	ui.titleBarButtonGui.Move(,A_ScreenHeight-ui.TaskbarHeight-150,90,500)
 	ui.AfkAnchoredToGui := false
 	WinGetPos(&GuiPrevX,&GuiPrevY,,,ui.mainGui)
 	ui.GuiX := GuiPrevX
 	ui.GuiY := GuiPrevY
 	guiVis(ui.mainGui,false)
-	ui.AfkGui.Show("x" MainGuix+45 " y" MainGuiY+35 " w225 h140 NoActivate")
-	
+	ui.afkGui.show("autoSize noActivate")
 	ui.buttonDockAfk.Opt("Hidden")
 	ui.buttonUndockAfk.Opt("-Hidden")
-	ui.HandlebarAfkGui.Opt("-Hidden")
 	ui.buttonPopout.Opt("+Hidden")
 	ui.buttonStartAFK.Move(3,3)
 	ui.buttonTower.Move(33,3)
@@ -336,14 +340,12 @@ dockAfkGui(*) {
 	ui.downButton.opt("hidden")
 	ui.exitButton.Move(10,0)
 	ui.buttonUndockAfk.Move(49,0)
-
-	ui.AfkGui.Move(0,A_ScreenHeight-ui.TaskbarHeight-140,265,140)	
-	WinGetPos(&AfkGuiX,&AfkGuiY,&AfkGuiW,&AfkGuiH,ui.afkGui)
-	ui.titleBarButtonGui.Opt("Owner" ui.AfkGui.Hwnd)
-	ui.titleBarButtonGui.Move(0,A_ScreenHeight-ui.TaskbarHeight-150,90,500)
-	;guiVis(ui.titleBarButtonGui,true)
-	guiVis(ui.mainGui,false)
 	guiVis(ui.afkGui,true)
+
+	WinGetPos(&AfkGuiX,&AfkGuiY,&AfkGuiW,&AfkGuiH,ui.afkGui)
+
+
+
 	WinSetTransparent(210,ui.AfkGui)
 	WinSetTransparent(210,ui.HandlebarAfkGui)
 	controlFocus(ui.buttonUndockAfk)
@@ -519,48 +521,74 @@ exitMenuShow() {
 }
 
 hideGui(*) {
-	SaveGuiPos()
-	WinSetTransparent(0,ui.MainGui)
-	if ui.AfkAnchoredToGui = true
-	{
-		WinSetTransparent(0,ui.AfkGui)
-		WinSetTransparent(0,ui.titleBarButtonGui)
-		WinSetTransparent(0,ui.HandlebarAfkGui)
-		WinSetTransparent(0,ui.gameSettingsGui)
-		; WinSetTransparent(0,ui.opsGui)
-	}
+	saveGuiPos()
+	guiVis(ui.mainGui,false)
+	guiVis(ui.titleBarButtonGui,false)
+	guiVis(ui.afkGui,false)
+	guiVis(ui.handleBarAfkGui,false)
+	guiVis(ui.gameSettingsGui,false)
 	debugLog("Hiding Interface")
 }
 
 saveGuiPos(*) {
 	Global
-	ui.MainGui.GetPos(&GuiX,&GuiY,&GuiW,&GuiH)
-	ui.AfkGui.GetPos(&AfkX,&AfkY,&AfkW,&AfkH)
-	cfg.GuiX := GuiX*(A_ScreenDPI/96)
-	cfg.GuiY := GuiY*(A_ScreenDPI/96)
-	cfg.AfkX := AfkX*(A_ScreenDPI/96)
-	cfg.AfkY := AfkY*(A_ScreenDPI/96)
+	winGetPos(&GuiX,&GuiY,,,ui.MainGui)
+	cfg.GuiX := GuiX
+	cfg.GuiY := GuiY
 	IniWrite(cfg.GuiX,cfg.file,"Interface","GuiX")
 	IniWrite(cfg.GuiY,cfg.file,"Interface","GuiY")
-	IniWrite(cfg.AfkX,cfg.file,"Interface","AfkX")
-	IniWrite(cfg.AfkY,cfg.file,"Interface","AfkY")
-	
 	debugLog("Saving Window Location at x" GuiX " y" GuiY)
 }
 
 showGui(*) {
-	global
-	cfg.GuiX := IniRead(cfg.file,"Interface","GuiX",A_ScreenWidth/2)
-	cfg.GuiY := IniRead(cfg.file,"Interface","GuiY",A_ScreenHeight/2)
-	debugLog("Showing Interface at x" cfg.GuiX " y" cfg.GuiY)
-	ui.MainGui.GetPos(&MainGuiX,&MainGuiY,,,)
+	lowX 		:= 0
+	highX 		:= 0
+	lowY 		:= 0
+	highY 		:= 0
+	; cfg.GuiX 	:= IniRead(cfg.file,"Interface","GuiX",PrimaryWorkAreaLeft+200)
+	; cfg.GuiY 	:= IniRead(cfg.file,"Interface","GuiY",PrimaryWorkAreaTop+200)
 
-;	ui.mainGuiTabs.Choose(ui.previousTab)
-	ui.HandlebarAfkGui.Opt("+Hidden")
-	ui.buttonAfkHide.opt("+hidden")
+	loop monitorGetCount() {
+		monitorNum := a_index
+		monitorGetWorkArea(monitorNum,&tmpMonLeft,&tmpMonTop,&tmpMonRight,&tmpMonBottom)
+		if tmpMonLeft < lowX
+			lowX := tmpMonLeft
+		if (tmpMonRight) > highX 
+			highX := tmpMonRight
+		if tmpMonTop < lowY
+			lowY := tmpMonTop
+		if (tmpMonBottom) > highY 
+			highY := tmpMonBottom
+		}
+	winGetPos(&guiX,&guiY,&guiW,&guiH,ui.mainGui)
+	if (guiX < lowX || cfg.guiX > highX)
+		cfg.guiX := 200
+	if (guiY < lowY || cfg.guiY > highY)
+		cfg.guiY := 200
+		
+	ui.mainGui.move(cfg.guiX,cfg.guiY,,)	
+	if ui.afkDocked {
+		guiVis(ui.afkGui,true)
+		guiVis(ui.handleBarAfkGui,true)
+	} else {
+		guiVis(ui.mainGui,true)
+		guiVis(ui.titleBarButtonGui,true)
+	}
+	
 	ui.AfkAnchoredToGui := true
-	ui.AfkDocked := false
-	tabsChanged()
+
+	debugLog("Showing Interface at x" cfg.GuiX " y" cfg.GuiY)
+	
+	if ui.afkDocked {
+		guiVis(ui.afkGui,true)
+		guiVis(ui.HandlebarAfkGui,true)
+		WinSetTransparent(210,ui.AfkGui)
+		WinSetTransparent(210,ui.HandlebarAfkGui)
+	} else {
+		guiVis(ui.mainGui,true)
+		guiVis(ui.titleBarButtonGui,true)
+		tabsChanged()
+	}
 	debugLog("Showing Interface")
 }
 
@@ -740,8 +768,8 @@ ui.mainGuiTabs.UseTab("AFK")
 ;	drawOutlineNamed("afkOutline2",ui.afkGui,178,38,67,58,cfg.themeBright1Color,cfg.themeBright2Color,2)
 ;	drawOutlineNamed("afkOutline3",ui.afkGui,240,40,67,58,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,2)
 	drawOutlineNamed("afkGuiOutline",ui.afkGui,0,2,182,32,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,1)
-	drawOutlineNamed("mainOutline1",ui.mainGui,346,35,180,80,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,2)
-	drawOutlineNamed("mainOutline2",ui.mainGui,346,125,180,80,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,2)
+	drawOutlineNamed("mainOutline1",ui.mainGui,330,35,198,80,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,2)
+	drawOutlineNamed("mainOutline2",ui.mainGui,330,125,198,80,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,2)
 	
 
 }
@@ -774,6 +802,6 @@ ui.MainGuiTabs.UseTab("Sys")
 	; drawOutline(ui.MainGui,102,77,158,15,cfg.ThemeBright2Color,cfg.ThemeBright2Color,1)				;Win1 Info Gridlines  
 	; drawOutline(ui.MainGui,305,77,156,15,cfg.ThemeBright2Color,cfg.ThemeBright2Color,1)				;Win2 Info Gridlines
 	drawOutline(ui.MainGui,305,62,156,76,cfg.ThemeBright1Color,cfg.ThemeBright1Color,2)	;WIn2 Info Frame
-	drawOutline(ui.MainGui,103,62,158,76,cfg.ThemeBright1Color,cfg.ThemeBright1Color,2) ;Win1 Info Frame
+	drawOutline(ui.MainGui,103,62,156,76,cfg.ThemeBright1Color,cfg.ThemeBright1Color,2) ;Win1 Info Frame
 
 }

@@ -384,8 +384,8 @@ cfgLoad(&cfg, &ui) {
 	cfg.AlwaysOnTopEnabled	:= IniRead(cfg.file,"Interface","AlwaysOnTopEnabled",true)
 	cfg.AnimationsEnabled	:= IniRead(cfg.file,"Interface","AnimationsEnabled",true)
 	cfg.ColorPickerEnabled 	:= IniRead(cfg.file,"Interface","ColorPickerEnabled",true)
-	cfg.GuiX 				:= IniRead(cfg.file,"Interface","GuiX",200)
-	cfg.GuiY 				:= IniRead(cfg.file,"Interface","GuiY",200)
+	cfg.GuiX 				:= IniRead(cfg.file,"Interface","GuiX",PrimaryWorkAreaLeft + 200)
+	cfg.GuiY 				:= IniRead(cfg.file,"Interface","GuiY",PrimaryWorkAreaTop + 200)
 	cfg.GuiW				:= IniRead(cfg.file,"Interface","GuiW",545)
 	cfg.GuiH				:= IniRead(cfg.file,"Interface","GuiH",210)
 
@@ -827,7 +827,11 @@ killMe(*) {
 }
 
 resetWindowPosition(*) {
-	WinSetTransparent(0,ui.MainGui)
+	guiVis(ui.titleBarButtonGui,false)
+	guiVis(ui.afkGui,false)
+	guiVis(ui.gameSettingsGui,false)
+	guiVis(ui.mainGui,false)
+	
 	ui.MainGui.Move(200,200,,)
 	Reload()
 }

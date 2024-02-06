@@ -1,24 +1,39 @@
-Summoner,1,w,500
-Summoner,2,F,350
-Summoner,3,E,350
-Summoner,4,R,350
-Summoner,5,1,350
-Summoner,6,X,350
-Spirit Archer,1,F,350
-Spirit Archer,2,E,350
-Spirit Archer,3,R,350
-Spirit Archer,4,1,350
-Spirit Archer,5,X,350
-Summoner2,1,X,350
-Summoner2,2,1,350
-Summoner2,3,E,350
-Summoner2,4,F,350
-Summoner2,5,R,350
-Spirit Archer2,1,X,350
-Spirit Archer2,2,1,350
-Spirit Archer2,3,E,350
-Spirit Archer2,4,F,350
-Spirit Archer2,5,R,350
-test,1,w,600
-test,2,d,600
-test,3,space,150
+Summoner,1,w,500,World//Zero
+Summoner,2,F,350,World//Zero
+Summoner,3,E,350,World//Zero
+Summoner,4,R,350,World//Zero
+Summoner,5,1,350,World//Zero
+Summoner,6,X,350,World//Zero
+Spirit Archer,1,F,350,World//Zero
+Spirit Archer,2,E,350,World//Zero
+Spirit Archer,3,R,350,World//Zero
+Spirit Archer,4,1,350,World//Zero
+Spirit Archer,5,X,350,World//Zero
+Summoner2,1,X,350,World//Zero
+Summoner2,2,1,350,World//Zero
+Summoner2,3,E,350,World//Zero
+Summoner2,4,F,350,World//Zero
+Summoner2,5,R,350,World//Zero
+Spirit Archer2,1,X,350,World//Zero
+Spirit Archer2,2,1,350,World//Zero
+Spirit Archer2,3,E,350,World//Zero
+Spirit Archer2,4,F,350,World//Zero
+Spirit Archer2,5,R,350,World//Zero
+Malva:Heal-U,1,w,850,Shatterline
+Malva:Heal-U,2,d,650,Shatterline
+Malva:Heal-U,3,q,250,Shatterline
+Malva:Heal-U,4,c,250,Shatterline
+strand:webdash,1,w,550,Destiny 2
+strand:webdash,2,c,350,Destiny 2
+strand:webdash,3,w,550,Destiny 2
+strand:webdash,4,c,350,Destiny 2
+strand:webdash,5,q,250,Destiny 2
+solar:deadeye,1,1,350,Destiny 2
+solar:deadeye,2,rbutton d,800,Destiny 2
+solar:deadeye,3,lbutton,250,Destiny 2
+solar:deadeye,4,rbutton u,250,Destiny 2
+statis:crystall,1,d,350,Destiny 2
+statis:crystall,2,space,250,Destiny 2
+statis:crystall,3,space,250,Destiny 2
+statis:crystall,4,q,800,Destiny 2
+<disabled>,,,,<disabled>
