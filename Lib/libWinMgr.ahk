@@ -25,13 +25,18 @@ WM_WINDOWPOSCHANGED(wParam, lParam, msg, Hwnd)
 			case ui.mainGui.hwnd:
 				ui.MainGui.GetPos(&winX,&winY,,)
 				ui.AfkGui.Move(winX+45,winY+35,,)
-				ui.titleBarButtonGui.Move(winX,WinY-3)
+				ui.titleBarButtonGui.Move(winX,WinY-5)
 				ui.gameSettingsGui.move(winx+35,winy+35)
 			case ui.titleBarButtonGui.hwnd:
-				winGetPos(&winX,&winY,,,ui.titleBarButtonGui)
-				ui.gameSettingsGui.move(winx+35,winy+38)
-				ui.afkGui.move(winX+45,winY+38,,)
-				ui.mainGui.move(winX,winY+3,,)
+				if (ui.afkDocked || !ui.afkAnchoredToGui) {
+					winGetPos(&AfkGuiX,&AfkGuiY,,,ui.afkGui)
+					ui.afkGui.move(afkGuiX,afkGuiY+5)
+				} else {
+					winGetPos(&winX,&winY,,,ui.titleBarButtonGui)
+					ui.gameSettingsGui.move(winx+35,winy+38)
+					ui.afkGui.move(winX+45,winY+38,,)
+					ui.mainGui.move(winX,winY+3,,)
+				}
 			case ui.dividerGui.hwnd:
 				if (Hwnd == ui.dividerGui.hwnd) {
 					MonitorGetWorkArea(cfg.nControlMonitor, &Left, &Top, &Right, &Bottom)
@@ -44,7 +49,7 @@ WM_WINDOWPOSCHANGED(wParam, lParam, msg, Hwnd)
 			case ui.afkGui.hwnd:
 				if (ui.afkdocked || !ui.afkAnchoredToGui) {
 					winGetPos(&AfkGuiX,&AfkGuiY,,,ui.afkGui)
-					ui.titleBarButtonGui.move(afkGuiX+187,afkGuiY-5)
+					ui.titleBarButtonGui.move(afkGuiX+160,afkGuiY-5)
 				}
 		} 
 			
@@ -58,7 +63,7 @@ WM_LBUTTONDOWN_callback(*) {
 ;###########MOUSE EVENTS##############
 WM_LBUTTONDOWN(wParam, lParam, msg, Hwnd) {
 	;ShowMouseClick()
-	if (Hwnd = ui.MainGui.hwnd) || (Hwnd = ui.titleBarButtonGui.Hwnd) || (hwnd == ui.dividerGui.hwnd)
+	if (Hwnd = ui.MainGui.hwnd) || (Hwnd = ui.titleBarButtonGui.Hwnd) || (hwnd == ui.dividerGui.hwnd) || (hwnd == ui.afkGui.hwnd)
 		PostMessage("0xA1",2)
 
 	if (hwnd == ui.dividerGui.hwnd)

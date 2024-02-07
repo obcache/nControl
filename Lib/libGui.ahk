@@ -47,6 +47,7 @@ initGui(&cfg, &ui) {
 	ui.MainGuiTabs.UseTab("")
 	ui.MainGui.SetFont("s12 c" cfg.ThemeFont1Color,"Calibri")
 	ui.handleBarImage := ui.MainGui.AddPicture("x0 y-2 w35 h216","./Img/handlebar_vertical.png")
+	ui.handleBarImage.ToolTip := "Drag Handlebar to Move.`nDouble-Click to collapse/uncollapse."
 	ui.rightHandlebarImage := ui.titleBarButtonGui.AddPicture("x527 w35 y3 h216","./Img/handlebar_vertical.png")
 	ui.rightHandlebarImage2 := ui.mainGui.AddPicture("x527 w35 y0 h216 section","./Img/handlebar_vertical.png")
 
@@ -218,12 +219,18 @@ toggleChanged(toggleControl,*) {
 		; reload()
 		}
 		
-toggleChange(name) {
-	(%name%Enabled := !%name%Enabled) 
-	? (%name%Toggle.Opt("Background" cfg.ThemeButtonOnColor)
-		,cfg.toggleOn) 
-	: (%name%Toggle.Opt("Background" cfg.ThemeButtonReadyColor)
-		,cfg.toggleOff)
+toggleVerticalChanged(toggleControl,*) {
+	toggleControl.value := 
+		(cfg.%toggleControl.name%Enabled := !cfg.%toggleControl.name%Enabled)
+			? (toggleControl.Opt("Background" cfg.ThemeButtonOnColor),"./img/toggle_vertical_trans_on.png")
+			: (toggleControl.Opt("Background" cfg.ThemeButtonReadyColor),"./img/toggle_vertical_trans_off.png")
+		; reload()
+		}
+		
+toggleChange(name,onOff := "",toggleOnImg := cfg.toggleOn,toggleOffImg := cfg.toggleOff,toggleOnColor := cfg.themeButtonOnColor,toggleOffColor := cfg.themeButtonReadyColor) {
+	 (onOff)
+		? (%name%.Opt("Background" toggleOnColor),toggleOnImg) 
+		: (%name%.Opt("Background" toggleOffColor),toggleOffImg)
 }
 	
 fadeIn() {
@@ -320,15 +327,21 @@ toggleAfkDock(*) {
 
 dockAfkGui(*) {
 	; guiVis(ui.opsGui,false)
-	ui.AfkGui.Move(-35,A_ScreenHeight-ui.TaskbarHeight-140,265,140)	
+	ui.AfkDocked := true
+	ui.AfkAnchoredToGui := false
 	ui.titleBarButtonGui.Opt("Owner" ui.AfkGui.Hwnd)
-	ui.titleBarButtonGui.Move(,A_ScreenHeight-ui.TaskbarHeight-150,90,500)
+	ui.titleBarButtonGui.Move(,A_ScreenHeight-ui.TaskbarHeight-140,90,50)
+	guiVis(ui.titleBarButtonGui,true)
+	ui.AfkGui.Move(5,A_ScreenHeight-ui.TaskbarHeight-150,270,140)
+	ui.handleBarAfkGui.move(250,0,25,140)
+	ui.handleBarAfkGui.opt("-hidden")
+
 	ui.AfkAnchoredToGui := false
 	WinGetPos(&GuiPrevX,&GuiPrevY,,,ui.mainGui)
 	ui.GuiX := GuiPrevX
 	ui.GuiY := GuiPrevY
 	guiVis(ui.mainGui,false)
-	ui.afkGui.show("autoSize noActivate")
+	ui.afkGui.show("x5 y" a_screenHeight-ui.TaskbarHeight-150 " w270 h140")
 	ui.buttonDockAfk.Opt("Hidden")
 	ui.buttonUndockAfk.Opt("-Hidden")
 	ui.buttonPopout.Opt("+Hidden")
@@ -352,6 +365,8 @@ dockAfkGui(*) {
 }
 	
 undockAfkGui(*) {
+	ui.AfkAnchoredToGui := true
+	ui.AfkDocked := false
 	; IniWrite(cfg.GuiX,"nControl.ini","Interface","GuiX")
 	; IniWrite(cfg.GuiY,"nControl.ini","Interface","GuiY")
 	; guiVis(ui.opsGui,true)
@@ -359,6 +374,7 @@ undockAfkGui(*) {
 	ui.buttonUndockAfk.Opt("Hidden")
 	ui.HandlebarAfkGui.Opt("Hidden")	
 	ui.buttonPopout.Opt("-Hidden")
+	ui.downButton.opt("-hidden")
 	ui.buttonDockAfk.Move(2,2)
 	ui.buttonStartAFK.Move(32,2)
 	ui.buttonTower.Move(62,2)
@@ -369,8 +385,9 @@ undockAfkGui(*) {
 	ui.exitButton.Move(494,3)
 	ui.titleBarButtonGui.Opt("Owner" ui.MainGui.Hwnd)
 	ui.MainGui.GetPos(&winX,&winY,,)
-	ui.AfkGui.Move(winX+30,winY+35,,)
-	ui.titleBarButtonGui.Move(winX+1,WinY-5,565,)
+	ui.AfkGui.Move(winX+45,winY+35,,)
+	ui.titleBarButtonGui.Move(winX,WinY-5,575,200)
+	ui.gameSettingsGui.move(winx+35,winy+35)
 	; ui.opsGui.Move(winX,winY)
 
 	guiVis(ui.titleBarButtonGui,true)

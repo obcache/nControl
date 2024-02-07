@@ -237,7 +237,8 @@ preAutoExec(InstallDir,ConfigFileName) {
 			FileInstall("./Img/button_launchLightGG_down.png",InstallDir "/Img/button_launchLightGG_down.png",1)
 			FileInstall("./Img/button_launchDIM.png",InstallDir "/Img/button_launchDIM.png",1)
 			FileInstall("./Img/button_launchDIM_down.png",InstallDir "/Img/button_launchDIM_down.png",1)
-			
+			fileInstall("./img/toggle_vertical_trans_on.png",installDir "/img/toggle_vertical_trans_on.png",1)
+			fileInstall("./img/toggle_vertical_trans_off.png",installDir "/img/toggle_vertical_trans_off.png",1)
 			persistLog("Copied Assets to: " InstallDir)
 			
 

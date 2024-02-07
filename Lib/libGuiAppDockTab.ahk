@@ -21,7 +21,7 @@ if !(StrCompare(A_LineFile,A_ScriptFullPath))
 
 GuiDockTab(&ui)
 {
-	ui.MainGuiTabs.UseTab("Dock")
+	ui.MainGuiTabs.UseTab("AppDock")
 	
 	ui.SetMonitorButton := ui.MainGui.AddPicture("x45 y50 w60 h20 section","./Img/Button_Change.png")
 	ui.SetMonitorButton.OnEvent("Click", SetMonitorButtonPush)
