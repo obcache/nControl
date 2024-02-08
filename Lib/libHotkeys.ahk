@@ -98,7 +98,7 @@ ToggleGuiCollapse()
 ;AFK Hotkeys
 !^F::
 {
-	autoFire()
+	autoFire(0)
 }
 
 !^c::

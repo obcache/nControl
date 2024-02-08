@@ -422,40 +422,48 @@ runAfkRoutine(*) {
 	}	
 }
 
-autoFire(WinNumber := GetWinNumber()) {
-	if (WinNumber == 0) {
-		debugLog("Couldn't Identify Window to Enable")
-		Return 1
+autoFire(initWinNumber := GetWinNumber()) {
+	if (initWinNumber == 0) {
+		loopCount := 2
+	} else {
+		loopCount := 1
 	}
-	if (A_TimeIdlePhysical > 2500 and A_TimeIdleMouse > 2500) && (ui.afkEnabled)
-	{
-		ui.autoFireWin%WinNumber%Button.Opt("Background" cfg.ThemeButtonOnColor)
-		ui.autoFireWin%WinNumber%Button.Value := "./Img/button_autoFire" WinNumber "_on.png"
+	
+	loop loopCount {
+		if initWinNumber == 0
+			winNumber := A_Index
+		else
+			winNumber := initWinNumber
+			
 
-		SetTimer(ResetAutoFireStatus,-2500)
-		CoordMode("Mouse","Client")
-		WinGetPos(&WinX,&WinY,&WinW,&WinH,"ahk_id " ui.Win%WinNumber%Hwnd)
-		MouseMove(WinW-50,WinH-120)
-		MouseClick("Left",WinW-50,WinH-120)
-		if winExist("ahk_id " ui.win%winNumber%hwnd)	
-			if (WinGetProcessName("ahk_id " ui.Win%WinNumber%Hwnd) == "RobloxPlayerBeta.exe")
-			{	
-				MouseClick("Left",WinW-50,WinH-120)
-				Sleep(250)
-				Send("{LButton Down}")
-				Sleep(250)
-				Send("!{Tab}")
-				Sleep(250)
-				Send("{LButton Up}")
-				Sleep(250)
-				Send("!{Tab}")	
-			} else {
-				Sleep(250)
-				Sleep(250)
-				MouseClickDrag("Left",WinW-50,WinH-120,WinW+50,WinH-120,5)
-			}
-		if (winExist("ahk_id " ui.win%winNumber%hwnd))
-			WinActivate("ahk_id " ui.Win%WinNumber%Hwnd)
+			ui.autoFireWin%WinNumber%Button.Opt("Background" cfg.ThemeButtonOnColor)
+			ui.autoFireWin%WinNumber%Button.Value := "./Img/button_autoFire" WinNumber "_on.png"
+
+			SetTimer(ResetAutoFireStatus,-2500)
+			CoordMode("Mouse","Client")
+			WinGetPos(&WinX,&WinY,&WinW,&WinH,"ahk_id " ui.Win%WinNumber%Hwnd)
+			MouseMove(WinW-50,WinH-120)
+			MouseClick("Left",WinW-50,WinH-120)
+			if winExist("ahk_id " ui.win%winNumber%hwnd)	
+				if (WinGetProcessName("ahk_id " ui.Win%WinNumber%Hwnd) == "RobloxPlayerBeta.exe")
+				{	
+					MouseClick("Left",WinW-50,WinH-120)
+					Sleep(250)
+					Send("{LButton Down}")
+					Sleep(250)
+					Send("!{Tab}")
+					Sleep(250)
+					Send("{LButton Up}")
+					Sleep(250)
+					Send("!{Tab}")	
+				} else {
+					Sleep(250)
+					Sleep(250)
+					MouseClickDrag("Left",WinW-50,WinH-120,WinW+50,WinH-120,5)
+				}
+			if (winExist("ahk_id " ui.win%winNumber%hwnd))
+				WinActivate("ahk_id " ui.Win%WinNumber%Hwnd)
+		
 	}
 }
  ;End Primary AFK Action Functions
