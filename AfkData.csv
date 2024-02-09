@@ -1,24 +1,35 @@
-Summoner,1,w,500,World//Zero
-Summoner,2,F,350,World//Zero
-Summoner,3,E,350,World//Zero
-Summoner,4,R,350,World//Zero
-Summoner,5,1,350,World//Zero
-Summoner,6,X,350,World//Zero
-Spirit Archer,1,F,350,World//Zero
-Spirit Archer,2,E,350,World//Zero
-Spirit Archer,3,R,350,World//Zero
-Spirit Archer,4,1,350,World//Zero
-Spirit Archer,5,X,350,World//Zero
-Summoner2,1,X,350,World//Zero
-Summoner2,2,1,350,World//Zero
-Summoner2,3,E,350,World//Zero
-Summoner2,4,F,350,World//Zero
-Summoner2,5,R,350,World//Zero
-Spirit Archer2,1,X,350,World//Zero
-Spirit Archer2,2,1,350,World//Zero
-Spirit Archer2,3,E,350,World//Zero
-Spirit Archer2,4,F,350,World//Zero
-Spirit Archer2,5,R,350,World//Zero
+summoner,1,f,200,World//Zero
+summoner,2,e,200,World//Zero
+summoner,3,f,200,World//Zero
+summoner,4,r,200,World//Zero
+summoner,5,f,200,World//Zero
+summoner,6,1,200,World//Zero
+summoner,7,f,200,World//Zero
+summoner,8,x,200,World//Zero
+summoner:rev,1,f,200,World//Zero
+summoner:rev,2,e,200,World//Zero
+summoner:rev,3,f,200,World//Zero
+summoner:rev,4,r,200,World//Zero
+summoner:rev,5,f,200,World//Zero
+summoner:rev,6,1,200,World//Zero
+summoner:rev,7,f,200,World//Zero
+summoner:rev,8,x,200,World//Zero
+spirit archer,1,e,200,World//Zero
+spirit archer,2,f,200,World//Zero
+spirit archer,3,e,200,World//Zero
+spirit archer,4,r,200,World//Zero
+spirit archer,5,e,200,World//Zero
+spirit archer,6,1,200,World//Zero
+spirit archer,7,e,200,World//Zero
+spirit archer,8,x,200,World//Zero
+spirit archer:rev,1,x,200,World//Zero
+spirit archer:rev,2,e,200,World//Zero
+spirit archer:rev,3,1,200,World//Zero
+spirit archer:rev,4,e,200,World//Zero
+spirit archer:rev,5,r,200,World//Zero
+spirit archer:rev,6,e,200,World//Zero
+spirit archer:rev,7,f,200,World//Zero
+spirit archer:rev,8,e,200,World//Zero
 Malva:Heal-U,1,w,850,Shatterline
 Malva:Heal-U,2,d,650,Shatterline
 Malva:Heal-U,3,q,250,Shatterline
