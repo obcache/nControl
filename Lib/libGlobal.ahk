@@ -232,7 +232,7 @@ preAutoExec(InstallDir,ConfigFileName) {
 			FileInstall("./nControl_currentBuild.dat",InstallDir "/nControl_currentBuild.dat",1)
 			FileInstall("./Img/keyboard_key_up.png",InstallDir "/img/keyboard_key_up.png",1)
 			FileInstall("./Img/keyboard_key_down.png",InstallDir "/img/keyboard_key_down.png",1)
-			FileInstall("./nControl_updater.exe",InstallDir "/nControl_updater.exe",1)
+			FileInstall("./Redist/nControl_updater.exe",InstallDir "/Redist/nControl_updater.exe",1)
 			FileInstall("./Img/button_launchLightGG.png",InstallDir "/Img/button_launchLightGG.png",1)
 			FileInstall("./Img/button_launchLightGG_down.png",InstallDir "/Img/button_launchLightGG_down.png",1)
 			FileInstall("./Img/button_launchDIM.png",InstallDir "/Img/button_launchDIM.png",1)
@@ -296,7 +296,7 @@ CheckForUpdates(msg,*) {
 		latestVersion := whr.ResponseText
 		currentVersion := fileRead("./nControl_currentBuild.dat")
 		if (currentVersion < latestVersion) {
-			run("./nControl_updater.exe")
+			run("./Redist/nControl_updater.exe")
 		} else {
 			 if(msg)
 				pbNotify("No upgraded needed`nCurrent Version: " currentVersion "`nLatest Version: " latestVersion,3000)

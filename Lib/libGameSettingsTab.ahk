@@ -144,7 +144,7 @@ d2LaunchDIMButtonClicked(*) {
 d2LaunchLightGGbuttonClicked(*) {
 	ui.d2LaunchLightGGbutton.value := "./Img/button_launchLightGG_down.png"
 	setTimer () => ui.d2LaunchLightGGbutton.value := "./Img/button_launchLightGG.png",-400
-	run("chrome.exe http://www.light.gg")	
+	run("chrome.exe https://www.light.gg/god-roll/roll-appraiser/")	
 }
 d2SprintKeyClicked(*) {
 	DialogBox('Press "Hold to Sprint" Key`n Bound in Destiny 2',"Center")
@@ -231,13 +231,34 @@ d2HoldWalkKeyClicked(*) {
 	DialogBoxClose()
 }
 
+HotIf(readyToRun)
+	hotKey("w",startRunning)
+HotIf()
+
+HotIf(d2IsRunning)
+	hotKey("w up",stopRunning)
+hotIf()
+
+d2IsRunning(*) {
+	if getKeyState(cfg.d2SprintKey)
+		return 1
+	else
+		return 0
+}
+
+
 HotIfWinActive("ahk_exe destiny2.exe")
 	hotKey("~" cfg.d2holdWalkKey,holdToWalk)
-	hotKey("w up",stopRunning)
-	hotKey("w",startRunning)
 	hotKey(cfg.d2ToggleWalkKey,toggleToWalk)
 	hotKey("r",d2reload)
 HotIf()
+
+readyToRun(*) {
+	if (winActive("ahk_exe destiny2.exe") && cfg.d2AlwaysRunEnabled && !(getKeyState("LButton") || getKeyState("RButton") || getKeyState(cfg.d2HoldWalkKey)))
+		Return 1
+	else
+		Return 0
+}
 
 holdToWalk(*) {
 	if ui.d2Running 
@@ -257,14 +278,8 @@ stopRunning(*) {
 }
 
 startRunning(*) {
-	if cfg.d2AlwaysRunEnabled && !getKeyState("LButton") && !getKeyState("RButton") && !getKeyState(cfg.d2HoldWalkKey) {
-		ui.d2Running := true
-		send("{w down}{" strLower(cfg.d2sprintKey) " down}")
-	} else {
-		send("{w down}")
-		keyWait("w","L")
-		send("{w}")
-	}
+	ui.d2Running := true
+	send("{w down}{" strLower(cfg.d2sprintKey) " down}")
 }
 
 toggleToWalk(*) {
