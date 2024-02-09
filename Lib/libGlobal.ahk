@@ -840,6 +840,12 @@ resetWindowPosition(*) {
 exitFunc(ExitReason,ExitCode) {
 	debugLog("Exit Command Received")
 	ui.MainGui.Opt("-AlwaysOnTop")
+	winSetTransparent(0,ui.titleBarButtonGui)
+	winSetTransparent(0,ui.afkGui)
+	winSetTransparent(0,ui.gameSettingsGui)
+	winSetTransparent(0,ui.mainGui)
+	if (ui.topDockEnabled)
+			ui.mainGui.move(ui.prevGuiX,ui.prevGuiY,ui.prevGuiW,ui.prevGuiH)
 
 	If !InStr("Logoff Shutdown Reload Single Close",ExitReason)
 	{

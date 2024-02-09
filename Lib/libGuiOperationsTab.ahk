@@ -76,7 +76,7 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 	ui.MainGui.SetFont("s14","Calibri Thin")
 
 	ui.OpsDockButton := ui.MainGui.AddPicture("x38 y35 w27 h27 section Background" cfg.ThemeButtonReadyColor,"./Img/button_dockLeft_ready.png")
-	ui.OpsDockButton.OnEvent("Click",ToggleGuiCollapse)
+	ui.OpsDockButton.OnEvent("Click",toggleTopDock)
 	ui.OpsDockButton.ToolTip 		:= "Dock AFK Panel"
 	
 
@@ -502,7 +502,7 @@ RefreshAfkRoutine(*) {
 			cfg.win1class := 1 
 		} 
 		
-		if (cfg.win1class > 0) && (cfg.win2class <= ui.profileList.length) {
+		if (cfg.win1class > 0) && (cfg.win1class <= ui.profileList.length) {
 			if (StrSplit(a_loopReadLine,',')[1] == ui.profileList[cfg.win1class]) 
 			{
 				win1afk.routine.text .= "  " A_LoopReadLine "`n"
@@ -570,7 +570,8 @@ refreshWinHwnd(*) { ;Performs Window Discovery, Game Identification and Gui Data
 			ui.win%a_index%hwndText.opt("Background" cfg.themePanel4Color)
 			ui.autoFireWin%A_Index%Button.Opt("Background" cfg.ThemePanel4Color)
 			ui.autoFireWin%A_Index%Button.Value := "./Img/button_autoFire" A_Index "_on.png"
-			setTimer(noGameAlert,600)
+			ui.afkWin%a_index%classDDL.opt("disabled")
+			ui.win%a_index%classDDL.opt("disabled")
 			ui.gameDDL.setFont("c" cfg.themeFont1color,"calibri bold")
 			ui.gameDDL.opt("background" cfg.themeEditboxColor)
 			ui.gameDDL.redraw()
@@ -630,6 +631,8 @@ refreshWinHwnd(*) { ;Performs Window Discovery, Game Identification and Gui Data
 			if !(winExist("ahk_id " ui.win%winNumber%hwnd)) {
 				ui.win%WinNumber%enabledToggle.Opt("+Disabled Background" cfg.ThemeDisabledColor)
 				ui.win%WinNumber%enabledToggle.Value := cfg.toggleOff
+				ui.opsWin%winNumber%classDDL.opt("disabled")
+				ui.win%winNumber%classDDL.opt("disabled")
 			}
 			
 			; else {
@@ -643,7 +646,6 @@ refreshWinHwnd(*) { ;Performs Window Discovery, Game Identification and Gui Data
 			if !(cfg.win%winNumber%disabled) && (winExist("ahk_id " ui.win%winNumber%hwnd)) {
 				ui.win%WinNumber%EnabledToggle.Opt("Background" cfg.themeButtonOnColor)
 				ui.win%WinNumber%EnabledToggle.Value := cfg.toggleOn
-				setTimer(noGameAlert,0)
 
 				ui.win%WinNumber%ClassDDL.Opt("-Disabled")
 				ui.afkWin%WinNumber%ClassDDL.Opt("-Disabled")
@@ -652,7 +654,7 @@ refreshWinHwnd(*) { ;Performs Window Discovery, Game Identification and Gui Data
 				ui.autoFireWin%WinNumber%Button.Opt("-Disabled Background" cfg.ThemeButtonReadyColor)
 				ui.autoFireWin%WinNumber%Button.Value := "./Img/button_autoFire" WinNumber "_ready.png"				
 				ui.win%WinNumber%enabledToggle.Opt("-Disabled Background" cfg.ThemeButtonOnColor)
-				setTimer(noGameAlert,0)
+
 			} else {
 				ui.Win%WinNumber%ProcessName.SetFont("c" cfg.ThemeFont4Color)
 				ui.Win%WinNumber%Name.SetFont("c" cfg.ThemeFont4Color)
@@ -665,7 +667,8 @@ refreshWinHwnd(*) { ;Performs Window Discovery, Game Identification and Gui Data
 				ui.win%winNumber%gridLines.redraw()
 				ui.autoFireWin%WinNumber%Button.Opt("Disabled Background" cfg.ThemePanel4Color)
 				ui.autoFireWin%WinNumber%Button.Value := "./Img/button_autoFire" WinNumber "_disabled.png"
-				setTimer(noGameAlert,600)
+				ui.opsWin%winNumber%classDDL.opt("disabled")
+				ui.win%winNumber%classDDL.opt("disabled")
 			}
 		}
 		ui.buttonSwapHwnd.Value := cfg.HwndSwapEnabled ? "./Img/button_swapHwnd_enabled.png" : "./Img/button_swapHwnd_disabled.png"
@@ -682,6 +685,8 @@ refreshWinHwnd(*) { ;Performs Window Discovery, Game Identification and Gui Data
 		ui.Win%winNum%HwndText.Opt("Background" cfg.ThemePanel4Color)
 		ui.autoFireWin%winNum%Button.Opt("Background" cfg.ThemePanel4Color)
 		ui.autoFireWin%winNum%Button.Value := "./Img/button_autoFire" winNum "_on.png"
+		ui.opsWin%winNumber%classDDL.opt("disabled")
+		ui.win%winNumber%classDDL.opt("disabled")
 		ui.win%winNumber%GridLines.opt("background" cfg.themeDark2Color)
 		Loop ui.AllGameWindowsList.Length {
 			if (WinGetProcessName("ahk_id " ui.AllGameWindowsList[winNum]) != "Windows10Universal.exe") 

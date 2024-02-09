@@ -822,3 +822,66 @@ ui.MainGuiTabs.UseTab("Sys")
 	drawOutline(ui.MainGui,103,62,156,76,cfg.ThemeBright1Color,cfg.ThemeBright1Color,2) ;Win1 Info Frame
 
 }
+ui.topDockEnabled := false
+ui.topDocPrevTab	:= ""
+toggleTopDock(*) {
+		(ui.topDockEnabled := !ui.topDockEnabled)
+			? topDockOn()
+			: topDockOff()
+	}
+	
+topDockOn() {
+	ui.topDockPrevTab := ui.mainGuiTabs.Text
+	ui.mainGuiTabs.choose(cfg.mainTabList[1])
+	winSetTransparent(0,ui.titleBarButtonGui)
+	transparent := 255
+	while transparent > 20 {
+		transparent -= 10
+		winSetTransparent(transparent,ui.mainGui)
+		sleep(10)
+	}
+	winSetTransparent(0,ui.mainGui)
+
+	winGetPos(&vX,&vY,&vW,&vH,ui.mainGui)
+	ui.prevGuiX := vX
+	ui.prevGuiY := vY
+	ui.prevGuiW := vW
+	ui.prevGuiH := vH
+	ui.mainGui.move((a_screenWidth/2)-(vW/2),-35,,63)
+	winSetRegion("38-35 w490 h25",ui.mainGui)	
+	while transparent < 80 {
+		transparent += 10
+		winSetTransparent(transparent, ui.mainGui)
+		sleep(10)
+	}
+	guiVis(ui.titleBarButtonGui,false)
+	winSetTransparent(90,ui.mainGui)
+	ui.opsDockButton.opt("background" cfg.themeButtonOnColor)
+}
+
+topDockOff(*) {
+	transparent := 255
+	winSetTransparent(0,ui.titleBarButtonGui)
+	while transparent > 10 {
+		transparent -= 10
+		winSetTransparent(transparent,ui.mainGui)
+		sleep(10)
+	}
+	winSetTransparent(0,ui.mainGui)
+	winSetTransColor("Off",ui.titleBarButtonGui)
+	winSetRegion(,ui.mainGui)
+	guiVis(ui.titleBarButtonGui,false)
+	
+	
+	ui.mainGui.move(ui.prevGuiX,ui.prevGuiY,ui.prevGuiW,ui.prevGuiH)
+	
+while transparent < 245 {
+		transparent += 10
+		winSetTransparent(transparent, ui.mainGui)
+		sleep(10)
+	}
+	winSetTransparent(255,ui.mainGui)
+	ui.mainGuiTabs.choose(ui.topDockPrevTab)
+	guivis(ui.titleBarbuttonGui,true)
+	ui.opsDockButton.opt("background" cfg.themeButtonReadyColor)
+}
