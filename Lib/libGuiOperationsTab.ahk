@@ -112,7 +112,6 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 	ui.GameDDL := ui.MainGui.AddDropDownList("x+2 ys w150 Background" cfg.ThemeEditboxColor " -E0x200 Choose" cfg.game,cfg.GameList)
 	ui.GameDDL.ToolTip := "Select the Game You Are Playing"
 	ui.GameDDL.OnEvent("Change",ChangeGameDDL)
-
 	ui.GameAddButton := ui.MainGui.AddPicture("ys x+2 w27 h27 section Background" cfg.ThemeButtonReadyColor,"./Img/button_plus_ready.png")
 	ui.GameAddButton.OnEvent("Click",AddGame)
 	ui.GameAddButton.ToolTip := "Add New Game to List"
@@ -120,9 +119,11 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 	ui.GameRemoveButton.OnEvent("Click",RemoveGame)
 	ui.GameRemoveButton.ToolTip := "Remove Selected Game from List"
 
-
-	ui.MainGuiTabs.Focus()
-
+	unFocusOpsDDL(*) {
+		ui.mainGuiTabs.focus()
+	}
+	unFocusOpsDDL()
+	
 	ui.MainGui.SetFont("s10 c" cfg.ThemeFont1Color,"Calibri")	
 	ui.GameWindowsListBox := ui.MainGui.AddListBox("x38 y+1 w0 r10 section hidden Background" cfg.ThemePanel1Color " -E0x200 multi",ui.gameWindowsList)
 	ui.GameWindowsListBox.ToolTip := "List of available game windows in session"
@@ -162,12 +163,12 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 		ui.opsWin1AfkStatus.setFont("s14")
 		ui.opsWin1AfkIcon := ui.MainGui.AddPicture("ys section w25 h30 Background" cfg.ThemePanel1Color,"./Img/sleep_icon.png")
 
-		ui.Win1ClassDDL := ui.MainGui.AddDDL("ys-2 x+-2 w155 r6 AltSubmit choose" cfg.win1class " Background" cfg.ThemeEditBoxColor, ui.ProfileList)
+		ui.Win1ClassDDL := ui.MainGui.AddDDL("ys-2 x+-2 w154 r6 AltSubmit choose" cfg.win1class " Background" cfg.ThemeEditBoxColor, ui.ProfileList)
 		ui.Win1ClassDDL.SetFont("s14")
 		ui.Win1ClassDDL.OnEvent("Change",opsWin1ClassChange)
 		PostMessage("0x153", -1, 26,, "AHK_ID " ui.Win1ClassDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153
 		PostMessage("0x153", 0, 26,, "AHK_ID " ui.Win1ClassDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153	
-		ui.OpsAfkButton := ui.MainGui.AddPicture("ys x+0 w47 h48 section Background" cfg.ThemeButtonReadyColor,"./Img/button_afk_ready.png")
+		ui.OpsAfkButton := ui.MainGui.AddPicture("ys x+1 w47 h48 section Background" cfg.ThemeButtonReadyColor,"./Img/button_afk_ready.png")
 		ui.OpsAfkButton.OnEvent("Click",ToggleAFK)
 		ui.OpsAfkButton.ToolTip := "Toggle AFK"
 	

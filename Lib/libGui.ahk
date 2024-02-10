@@ -82,7 +82,7 @@ initGui(&cfg, &ui) {
 	WinSetTransparent(0,ui.titleBarButtonGui)
 	winSetTransparent(0,ui.gameSettingsGui)
 	
-	ui.titleBarButtonGui.Show("x" cfg.GuiX " y" cfg.GuiY-3 " w565 h218 NoActivate")
+	ui.titleBarButtonGui.Show("x" cfg.GuiX " y" cfg.GuiY " w565 h218 NoActivate")
 	ui.MainGui.Show("x" cfg.GuiX " y" cfg.GuiY " w562 h214 NoActivate")
 
 	ui.MainGuiTabs.Choose(cfg.mainTabList[cfg.activeMainTab])
