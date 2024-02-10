@@ -849,13 +849,13 @@ topDockOn() {
 	ui.prevGuiH := vH
 	ui.mainGui.move((a_screenWidth/2)-(vW/2),-35,,63)
 	winSetRegion("38-35 w490 h25",ui.mainGui)	
-	while transparent < 80 {
+	while transparent < 140 {
 		transparent += 10
 		winSetTransparent(transparent, ui.mainGui)
 		sleep(10)
 	}
 	guiVis(ui.titleBarButtonGui,false)
-	winSetTransparent(90,ui.mainGui)
+	winSetTransparent(150,ui.mainGui)
 	ui.opsDockButton.opt("background" cfg.themeButtonOnColor)
 }
 

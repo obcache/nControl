@@ -403,6 +403,7 @@ cfgLoad(&cfg, &ui) {
 
 
 	cfg.AutoDetectGame			:= IniRead(cfg.file,"Game","AutoDetectGame",true)
+	cfg.excludedProcesses		:= IniRead(cfg.file,"Game","ExcludedProcesses",true)
 	cfg.gameModuleList			:= strSplit(iniRead(cfg.file,"Game","GameModuleList","World//Zero,Destiny2,CS2,Fortnite"),",")
 	cfg.GameList				:= StrSplit(IniRead(cfg.file,"Game","GameList","Roblox,Rocket League"),",")
 	cfg.mainTabList				:= strSplit(IniRead(cfg.file,"Interface","MainTabList","Sys,AFK,Game,Dock,Setup,Audio"),",")
@@ -491,6 +492,7 @@ WriteConfig() {
 	}
 	iniWrite(rtrim(cfg.gamingStartProcString,","),cfg.file,"System","GamingStartProcesses")
 	iniWrite(rtrim(cfg.gamingStopProcString,","),cfg.file,"System","GamingStopProcesses")
+	iniWrite(cfg.excludedProcesses,cfg.file,"Game","ExcludedProcesses")
 	IniWrite(cfg.autoDetectGame,cfg.file,"Game","AutoDetectGame")
 	iniWrite(cfg.excludedApps,cfg.file,"System","ExcludedApps")
 	IniWrite(cfg.game,cfg.file,"Game","Game")
