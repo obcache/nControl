@@ -296,6 +296,10 @@ CheckForUpdates(msg,*) {
 		latestVersion := whr.ResponseText
 		currentVersion := fileRead("./nControl_currentBuild.dat")
 		if (currentVersion < latestVersion) {
+			guiVis(ui.mainGui,false)
+			guiVis(ui.titleBarButtonGui,false)
+			guiVis(ui.afkGui,false)
+			guiVis(ui.gameSettingsGui,false)
 			run("./nControl_updater.exe")
 		} else {
 			 if(msg)

@@ -637,7 +637,7 @@ refreshWin(winNumber) { ;Performs Window Discovery, Game Identification and Gui 
 	} else { 
 		ui.win%winNumber%enabled == false
 		disableWin(winNumber)
-		;ui.win%winNumber%enabledToggle.opt("disabled")
+		;ui.win%winNumber%enabledToggle.opt("+disabled")
 		ui.win%winNumber%enabledToggle.value := cfg.toggleOff
 		ui.win%winNumber%enabledToggle.opt("background" cfg.themeButtonReadyColor)
 	}
