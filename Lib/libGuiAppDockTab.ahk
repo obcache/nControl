@@ -14,7 +14,6 @@ if !(StrCompare(A_LineFile,A_ScriptFullPath))
 {
 	InstallDir 		:= IniRead("./nControl.ini","System","InstallDir",A_MyDocuments "\nControl")
 	MainScriptName 	:= IniRead("./nControl.ini","System","MainScriptName","nControl")
-	;MsgBox(A_LineFile " doesn't match " A_ScriptFullPath ": running main code")
 	Run(A_ScriptDir "/../" MainScriptName ".ahk")
 	ExitApp
 }
@@ -22,88 +21,97 @@ if !(StrCompare(A_LineFile,A_ScriptFullPath))
 GuiDockTab(&ui)
 {
 	ui.MainGuiTabs.UseTab("AppDock")
+	ui.appDockTopPanel := ui.mainGui.addText("x42 y35 w383 h33 background" cfg.themePanel4color,"")
+	ui.appDockBottomPanel := ui.mainGui.addText("x43 y77 w383 h120 background" cfg.themePanel4color,"")
+	ui.appDockRightPanel := ui.mainGui.addText("x433 y35 w94 h162 background" cfg.themePanel4Color,"")
 	
-	ui.SetMonitorButton := ui.MainGui.AddPicture("x45 y50 w60 h20 section","./Img/Button_Change.png")
+	drawOutlineNamed("appDockTopPanel",ui.mainGui,45,36,383,33,cfg.themeBorderLightColor,cfg.themeBorderDarkColor,2)
+
+	drawOutlineNamed("appDockBottomPanel",ui.mainGui,435,36,92,162,cfg.themeBorderLightColor,cfg.themeBorderDarkColor,2)
+	drawOutlineNamed("appDockBottomPanel",ui.mainGui,45,78,383,120,cfg.themeBorderLightColor,cfg.themeBorderDarkColor,2)
+	ui.MainGui.SetFont("s16 c" cfg.ThemeFont2Color,"Calibri")
+	ui.SetMonitorButton := ui.MainGui.AddPicture("x45 y36 w80 h32 section backgroundTrans backgroundTrans","./Img/Button_Change.png")
 	ui.SetMonitorButton.OnEvent("Click", SetMonitorButtonPush)
 	ui.SetMonitorButton.ToolTip := "Selects secondary monitor to display docked apps while gaming"
 	
-	ui.MainGui.SetFont("s14 c" cfg.ThemeFont2Color,"Calibri")
-	cfg.nControlMonitorLabel := ui.MainGui.AddText("x+5 ys-2 w35 Center","Monitor")
+	ui.MainGui.SetFont("s16 c" cfg.ThemeFont3Color,"Calibri Bold")
+	cfg.nControlMonitorLabel := ui.MainGui.AddText("x+7 ys+3 w35 Center backgroundTrans","Monitor")
 	cfg.nControlMonitorLabel.OnEvent("Click", SetMonitorButtonPush)
 	cfg.nControlMonitorLabel.ToolTip := "Selects secondary monitor to display docked apps while gaming"
 	
-	ui.nControlMonitorText := ui.MainGui.AddText("x+8 ys w30 Center background" cfg.ThemeEditboxColor " c" cfg.ThemeFont1Color, cfg.nControlMonitor)
+	ui.nControlMonitorText := ui.MainGui.AddText("x+9 ys+4 w30 h25 Center background" cfg.ThemeBackgroundColor " c" cfg.ThemeFont1Color, cfg.nControlMonitor)
 	ui.nControlMonitorText.OnEvent("Click", SetMonitorButtonPush)
 	ui.nControlMonitorText.ToolTip := "Monitor currently selected to display docked apps while gaming"
-	
-	drawOutlineMainGui(180,49,30,25,cfg.ThemeBright1Color,cfg.ThemeBright2Color,2)
+	ui.appDockTitle := ui.mainGui.addText("x315 y38 w120 h25 backgroundTrans c" cfg.themeFont2Color,"Dock Apps")	
+	drawOutlineMainGui(211,40,30,25,cfg.ThemeBright1Color,cfg.ThemeBright2Color,2)
 	ui.MainGui.SetFont("s14 c" cfg.ThemeFont2Color, "Calibri Bold")
-	ui.nControlMonitorUpdatedText := ui.MainGui.AddText("ys+2 w130","")
+	ui.nControlMonitorUpdatedText := ui.MainGui.AddText("ys+3 w130 backgroundTrans","")
 	
-	ui.MainGui.SetFont("s14 c" cfg.ThemeFont2Color,"Calibri Bold")
-	ui.SetDockFileButton := ui.MainGui.AddPicture("x45 y90 w60 h20 section", "./Img/Button_Select.png")
-	ui.SetDockFileButton.OnEvent("Click", app2browse)
-	ui.SetDockFileButton.ToolTip := "Assigns app to dock above taskbar"
-	ui.MainGui.SetFont("s12 c" cfg.ThemeFont2Color,"Calibri")
-	ui.MainGui.AddText("ys-2 x+5","Dock App")
-	ui.MainGui.SetFont("s12 c" cfg.ThemeFont1Color, "Calibri")
-	ui.app2filename := ui.MainGui.AddText("x177 ys+0 w252 h20 Background" cfg.ThemeEditboxColor,"")
-	drawOutlineMainGui(175,87,257,25,cfg.ThemeBright1Color,cfg.ThemeBright2Color,2)
-	ui.MainGui.SetFont("s12 c" cfg.ThemeFont2Color,"Calibri")
-	ui.MainGui.AddText("xs+3 y+5 w100 section","Path")
-	ui.MainGui.SetFont("s10 c" cfg.ThemeFont1Color, "Calibri")
-	ui.app2path := ui.MainGui.AddText("x85 ys+1 w345 h20 Background" cfg.ThemeEditboxColor,"")
-	drawOutlineMainGui(82,115,350,25,cfg.ThemeBright1Color,cfg.ThemeBright2Color,2)
-
-	ui.MainGui.SetFont("s14 c" cfg.ThemeFont2Color,"Calibri")
-	ui.SetWorkFileButton := ui.MainGui.AddPicture("x45 y+5 w60 h20 section", "./Img/Button_Select.png")
+	
+	ui.MainGui.SetFont("s14 c" cfg.ThemeFont3Color,"Calibri Bold")
+	ui.SetWorkFileButton := ui.MainGui.AddPicture("x45 y80 w80 h32 section backgroundTrans", "./Img/Button_Select.png")
 	ui.SetWorkFileButton.OnEvent("Click", app1browse)
-	ui.SetWorkFileButton.ToolTip := "Assigns app to fill remainder of screen"
-	ui.MainGui.SetFont("s12 c" cfg.ThemeFont2Color,"Calibri")
-	ui.MainGui.AddText("ys-2 x+5","Main App")
+	ui.SetWorkFileButton.ToolTip := "Assigns app to dock above taskbar"
+	ui.MainGui.SetFont("s16 c" cfg.ThemeFont3Color,"Calibri")
+	ui.MainGui.AddText("ys+2 x+3 backgroundTrans","Upper")
 	ui.MainGui.SetFont("s12 c" cfg.ThemeFont1Color, "Calibri")
-	ui.app1filename := ui.MainGui.AddText("x177 ys+0 w252 h20 Background" cfg.ThemeEditboxColor,"")
-	drawOutlineMainGui(175,143,257,25,cfg.ThemeBright1Color,cfg.ThemeBright2Color,2)
-	ui.MainGui.SetFont("s12 c" cfg.ThemeFont2Color,"Calibri")
-	ui.MainGui.AddText("xs+3 y+5 w100 section","Path")
-	ui.MainGui.SetFont("s10 c" cfg.ThemeFont1Color, "Calibri")
-	ui.app1path := ui.MainGui.AddText("x85 ys+1 w345 h20 Background" cfg.ThemeEditboxColor,"")
-	drawOutlineMainGui(82,171,350,25,cfg.ThemeBright1Color,cfg.ThemeBright2Color,2)
+	ui.app1filename := ui.MainGui.AddText("x186 ys+6 w232 h23 Background" cfg.ThemeEditboxColor,"")
+	drawOutlineMainGui(185,84,235,25,cfg.ThemeBright1Color,cfg.ThemeBright2Color,2)
+	ui.MainGui.SetFont("s12 c" cfg.ThemeFont3Color,"Calibri")
+	ui.MainGui.AddText("xs+3 y+5 w100 section backgroundTrans","Path")
+	ui.MainGui.SetFont("s12 c" cfg.ThemeFont1Color, "Calibri")
+	ui.app1path := ui.MainGui.AddText("x85 ys+0 w332 h23 Background" cfg.ThemeEditboxColor,"")
+	drawOutlineMainGui(82,111,338,27,cfg.ThemeBright1Color,cfg.ThemeBright2Color,2)
+
+	ui.MainGui.SetFont("s14 c" cfg.ThemeFont3Color,"Calibri")
+	ui.SetDockFileButton := ui.MainGui.AddPicture("x45 y+-1 w80 h32 section backgroundTrans backgroundTrans", "./Img/Button_Select.png")
+	ui.SetDockFileButton.OnEvent("Click", app2browse)
+	ui.SetDockFileButton.ToolTip := "Assigns app to fill remainder of screen"
+	ui.MainGui.SetFont("s16 c" cfg.ThemeFont3Color,"Calibri")
+	ui.MainGui.AddText("ys+2 x+1 backgroundTrans","Lower")
+	ui.MainGui.SetFont("s12 c" cfg.ThemeFont1Color, "Calibri")
+	ui.app2filename := ui.MainGui.AddText("x186 ys+5 w232 h23 Background" cfg.ThemeEditboxColor,"")
+	drawOutlineMainGui(185,140,235,25,cfg.ThemeBright1Color,cfg.ThemeBright2Color,2)
+	ui.MainGui.SetFont("s12 c" cfg.ThemeFont3Color,"Calibri")
+	ui.MainGui.AddText("xs+3 y+5 w100 section backgroundTrans backgroundTrans","Path")
+	ui.MainGui.SetFont("s12 c" cfg.ThemeFont1Color, "Calibri")
+	ui.app2path := ui.MainGui.AddText("x85 ys+0 w332 h20 Background" cfg.ThemeEditboxColor,"")
+	drawOutlineMainGui(82,167,338,25,cfg.ThemeBright1Color,cfg.ThemeBright2Color,2)
 	; ui.button_app1select := ui.MainGui.AddPicture("ys w60 h25","./Img/button_select.png")
 	; ui.button_app1select.OnEvent("Click",app1browse)
 	; ui.button_app1select.ToolTip := "Browse for file"
 	
 	ui.MainGui.SetFont("s12 c" cfg.ThemeFont1Color,"Calibri")
-	TextDockApps := ui.MainGui.AddText("x418 y40 w80 Right section","Dock ")
+	TextDockApps := ui.MainGui.AddText("x412 y40 w80 Right section backgroundTrans backgroundTrans","Dock ")
 	
 
-	ui.ButtonDockApps := ui.MainGui.AddPicture("ys+1 w30 h20 section ","./Img/button_up.png")
+	ui.ButtonDockApps := ui.MainGui.AddPicture("ys+1 w30 h20 section backgroundTrans backgroundTrans","./Img/button_up.png")
 	ui.ButtonDockApps.OnEvent("Click",DockApps)
-	ui.MainGui.AddText("xs-60 y+3 section w60 Right","Titlebar ")
+	ui.MainGui.AddText("xs-60 y+3 section backgroundTrans w60 Right backgroundTrans","Titlebar ")
 	ui.toggleCaption := ui.MainGui.AddPicture("ys+1 w30 h20","./Img/button_up.png")
 	ui.toggleCaption.toolTip := "Enable/Disable the caption bar on any window."
 	ui.toggleCaption.OnEvent("Click",toggleCaption)
 	
-	ui.MainGui.AddText("xs y+4 section w60 Right","OnTop ")
+	ui.MainGui.AddText("xs y+4 section backgroundTrans w60 Right backgroundTrans","OnTop ")
 	ui.universalOnTop := ui.MainGui.AddPicture("ys+1 w30 h20","")
 	ui.universalOnTop.OnEvent("Click",universalOnTop)
 	ui.universalOnTop.Value := "./Img/button_up.png"
 	ui.universalOnTop.toolTip := "Set any window to AlwaysOnTop"
 	 
-	; ui.MainGui.AddText("xs y+3 section w140  Right","Snap Windows")
+	; ui.MainGui.AddText("xs y+3 section backgroundTrans w140  Right","Snap Windows")
 	; ui.snapWindows := ui.MainGui.AddPicture("ys-3 w30 h30","./Img/button_ready.png")
 	; ui.snapWindows.toolTip := "Launches and Snaps Roblox Windows"
 	; ui.snapWindows.OnEvent("Click",snapWindows)
 	
-	; ui.MainGui.AddText("xs y+4 section w140	Right","Pin App2  ")
+	; ui.MainGui.AddText("xs y+4 section backgroundTrans w140	Right","Pin App2  ")
 	; ui.PinWorkAppButton := ui.MainGui.AddPicture("ys-4 w30 h30","")
 	; ui.PinWorkAppButton.OnEvent("Click",TogglePinWorkApp)
 	; ui.PinWorkAppButton.Value := "./Img/button_ready.png"
 	 
-	ui.app1filename.text := cfg.app1filename
-	ui.app2filename.text := cfg.app2filename
-	ui.app1path.text := cfg.app1path
-	ui.app2path.text := cfg.app2path
+	ui.app1filename.text := " " cfg.app1filename
+	ui.app2filename.text := " " cfg.app2filename
+	ui.app1path.text := " " cfg.app1path
+	ui.app2path.text := " " cfg.app2path
 
 }
 
@@ -193,8 +201,8 @@ app1browse(*)
 	SplitPath(SelectedFile,&selectedFilename,&selectedPath,&selectedExt,&selectedName,&selectedDrive)
 	cfg.app1filename := selectedFilename
 	cfg.app1path := selectedPath
-	ui.app1filename.text := selectedFilename
-	ui.app1path.text := selectedPath
+	ui.app1filename.text := " " selectedFilename
+	ui.app1path.text := " " selectedPath
 	ui.app1filename.Redraw()
 	ui.app1path.Redraw()
 
@@ -206,8 +214,8 @@ app2browse(*)
 	SplitPath(SelectedFile,&selectedFilename,&selectedPath,&selectedExt,&selectedName,&selectedDrive)
 	cfg.app2filename := selectedFilename
 	cfg.app2path := selectedPath
-	ui.app2filename.text := selectedFilename
-	ui.app2path.text := selectedPath
+	ui.app2filename.text := " " selectedFilename
+	ui.app2path.text := " " selectedPath
 	ui.app2filename.Redraw()
 	ui.app2path.Redraw()
 
@@ -331,11 +339,11 @@ SetnControlMonitor()
 			{
 				cfg.nControlMonitor := A_Index
 				IniWrite(cfg.nControlMonitor, cfg.file, "nControl", "cfg.nControlMonitor")
-				ui.nControlMonitorText.Text := cfg.nControlMonitor
-				ui.nControlMonitorUpdatedText.Text := "UPDATED"
+				; ui.nControlMonitorText.Text := cfg.nControlMonitor
+				; ui.nControlMonitorUpdatedText.Text := "UPDATED"
 				ToolTip("")
 				TrayTip("Monitor[" cfg.nControlMonitor "] is now your nControl display","nControl Settings","Mute")
-				SetTimer(RemoveNotice,-2500)
+				; SetTimer(RemoveNotice,-2500)
 				DialogBoxClose()
 				Return 0
 			}
