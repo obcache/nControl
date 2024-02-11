@@ -1,35 +1,43 @@
-summoner,1,f,200,World//Zero
-summoner,2,e,200,World//Zero
-summoner,3,f,200,World//Zero
-summoner,4,r,200,World//Zero
-summoner,5,f,200,World//Zero
-summoner,6,1,200,World//Zero
-summoner,7,f,200,World//Zero
-summoner,8,x,200,World//Zero
-summoner:rev,1,f,200,World//Zero
-summoner:rev,2,e,200,World//Zero
-summoner:rev,3,f,200,World//Zero
-summoner:rev,4,r,200,World//Zero
-summoner:rev,5,f,200,World//Zero
-summoner:rev,6,1,200,World//Zero
-summoner:rev,7,f,200,World//Zero
-summoner:rev,8,x,200,World//Zero
-spirit archer,1,e,200,World//Zero
-spirit archer,2,f,200,World//Zero
-spirit archer,3,e,200,World//Zero
-spirit archer,4,r,200,World//Zero
-spirit archer,5,e,200,World//Zero
-spirit archer,6,1,200,World//Zero
-spirit archer,7,e,200,World//Zero
-spirit archer,8,x,200,World//Zero
-spirit archer:rev,1,x,200,World//Zero
-spirit archer:rev,2,e,200,World//Zero
-spirit archer:rev,3,1,200,World//Zero
-spirit archer:rev,4,e,200,World//Zero
-spirit archer:rev,5,r,200,World//Zero
-spirit archer:rev,6,e,200,World//Zero
-spirit archer:rev,7,f,200,World//Zero
-spirit archer:rev,8,e,200,World//Zero
+mage of shadows,1,r,350,World//Zero
+mage of shadows,2,e,350,World//Zero
+mage of shadows,3,r,350,World//Zero
+mage of shadows,4,f,350,World//Zero
+mage of shadows,5,r,350,World//Zero
+mage of shadows,6,1,350,World//Zero
+mage of shadows,7,r,350,World//Zero
+mage of shadows,8,x,350,World//Zero
+summoner,1,f,350,World//Zero
+summoner,2,e,350,World//Zero
+summoner,3,f,350,World//Zero
+summoner,4,r,350,World//Zero
+summoner,5,f,350,World//Zero
+summoner,6,1,350,World//Zero
+summoner,7,f,350,World//Zero
+summoner,8,x,350,World//Zero
+summoner:rev,1,f,350,World//Zero
+summoner:rev,2,e,350,World//Zero
+summoner:rev,3,f,350,World//Zero
+summoner:rev,4,r,350,World//Zero
+summoner:rev,5,f,350,World//Zero
+summoner:rev,6,1,350,World//Zero
+summoner:rev,7,f,350,World//Zero
+summoner:rev,8,x,350,World//Zero
+spirit archer,1,e,350,World//Zero
+spirit archer,2,f,350,World//Zero
+spirit archer,3,e,350,World//Zero
+spirit archer,4,r,350,World//Zero
+spirit archer,5,e,350,World//Zero
+spirit archer,6,1,350,World//Zero
+spirit archer,7,e,350,World//Zero
+spirit archer,8,x,350,World//Zero
+spirit archer:rev,1,x,350,World//Zero
+spirit archer:rev,2,e,350,World//Zero
+spirit archer:rev,3,1,350,World//Zero
+spirit archer:rev,4,e,350,World//Zero
+spirit archer:rev,5,r,350,World//Zero
+spirit archer:rev,6,e,350,World//Zero
+spirit archer:rev,7,f,350,World//Zero
+spirit archer:rev,8,e,350,World//Zero
 Malva:Heal-U,1,w,850,Shatterline
 Malva:Heal-U,2,d,650,Shatterline
 Malva:Heal-U,3,q,250,Shatterline

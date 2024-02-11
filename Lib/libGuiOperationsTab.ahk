@@ -75,16 +75,16 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 	ui.win2GridLines := ui.mainGui.addText("x285 y60 w200 h40 background" cfg.themeDark1color,"")
 	ui.MainGui.SetFont("s14","Calibri Thin")
 
-	ui.OpsDockButton := ui.MainGui.AddPicture("x38 y35 w27 h27 section Background" cfg.ThemeButtonReadyColor,"./Img/button_dockLeft_ready.png")
+	ui.OpsDockButton := ui.MainGui.AddPicture("x37 y35 w27 h27 section Background" cfg.ThemeButtonReadyColor,"./Img/button_dockLeft_ready.png")
 	ui.OpsDockButton.OnEvent("Click",toggleTopDock)
 	ui.OpsDockButton.ToolTip 		:= "Dock AFK Panel"
 	
 
 	ui.MainGui.SetFont("s12 c" cfg.ThemeFont3Color,"Calibri Thin")
-	ui.OpsClockModeLabel := ui.MainGui.AddText("x+2 ys+2 section w48 h22 Background" cfg.ThemePanel3Color," Clock")
+	ui.OpsClockModeLabel := ui.MainGui.AddText("x+2 ys+0 section w48 h24 Background" cfg.ThemePanel3Color," Clock")
 	ui.OpsClockModeLabel.SetFont("s8 c" cfg.ThemeFont3Color,"Ariel Bold")
 	
-	ui.OpsClock := ui.MainGui.AddText("x+0 ys w120 Right h22 Background" cfg.ThemePanel3Color " c" cfg.ThemeFont3Color,)
+	ui.OpsClock := ui.MainGui.AddText("x+0 ys w120 Right h24 Background" cfg.ThemePanel3Color " c" cfg.ThemeFont3Color,)
 	ui.OpsClock.SetFont("s16","Orbitron")
 	ui.OpsClock.OnEvent("Click",ChangeClockMode)
 	ui.OpsClock.OnEvent("ContextMenu",ShowClockMenu)
@@ -159,29 +159,29 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 
 		ui.Win2EnabledToggle := ui.MainGui.AddPicture("xs-2 section w69 h25 Background" cfg.ThemeButtonReadyColor, cfg.toggleOff)
 		
-		ui.opsWin1AfkStatus := ui.MainGui.AddText("xs-429 section w49 h30 Background" cfg.ThemePanel1Color,"")
+		ui.opsWin1AfkStatus := ui.MainGui.AddText("xs-429 section w49 h26 Background" cfg.ThemePanel1Color,"")
 		ui.opsWin1AfkStatus.setFont("s14")
-		ui.opsWin1AfkIcon := ui.MainGui.AddPicture("ys section w25 h30 Background" cfg.ThemePanel1Color,"./Img/sleep_icon.png")
+		ui.opsWin1AfkIcon := ui.MainGui.AddPicture("ys section w25 h26 Background" cfg.ThemePanel1Color,"./Img/sleep_icon.png")
 
-		ui.Win1ClassDDL := ui.MainGui.AddDDL("ys-2 x+-2 w154 r6 AltSubmit choose" cfg.win1class " Background" cfg.ThemeEditBoxColor, ui.ProfileList)
-		ui.Win1ClassDDL.SetFont("s14")
+		ui.Win1ClassDDL := ui.MainGui.AddDDL("ys-2 x+-3 w156 r6 AltSubmit choose" cfg.win1class " Background" cfg.ThemeEditBoxColor, ui.ProfileList)
+		ui.Win1ClassDDL.SetFont("s12")
 		ui.Win1ClassDDL.OnEvent("Change",opsWin1ClassChange)
-		PostMessage("0x153", -1, 26,, "AHK_ID " ui.Win1ClassDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153
-		PostMessage("0x153", 0, 26,, "AHK_ID " ui.Win1ClassDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153	
-		ui.OpsAfkButton := ui.MainGui.AddPicture("ys x+1 w47 h48 section Background" cfg.ThemeButtonReadyColor,"./Img/button_afk_ready.png")
+		PostMessage("0x153", -1, 22,, "AHK_ID " ui.Win1ClassDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153
+		PostMessage("0x153", 0, 22,, "AHK_ID " ui.Win1ClassDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153	
+		ui.OpsAfkButton := ui.MainGui.AddPicture("ys x+2 w45 h48 section Background" cfg.ThemeButtonReadyColor,"./Img/button_afk_ready.png")
 		ui.OpsAfkButton.OnEvent("Click",ToggleAFK)
 		ui.OpsAfkButton.ToolTip := "Toggle AFK"
 	
-		ui.Win2ClassDDL := ui.MainGui.AddDDL("x+2 ys-2 w154 r6 section AltSubmit choose" cfg.win2class " Background" cfg.ThemeEditBoxColor, ui.ProfileList)
-		ui.Win2ClassDDL.SetFont("s14")
+		ui.Win2ClassDDL := ui.MainGui.AddDDL("x+2 ys-2 w155 r6 section AltSubmit choose" cfg.win2class " Background" cfg.ThemeEditBoxColor, ui.ProfileList)
+		ui.Win2ClassDDL.SetFont("s12","impact light")
 		ui.Win2ClassDDL.OnEvent("Change",opsWin2ClassChange)
-		PostMessage("0x153", -1, 26,, "AHK_ID " ui.Win2ClassDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153
-		PostMessage("0x153", 0, 26,, "AHK_ID " ui.Win2ClassDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153		
-		ui.opsWin2AfkIcon := ui.MainGui.AddPicture("ys+1 w25 h30 section Background" cfg.ThemePanel1Color,"./Img/sleep_icon.png")
-		ui.opsWin2AfkStatus := ui.MainGui.AddText("x+0 ys section w50 h30 +Background" cfg.ThemePanel1Color,"")
+		PostMessage("0x153", -1, 22,, "AHK_ID " ui.Win2ClassDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153
+		PostMessage("0x153", 0, 22,, "AHK_ID " ui.Win2ClassDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153		
+		ui.opsWin2AfkIcon := ui.MainGui.AddPicture("ys+1 w25 h26 section Background" cfg.ThemePanel1Color,"./Img/sleep_icon.png")
+		ui.opsWin2AfkStatus := ui.MainGui.AddText("x+0 ys section w50 h26 +Background" cfg.ThemePanel1Color,"")
 		UI.opsWin2AfkStatus.setFont("s14")
 
-		ui.autoFireWin1Button := ui.MainGui.AddPicture("x36 y137 section w30 h30 Disabled Background" cfg.ThemeButtonReadyColor,"./Img/button_autoFire1_ready.png")
+		ui.autoFireWin1Button := ui.MainGui.AddPicture("x36 y131 section w30 h30 Disabled Background" cfg.ThemeButtonReadyColor,"./Img/button_autoFire1_ready.png")
 		ui.autoFireWin1Button.Tooltip := "Window1 AutoFire"
 		ui.autoFireWin1Button.OnEvent("Click",autoFireWin1)
 
@@ -191,11 +191,11 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 		
 		ui.OpsProgress1 := ui.MainGui.AddProgress("ys section w158 h28 c" cfg.ThemeFont1Color " Smooth Range0-" cfg.towerInterval " Background" cfg.ThemePanel1Color,0)	
 	
-		ui.OpsTowerButton := ui.MainGui.AddPicture("x+2 ys+18 w47 h47 section Background" cfg.ThemeButtonReadyColor,"./Img/button_tower_ready.png")
+		ui.OpsTowerButton := ui.MainGui.AddPicture("x+2 ys+22 w47 h47 section Background" cfg.ThemeButtonReadyColor,"./Img/button_tower_ready.png")
 		ui.OpsTowerButton.OnEvent("Click",ToggleTower)
 		ui.OpsTowerButton.ToolTip := "Toggle Tower Timer + AFK"
 	
-		ui.OpsProgress2 := ui.MainGui.AddProgress("x+0 ys-17 section w167 h28 c" cfg.ThemeFont1Color " Smooth Range0-" cfg.towerInterval " Background" cfg.ThemePanel1Color,0)	
+		ui.OpsProgress2 := ui.MainGui.AddProgress("x+0 ys-22 section w167 h28 c" cfg.ThemeFont1Color " Smooth Range0-" cfg.towerInterval " Background" cfg.ThemePanel1Color,0)	
 
 		ui.OpsAntiIdle2Button := ui.MainGui.AddPicture("x+0 ys w28 h28 section Background" cfg.ThemeButtonReadyColor,"./Img/button_antiIdle_ready.png")
 		ui.OpsAntiIdle2Button.OnEvent("Click",ToggleAntiIdle2)
@@ -206,7 +206,7 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 		ui.autoFireWin2Button.OnEvent("Click",autoFireWin2)
 		
 
-		ui.OpsStatusLeftTrim := ui.mainGui.AddPicture("x146 y165 w15 h38 section","./Img/label_left_trim.png")
+		ui.OpsStatusLeftTrim := ui.mainGui.AddPicture("x146 y161 w15 h38 section","./Img/label_left_trim.png")
 		ui.OpsStatus1 := ui.MainGui.AddPicture("ys w100 h38 section Background" cfg.ThemeButtonReadyColor,"./Img/label_timer_off.png")  ; XX & YY serve to auto-size the window.
 		ui.OpsStatus2 := ui.MainGui.AddPicture("x+47 ys w100 h38 section Background" cfg.ThemeButtonReadyColor,"./Img/label_timer_off.png")  ; XX & YY serve to auto-size the window.
 		ui.OpsStatusRightTrim := ui.mainGui.AddPicture("ys w15 h38","./Img/label_right_trim.png")
@@ -280,12 +280,12 @@ toggleHwndSwap(*) {
 	
 	ui.win1hwnd := ""
 	ui.win2hwnd := ""
-	Loop 2 {
-		if !cfg.win%a_index%disabled {
-			ui.win%a_index%enabledToggle.Opt("+Disabled Background" cfg.ThemeDisabledColor)
-			ui.win%a_index%enabledToggle.Value := cfg.toggleOff
-		}
-	}
+	; Loop 2 {
+		; if !cfg.win%a_index%disabled {
+			; ui.win%a_index%enabledToggle.Opt("+Disabled Background" cfg.ThemeDisabledColor)
+			; ui.win%a_index%enabledToggle.Value := cfg.toggleOff
+		; }
+	; }
 	RefreshWinHwnd()
 
 }
@@ -555,6 +555,7 @@ gameInfoUpdate(winNumber,OnOff := false) {
 		ui.autoFireWin%winNumber%Button.Value := "./Img/button_autoFire" winNumber "_disabled.png"
 		ui.win%winNumber%classDDL.opt("disabled")
 		ui.afkWin%winNumber%classDDL.opt("disabled")
+		; ui.win%winNumber%enabledToggle.opt("background" cfg.themeDisabledColor)
 
 	}
 }
@@ -615,22 +616,49 @@ refreshWin(winNumber) { ;Performs Window Discovery, Game Identification and Gui 
 	ui.AllGameWindowsList := WinGetList(strReplace(ui.GameDDL.Text,"World//Zero","Roblox"))
 	ui.FilteredGameWindowsList := Array()
 	Loop ui.AllGameWindowsList.Length {
-		if !InStr(cfg.excludedProcesses,WinGetProcessName("ahk_id " ui.AllGameWindowsList[A_Index])) {
+		if !InStr(cfg.excludedApps,WinGetProcessName("ahk_id " ui.AllGameWindowsList[A_Index])) {
 			ui.FilteredGameWindowsList.Push(ui.AllGameWindowsList[A_Index])
 		}
 	}
 
 	ui.win%winNumber%enabled := false
-	if (ui.filteredGameWindowsList.length >= winNumber && winExist("ahk_id " ui.filteredGameWindowsList[origWinNumber])) {
+	if (ui.filteredGameWindowsList.length >= origWinNumber && winExist("ahk_id " ui.filteredGameWindowsList[origWinNumber])) {
 		ui.win%winNumber%enabled := true
 		ui.win%WinNumber%Hwnd := ui.filteredGameWindowsList[origWinNumber]
 		ui.win%winNumber%HwndText.text := ui.Win%WinNumber%Hwnd
 		ui.win%winNumber%Name.text
 		updateWin(winNumber)
+		ui.win%winNumber%enabledToggle.opt("-disabled")
+		if !cfg.win%winNumber%disabled {
+			ui.win%winNumber%enabledToggle.value := cfg.toggleOn
+			ui.win%origWinNumber%enabledToggle.opt("background" cfg.themeButtonOnColor)
+		}	
+
 	} else { 
 		ui.win%winNumber%enabled == false
 		disableWin(winNumber)
+		;ui.win%winNumber%enabledToggle.opt("disabled")
+		ui.win%winNumber%enabledToggle.value := cfg.toggleOff
+		ui.win%winNumber%enabledToggle.opt("background" cfg.themeButtonReadyColor)
 	}
+	
+		ui.Win%winNumber%EnabledToggle.Value := 												;Property in which ternary output will be stored
+		!(cfg.win%winNumber%disabled)					 									;Toggles the bit for the Win%winNumber%Enabled variable
+		? (																		;IF (after being toggled) it is true
+			ui.Win%winNumber%EnabledToggle.Opt("Background" cfg.ThemeButtonOnColor)		;Set BG color of the control to theme's Button-On
+			,cfg.toggleOn														;Returns png path for toggle's On state			
+		) : (																	;ELSE
+			ui.Win%winNumber%EnabledToggle.Opt("Background" cfg.ThemeButtonReadyColor)	;Set BG color of the control to theme's Button-Off
+			,cfg.toggleOff 														;Returns png path for toggle's Off state
+		)
+		
+	
+	if (cfg.win%winNumber%disabled) {
+		gameInfoUpdate(winNumber,false)
+		ui.win%winNumber%enabledToggle.value := cfg.toggleOff
+		ui.win%winNumber%enabledToggle.opt("background" cfg.themeButtonReadyColor)
+	}
+
 }	
 /* 
 

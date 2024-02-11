@@ -54,7 +54,7 @@ GuiAudioTab(&ui,&cfg,&audio)
 	ui.ButtonSetHeadset := ui.MainGui.AddPicture("ys+0 x+0 w25 h25","./Img/button_ready.png")
 	ui.MainGui.SetFont("s11 c" cfg.ThemeFont1Color,"Calibri")
 	ui.HeadsetNameDDL	:= ui.MainGui.AddDropDownList("ys x+0 w210 Background" cfg.ThemeEditboxColor,audioDevices)
-
+	
 	
 	ui.MainGui.SetFont("s12 c" cfg.ThemeFont1Color,"Calibri Bold")
 	ui.MainGui.SetFont("s14 c" cfg.ThemeFont2Color,"Calibri")

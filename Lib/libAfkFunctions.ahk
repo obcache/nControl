@@ -498,13 +498,13 @@ autoFire(initWinNumber := GetWinNumber()) {
 				MouseClick("Left",WinW-50,WinH-120,2)
 			}
 			;debugLog("activating win: " winNumber)
-			Sleep(150)
+			Sleep(350)
 			;debugLog("sending: " command " to win: " winNumber)
 			SendEvent("{" Command " Down}")
 			sleep(duration)
 			SendEvent("{" Command " Up}")
 
-			if InStr(ui.Win%WinNumber%ClassDDL.Text,"Summoner") || InStr(ui.Win%WinNumber%ClassDDL.Text,"Archer") 
+			if InStr("mage of shadows,spirit archer,summoner",substr(ui.Win%WinNumber%ClassDDL.Text,5,3))
 			{
 				AutoFire(WinNumber)
 			}	

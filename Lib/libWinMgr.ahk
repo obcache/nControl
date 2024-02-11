@@ -29,8 +29,8 @@ WM_WINDOWPOSCHANGED(wParam, lParam, msg, Hwnd)
 				ui.gameSettingsGui.move(winx+35,winy+35)
 			case ui.titleBarButtonGui.hwnd:
 				if (ui.afkDocked || !ui.afkAnchoredToGui) {
-					winGetPos(&AfkGuiX,&AfkGuiY,,,ui.afkGui)
-					ui.afkGui.move(afkGuiX,afkGuiY+5)
+					winGetPos(&titleGuiX,&titleGuiY,,,ui.titleBarButtonGui)
+					;ui.title.move(titleGuiX,titleGuiY-3)
 				} else {
 					winGetPos(&winX,&winY,,,ui.titleBarButtonGui)
 					ui.gameSettingsGui.move(winx+35,winy+38)
@@ -50,6 +50,7 @@ WM_WINDOWPOSCHANGED(wParam, lParam, msg, Hwnd)
 				if (ui.afkdocked || !ui.afkAnchoredToGui) {
 					winGetPos(&AfkGuiX,&AfkGuiY,,,ui.afkGui)
 					ui.titleBarButtonGui.move(afkGuiX+160,afkGuiY-3)
+					ui.mainGui.move(afkGuiX-45,afkGuiX-35)
 				}
 		} 
 			
