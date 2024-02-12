@@ -580,12 +580,7 @@ WriteConfig() {
 		IniWrite(rtrim(ui.mainTabListString,","),cfg.file,"Interface","MainTabList")
 	}
 	
-	ui.MainGui.GetPos(&GuiX,&GuiY,,)
-	ui.AfkGui.GetPos(&AfkX,&AfkY,,)
-	cfg.GuiX := GuiX
-	cfg.GuiY := GuiY
-	cfg.AfkX := AfkX
-	cfg.AfkY := AfkY
+	saveGuiPos()
 	try {
 			if (ui.AfkDocked)
 			{

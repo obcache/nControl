@@ -75,13 +75,13 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 	ui.win2GridLines := ui.mainGui.addText("x285 y60 w200 h40 background" cfg.themeDark1color,"")
 	ui.MainGui.SetFont("s14","Calibri Thin")
 
-	ui.OpsDockButton := ui.MainGui.AddPicture("x37 y35 w27 h27 section Background" cfg.ThemeButtonReadyColor,"./Img/button_dockLeft_ready.png")
+	ui.OpsDockButton := ui.MainGui.AddPicture("x38 y34 w28 h27 section Background" cfg.ThemeButtonReadyColor,"./Img/button_dockLeft_ready.png")
 	ui.OpsDockButton.OnEvent("Click",toggleTopDock)
 	ui.OpsDockButton.ToolTip 		:= "Dock AFK Panel"
 	
 
 	ui.MainGui.SetFont("s12 c" cfg.ThemeFont3Color,"Calibri Thin")
-	ui.OpsClockModeLabel := ui.MainGui.AddText("x+2 ys+0 section w48 h24 Background" cfg.ThemePanel3Color," Clock")
+	ui.OpsClockModeLabel := ui.MainGui.AddText("x+1 ys+1 section w48 h24 Background" cfg.ThemePanel3Color," Clock")
 	ui.OpsClockModeLabel.SetFont("s8 c" cfg.ThemeFont3Color,"Ariel Bold")
 	
 	ui.OpsClock := ui.MainGui.AddText("x+0 ys w120 Right h24 Background" cfg.ThemePanel3Color " c" cfg.ThemeFont3Color,)
@@ -109,9 +109,11 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 	ui.ButtonHelp.OnEvent("Click",ToggleHelp)
 
 
-	ui.GameDDL := ui.MainGui.AddDropDownList("x+2 ys w150 Background" cfg.ThemeEditboxColor " -E0x200 Choose" cfg.game,cfg.GameList)
+	ui.GameDDL := ui.MainGui.AddDropDownList("x+2 ys+2 w150 Background" cfg.ThemeEditboxColor " -E0x200 Choose" cfg.game,cfg.GameList)
 	ui.GameDDL.ToolTip := "Select the Game You Are Playing"
 	ui.GameDDL.OnEvent("Change",ChangeGameDDL)
+	postMessage("0x153", -1, 18,, "AHK_ID " ui.gameDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153
+	postMessage("0x153", 0, 18,, "AHK_ID " ui.gameDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153
 	ui.GameAddButton := ui.MainGui.AddPicture("ys x+2 w27 h27 section Background" cfg.ThemeButtonReadyColor,"./Img/button_plus_ready.png")
 	ui.GameAddButton.OnEvent("Click",AddGame)
 	ui.GameAddButton.ToolTip := "Add New Game to List"
@@ -172,7 +174,7 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 		ui.OpsAfkButton.OnEvent("Click",ToggleAFK)
 		ui.OpsAfkButton.ToolTip := "Toggle AFK"
 	
-		ui.Win2ClassDDL := ui.MainGui.AddDDL("x+2 ys-2 w155 r6 section AltSubmit choose" cfg.win2class " Background" cfg.ThemeEditBoxColor, ui.ProfileList)
+		ui.Win2ClassDDL := ui.MainGui.AddDDL("x+3 ys-2 w154 r6 section AltSubmit choose" cfg.win2class " Background" cfg.ThemeEditBoxColor, ui.ProfileList)
 		ui.Win2ClassDDL.SetFont("s12","impact light")
 		ui.Win2ClassDDL.OnEvent("Change",opsWin2ClassChange)
 		PostMessage("0x153", -1, 22,, "AHK_ID " ui.Win2ClassDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153
@@ -195,7 +197,7 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 		ui.OpsTowerButton.OnEvent("Click",ToggleTower)
 		ui.OpsTowerButton.ToolTip := "Toggle Tower Timer + AFK"
 	
-		ui.OpsProgress2 := ui.MainGui.AddProgress("x+0 ys-22 section w167 h28 c" cfg.ThemeFont1Color " Smooth Range0-" cfg.towerInterval " Background" cfg.ThemePanel1Color,0)	
+		ui.OpsProgress2 := ui.MainGui.AddProgress("x+2 ys-22 section w165 h28 c" cfg.ThemeFont1Color " Smooth Range0-" cfg.towerInterval " Background" cfg.ThemePanel1Color,0)	
 
 		ui.OpsAntiIdle2Button := ui.MainGui.AddPicture("x+0 ys w28 h28 section Background" cfg.ThemeButtonReadyColor,"./Img/button_antiIdle_ready.png")
 		ui.OpsAntiIdle2Button.OnEvent("Click",ToggleAntiIdle2)
@@ -494,8 +496,8 @@ RefreshAfkRoutine(*) {
 	win1afk.waits			:= array()
 	win2afk.steps			:= array()
 	win2afk.waits			:= array()
-	win1afk.routine.text 	:= ""
-	win2afk.routine.text 	:= ""
+	win1afk.routine.delete()
+	win2afk.routine.delete()
 
 	Loop read, cfg.AfkDataFile
 	{
@@ -503,10 +505,11 @@ RefreshAfkRoutine(*) {
 			cfg.win1class := 1 
 		} 
 		
+		
 		if (cfg.win1class > 0) && (cfg.win1class <= ui.profileList.length) {
 			if (StrSplit(a_loopReadLine,',')[1] == ui.profileList[cfg.win1class]) 
 			{
-				win1afk.routine.text .= "  " A_LoopReadLine "`n"
+				win1afk.routine.add(,strSplit(a_LoopReadLine,',')[1],strSplit(a_LoopReadLine,',')[2],strSplit(a_LoopReadLine,',')[3],strSplit(a_LoopReadLine,',')[4])
 				win1afk.steps.push(StrSplit(a_LoopReadLine,',')[3])
 				win1afk.waits.push(StrSplit(a_loopReadLine,',')[4])
 			}
@@ -518,7 +521,7 @@ RefreshAfkRoutine(*) {
 		if (cfg.win2class > 0) && (cfg.win2class <= ui.profileList.length) {
 			if (StrSplit(a_loopReadLine,',')[1] == ui.profileList[cfg.win2class])
 			{
-				win2afk.routine.text .= "  " A_LoopReadLine "`n"
+				win2afk.routine.add(,strSplit(a_LoopReadLine,',')[1],strSplit(a_LoopReadLine,',')[2],strSplit(a_LoopReadLine,',')[3],strSplit(a_LoopReadLine,',')[4])
 				win2afk.steps.push(StrSplit(a_LoopReadLine,',')[3])
 				win2afk.waits.push(StrSplit(a_loopReadLine,',')[4])
 			}
@@ -549,12 +552,12 @@ gameInfoUpdate(winNumber,OnOff := false) {
 	ui.autoFireWin%winNumber%Button.Opt("Background" bgColor)
 	if OnOff {
 		ui.autoFireWin%winNumber%Button.Value := "./Img/button_autoFire" winNumber "_on.png"
-		ui.win%winNumber%classDDL.opt("-disabled")
-		ui.afkWin%winNumber%classDDL.opt("-disabled")
+		ui.win%winNumber%classDDL.opt("-disabled background" cfg.themePanel3Color " c" cfg.themeFont3Color)
+		ui.afkWin%winNumber%classDDL.opt("-disabled background" cfg.themePanel3Color " c" cfg.themeFont3Color)
 	} else {
 		ui.autoFireWin%winNumber%Button.Value := "./Img/button_autoFire" winNumber "_disabled.png"
-		ui.win%winNumber%classDDL.opt("disabled")
-		ui.afkWin%winNumber%classDDL.opt("disabled")
+		ui.win%winNumber%classDDL.opt("disabled background" cfg.themeDisabledColor " c" cfg.themeFont4Color)
+		ui.afkWin%winNumber%classDDL.opt("disabled background" cfg.themeDisabledColor " c" cfg.themeFont4Color)
 		; ui.win%winNumber%enabledToggle.opt("background" cfg.themeDisabledColor)
 
 	}
@@ -568,9 +571,9 @@ disableWin(winNumber) {
 }
 
 updateWin(winNumber) {
-		ui.win%winNumber%Name.text 			:= winGetTitle("ahk_id " ui.win%winNumber%hwnd)
-		ui.win%winNumber%ProcessName.text 	:= winGetProcessName("ahk_id " ui.win%winNumber%hwnd)
-		ui.win%winNumber%HwndText.text 		:= ui.Win%WinNumber%Hwnd
+		ui.win%winNumber%Name.text 			:= "  " winGetTitle("ahk_id " ui.win%winNumber%hwnd) "  "
+		ui.win%winNumber%ProcessName.text 	:= "  " winGetProcessName("ahk_id " ui.win%winNumber%hwnd) "  "
+		ui.win%winNumber%HwndText.text 		:= "  " ui.Win%WinNumber%Hwnd "  "
 		gameInfoUpdate(winNumber,true)
 }
 

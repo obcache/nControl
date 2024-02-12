@@ -11,10 +11,18 @@ guiAFKTab(&ui,&afk) {
 	global
 	ui.MainGuiTabs.UseTab("AFK")
 	;Any logic needed for the AFK tab beneath the docked AfkGui
-	win1afk.routine := ui.mainGui.addText("x330 y37 section w196 h78 0xC Background" cfg.ThemePanel1Color,"")
-	win2afk.routine := ui.mainGui.addText("xs y+10 w196 h78 0xC Background" cfg.ThemePanel1Color,"")
-	win1afk.routine.SetFont("s10")
-	win2afk.routine.SetFont("s10")
+	win1afk.routine := ui.mainGui.addListView("x325 y37 section w200 h78 0xC 0x2000 -Hdr readOnly Background" cfg.ThemeEditBoxColor,["","","",""])
+	win2afk.routine := ui.mainGui.addListView("xs y+10 w200 h78 0xC 0x2000 -Hdr readOnly Background" cfg.ThemeEditboxColor,["","","",""])
+	win1afk.routine.SetFont("s10 c" cfg.themeFont1color)
+	win2afk.routine.SetFont("s10 c" cfg.themeFont1color)
+	loop 2 {
+	win%a_index%afk.routine.modifyCol(1,105)
+	win%a_index%afk.routine.modifyCol(2,20)
+	win%a_index%afk.routine.modifyCol(3,"autoHdr")
+	win%a_index%afk.routine.modifyCol(4,"autoHdr")
+	
+	
+	}
 	
 	
 	
