@@ -235,7 +235,10 @@ antiIdle1Off() {
 
 toggleTower(*) {
 	global
-
+	if (ui.gameDDL.text != "World//Zero") {
+		notifyOSD("You must be playing World//Zero`nto use this feature",2000,"Center")
+		return
+	}
 	((!cfg.win1disabled && WinExist("ahk_id " ui.win1Hwnd)) 
 	|| (!cfg.win2disabled && WinExist("ahk_id " ui.win2Hwnd)) 
 	|| (ui.towerEnabled))
@@ -255,6 +258,8 @@ toggleTower(*) {
 					,ui.opsStatus1.value 	:= "./Img/label_infinite_tower.png"
 					,ui.opsStatus2.value 	:= "./Img/label_infinite_tower.png"
 					,ui.opsTowerButton.value := "./img/button_tower_on.png"
+					,ui.buttonTower.opt("background" cfg.themeButtonOnColor)
+					,ui.buttonTower.value		:= "./img/button_tower_on.png"
 					,ui.opsTowerButton.opt("Background" cfg.ThemeButtonOnColor)
 					,ui.buttonTower.Opt("Background" cfg.ThemeButtonOnColor)
 					,restartTower()

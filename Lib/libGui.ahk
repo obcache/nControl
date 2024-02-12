@@ -41,7 +41,7 @@ initGui(&cfg, &ui) {
 	ui.MainGui.MarginX := 0
 	ui.MainGui.MarginY := 0
 	ui.MainGui.SetFont("s13 c" cfg.ThemeFont1Color,"Calibri")
-	ui.MainGuiTabs := ui.MainGui.AddTab3("x35 y1 w495 h213 Buttons -Redraw Background" cfg.ThemeBackgroundColor " -E0x200", cfg.mainTabList)
+	ui.MainGuiTabs := ui.MainGui.AddTab3("x35 y1 w495 h213 Buttons -redraw Background" cfg.ThemeBackgroundColor " -E0x200", cfg.mainTabList)
 	ui.MainGuiTabs.OnEvent("Change",TabsChanged)
 ;	ui.MainGuiTabs.Choose(cfg.mainTabList[3])
 	ui.MainGuiTabs.UseTab("")
@@ -81,7 +81,7 @@ initGui(&cfg, &ui) {
 	WinSetTransparent(0,ui.MainGui)
 	WinSetTransparent(0,ui.titleBarButtonGui)
 	winSetTransparent(0,ui.gameSettingsGui)
-	
+	winSetTransparent(0,ui.afkGui)
 	ui.titleBarButtonGui.Show("x" cfg.GuiX " y" cfg.GuiY-5 " w562 h218 NoActivate")
 	ui.MainGui.Show("x" cfg.GuiX " y" cfg.GuiY " w562 h214 NoActivate")
 
@@ -133,8 +133,8 @@ initOSDGui() {
 	ui.AfkGui.MarginX := 5
 	ui.AfkGui.Opt("-Caption -Border +AlwaysOnTop +ToolWindow +0x4000000 +Owner" ui.MainGui.Hwnd)
 	ui.AfkGui.SetFont("s14 c" cfg.ThemeFont1Color,"Calibri")
-	ui.win1statusBg := ui.afkGui.addText("x5 y38 w240 h25 background " cfg.themeEditboxColor,"")
-	ui.win2statusBg := ui.afkGui.addText("x5 y72 w240 h25 background " cfg.themeEditboxColor,"")
+	ui.win1statusBg := ui.afkGui.addText("x5 y38 w85 h25 background " cfg.themeEditboxColor,"")
+	ui.win2statusBg := ui.afkGui.addText("x5 y72 w85 h25 background " cfg.themeEditboxColor,"")
 	
 	ui.buttonDockAfk := ui.AfkGui.AddPicture("x6 y2 w30 h30 section Background" cfg.ThemeButtonReadyColor,"./Img/button_dockLeft_ready.png")
 	ui.buttonDockAfk.OnEvent("Click",ToggleAfkDock)
@@ -161,6 +161,9 @@ initOSDGui() {
 
 	ui.buttonAfkHide := ui.AfkGui.AddPicture("x+0 ys0 w30 h30 hidden Background" cfg.ThemeButtonReadyColor,"./Img/button_hide.png")
 	ui.buttonAfkHide.OnEvent("Click",HideAfkGui)
+	hideAfkGui(*) {
+		guiVis(ui.afkGui,false)
+	}
 	ui.buttonAfkHide.ToolTip := "Minimizes AFK Window to System Tray"
 	
 	ui.buttonPopout := ui.AfkGui.AddPicture("x+-0 ys0 w30 h30 Background" cfg.ThemeButtonReadyColor,"./Img/button_popout_ready.png")
@@ -172,10 +175,11 @@ initOSDGui() {
 	ui.Win1AfkIcon := ui.AfkGui.AddPicture("x+0 ys w28 h23 right background" cfg.themeEditboxColor,"./Img/sleep_icon.png")
 	ui.Win1AfkStatus := ui.AfkGui.AddText("x+0 ys w28 h23 background" cfg.themeEditboxColor,"")
 	ui.AfkGui.SetFont("s12","Calibri")
-	ui.afkWin1ClassDDL := ui.AfkGui.AddDDL("x+0 ys-2 w158 altSubmit choose" cfg.win1class " background" cfg.ThemeEditboxColor, ui.profileList)
+	ui.afkWin1ClassDDL := ui.AfkGui.AddDDL("x+0 ys-1 w158 altSubmit choose" cfg.win1class " background" cfg.ThemeEditboxColor, ui.profileList)
 	ui.afkWin1ClassDDL.OnEvent("Change",afkWin1ClassChange)
-	
-	ui.Win2Label := ui.AfkGui.AddPicture("xs y+9 section w25 h23 background" cfg.themeEditboxColor,"./Img/arrow_right.png")
+	postMessage("0x153", -1, 19,, "AHK_ID " ui.afkWin1ClassDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153
+	postMessage("0x153", 0, 19,, "AHK_ID " ui.afkWin1ClassDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153
+	ui.Win2Label := ui.AfkGui.AddPicture("xs y+8 section w25 h23 background" cfg.themeEditboxColor,"./Img/arrow_right.png")
 	; loop ui.profileList.length {
 		; if (ui.profileList[a_index] == cfg.win1class) {
 			; ui.afkWin1ClassDDL.choose(a_index)
@@ -190,7 +194,8 @@ initOSDGui() {
 	ui.AfkGui.SetFont("s12","Calibri")
 	ui.afkWin2ClassDDL := ui.AfkGui.AddDDL("x+0 ys-2 w158 altSubmit choose" cfg.win2class " background" cfg.ThemeEditboxColor,ui.profileList)
 	ui.afkWin2ClassDDL.OnEvent("Change",afkWin2ClassChange)
-	
+	postMessage("0x153", -1, 20,, "AHK_ID " ui.afkWin2ClassDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153
+	postMessage("0x153", 0, 20,, "AHK_ID " ui.afkWin2ClassDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153
 	ui.AfkGui.SetFont("s16 bold")  ; Set a large font size (32-point).
 	ui.Title := ui.AfkGui.AddText("x0 y+13","")
 	ui.AfkGui.AddPicture("x+-8 ys+30 w10 h28","./Img/label_left_trim.png")
@@ -257,13 +262,15 @@ fadeIn() {
 			Sleep(1)
 		}
 	}
-	
-	ui.mainGui.getPos(&winX,&winY,,)
-	ui.AfkGui.Move(winX+40,winY+50,280,140)
-	ui.titleBarButtonGui.Move(winX,WinY-5)
+	winGetPos(&mainGuiX,&mainGuiY,,,ui.mainGui)
+	drawAfkOutlines()		
+	ui.titleBarButtonGui.Move(mainGuiX,mainGuiY-5)
+	guiVis(ui.afkGui,true)
 	guiVis(ui.MainGui,true)
 	guiVis(ui.titleBarButtonGui,true)
-	; guiVis(ui.opsGui,true)
+	ui.gameSettingsGui.show("x" mainGuiX+35 " y" mainGuiY+35 " w495 h170 noActivate")
+	ui.AfkGui.Show("x" mainGuiX+40 " y" mainGuiY+50 " w280 h140 NoActivate")
+; guiVis(ui.opsGui,true)
 }
 
 autoFireButtonClicked(*) {
@@ -335,8 +342,8 @@ dockAfkGui(*) {
 	ui.AfkAnchoredToGui := false
 	ui.titleBarButtonGui.Opt("Owner" ui.AfkGui.Hwnd)
 	ui.mainGui.opt("owner" ui.afkGui.hwnd)
-	guiVis(ui.titleBarButtonGui,false)	
 	guiVis(ui.mainGui,false)
+	guiVis(ui.titleBarButtonGui,false)	
 	ui.buttonDockAfk.Opt("Hidden")
 	ui.handleBarAfkGui.opt("-hidden")
 
@@ -356,12 +363,12 @@ dockAfkGui(*) {
 
 	ui.buttonUndockAfk.Opt("-Hidden")
 	ui.buttonPopout.Opt("-Hidden")
-	ui.buttonStartAFK.Move(6,3)
-	ui.buttonTower.Move(36,3)
-	ui.buttonAntiIdle1.Move(66,3)
-	ui.buttonAutoFire.Move(96,3)
-	ui.buttonAutoClicker.Move(126,3)
-	ui.buttonPopout.move(156,3)
+	ui.buttonStartAFK.Move(6,2)
+	ui.buttonTower.Move(36,2)
+	ui.buttonAntiIdle1.Move(66,2)
+	ui.buttonAutoFire.Move(96,2)
+	ui.buttonAutoClicker.Move(126,2)
+	ui.buttonPopout.move(156,2)
 	ui.downButton.opt("hidden")
 	ui.exitButton.Move(10,0)
 	ui.buttonUndockAfk.Move(49,0)
@@ -394,13 +401,13 @@ undockAfkGui(*) {
 	ui.HandlebarAfkGui.Opt("Hidden")	
 	ui.buttonPopout.Opt("-Hidden")
 	ui.downButton.opt("-hidden")
-	ui.buttonDockAfk.Move(6,3)
-	ui.buttonStartAFK.Move(36,3)
-	ui.buttonTower.Move(66,3)
-	ui.buttonAntiIdle1.Move(96,3)
-	ui.buttonAutoFire.Move(126,3)
-	ui.buttonAutoClicker.Move(156,3)
-	ui.buttonPopout.move(217,3)
+	ui.buttonDockAfk.Move(6,2)
+	ui.buttonStartAFK.Move(36,2)
+	ui.buttonTower.Move(66,2)
+	ui.buttonAntiIdle1.Move(96,2)
+	ui.buttonAutoFire.Move(126,2)
+	ui.buttonAutoClicker.Move(156,2)
+	ui.buttonPopout.move(217,2)
 	ui.downButton.Move(456,0)
 	ui.exitButton.Move(494,0)
 	; ui.opsGui.Move(winX,winY)
@@ -434,7 +441,7 @@ afkPopoutButtonPushed(*) {
 		WinSetTransparent(210,ui.AfkGui)
 		ui.buttonPopout.Value := "./Img/button_popout_on.png"
 		ui.buttonPopout.Opt("Background" cfg.ThemeButtonOnColor)
-		ui.buttonPopout.move(245,3)
+		ui.buttonPopout.move(245,2)
 	}
 	
 	afkPopIn() {
@@ -447,7 +454,7 @@ afkPopoutButtonPushed(*) {
 		ui.AfkGui.Move(ui.prevGuiX+40,ui.prevGuiY+50,,)
 		ui.buttonPopout.Value := "./Img/button_popout_ready.png"
 		ui.buttonPopout.Opt("Background" cfg.ThemeButtonReadyColor)
-		ui.buttonPopout.move(217,3)
+		ui.buttonPopout.move(217,2)
 		
 		if !(ui.MainGuiTabs.Text == "AFK")
 		{
@@ -457,10 +464,6 @@ afkPopoutButtonPushed(*) {
 	}
 }
 
-
-hideAfkGui(*) {
-	WinSetTransparent(0,ui.AfkGui)
-}
 
 exitButtonPushed(*) {
 	exitMenuShow()
@@ -584,7 +587,7 @@ showGui(*) {
 	; if (guiX < lowX || cfg.guiX > highX)
 		; cfg.guiX := 200
 	; if (guiY < lowY || cfg.guiY > highY)
-		; cfg.guiY := 200
+	; cfg.guiY := 200
 		
 	; ui.mainGui.move(cfg.guiX,cfg.guiY,,)	
 	; if ui.afkDocked {
@@ -693,22 +696,10 @@ tabsChanged(*) {
 				notifyOSD("Tab currently disabled `nby developer",2500)
 			}
 			Return				
-		}a
+		}
 		case (ui.activeTab == "Setup"):
 		{
 			ControlFocus(ui.toggleColorSelector,ui.mainGui)
-		}
-		case (ui.activeTab == "AFK"):
-		{
-			ui.mainGui.getPos(&MainGuiX,&MainGuiY,,)
-			drawAfkOutlines()
-			ui.AfkGui.Show("x" MainGuix+40 " y" MainGuiY+50 " w280 h140 NoActivate")
-		}
-		case (ui.activeTab == "Game"):
-		{
-			winGetPos(&tmpX,&tmpY,,,ui.mainGui)
-			ui.gameSettingsGui.show("x" tmpX+35 " y" tmpY+35 " w490 h172")
-			;winSetTransparent(255,ui.gameSettingsGui)
 		}
 	}
 	ui.previousTab := ui.activeTab
@@ -799,7 +790,7 @@ ui.mainGuiTabs.UseTab("AFK")
 drawMainOutlines() {
 ui.mainGuiTabs.useTab("")
 
-	drawOutlineNamed("consolePanelOutline",ui.mainGui,35,150,498,6,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,3) 	;Log Panel Outline
+	drawOutlineNamed("consolePanelOutline",ui.mainGui,35,150,498,6,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,2) 	;Log Panel Outline
 	drawOutlineNamed("consolePanelOutline2",ui.mainGui,35,220,498,184,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,1)		;Log Panel 3D Effect
 }
 drawOpsOutlines() {

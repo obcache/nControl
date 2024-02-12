@@ -32,8 +32,8 @@ WM_WINDOWPOSCHANGED(wParam, lParam, msg, Hwnd)
 			case ui.titleBarButtonGui.hwnd:
 				if (!ui.afkDocked) {
 					winGetPos(&winX,&winY,,,ui.titleBarButtonGui)
-					ui.gameSettingsGui.move(winx+35,winy+35)
-					ui.afkGui.move(winX+40,winY+50,,)
+					ui.gameSettingsGui.move(winx+35,winy+40)
+					ui.afkGui.move(winX+40,winY+55,,)
 					ui.mainGui.move(winX,winY+5,,)
 				}
 			case ui.dividerGui.hwnd:
@@ -62,18 +62,22 @@ WM_LBUTTONDOWN_callback(*) {
 ;###########MOUSE EVENTS##############
 WM_LBUTTONDOWN(wParam, lParam, msg, Hwnd) {
 	;ShowMouseClick()
-	if !ui.topDockEnabled && ((Hwnd = ui.MainGui.hwnd) || (Hwnd = ui.titleBarButtonGui.Hwnd) || (hwnd == ui.dividerGui.hwnd) || (hwnd == ui.afkGui.hwnd))
-		PostMessage("0xA1",2)
+	if !(hwnd == ui.afkGui.hwnd && ui.afkAnchoredToGui) {
+		
+		
+		if !ui.topDockEnabled && ((Hwnd = ui.MainGui.hwnd) || (Hwnd = ui.titleBarButtonGui.Hwnd) || (hwnd == ui.dividerGui.hwnd) || (hwnd == ui.afkGui.hwnd))
+			PostMessage("0xA1",2)
 
-	if (hwnd == ui.dividerGui.hwnd)
-	{
-	keyWait("LButton")
-	MonitorGetWorkArea(cfg.nControlMonitor, &Left, &Top, &Right, &Bottom)
-	coordMode("mouse","screen")
-	MouseGetPos(&mX,&mY,&currWin)
-	winMove(,mY,,Bottom-mY+8,"ahk_exe " ui.app2filename.text)
-	winMove(,Top,,mY-Top,"ahk_exe " ui.app1filename.text)
-	winActivate(ui.dividerGui)
+		if (hwnd == ui.dividerGui.hwnd)
+		{
+		keyWait("LButton")
+		MonitorGetWorkArea(cfg.nControlMonitor, &Left, &Top, &Right, &Bottom)
+		coordMode("mouse","screen")
+		MouseGetPos(&mX,&mY,&currWin)
+		winMove(,mY,,Bottom-mY+8,"ahk_exe " ui.app2filename.text)
+		winMove(,Top,,mY-Top,"ahk_exe " ui.app1filename.text)
+		winActivate(ui.dividerGui)
+		}
 	}
 }
 

@@ -344,6 +344,7 @@ ui.gameTabs.useTab("Fortnite")
 
 gameTabChanged(*) {
 	cfg.activeGameTab := ui.gametabs.value
+	controlFocus(ui.buttonDockAfk)
 }	
 ;ui.gameTabs.useTab("")
 ;drawOutlineNamed("GameSettingsOutline",ui.gameSettingsGui,5,0,485,173,cfg.themeFont3Color,cfg.themeFont3Color,3)
