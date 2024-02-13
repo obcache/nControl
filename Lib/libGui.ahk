@@ -518,16 +518,16 @@ exitMenuShow() {
 	ui.exitMenuGui.Opt("-caption -border AlwaysOnTop Owner" ui.mainGui.hwnd)
 	ui.exitMenuGui.BackColor := ui.transparentColor
 
-	ui.gamingModeLabel := ui.exitMenuGui.addText("x0 y0 w70 h15 backgroundTrans c" cfg.themeFont2Color,"Gaming Mode")
+	ui.gamingModeLabel := ui.exitMenuGui.addText("x3 y2 w70 h15 background" cfg.themePanel3color " c" cfg.themeFont3Color," Gaming Mode")
 	ui.gamingModeLabel.setFont("s8")
-	ui.gamingLabels := ui.exitMenuGui.addText("x0 y15 w70 h20 backgroundTrans c" cfg.themeFont1Color,"Stop   Start")
+	ui.gamingLabels := ui.exitMenuGui.addText("x3 y16 w70 h20 background" cfg.themePanel3color " c" cfg.themeFont2Color," Stop   Start")
 	ui.gamingLabels.setFont("s10")
-	ui.stopGamingButton := ui.exitMenuGui.addPicture("x0 y35 section w35 h35 background" cfg.themeButtonReadyColor,"./img/button_quit.png")
-	ui.startGamingButton := ui.exitMenuGui.addPicture("x+0 ys w35 h35 background" cfg.themeButtonReadyColor,"./img/button_exit_gaming.png")
+	ui.stopGamingButton := ui.exitMenuGui.addPicture("x3 y32 section w35 h35 background" cfg.themeButtonReadyColor,"./img/button_quit.png")
+	ui.startGamingButton := ui.exitMenuGui.addPicture("x+3 ys w35 h34 background" cfg.themeButtonReadyColor,"./img/button_exit_gaming.png")
 	ui.stopGamingButton.onEvent("Click",exitAppCallback)
 	ui.startGamingButton.onEvent("Click",stopGaming)
 	WinSetTransColor(ui.transparentColor,ui.exitMenuGui)
-	ui.exitMenuGui.show("x" tbX+491 " y" tbY-70 " AutoSize noActivate")
+	ui.exitMenuGui.show("x" tbX+470 " y" tbY-70 " AutoSize noActivate")
 	
 	exitAppCallback(*) {
 		ExitApp
