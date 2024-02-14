@@ -1,4 +1,4 @@
-A_FileVersion := "3.6.0.7"
+A_FileVersion := "3.6.0.9"
 ;@Ahk2Exe-Let FileVersion=%A_PriorLine~U)^(.+"){1}(.+)".*$~$2% 
 
 A_AppName := "nControl"
@@ -86,7 +86,7 @@ debugLog("Console Initialized")
 ; }																																																				
 
 ;setTimer(monitorGameWindows,2500)
-refreshWinHwnd()
+; refreshWinHwnd()
 ui.gameTabs.choose(cfg.gameModuleList[1])
 ;ui.mainGuiTabs.choose(cfg.mainTabList[cfg.activeMainTab])
 
@@ -100,8 +100,6 @@ if (cfg.startMinimizedEnabled)
 	hideGui()
 ui.mainGui.getPos(&MainGuiX,&MainGuiY,,)
 fadeIn()
-guiVis(ui.afkGui,(ui.activeTab == "AFK") ? true : false)
-guiVis(ui.gameSettingsGui,(ui.activeTab = "Game") ? true : false)	
-tabsChanged()
 changeGameDDL()
-controlFocus(ui.d2AlwaysRun)
+ui.MainGuiTabs.Choose(cfg.mainTabList[cfg.activeMainTab])
+
