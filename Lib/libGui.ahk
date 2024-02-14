@@ -251,7 +251,6 @@ fadeIn() {
 		{
 			Transparency += 2.5
 			WinSetTransparent(Round(Transparency),ui.MainGui)			
-			; WinSetTransparent(Round(Transparency),ui.opsGui)
 			Sleep(1)
 		}
 
@@ -259,9 +258,6 @@ fadeIn() {
 		{
 			Transparency += 2.5
 			WinSetTransparent(Round(Transparency),ui.MainGui)
-			; winSetTransparent(Round(Transparency),ui.gameSettingsGui)
-			; winSetTransparent(Round(Transparency),ui.afkGui)
-			; WinSetTransparent(Round(Transparency),ui.opsGui)
 			Sleep(1)
 		}
 	}
@@ -270,8 +266,8 @@ fadeIn() {
 	ui.titleBarButtonGui.Move(mainGuiX,mainGuiY-5)
 	ui.gameSettingsGui.show("x" mainGuiX+35 " y" mainGuiY+35 " w495 h170 noActivate")
 	ui.AfkGui.Show("x" mainGuiX+40 " y" mainGuiY+50 " w280 h140 NoActivate")
-	guiVis(ui.MainGui,true)
-	guiVis(ui.titleBarButtonGui,true)
+	; guiVis(ui.MainGui,true)
+	 guiVis(ui.titleBarButtonGui,true)
 ; guiVis(ui.opsGui,true)
 }
 
@@ -297,7 +293,7 @@ CollapseGui() {
 	guiVis(ui.gameSettingsGui,false)
 	if (cfg.AnimationsEnabled) {
 		While GuiWidth > 5 {
-			redrawGuis(GuiWidth,mainX,mainY)
+			ui.MainGui.Move(mainX,mainY,GuiWidth,)
 			GuiWidth -= 30
 			sleep(20)
 		}	
@@ -306,7 +302,7 @@ CollapseGui() {
 }
 
 redrawGuis(GuiWidth,mainX,mainY) {
-	ui.MainGui.Move(mainX,mainY,GuiWidth,)
+	
 	; if guiWidth < 310
 		; ui.afkGui.move(mainX+45,mainY+35,guiWidth-35,)
 	;ui.gameSettingsGui.move(mainX+35,mainY+35,guiWidth-35,)
@@ -318,7 +314,7 @@ UncollapseGui() {
 	guiVis(ui.titleBarButtonGui,false)
 	if (cfg.AnimationsEnabled) {
 		While GuiWidth < 575 {
-			redrawGuis(GuiWidth,mainX,mainY)
+			ui.MainGui.Move(mainX,mainY,GuiWidth,)
 			GuiWidth += 30
 			sleep(20)
 		}
@@ -520,15 +516,16 @@ exitMenuShow() {
 	ui.exitMenuGui.Opt("-caption -border AlwaysOnTop Owner" ui.mainGui.hwnd)
 	ui.exitMenuGui.BackColor := ui.transparentColor
 
-	ui.gamingModeLabel := ui.exitMenuGui.addText("x3 y2 w70 h15 background" cfg.themePanel3color " c" cfg.themeFont3Color," Gaming Mode")
+	ui.gamingModeLabel := ui.exitMenuGui.addText("x0 y2 w72 h15 center background" cfg.themePanel3color " c" cfg.themeFont2Color," Gaming Mode")
 	ui.gamingModeLabel.setFont("s8")
-	ui.gamingLabels := ui.exitMenuGui.addText("x3 y16 w70 h20 background" cfg.themePanel3color " c" cfg.themeFont2Color," Stop   Start")
+	ui.gamingLabels := ui.exitMenuGui.addText("x0 y16 w72 h52 center background" cfg.themePanel3color " c" cfg.themeFont3Color," Stop   Start ")
 	ui.gamingLabels.setFont("s10")
-	ui.stopGamingButton := ui.exitMenuGui.addPicture("x3 y32 section w35 h35 background" cfg.themeButtonReadyColor,"./img/button_quit.png")
-	ui.startGamingButton := ui.exitMenuGui.addPicture("x+3 ys w35 h34 background" cfg.themeButtonReadyColor,"./img/button_exit_gaming.png")
+	ui.stopGamingButton := ui.exitMenuGui.addPicture("x0 y32 section w35 h35 background" cfg.themeFont2Color,"./img/button_quit.png")
+	ui.startGamingButton := ui.exitMenuGui.addPicture("x+2 ys w35 h35 background" cfg.themeFont2Color,"./img/button_exit_gaming.png")
 	ui.stopGamingButton.onEvent("Click",exitAppCallback)
 	ui.startGamingButton.onEvent("Click",stopGaming)
 	WinSetTransColor(ui.transparentColor,ui.exitMenuGui)
+	drawOutlineNamed("exitMenuBorder",ui.exitMenuGui,0,0,74,68,cfg.themeFont3Color,cfg.themeFont3Color,2)
 	ui.exitMenuGui.show("x" tbX+470 " y" tbY-70 " AutoSize noActivate")
 	
 	exitAppCallback(*) {
@@ -729,42 +726,25 @@ tabsChanged(*) {
 	ui.activeTab := ui.mainGuiTabs.Text
 	cfg.activeMainTab := ui.mainGuiTabs.value
 
-	(ui.activeTab == "AFK") 
-		?	(guiVis(ui.afkGui, false))
-		:	(guiVis(ui.afkGui, true)
-			,controlFocus(ui.buttonTower,ui.afkGui))
-		
-
-	(ui.activeTab == "Game")
-		?	(guiVis(ui.gameSettingsGui, false))
-		:	(guiVis(ui.gameSettingsGui, true)
-			, controlFocus(ui.mainGuiTabs,ui.mainGui)) 
+	switch ui.activeTab {
+		case "AFK":
+			guiVis(ui.afkGui,true)
+			guiVis(ui.gameSettingsGui,false)
+			controlFocus(ui.buttonTower,ui.afkGui)
 			
-
-	if (ui.activeTab = "Sys") 
-	|| (ui.activeTab = "AppDock") 
-	|| (ui.activeTab = "Setup") 
-	|| (ui.activeTab = "Audio") {
-		controlFocus(ui.mainGuiTabs,ui.mainGui) 
-		guiVis(ui.gameSettingsGui,false)
-		guiVis(ui.afkGui,false)
-	}
-	
-	ui.previousTab := ui.activeTab	
-
-; Switch {
-		; case (ui.activeTab == "zGame") || (ui.activeTab == "zAudio"):
-		; {
-			; ui.MainGuiTabs.Choose(ui.previousTab)
-			; SetTimer(GameDisabled,-1)
-			; GameDisabled() {
-				; notifyOSD("Tab currently disabled `nby developer",2500)
-			; }
-			; Return				
-		; }
-	; }
-
+		case "Game":
+			guiVis(ui.gameSettingsGui,true)
+			guiVis(ui.afkGui,false)
+			controlFocus(ui.d2AlwaysRun,ui.gameSettingsGui)
+		default:
+			guiVis(ui.gameSettingsGui,false)
+			guiVis(ui.afkGui,false)
+			guiVis(ui.mainGui,true)
+			controlFocus(ui.mainGuiTabs,ui.mainGui)
+		} 
+		ui.previousTab := ui.activeTab	
 }
+
 
 { ;Draw Outline Functions
 	drawOutlineMainGui(X, Y, W, H, Color1 := "Black", Color2 := "Black", Thickness := 1) {	
@@ -854,7 +834,8 @@ ui.mainGuiTabs.useTab("")
 }
 drawOpsOutlines() {
 	ui.mainGuiTabs.useTab("")
-	drawOutlineNamed("bottomLine",ui.mainGui,37,208,492,4,cfg.themeBorderDarkColor,cfg.themeBorderLightColor,2)
+	drawOutlineNamed("bottomLine",ui.mainGui,36,211,494,2,cfg.themeBright2Color,cfg.themeBright2Color,1)
+	drawOutlineNamed("bottomLine",ui.mainGui,36,208,494,3,cfg.themeBright1Color,cfg.themeBright1Color,2)
 	ui.mainGuiTabs.useTab("Sys")
 	drawGridlines()
 	drawOutlineNamed("tabsUnderline",ui.MainGui,35,29,502,3,cfg.ThemeBackgroundColor,cfg.ThemeBackgroundColor,2)

@@ -1,4 +1,4 @@
-A_FileVersion := "3.6.0.9"
+A_FileVersion := "3.6.1.0"
 ;@Ahk2Exe-Let FileVersion=%A_PriorLine~U)^(.+"){1}(.+)".*$~$2% 
 
 A_AppName := "nControl"
@@ -102,4 +102,5 @@ ui.mainGui.getPos(&MainGuiX,&MainGuiY,,)
 fadeIn()
 changeGameDDL()
 ui.MainGuiTabs.Choose(cfg.mainTabList[cfg.activeMainTab])
+tabsChanged()
 
