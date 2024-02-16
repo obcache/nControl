@@ -81,10 +81,10 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 	
 
 	ui.MainGui.SetFont("s12 c" cfg.ThemeFont3Color,"Calibri Thin")
-	ui.OpsClockModeLabel := ui.MainGui.AddText("x+1 ys+1 section w48 h24 Background" cfg.ThemePanel3Color," Clock")
+	ui.OpsClockModeLabel := ui.MainGui.AddText("x+3 ys+1 section w48 h24 Background" cfg.ThemePanel3Color," Clock")
 	ui.OpsClockModeLabel.SetFont("s8 c" cfg.ThemeFont3Color,"Ariel Bold")
 	
-	ui.OpsClock := ui.MainGui.AddText("x+0 ys w120 Right h24 Background" cfg.ThemePanel3Color " c" cfg.ThemeFont3Color,)
+	ui.OpsClock := ui.MainGui.AddText("x+0 ys w123 Right h24 Background" cfg.ThemePanel3Color " c" cfg.ThemeFont3Color,)
 	ui.OpsClock.SetFont("s16","Orbitron")
 	ui.OpsClock.OnEvent("Click",ChangeClockMode)
 	ui.OpsClock.OnEvent("ContextMenu",ShowClockMenu)
@@ -93,8 +93,8 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 	
 	ui.ButtonDebug := ui.MainGui.AddPicture( 
 	(cfg.consoleVisible) 
-		? "x+2 ys-2 w27 h27 section Background" cfg.ThemeButtonOnColor 
-		: "x+2 ys-2 w27 h27 section Background" cfg.ThemeButtonReadyColor,
+		? "x+3 ys-2 w27 h27 section Background" cfg.ThemeButtonOnColor 
+		: "x+3 ys-2 w27 h27 section Background" cfg.ThemeButtonReadyColor,
 	(cfg.consoleVisible) 
 		? "./Img/button_console_ready.png" 
 		: "./Img/button_console_ready.png")
@@ -109,13 +109,13 @@ ui.RefreshWindowHandlesButton := ui.MainGui.AddPicture("x+1 ys section w27 h27 B
 	ui.ButtonHelp.OnEvent("Click",ToggleHelp)
 
 
-	ui.GameDDL := ui.MainGui.AddDropDownList("x+4 ys+4 w147 Background" cfg.ThemeEditboxColor " -E0x200 Choose" cfg.game,cfg.GameList)
+	ui.GameDDL := ui.MainGui.AddDropDownList("x+2 ys+1 w148 Background" cfg.ThemeEditboxColor " -E0x200 Choose" cfg.game,cfg.GameList)
 	ui.GameDDL.ToolTip := "Select the Game You Are Playing"
 	ui.GameDDL.OnEvent("Change",ChangeGameDDL)
-	ui.gameDDL.SetFont("s10 c" cfg.ThemeFont1Color,"Arial Light")
-	postMessage("0x153", -1, 25,, "AHK_ID " ui.gameDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153
-	postMessage("0x153", 0, 25,, "AHK_ID " ui.gameDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153
-	ui.GameAddButton := ui.MainGui.AddPicture("ys+2 x+4 w27 h26 section Background" cfg.ThemeButtonReadyColor,"./Img/button_plus_ready.png")
+	ui.gameDDL.SetFont("s11 c" cfg.ThemeFont1Color,"Arial Light")
+	postMessage("0x153", -1, 22,, "AHK_ID " ui.gameDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153
+	postMessage("0x153", 0, 22,, "AHK_ID " ui.gameDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153
+	ui.GameAddButton := ui.MainGui.AddPicture("ys+2 x+2 w27 h26 section Background" cfg.ThemeButtonReadyColor,"./Img/button_plus_ready.png")
 	ui.GameAddButton.OnEvent("Click",AddGame)
 	ui.GameAddButton.ToolTip := "Add New Game to List"
 	ui.GameRemoveButton	:= ui.MainGui.AddPicture("ys w27 h26 Background" cfg.ThemeButtonReadyColor,"./Img/button_minus_ready.png")
@@ -165,9 +165,9 @@ ui.RefreshWindowHandlesButton := ui.MainGui.AddPicture("x+1 ys section w27 h27 B
 		ui.opsWin1AfkStatus := ui.MainGui.AddText("xs-429 y+1 section w40 h22 Background" cfg.ThemePanel1Color,"")
 		ui.opsWin1AfkStatus.setFont("s14")
 		ui.opsWin1AfkIcon 	:= ui.MainGui.AddPicture("ys section w25 h22 Background" cfg.ThemePanel1Color,"./Img/sleep_icon.png")
-		ui.opsWin1AfkPad	:= ui.MainGui.AddText("ys section w6 h22 Background" cfg.ThemePanel1Color,"")
+		ui.opsWin1AfkPad	:= ui.MainGui.AddText("ys section w5 h22 Background" cfg.ThemePanel1Color,"")
 
-		ui.Win1ClassDDL := ui.MainGui.AddDDL("ys-3 x+0 w155 r6 AltSubmit choose" cfg.win1class " Background" cfg.ThemeEditBoxColor, ui.ProfileList)
+		ui.Win1ClassDDL := ui.MainGui.AddDDL("ys-3 x+0 w156 r6 AltSubmit choose" cfg.win1class " Background" cfg.ThemeEditBoxColor, ui.ProfileList)
 		ui.Win1ClassDDL.SetFont("s12")
 		ui.Win1ClassDDL.OnEvent("Change",opsWin1ClassChange)
 		PostMessage("0x153", -1, 22,, "AHK_ID " ui.Win1ClassDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153
@@ -176,7 +176,7 @@ ui.RefreshWindowHandlesButton := ui.MainGui.AddPicture("x+1 ys section w27 h27 B
 		ui.OpsAfkButton.OnEvent("Click",ToggleAFK)
 		ui.OpsAfkButton.ToolTip := "Toggle AFK"
 	
-		ui.Win2ClassDDL := ui.MainGui.AddDDL("x+3 ys-4 w154 r6 section AltSubmit choose" cfg.win2class " Background" cfg.ThemeEditBoxColor, ui.ProfileList)
+		ui.Win2ClassDDL := ui.MainGui.AddDDL("x+4 ys-3 w153 r6 section AltSubmit choose" cfg.win2class " Background" cfg.ThemeEditBoxColor, ui.ProfileList)
 		ui.Win2ClassDDL.SetFont("s12","impact light")
 		ui.Win2ClassDDL.OnEvent("Change",opsWin2ClassChange)
 		PostMessage("0x153", -1, 22,, "AHK_ID " ui.Win2ClassDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153
@@ -190,19 +190,19 @@ ui.RefreshWindowHandlesButton := ui.MainGui.AddPicture("x+1 ys section w27 h27 B
 		ui.autoFireWin1Button.Tooltip := "Window1 AutoFire"
 		ui.autoFireWin1Button.OnEvent("Click",autoFireWin1)
 
-		ui.OpsAntiIdle1Button := ui.MainGui.AddPicture("ys x+0 w33 h30 Background" cfg.ThemeButtonReadyColor,"./Img/button_antiIdle_ready.png")
+		ui.OpsAntiIdle1Button := ui.MainGui.AddPicture("ys x+0 w35 h30 Background" cfg.ThemeButtonReadyColor,"./Img/button_antiIdle_ready.png")
 		ui.OpsAntiIdle1Button.OnEvent("Click",ToggleAntiIdle1)
 		ui.OpsAntiIdle1Button.ToolTip := "Toggle Anti-Idle"
 		
-		ui.OpsProgress1 := ui.MainGui.AddProgress("ys section w156 h28 c" cfg.ThemeFont1Color " Smooth Range0-" cfg.towerInterval " Background" cfg.ThemePanel1Color,0)	
+		ui.OpsProgress1 := ui.MainGui.AddProgress("ys x+-2 section w156 h28 c" cfg.ThemeFont1Color " Smooth Range0-" cfg.towerInterval " Background" cfg.ThemePanel1Color,0)	
 	
 		ui.OpsTowerButton := ui.MainGui.AddPicture("x+2 ys+22 w47 h47 section Background" cfg.ThemeButtonReadyColor,"./Img/button_tower_ready.png")
 		ui.OpsTowerButton.OnEvent("Click",ToggleTower)
 		ui.OpsTowerButton.ToolTip := "Toggle Tower Timer + AFK"
 	
-		ui.OpsProgress2 := ui.MainGui.AddProgress("x+2 ys-22 section w157 h28 c" cfg.ThemeFont1Color " Smooth Range0-" cfg.towerInterval " Background" cfg.ThemePanel1Color,0)	
+		ui.OpsProgress2 := ui.MainGui.AddProgress("x+4 ys-22 section w156 h28 c" cfg.ThemeFont1Color " Smooth Range0-" cfg.towerInterval " Background" cfg.ThemePanel1Color,0)	
 
-		ui.OpsAntiIdle2Button := ui.MainGui.AddPicture("x+0 ys w33 h30 section Background" cfg.ThemeButtonReadyColor,"./Img/button_antiIdle_ready.png")
+		ui.OpsAntiIdle2Button := ui.MainGui.AddPicture("x+-3 ys w33 h30 section Background" cfg.ThemeButtonReadyColor,"./Img/button_antiIdle_ready.png")
 		ui.OpsAntiIdle2Button.OnEvent("Click",ToggleAntiIdle2)
 		ui.OpsAntiIdle2Button.ToolTip := "Toggle Anti-Idle"
 		

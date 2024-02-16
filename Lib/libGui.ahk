@@ -133,8 +133,8 @@ initOSDGui() {
 	ui.AfkGui.MarginX := 5
 	ui.AfkGui.Opt("-Caption -Border +AlwaysOnTop +ToolWindow +0x4000000 +Owner" ui.MainGui.Hwnd)
 	ui.AfkGui.SetFont("s14 c" cfg.ThemeFont1Color,"Calibri")
-	ui.win1statusBg := ui.afkGui.addText("x5 y38 w85 h25 background " cfg.themeEditboxColor,"")
-	ui.win2statusBg := ui.afkGui.addText("x5 y72 w85 h25 background " cfg.themeEditboxColor,"")
+	ui.win1statusBg := ui.afkGui.addText("x5 y38 w85 h25 background" cfg.themeEditboxColor,"")
+	ui.win2statusBg := ui.afkGui.addText("x5 y72 w85 h25 background" cfg.themeEditboxColor,"")
 	
 	ui.buttonDockAfk := ui.AfkGui.AddPicture("x6 y2 w30 h30 section Background" cfg.ThemeButtonReadyColor,"./Img/button_dockLeft_ready.png")
 	ui.buttonDockAfk.OnEvent("Click",ToggleAfkDock)
@@ -839,23 +839,25 @@ drawOpsOutlines() {
 	ui.mainGuiTabs.useTab("Sys")
 	drawGridlines()
 	drawOutlineNamed("tabsUnderline",ui.MainGui,35,29,502,3,cfg.ThemeBackgroundColor,cfg.ThemeBackgroundColor,2)
-	drawOutlineNamed("opsClock",ui.mainGui,66,33,171,28,cfg.ThemeBorderDarkColor,cfg.ThemeBorderDarkColor,1)		;Ops Clock
-	drawOutlineNamed("opsClock",ui.mainGui,67,34,169,26,cfg.ThemeBorderLightColor,cfg.ThemeBorderLightColor,1)	
+	drawOutlineNamed("opsClock",ui.mainGui,67,33,175,28,cfg.ThemeBorderDarkColor,cfg.ThemeBorderDarkColor,2)		;Ops Clock
+	drawOutlineNamed("opsClock",ui.mainGui,326,33,149,28,cfg.ThemeBorderDarkColor,cfg.ThemeBorderDarkColor,1)		;Ops Clock
+	;drawOutlineNamed("opsClock",ui.mainGui,67,34,173,26,cfg.ThemeBorderLightColor,cfg.ThemeBorderLightColor,1)	
 	drawOutlineNamed("opsToolbarOutline2",ui.mainGui,36,33,494,30,cfg.ThemeBright1Color,cfg.ThemeBright1Color,1)		;Ops Toolbar Outline
 ;	drawOutlineNamed("opsStatusBarRightDark",ui.mainGui,307,131,227,30,cfg.ThemeBorderDarkColor,cfg.ThemeBorderDarkColor,2)	;Status Bar
-	drawOutlineNamed("opsStatusBarRightLight",ui.mainGui,306,131,228,32,cfg.ThemeBorderLightColor,cfg.ThemeBorderLightColor,2)	;Status Bar
-	drawOutlineNamed("opsStatusBarRightLight",ui.mainGui,464,131,35,32,cfg.ThemeBorderLightColor,cfg.ThemeBorderLightColor,2)	;Status Bar
+	; drawOutlineNamed("opsStatusBarRightLight",ui.mainGui,306,131,228,32,cfg.ThemeDark2Color,cfg.ThemeBright2Color,2)	;Status Bar
+	; drawOutlineNamed("opsStatusBarRightLight",ui.mainGui,464,131,35,32,cfg.ThemeDark2Color,cfg.ThemeBright2Color,2)	;Status Bar
 	;drawOutlineNamed("opsStatusBarLeftDark",ui.mainGui,34,131,227,30,cfg.ThemeBorderDarkColor,cfg.ThemeBorderDarkColor,2)	;Status Bar
-	drawOutlineNamed("opsStatusBarLeftLight",ui.mainGui,30,131,230,32,cfg.ThemeBorderLightColor,cfg.ThemeBorderLightColor,2)	;Status Bar
-	drawOutlineNamed("opsStatusBarLeftLight",ui.mainGui,68,131,35,32,cfg.ThemeBorderLightColor,cfg.ThemeBorderLightColor,2)	;Status Bar
-	; drawOutlineNamed("opsMiddleColumnOutlineLight",ui.mainGui,259,62,48,137,cfg.ThemeDark1Color,cfg.ThemeDark2Color,2)		;Ops Toolbar
-	; drawOutlineNamed("opsMiddleColumnMiddleRow",ui.mainGui,259,105,50,50,cfg.ThemeBorderLightColor,cfg.ThemeBorderLightColor,2)		;Ops Toolbar Outline
-	; drawOutlineNamed("opsMiddleColumnOutlineDark",ui.mainGui,258,62,52,139,cfg.ThemeBright1Color,cfg.ThemeBright2Color,2)		;Ops Toolbar Outline
-	drawOutlineNamed("opsMiddleColumnMiddleRow",ui.mainGui,259,106,49,49,cfg.themeBright1Color,cfg.themeBright1Color,2)	
-	drawOutlineNamed("opsMiddleColumnOutlineLight",ui.mainGui,259,62,49,141,cfg.themeDark1Color,cfg.themeDark1Color,2)		;Ops Toolbar
-	;Ops Toolbar Outline
-	drawOutlineNamed("opsMiddleColumnOutlineDark",ui.mainGui,258,62,51,141,cfg.themeBright1Color,cfg.themeBright1Color,2)		;Ops Toolbar Outline
+	; drawOutlineNamed("opsStatusBarLeftLight",ui.mainGui,30,132,230,32,cfg.ThemeDark2Color,cfg.ThemeBright2Color,2)	;Status Bar
+	; drawOutlineNamed("opsStatusBarLeftLight",ui.mainGui,68,132,35,32,cfg.ThemeDark2Color,cfg.ThemeBright2Color,2)	;Status Bar
 
+	drawOutlineNamed("opsMiddleColumnOutlineLight",ui.mainGui,259,62,51,141,cfg.themeDark1Color,cfg.themeDark1Color,2)		;Ops Toolbar
+	;Ops Toolbar Outline
+	drawOutlineNamed("opsMiddleColumnOutlineDark",ui.mainGui,258,62,53,141,cfg.themeBright1Color,cfg.themeBright1Color,2)		;Ops Toolbar Outline	;Ops Toolbar Outline
+	drawOutlineNamed("opsMiddleColumnOutlineDark",ui.mainGui,258,62,50,141,cfg.themeBright1Color,cfg.themeBright1Color,1)		;Ops Toolbar Outline
+	drawOutlineNamed("opsAfkStatusLeft",ui.mainGui,36,107,66,24,cfg.themeBright1Color,cfg.themeBright1Color,1)
+	drawOutlineNamed("opsAfkStatusRight",ui.mainGui,464,107,66,24,cfg.themeBright1Color,cfg.themeBright1Color,1)	
+	drawOutlineNamed("opsAfkStatusLeft",ui.mainGui,36,132,66,30,cfg.themeBright1Color,cfg.themeBright1Color,1)
+	drawOutlineNamed("opsAfkStatusRight",ui.mainGui,464,132,66,30,cfg.themeBright1Color,cfg.themeBright1Color,1)
 	; drawOutlineNamed("opsBottomMiddleLine",ui.mainGui,259,198,49,2,cfg.themeBorderDarkColor,cfg.themeBorderDarkColor,2)
 	; drawOutlineNamed("opsBottom2MiddleLine",ui.mainGui,258,200,51,2,cfg.themeBorderLightColor,cfg.themeBorderLightColor,2)
 }
@@ -864,8 +866,8 @@ drawGridLines() {
 ui.MainGuiTabs.UseTab("Sys")
 	drawOutline(ui.MainGui,103,77,157,15,cfg.ThemeBright2Color,cfg.ThemeBright2Color,1)				;Win1 Info Gridlines  
 	drawOutline(ui.MainGui,308,77,155,15,cfg.ThemeBright2Color,cfg.ThemeBright2Color,1)				;Win2 Info Gridlines
-	drawOutline(ui.MainGui,308,62,155,71,cfg.ThemeBright1Color,cfg.ThemeBright1Color,2)	;WIn2 Info Frame
-	drawOutline(ui.MainGui,103,62,157,71,cfg.ThemeBright1Color,cfg.ThemeBright1Color,2) ;Win1 Info Frame
+	drawOutline(ui.MainGui,308,62,155,100,cfg.ThemeBright1Color,cfg.ThemeBright1Color,2)	;WIn2 Info Frame
+	drawOutline(ui.MainGui,103,62,157,100,cfg.ThemeBright1Color,cfg.ThemeBright1Color,2) ;Win1 Info Frame
 
 }
 ui.topDockEnabled := false
