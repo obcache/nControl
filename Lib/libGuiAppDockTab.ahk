@@ -110,8 +110,8 @@ GuiDockTab(&ui)
 	 
 	ui.app1filename.text := " " cfg.app1filename
 	ui.app2filename.text := " " cfg.app2filename
-	ui.app1path.text := " " cfg.app1path
-	ui.app2path.text := " " cfg.app2path
+	ui.app1path.text := " " subStr(cfg.app1path,1,40)
+	ui.app2path.text := " " subStr(cfg.app2path,1,40)
 
 }
 
