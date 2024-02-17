@@ -252,16 +252,21 @@ toggleTower(*) {
 					,ui.opsTowerButton.value := "./img/button_tower_on.png"
 					,ui.buttonTower.opt("Background" cfg.ThemeButtonOnColor)
 					,ui.buttonTower.value := "./img/button_tower_on.png"
+					,ui.dockBarTowerButton.opt("background" cfg.themeButtonOnColor)
+					ui.dockBarTowerButton.value := "./img/button_tower_on.png"
 					,restartTower()
 				) : (
 					ui.afkStatus1.value		:= "./Img/label_infinite_tower.png"
 					,ui.opsStatus1.value 	:= "./Img/label_infinite_tower.png"
 					,ui.opsStatus2.value 	:= "./Img/label_infinite_tower.png"
+					,ui.opsTowerButton.Opt("background" cfg.themeButtonOnColor)
 					,ui.opsTowerButton.value := "./img/button_tower_on.png"
 					,ui.buttonTower.opt("background" cfg.themeButtonOnColor)
 					,ui.buttonTower.value		:= "./img/button_tower_on.png"
 					,ui.opsTowerButton.opt("Background" cfg.ThemeButtonOnColor)
 					,ui.buttonTower.Opt("Background" cfg.ThemeButtonOnColor)
+					,ui.dockBarTowerButton.opt("background" cfg.themeButtonOnColor)
+					,ui.dockBarTowerButton.value := "./img/button_tower_on.png"
 					,restartTower()
 				)			
 			) : (
@@ -275,6 +280,8 @@ toggleTower(*) {
 				,ui.opsStatus2.value 		:= "./Img/label_timer_off.png"
 				,ui.opsTowerButton.Value	:= "./img/button_tower_ready.png"
 				,ui.buttonTower.Value		:= "./img/button_tower_ready.png"
+				,ui.dockBarTowerButton.opt("background" cfg.themeButtonReadyColor)
+				,ui.dockBarTowerButton.value := "./img/button_tower_ready.png"
 		) : (
 			ui.afkProgress.value 		:= 0
 			,ui.opsProgress1.value 		:= 0
@@ -285,7 +292,9 @@ toggleTower(*) {
 			,ui.opsStatus1.value 		:= "./Img/label_timer_off.png"
 			,ui.opsStatus2.value 		:= "./Img/label_timer_off.png"
 			,ui.opsTowerButton.Value	:= "./img/button_tower_ready.png"
-			,ui.buttonTower.Value		:= "./img/button_tower_ready.png"
+			,ui.buttonTower.Value		:= "./img/button_tower_ready.png"				
+			,ui.dockBarTowerButton.opt("background" cfg.themeButtonReadyColor)
+			,ui.dockBarTowerButton.value := "./img/button_tower_ready.png"
 			,debugLog("AutoTower: Failed to start. No game windows found.")
 			,notifyOSD("AutoTower Failed: No valid game windows found.",3000)
 		)
@@ -370,6 +379,8 @@ startAFK(*) {
 	ui.opsAfkButton.Value := "./Img/button_afk_on.png"
 	ui.buttonStartAFK.Opt("Background" cfg.ThemeButtonOnColor)
 	ui.buttonStartAfk.value := "./Img/button_afk_on.png"
+	ui.dockBarAfkButton.Opt("Background" cfg.ThemeButtonOnColor)
+	ui.dockBarAfkButton.value := "./Img/button_afk_on.png"
 	; ui.OpsAfkButton.Redraw()
 	; ui.buttonStartAFK.Redraw()	
 	setTimer(afkBeta,-100)
@@ -384,6 +395,8 @@ stopAFK(*) {
 	ui.opsAfkButton.Value := "./Img/button_afk_ready.png"
 	ui.buttonStartAFK.Opt("Background" cfg.ThemeButtonReadyColor)
 	ui.buttonStartAfk.value := "./Img/button_afk_ready.png"
+	ui.dockBarAfkButton.Opt("Background" cfg.ThemeButtonReadyColor)
+	ui.dockBarAfkButton.value := "./Img/button_afk_ready.png"
 	ui.OpsAfkButton.Redraw()
 	ui.buttonStartAFK.Redraw()	
 	SendEvent("{LButton Up}")

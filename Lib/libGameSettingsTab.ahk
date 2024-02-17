@@ -79,6 +79,13 @@ loop cfg.gameModuleList.length {
 		((cfg.d2AlwaysRunEnabled) 
 			? ("./img/toggle_vertical_trans_on.png") 
 				: ("./img/toggle_vertical_trans_off.png")))
+	ui.dockBarD2AlwaysRun := ui.gameSettingsGui.addPicture("x22 y17 w30 h45 section " 
+		((cfg.d2AlwaysRunEnabled) 
+			? ("Background" cfg.ThemeButtonOnColor) 
+				: ("Background" cfg.themeButtonReadyColor)),
+		((cfg.d2AlwaysRunEnabled) 
+			? ("./img/toggle_vertical_trans_on.png") 
+				: ("./img/toggle_vertical_trans_off.png")))
 
 	ui.panelColoring			:= ui.gameSettingsGui.addText("x12 y75 w472 h67 background" cfg.themePanel1Color,"")
 	drawOutlineNamed("gameSettingsD2Panel",ui.gameSettingsGui,10,73,475,71,cfg.themeDark2Color,cfg.themeBright2Color,1)
