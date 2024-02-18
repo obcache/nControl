@@ -196,8 +196,8 @@ initOSDGui() {
 	ui.afkWin2ClassDDL.OnEvent("Change",afkWin2ClassChange)
 	postMessage("0x153", -1, 20,, "AHK_ID " ui.afkWin2ClassDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153
 	postMessage("0x153", 0, 20,, "AHK_ID " ui.afkWin2ClassDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153
-	ui.AfkGui.SetFont("s16 bold")  ; Set a large font size (32-point).
 	ui.Title := ui.AfkGui.AddText("x0 y+13","")
+	ui.AfkGui.SetFont("s16 bold")  ; Set a large font size (32-point).
 	ui.AfkGui.AddPicture("x+-8 ys+30 w10 h28","./Img/label_left_trim.png")
 	ui.AfkStatus1 := ui.AfkGui.AddPicture("x+0 ys+30 w65 h28 Background" cfg.ThemeButtonReadyColor,"./Img/label_timer_off.png")  ; XX & YY serve to auto-size the window.
 	ui.AfkGui.AddPicture("x+0 ys+30 w10 h28 section","./Img/label_right_trim.png")
@@ -670,7 +670,7 @@ createDockBar() {
 	ui.dockBarGui.color := cfg.themeBackgroundColor
 	winGetPos(&tmpX,&tmpY,&tmpW,&tmpH,ui.mainGui)
 	guiVis(ui.dockBarGui,false)
-	ui.dockBarGui.show("x" ((a_screenwidth/2)+(tmpW/2)-242) " y0 w" tmpW-258 " h25 noActivate")
+	ui.dockBarGui.show("x" tmpx+200 " y0 w305 h25 noActivate")
 	drawOutlineNamed("dockBarOutline",ui.dockBarGui,0,0,tmpW-258,25,cfg.themeBorderDarkColor,cfg.themeBorderDarkColor,1)
 	dockBarIcons("Destiny 2","Add")
 	dockBarIcons("World//Zero","Add")
@@ -915,7 +915,14 @@ topDockOn() {
 	ui.prevGuiY := vY
 	ui.prevGuiW := vW
 	ui.prevGuiH := vH
-	ui.mainGui.move((a_screenWidth/2)-((vW+(vw-255))/2),-35,,63)
+	ui.mainGui.move((a_screenWidth/2)-((vW+(vw-255))/2),-35,900,63)
+	ui.buttonDebug.opt("hidden")
+	ui.refreshWindowHandlesbutton.opt("hidden")
+	ui.gameAddButton.opt("hidden")
+	ui.gameRemoveButton.opt("hidden")
+	ui.gameRemoveButton
+	ui.buttonHelp.opt("hidden")
+	ui.gameDDL.move(445,35,120,25)
 	winSetRegion("38-35 w490 h25",ui.mainGui)	
 	while transparent < 170 {
 		transparent += 10

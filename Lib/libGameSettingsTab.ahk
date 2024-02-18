@@ -65,7 +65,7 @@ loop cfg.gameModuleList.length {
 
 	ui.gameTabs.useTab("Destiny2") 
 	ui.d2Sliding := false
-	ui.d2HoldingRun := false
+	ui.d2HoldingRun := false                           
 
 	ui.gameSettingsGui.setFont("s12")
 	drawOutlineNamed("d2AlwaysRunOutline",ui.gameSettingsGui,10,5,475,65,cfg.themeBright1Color,cfg.themeBright2Color,2)
