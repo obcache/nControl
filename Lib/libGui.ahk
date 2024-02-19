@@ -17,6 +17,7 @@ initGui(&cfg, &ui) {
 	ui.MainGui.BackColor := ui.TransparentColor
 	ui.MainGui.Color := ui.TransparentColor
 	ui.MainGui.Opt("-Caption -Border")
+	;ui.mainGui.addPicture("x0 y0 w600	h220","./img/mainBg.png")
 	if (cfg.AlwaysOnTopEnabled)
 	{
 		ui.MainGui.Opt("+AlwaysOnTop 0x4000000")
@@ -136,28 +137,32 @@ initOSDGui() {
 	ui.win1statusBg := ui.afkGui.addText("x5 y38 w85 h25 background" cfg.themeEditboxColor,"")
 	ui.win2statusBg := ui.afkGui.addText("x5 y72 w85 h25 background" cfg.themeEditboxColor,"")
 	
-	ui.buttonDockAfk := ui.AfkGui.AddPicture("x6 y2 w30 h30 section Background" cfg.ThemeButtonReadyColor,"./Img/button_dockLeft_ready.png")
+
+	ui.buttonDockAfk := ui.AfkGui.AddPicture("x7 y2 w30 h30 section Background" cfg.ThemeButtonReadyColor,"./Img/button_dockLeft_ready.png")
 	ui.buttonDockAfk.OnEvent("Click",ToggleAfkDock)
-	ui.buttonDockAfk.ToolTip := "Dock AFK Panel"
-	ui.buttonStartAFK := ui.AfkGui.AddPicture("x+0 ys0 w30 h30 Background" cfg.ThemeButtonReadyColor,"./Img/button_afk_ready.png")
+	ui.buttonDockAfk.ToolTip := "Dock AFK Panel"	
+	
+	ui.buttonStartAFK := ui.AfkGui.AddPicture("x+0 y2 section w30 h30 Background" cfg.ThemeButtonReadyColor,"./Img/button_afk_ready.png")
 	ui.buttonStartAFK.OnEvent("Click",ToggleAFK)
 	ui.buttonStartAFK.ToolTip := "Toggle AFK"
 	
-	ui.buttonTower := ui.AfkGui.AddPicture("x+0 ys0 w30 h30 Background" cfg.ThemeButtonReadyColor,"./Img/button_tower_ready.png")
+	ui.buttonTower := ui.AfkGui.AddPicture("x+0 ys0 w30 h30 section Background" cfg.ThemeButtonReadyColor,"./Img/button_tower_ready.png")
 	ui.buttonTower.OnEvent("Click",ToggleTower)
 	ui.buttonTower.ToolTip := "Starts Infinte Tower"
-	
-	ui.buttonAntiIdle1 := ui.AfkGui.AddPicture("x+0 ys0 w30 h30 Background" cfg.ThemeButtonReadyColor,"./Img/button_antiIdle_ready.png")
-	ui.buttonAntiIdle1.OnEvent("Click",ToggleAntiIdleBoth)
-	ui.buttonAntiIdle1.ToolTip := "Toggles AntiIdle Mode On/Off"
-	
-	ui.buttonAutoFire := ui.AfkGui.AddPicture("x+0 ys0 w30 h30 Background" cfg.ThemeButtonReadyColor,"./Img/button_AutoFire_ready.png")
-	ui.buttonAutoFire.OnEvent("Click",toggleAutoFire)
-	ui.buttonAutoFire.ToolTip := "Toggles AutoFire on Current Window"
 	
 	ui.buttonAutoClicker := ui.AfkGui.AddPicture("x+0 ys0 w30 h30 Background" cfg.ThemeButtonReadyColor,"./Img/button_AutoClicker_ready.png")
 	ui.buttonAutoClicker.OnEvent("Click",ToggleAutoClicker)
 	ui.buttonAutoClicker.ToolTip := "Toggles AutoClicker"
+	ui.buttonAntiIdle1 := ui.AfkGui.AddPicture("x+0 ys0 w30 h30 hidden Background" cfg.ThemeButtonReadyColor,"./Img/button_antiIdle_ready.png")
+	ui.buttonAntiIdle1.OnEvent("Click",ToggleAntiIdleBoth)
+	ui.buttonAntiIdle1.ToolTip := "Toggles AntiIdle Mode On/Off"
+	
+	ui.buttonAutoFire := ui.AfkGui.AddPicture("x+0 ys0 w30 h30 hidden Background" cfg.ThemeButtonReadyColor,"./Img/button_AutoFire_ready.png")
+	ui.buttonAutoFire.OnEvent("Click",toggleAutoFire)
+	ui.buttonAutoFire.ToolTip := "Toggles AutoFire on Current Window"
+	
+
+
 
 	ui.buttonAfkHide := ui.AfkGui.AddPicture("x+0 ys0 w30 h30 hidden Background" cfg.ThemeButtonReadyColor,"./Img/button_hide.png")
 	ui.buttonAfkHide.OnEvent("Click",HideAfkGui)
@@ -169,7 +174,7 @@ initOSDGui() {
 	ui.buttonPopout := ui.AfkGui.AddPicture("x+-0 ys0 w30 h30 Background" cfg.ThemeButtonReadyColor,"./Img/button_popout_ready.png")
 	ui.buttonPopout.OnEvent("Click",AfkPopoutButtonPushed)
 	
-	ui.Win1Label := ui.AfkGui.AddPicture("xs y+8 section w25 h23 background" cfg.themeEditboxColor,"./Img/arrow_left.png")
+	ui.Win1Label := ui.AfkGui.AddPicture("x6 y+8 section w25 h23 background" cfg.themeEditboxColor,"./Img/arrow_left.png")
 
 	ui.AfkGui.SetFont("s14","Calibri")
 	ui.Win1AfkIcon := ui.AfkGui.AddPicture("x+0 ys w28 h23 right background" cfg.themeEditboxColor,"./Img/sleep_icon.png")
@@ -314,7 +319,7 @@ UncollapseGui() {
 		}
 	}
 	ui.mainGui.move(,,562,)
-	ui.mainGui.getPos(&mainX,&mainY,&mainW,&mainH)
+	winGetPos(&mainX,&mainY,&mainW,&mainH,ui.mainGui)
 	ui.gameSettingsGui.move(mainX+35,mainY+35,495,)
 	ui.afkGui.move(mainX+40,mainY+50,275,)
 	guiVis(ui.titleBarButtonGui,true)
@@ -330,83 +335,72 @@ toggleAfkDock(*) {
 
 dockAfkGui(*) {
 	; guiVis(ui.opsGui,false)
-	saveGuiPos()
+	savePrevGuiPos()
+	ui.topDockEnabled := false
 	ui.AfkDocked := true
 	ui.AfkAnchoredToGui := false
 	ui.titleBarButtonGui.Opt("Owner" ui.AfkGui.Hwnd)
 	ui.mainGui.opt("owner" ui.afkGui.hwnd)
 	guiVis(ui.mainGui,false)
 	guiVis(ui.titleBarButtonGui,false)	
-	ui.buttonDockAfk.Opt("Hidden")
-	ui.handleBarAfkGui.opt("-hidden")
-
-
-
-
-	; ui.afkGui.show("x5 y" a_screenHeight-ui.TaskbarHeight-150 " w270 h140")
-
-
 	ui.AfkGui.Move(0,A_ScreenHeight-ui.TaskbarHeight-134,272,134)
 	winGetPos(&AfkGuiX,&AfkGuiY,,,ui.afkGui)
 	ui.titleBarButtonGui.move(afkGuiX+185,afkGuiY,90,50)
-	; ui.mainGui.move(afkGuiX-45,afkGuiX-35)
-
-	; ui.titleBarButtonGui.Move(,,90,50)
+	ui.mainGui.move(afkGuiX-45,afkGuiX-35)
 	ui.handleBarAfkGui.move(245,35,25,100)
-
-	ui.buttonUndockAfk.Opt("-Hidden")
-	ui.buttonPopout.Opt("-Hidden")
-	ui.buttonStartAFK.Move(6,2)
-	ui.buttonTower.Move(36,2)
-	ui.buttonAntiIdle1.Move(66,2)
-	ui.buttonAutoFire.Move(96,2)
-	ui.buttonAutoClicker.Move(126,2)
-	ui.buttonPopout.move(156,2)
+	ui.buttonDockAfk.opt("background" cfg.themeButtonAlertColor)
+	ui.buttonDockAfk.value := "./img/button_dockright_ready.png"
+	ui.handleBarAfkGui.opt("-hidden")
+	ui.buttonPopout.Opt("Hidden")
 	ui.downButton.opt("hidden")
-	ui.exitButton.Move(10,0)
-	ui.buttonUndockAfk.Move(49,0)
 	guiVis(ui.afkGui,true)
 	guiVis(ui.titleBarButtonGui,true)
-	
 	WinGetPos(&AfkGuiX,&AfkGuiY,&AfkGuiW,&AfkGuiH,ui.afkGui)
-
-
-
 	WinSetTransparent(210,ui.AfkGui)
 	WinSetTransparent(210,ui.HandlebarAfkGui)
 	controlFocus(ui.buttonUndockAfk)
+
+	; ui.buttonUndockAfk.Opt("-Hidden")
+
+	; ui.exitButton.Move(10,0)
+	;ui.buttonUndockAfk.Move(49,0)
 }
 	
 undockAfkGui(*) {
+	ui.AfkAnchoredToGui := true
+	ui.AfkDocked := false
 	ui.titleBarButtonGui.Opt("Owner" ui.MainGui.Hwnd)
 	ui.afkGui.opt("Owner" ui.mainGui.hwnd)	
-	ui.mainGui.move(ui.prevGuiX,ui.prevGuiY)
+	cfg.guiX := ui.prevGuiX
+	cfg.guiY := ui.prevGuiY
+	ui.buttonDockAfk.opt("background" cfg.themeButtonOnColor)
+	ui.buttonDockAfk.value := "./img/button_dockLeft_ready.png"
+	ui.mainGui.move(cfg.guiX,cfg.guiY)
 	ui.AfkGui.Move(cfg.guiX+40,cfg.guiY+50,,)
 	ui.titleBarButtonGui.Move(cfg.guiX,cfg.guiY-5,575,220)
 	ui.gameSettingsGui.move(cfg.guiX+35,cfg.guiY+35)
-	ui.AfkAnchoredToGui := true
-	ui.AfkDocked := false
-	; IniWrite(cfg.GuiX,"nControl.ini","Interface","GuiX")
-	; IniWrite(cfg.GuiY,"nControl.ini","Interface","GuiY")
-	; guiVis(ui.opsGui,true)
-	ui.buttonDockAfk.Opt("-Hidden")
-	ui.buttonUndockAfk.Opt("Hidden")
 	ui.HandlebarAfkGui.Opt("Hidden")	
 	ui.buttonPopout.Opt("-Hidden")
 	ui.downButton.opt("-hidden")
-	ui.buttonDockAfk.Move(6,2)
-	ui.buttonStartAFK.Move(36,2)
-	ui.buttonTower.Move(66,2)
-	ui.buttonAntiIdle1.Move(96,2)
-	ui.buttonAutoFire.Move(126,2)
-	ui.buttonAutoClicker.Move(156,2)
-	ui.buttonPopout.move(217,2)
-	ui.downButton.Move(456,0)
-	ui.exitButton.Move(494,0)
+	; ui.downButton.Move(456,0)
+	; ui.exitButton.Move(494,0)
+
+	; IniWrite(cfg.GuiX,"nControl.ini","Interface","GuiX")
+	; IniWrite(cfg.GuiY,"nControl.ini","Interface","GuiY")
+	; guiVis(ui.opsGui,true)
+	; ui.buttonDockAfk.Opt("-Hidden")
+	; ui.buttonUndockAfk.Opt("Hidden")
+	; ui.buttonDockAfk.Move(6,2)
+	; ui.buttonStartAFK.Move(36,2)
+	; ui.buttonTower.Move(66,2)
+	; ui.buttonAntiIdle1.Move(96,2)
+	; ui.buttonAutoFire.Move(126,2)
+	; ui.buttonAutoClicker.Move(156,2)
+	; ui.buttonPopout.move(217,2)
 	; ui.opsGui.Move(winX,winY)
 
 	guiVis(ui.titleBarButtonGui,true)
-	guiVis(ui.mainGui,true)
+	;ui.mainGui.move(ui.prevGuiX,ui.prevGuiY)
 	if !(ui.MainGuiTabs.Text == "AFK")
 	{
 		guiVis(ui.afkGui,false)
@@ -414,8 +408,9 @@ undockAfkGui(*) {
 	} else {
 		guiVis(ui.afkGui,true)
 	}
+	guiVis(ui.mainGui,true)
+	ui.mainGuiTabs.choose("AFK")
 	controlFocus(ui.buttonDockAfk)
-	saveGuiPos()
 }	
 
 afkPopoutButtonPushed(*) {
@@ -531,13 +526,13 @@ exitMenuShow() {
 hideGui(*) {
 	saveGuiPos()
 	winMinimize(ui.mainGui)
-	; saveGuiPos()
-	; guiVis(ui.mainGui,false)
-	; guiVis(ui.titleBarButtonGui,false)
-	; guiVis(ui.afkGui,false)
-	; guiVis(ui.handleBarAfkGui,false)
-	; guiVis(ui.gameSettingsGui,false)
 	debugLog("Hiding Interface")
+}
+
+savePrevGuiPos(*) {
+	winGetPos(&prevGuiX,&prevGuiY,,,ui.mainGui)
+	ui.prevGuiX := prevGuiX
+	ui.prevGuiY := prevGuiY
 }
 
 saveGuiPos(*) {
@@ -545,8 +540,6 @@ saveGuiPos(*) {
 	winGetPos(&GuiX,&GuiY,,,ui.MainGui)
 	cfg.GuiX := GuiX
 	cfg.GuiY := GuiY
-	ui.prevGuiX := GuiX
-	ui.prevGuiY := GuiY
 	IniWrite(cfg.GuiX,cfg.file,"Interface","GuiX")
 	IniWrite(cfg.GuiY,cfg.file,"Interface","GuiY")
 	debugLog("Saving Window Location at x" GuiX " y" GuiY)
@@ -554,58 +547,9 @@ saveGuiPos(*) {
 
 showGui(*) {
 	detectHiddenWindows(true)
-
 	winActivate(ui.mainGui)
 	winRestore(ui.mainGui)
 	ui.mainGui.move(cfg.GuiX,cfg.GuiY)	
-	; lowX 		:= 0
-	; highX 		:= 0
-	; lowY 		:= 0
-	; highY 		:= 0
-	; cfg.GuiX 	:= IniRead(cfg.file,"Interface","GuiX",PrimaryWorkAreaLeft+200)
-	; cfg.GuiY 	:= IniRead(cfg.file,"Interface","GuiY",PrimaryWorkAreaTop+200)
-
-	; loop monitorGetCount() {
-		; monitorNum := a_index
-		; monitorGetWorkArea(monitorNum,&tmpMonLeft,&tmpMonTop,&tmpMonRight,&tmpMonBottom)
-		; if tmpMonLeft < lowX
-			; lowX := tmpMonLeft
-		; if (tmpMonRight) > highX 
-			; highX := tmpMonRight
-		; if tmpMonTop < lowY
-			; lowY := tmpMonTop
-		; if (tmpMonBottom) > highY 
-			; highY := tmpMonBottom
-		; }
-	; winGetPos(&guiX,&guiY,&guiW,&guiH,ui.mainGui)
-	; if (guiX < lowX || cfg.guiX > highX)
-		; cfg.guiX := 200
-	; if (guiY < lowY || cfg.guiY > highY)
-	; cfg.guiY := 200
-		
-	; ui.mainGui.move(cfg.guiX,cfg.guiY,,)	
-	; if ui.afkDocked {
-		; guiVis(ui.afkGui,true)
-		; guiVis(ui.handleBarAfkGui,true)
-	; } else {
-		; guiVis(ui.mainGui,true)
-		; guiVis(ui.titleBarButtonGui,true)
-	; }
-	
-	; ui.AfkAnchoredToGui := true
-
-	; debugLog("Showing Interface at x" cfg.GuiX " y" cfg.GuiY)
-	
-	; if ui.afkDocked {
-		; guiVis(ui.afkGui,true)
-		; guiVis(ui.HandlebarAfkGui,true)
-		; WinSetTransparent(210,ui.AfkGui)
-		; WinSetTransparent(210,ui.HandlebarAfkGui)
-	; } else {
-		; guiVis(ui.mainGui,true)
-		; guiVis(ui.titleBarButtonGui,true)
-		; tabsChanged()
-	; }
 	debugLog("Showing Interface")
 }
 
@@ -630,7 +574,7 @@ toggleConsole(*) {
 		}
 		GuiH := 430
 		ui.mainGui.Move(,,,GuiH)
-		ui.MainGui.GetPos(&GuiX,&GuiY,&GuiW,&GuiH)
+		winGetPos(&GuiX,&GuiY,&GuiW,&GuiH,ui.mainGui)
 		;MsgBox(GuiX "`n" GuiY "`n" GuiW "`n" GuiH)
 		debugLog("Showing Log")
 	} else {
@@ -638,7 +582,7 @@ toggleConsole(*) {
 		ui.ButtonDebug.Value := "./Img/button_console_ready.png"
 		ui.ButtonDebug.Opt("Background" cfg.ThemeButtonReadyColor)
 
-		ui.MainGui.GetPos(&GuiX,&GuiY,&GuiW,&GuiH)
+		winGetPos(&GuiX,&GuiY,&GuiW,&GuiH,ui.mainGui)
 		if (cfg.AnimationsEnabled) {
 			While (GuiH > 225)
 			{
@@ -662,109 +606,6 @@ initConsole(&ui) {
 	ui.gvMonitorSelectGui.SetFont("s16 c00FFFF","Calibri Bold")
 	ui.gvMonitorSelectGui.Add("Text",,"Click anywhere on the screen`nyou'd like your nControlDock on.")
 }
-
-createDockBar() {
-	ui.dockBarGui := gui()
-	ui.dockBarGui.opt("alwaysOnTop owner" ui.mainGui.hwnd " -caption")
-	ui.dockBarGui.backColor := cfg.themeBackgroundColor
-	ui.dockBarGui.color := cfg.themeBackgroundColor
-	winGetPos(&tmpX,&tmpY,&tmpW,&tmpH,ui.mainGui)
-	guiVis(ui.dockBarGui,false)
-	ui.dockBarGui.show("x" tmpx+200 " y0 w305 h25 noActivate")
-	drawOutlineNamed("dockBarOutline",ui.dockBarGui,0,0,tmpW-258,25,cfg.themeBorderDarkColor,cfg.themeBorderDarkColor,1)
-	dockBarIcons("Destiny 2","Add")
-	dockBarIcons("World//Zero","Add")
-	dockBarIcons("Game","Add")
-}
-
-
-
-guiVis(guiName,isVisible:= true) {
-	if (isVisible) {
-		WinSetTransparent(255,guiName)
-		WinSetTransparent("Off",guiName)
-		WinSetTransColor(ui.TransparentColor,guiName)
-	} else {
-		WinSetTransparent(0,guiName)
-	}
-}
-
-dockBarIcons(game,operation) {
-if (operation == "Add") {
-	switch game {
-		case "Shatterline":
-			;TBD
-		case "Destiny 2":
-			ui.dockBarD2label := ui.dockbarGui.addText("x2 y0 w25 h25 section c" cfg.themeButtonOncolor " backgroundTrans","D2")
-			ui.dockBarD2label.setFont("s14")
-			ui.dockBarRunIcon := ui.dockBarGui.addPicture("x+0 ys w25 h25 section background" cfg.themeDisabledColor, 
-			"./img/icon_running.png")
-			
-			(cfg.d2AlwaysRunEnabled) 
-				? ui.dockBarRunIcon.opt("Background" cfg.ThemeButtonOnColor)
-				: ui.dockBarRunIcon.opt("Background" cfg.themeButtonReadyColor)
-				
-			ui.dockBarD2AlwaysRun := ui.dockBarGui.addPicture("x+0 ys w30 h25 section vd2AlwaysRun " 
-			((cfg.d2AlwaysRunEnabled) 
-				? ("Background" cfg.ThemeButtonOnColor) 
-					: ("Background" cfg.themeButtonReadyColor)),
-			((cfg.d2AlwaysRunEnabled) 
-				? ("./img/toggle_vertical_trans_on.png") 
-					: ("./img/toggle_vertical_trans_off.png")))			
-
-			
-		case "World//Zero":
-			ui.dockBarW0label		:= ui.dockBarGui.addText("x+0 ys w30 h25 section backgroundTrans c" cfg.themeButtonOnColor,"W0")
-			ui.dockBarW0label.setFont("s14")
-			ui.dockBarAfkButton 	:= ui.dockBarGui.addPicture("x+0 ys w25 h25 section background" cfg.themeButtonReadyColor,ui.buttonStartAfk.value)
-			ui.dockBarTowerButton	:= ui.dockBarGui.addPicture("x+0 ys w25 h25 section background" cfg.themeButtonReadyColor,ui.buttonTower.value)
-			((ui.towerEnabled) 
-				? ("Background" cfg.ThemeButtonOnColor) 
-					: ("Background" cfg.themeButtonReadyColor),
-			((ui.towerEnabled) 
-				? ("./img/toggle_vertical_trans_on.png") 
-					: ("./img/toggle_vertical_trans_off.png")))
-					
-			ui.dockBarAfkButton.onEvent("click",toggleAfk)
-			ui.dockBarTowerButton.onEvent("click",ToggleTower)
-		
-		case "Game":
-			ui.dockBarWin1Cmd		:= ui.dockBarGui.addText("x+0 ys w25 h25 section backgroundTrans c" cfg.themeButtonReadyColor,"")
-			ui.dockBarWin1Cmd.setFont("s14")
-			ui.dockBarGui.addPicture("x+0 ys w25 h25 section background" cfg.themeBackgroundColor,"./img/arrow_left.png")
-			ui.dockBarGamelabel		:= ui.dockBarGui.addText("x+0 ys w40 h25 section backgroundTrans c" cfg.themeButtonOnColor,"AFK")
-			ui.dockBarGamelabel.setFont("s14")
-			ui.dockBarGui.addPicture("x+0 ys w25 h25 section backgroundTrans","./img/arrow_right.png")
-			ui.dockBarWin2Cmd		:= ui.dockBarGui.addText("x+0 ys w25 h25 section backgroundTrans c" cfg.themeButtonReadyColor,"")
-	}	
-	}
-}
-
-tabsChanged(*) {
-	ui.activeTab := ui.mainGuiTabs.Text
-	cfg.activeMainTab := ui.mainGuiTabs.value
-
-	switch ui.activeTab {
-		case "AFK":
-			guiVis(ui.mainGui,true)
-			guiVis(ui.afkGui,true)
-			guiVis(ui.gameSettingsGui,false)
-			controlFocus(ui.buttonTower,ui.afkGui)
-			
-		case "Game":
-			guiVis(ui.mainGui,true)
-			guiVis(ui.gameSettingsGui,true)
-			guiVis(ui.afkGui,false)
-			controlFocus(ui.d2AlwaysRun,ui.gameSettingsGui)
-		default:
-			guiVis(ui.gameSettingsGui,false)
-			guiVis(ui.afkGui,false)
-			guiVis(ui.mainGui,true)
-			controlFocus(ui.mainGuiTabs,ui.mainGui)
-		} 
-		ui.previousTab := ui.activeTab	
-}
-
 
 { ;Draw Outline Functions
 	drawOutlineMainGui(X, Y, W, H, Color1 := "Black", Color2 := "Black", Thickness := 1) {	
@@ -833,133 +674,273 @@ tabsChanged(*) {
 	}
 } ;End Draw Outline Functions
 
-drawAfkOutlines() {	
-ui.mainGuiTabs.UseTab("AFK")
-	drawOutlineNamed("afkOutline1",ui.afkGui,5,104,240,28,cfg.themeBright1Color,cfg.themeBright2Color,2)
-;	drawOutlineNamed("afkOutline2",ui.afkGui,178,38,67,58,cfg.themeBright1Color,cfg.themeBright2Color,2)
-;	drawOutlineNamed("afkOutline3",ui.afkGui,240,40,67,58,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,2)
-	drawOutlineNamed("afkGuiOutline",ui.afkGui,5,0,184,34,cfg.ThemeBright1Color,cfg.ThemeBright1Color,1)
-	drawOutlineNamed("afkGuiOutline",ui.afkGui,6,1,182,32,cfg.ThemeDark1Color,cfg.ThemeDark1Color,1)
-	drawOutlineNamed("mainOutline1",ui.mainGui,322,34,205,84,cfg.ThemeBright1Color,cfg.ThemeBright1Color,1)
-	drawOutlineNamed("mainOutline2",ui.mainGui,322,122,205,84,cfg.ThemeBright1Color,cfg.ThemeBright1Color,1)
-	drawOutlineNamed("win1statusRow",ui.afkGui,5,38,240,27,cfg.themeBright1Color,cfg.themeBright1Color,2)
-	drawOutlineNamed("win2statusRow",ui.afkGui,5,72,240,27,cfg.themeBright1Color,cfg.themeBright1Color,2)
+{ ;BEGIN = outline parameters
+	drawAfkOutlines() {	
+	ui.mainGuiTabs.UseTab("AFK")
+		drawOutlineNamed("afkToolbarOutline",ui.afkGui,5,0,123,34,cfg.ThemeBright1Color,cfg.ThemeBright1Color,1)
+		drawOutlineNamed("win1statusRow",ui.afkGui,5,38,240,27,cfg.themeBright1Color,cfg.themeBright1Color,2)
+		drawOutlineNamed("win2statusRow",ui.afkGui,5,72,240,27,cfg.themeBright1Color,cfg.themeBright1Color,2)
+		drawOutlineNamed("afkTimeStatusOutline",ui.afkGui,5,104,240,28,cfg.themeBright1Color,cfg.themeBright2Color,2)
+		drawOutlineNamed("afkRoutine1Outline",ui.mainGui,322,34,205,84,cfg.ThemeBright1Color,cfg.ThemeBright1Color,1)
+		drawOutlineNamed("afkRoutine2Outline",ui.mainGui,322,122,205,84,cfg.ThemeBright1Color,cfg.ThemeBright1Color,1)
+
 }
 
-drawMainOutlines() {
-ui.mainGuiTabs.useTab("")
-
-	drawOutlineNamed("consolePanelOutline",ui.mainGui,35,150,498,6,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,2) 	;Log Panel Outline
-	drawOutlineNamed("consolePanelOutline2",ui.mainGui,35,220,498,184,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,1)		;Log Panel 3D Effect
-}
-drawOpsOutlines() {
+	drawMainOutlines() {
 	ui.mainGuiTabs.useTab("")
-	drawOutlineNamed("bottomLine",ui.mainGui,36,211,494,2,cfg.themeBright2Color,cfg.themeBright2Color,1)
-	drawOutlineNamed("bottomLine",ui.mainGui,36,208,494,3,cfg.themeBright1Color,cfg.themeBright1Color,2)
-	ui.mainGuiTabs.useTab("Sys")
-	drawGridlines()
-	drawOutlineNamed("tabsUnderline",ui.MainGui,35,29,502,3,cfg.ThemeBackgroundColor,cfg.ThemeBackgroundColor,2)
-	drawOutlineNamed("opsClock",ui.mainGui,67,33,175,28,cfg.ThemeBorderDarkColor,cfg.ThemeBorderDarkColor,2)		;Ops Clock
-	drawOutlineNamed("opsClock",ui.mainGui,326,33,149,28,cfg.ThemeBorderDarkColor,cfg.ThemeBorderDarkColor,1)		;Ops Clock
-	;drawOutlineNamed("opsClock",ui.mainGui,67,34,173,26,cfg.ThemeBorderLightColor,cfg.ThemeBorderLightColor,1)	
-	drawOutlineNamed("opsToolbarOutline2",ui.mainGui,36,33,494,30,cfg.ThemeBright1Color,cfg.ThemeBright1Color,1)		;Ops Toolbar Outline
-;	drawOutlineNamed("opsStatusBarRightDark",ui.mainGui,307,131,227,30,cfg.ThemeBorderDarkColor,cfg.ThemeBorderDarkColor,2)	;Status Bar
-	; drawOutlineNamed("opsStatusBarRightLight",ui.mainGui,306,131,228,32,cfg.ThemeDark2Color,cfg.ThemeBright2Color,2)	;Status Bar
-	; drawOutlineNamed("opsStatusBarRightLight",ui.mainGui,464,131,35,32,cfg.ThemeDark2Color,cfg.ThemeBright2Color,2)	;Status Bar
-	;drawOutlineNamed("opsStatusBarLeftDark",ui.mainGui,34,131,227,30,cfg.ThemeBorderDarkColor,cfg.ThemeBorderDarkColor,2)	;Status Bar
-	; drawOutlineNamed("opsStatusBarLeftLight",ui.mainGui,30,132,230,32,cfg.ThemeDark2Color,cfg.ThemeBright2Color,2)	;Status Bar
-	; drawOutlineNamed("opsStatusBarLeftLight",ui.mainGui,68,132,35,32,cfg.ThemeDark2Color,cfg.ThemeBright2Color,2)	;Status Bar
+		drawOutlineNamed("consolePanelOutline",ui.mainGui,35,150,498,6,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,2) 		;Log Panel Outline
+		drawOutlineNamed("consolePanelOutline2",ui.mainGui,35,220,498,184,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,1)		;Log Panel 3D Effect
+	}
 
-	drawOutlineNamed("opsMiddleColumnOutlineLight",ui.mainGui,259,62,51,141,cfg.themeDark1Color,cfg.themeDark1Color,2)		;Ops Toolbar
-	;Ops Toolbar Outline
-	drawOutlineNamed("opsMiddleColumnOutlineDark",ui.mainGui,258,62,53,141,cfg.themeBright1Color,cfg.themeBright1Color,2)		;Ops Toolbar Outline	;Ops Toolbar Outline
-	drawOutlineNamed("opsMiddleColumnOutlineDark",ui.mainGui,258,62,50,141,cfg.themeBright1Color,cfg.themeBright1Color,1)		;Ops Toolbar Outline
-	drawOutlineNamed("opsAfkStatusLeft",ui.mainGui,36,107,66,24,cfg.themeBright1Color,cfg.themeBright1Color,1)
-	drawOutlineNamed("opsAfkStatusRight",ui.mainGui,464,107,66,24,cfg.themeBright1Color,cfg.themeBright1Color,1)	
-	drawOutlineNamed("opsAfkStatusLeft",ui.mainGui,36,132,66,30,cfg.themeBright1Color,cfg.themeBright1Color,1)
-	drawOutlineNamed("opsAfkStatusRight",ui.mainGui,464,132,66,30,cfg.themeBright1Color,cfg.themeBright1Color,1)
-	; drawOutlineNamed("opsBottomMiddleLine",ui.mainGui,259,198,49,2,cfg.themeBorderDarkColor,cfg.themeBorderDarkColor,2)
-	; drawOutlineNamed("opsBottom2MiddleLine",ui.mainGui,258,200,51,2,cfg.themeBorderLightColor,cfg.themeBorderLightColor,2)
+	drawOpsOutlines() {
+		ui.mainGuiTabs.useTab("")
+		drawOutlineNamed("bottomLine",ui.mainGui,36,211,494,2,cfg.themeBright2Color,cfg.themeBright2Color,1)
+		drawOutlineNamed("bottomLine",ui.mainGui,36,208,494,3,cfg.themeBright1Color,cfg.themeBright1Color,2)
+		ui.mainGuiTabs.useTab("Sys")
+		drawGridlines()
+		drawOutlineNamed("tabsUnderline",ui.MainGui,35,29,502,3,cfg.ThemeBackgroundColor,cfg.ThemeBackgroundColor,2)
+		drawOutlineNamed("opsClock",ui.mainGui,103,33,139,28,cfg.ThemeBorderDarkColor,cfg.ThemeBorderDarkColor,2)		;Ops Clock
+		drawOutlineNamed("opsClock",ui.mainGui,325,33,138,28,cfg.ThemeBorderDarkColor,cfg.ThemeBorderDarkColor,2)		;Ops Clock
+		drawOutlineNamed("opsToolbarOutline2",ui.mainGui,36,33,494,30,cfg.ThemeBright1Color,cfg.ThemeBright1Color,1)	;Ops Toolbar Outline
+
+		drawOutlineNamed("opsMiddleColumnOutlineLight",ui.mainGui,259,62,51,141,cfg.themeDark1Color,cfg.themeDark1Color,2)		;Ops Toolbar
+		drawOutlineNamed("opsMiddleColumnOutlineDark",ui.mainGui,258,62,53,141,cfg.themeBright1Color,cfg.themeBright1Color,2)	;Ops Toolbar Outline
+		drawOutlineNamed("opsMiddleColumnOutlineDark",ui.mainGui,258,62,50,141,cfg.themeBright1Color,cfg.themeBright1Color,1)	;Ops Toolbar Outline
+		drawOutlineNamed("opsAfkStatusLeft",ui.mainGui,36,107,66,24,cfg.themeBright1Color,cfg.themeBright1Color,1)
+		drawOutlineNamed("opsAfkStatusRight",ui.mainGui,464,107,66,24,cfg.themeBright1Color,cfg.themeBright1Color,1)	
+		drawOutlineNamed("opsAfkStatusLeft",ui.mainGui,36,132,66,30,cfg.themeBright1Color,cfg.themeBright1Color,1)
+		drawOutlineNamed("opsAfkStatusRight",ui.mainGui,464,132,66,30,cfg.themeBright1Color,cfg.themeBright1Color,1)
+	}
+
+	drawGridLines() {
+	ui.MainGuiTabs.UseTab("Sys")
+		drawOutline(ui.MainGui,103,77,157,15,cfg.ThemeBright2Color,cfg.ThemeBright2Color,1)		;Win1 Info Gridlines  
+		drawOutline(ui.MainGui,308,77,155,15,cfg.ThemeBright2Color,cfg.ThemeBright2Color,1)		;Win2 Info Gridlines
+		drawOutline(ui.MainGui,308,62,155,100,cfg.ThemeBright1Color,cfg.ThemeBright1Color,2)	;WIn2 Info Frame
+		drawOutline(ui.MainGui,103,62,157,100,cfg.ThemeBright1Color,cfg.ThemeBright1Color,2) 	;Win1 Info Frame
+
+	}
+} ;END - outline parameters
+
+
+tabsChanged(*) {
+	ui.activeTab := ui.mainGuiTabs.Text
+	cfg.activeMainTab := ui.mainGuiTabs.value
+
+	switch ui.activeTab {
+		case "AFK":
+			guiVis(ui.mainGui,true)
+			guiVis(ui.afkGui,true)
+			guiVis(ui.gameSettingsGui,false)
+			controlFocus(ui.buttonTower,ui.afkGui)
+			
+		case "Game":
+			guiVis(ui.mainGui,true)
+			guiVis(ui.gameSettingsGui,true)
+			guiVis(ui.afkGui,false)
+			controlFocus(ui.d2AlwaysRun,ui.gameSettingsGui)
+		default:
+			guiVis(ui.gameSettingsGui,false)
+			guiVis(ui.afkGui,false)
+			guiVis(ui.mainGui,true)
+			controlFocus(ui.mainGuiTabs,ui.mainGui)
+		} 
+		ui.previousTab := ui.activeTab	
 }
 
-drawGridLines() {
-ui.MainGuiTabs.UseTab("Sys")
-	drawOutline(ui.MainGui,103,77,157,15,cfg.ThemeBright2Color,cfg.ThemeBright2Color,1)				;Win1 Info Gridlines  
-	drawOutline(ui.MainGui,308,77,155,15,cfg.ThemeBright2Color,cfg.ThemeBright2Color,1)				;Win2 Info Gridlines
-	drawOutline(ui.MainGui,308,62,155,100,cfg.ThemeBright1Color,cfg.ThemeBright1Color,2)	;WIn2 Info Frame
-	drawOutline(ui.MainGui,103,62,157,100,cfg.ThemeBright1Color,cfg.ThemeBright1Color,2) ;Win1 Info Frame
-
+guiVis(guiName,isVisible:= true) {
+	if (isVisible) {
+		WinSetTransparent(255,guiName)
+		WinSetTransparent("Off",guiName)
+		WinSetTransColor(ui.TransparentColor,guiName)
+	} else {
+		WinSetTransparent(0,guiName)
+	}
 }
-ui.topDockEnabled := false
+
+ui.dockBarWidth := 0
+
+createDockBar() {
+	ui.dockBarGui := gui()
+	ui.dockBarGui.opt("alwaysOnTop owner" ui.mainGui.hwnd " -caption")
+	ui.dockBarGui.backColor := cfg.themeBackgroundColor
+	ui.dockBarGui.color := cfg.themeBackgroundColor
+	guiVis(ui.dockBarGui,false)
+	ui.dockBarWidth := 0
+	ui.dockBarGui.SetFont("s14","Calibri Thin")
+	ui.dockOpsDockButton := ui.dockBarGui.AddPicture("x1 y0 w25 h25 section Background" cfg.ThemeButtonReadyColor,"./Img/button_dockLeft_ready.png")
+	ui.dockOpsDockButton.OnEvent("Click",toggleAfkDock)
+	ui.dockOpsDockButton.ToolTip 		:= "Dock AFK Panel"
+	ui.dockBarWidth += 26
+	
+	ui.docktopDockButton := ui.dockBarGui.addPicture("x+0 ys w25 h25 section background" cfg.themeButtonOnColor,"./img/button_dockDown_ready.png")
+	ui.docktopDockButton.onEvent("click",topDockOff)
+	ui.docktopDockButton.toolTip := "Dock to top of screen"
+	ui.dockBarWidth += 25
+	ui.dockAutoClicker 		:= ui.dockBarGui.addPicture("x+0 ys w25 h25 section background" cfg.themeButtonReadyColor,"./img/button_AutoClicker_ready.png")
+	ui.dockAutoClicker.onEvent("click", ToggleAutoClicker)
+	ui.dockAutoClicker.ToolTip := "AutoClicker Status. (Use settings screen to adjust timing)"
+	ui.dockBarWidth += 25
+	ui.dockPadBar1 			:= ui.dockBarGui.addText("x+0 ys w1 h25 section background" cfg.themeBright1Color,"")
+	ui.dockBarWidth += 1
+	ui.dockBarWin1Icon		:= ui.dockBarGui.addPicture("x+0 ys w25 h25 section background" cfg.themePanel1Color,"./img/sleep_icon.png")
+	ui.dockBarWidth	+= 25
+	ui.dockBarWin1Cmd		:= ui.dockBarGui.addText("x+0 ys w25 h25 section center background" cfg.themePanel3Color " c" cfg.themeFont3Color,"--")
+	ui.dockBarWin1Cmd.setFont("s14")
+	ui.dockBarWidth += 25
+	ui.dockBarGui.addPicture("x+0 ys w25 h25 section background" cfg.themeBackgroundColor,"./img/arrow_left.png")
+	ui.dockBarWidth += 25
+	; ui.dockBarGamelabel		:= ui.dockBarGui.addText("x+0 ys w40 h25 section backgroundTrans c" cfg.themeButtonOnColor,"AFK")
+	; ui.dockBarGamelabel.setFont("s14")
+	; ui.dockBarWidth += 40
+	ui.dockGameDDL := ui.dockBarGui.AddDropDownList("x+0 ys-1 w137 Background" cfg.ThemeEditboxColor " -E0x200 Choose" cfg.game,cfg.GameList)
+	ui.dockBarWidth += 137
+	ui.dockGameDDL.ToolTip := "Select the Game You Are Playing"
+	ui.dockGameDDL.OnEvent("Change",ChangeDockGameDDL)
+	ui.dockGameDDL.SetFont("s11.8 c" cfg.ThemeFont1Color)
+
+	postMessage("0x153", -1, 20,, "AHK_ID " ui.gameDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153
+	postMessage("0x153", 0, 20,, "AHK_ID " ui.gameDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153
+
+ui.dockBarGui.addPicture("x+0 ys w25 h25 section backgroundTrans","./img/arrow_right.png")
+	ui.dockBarWidth += 25
+	ui.dockBarWin2Cmd		:= ui.dockBarGui.addText("x+0 ys w25 h25 section center background" cfg.themePanel3Color " c" cfg.themeFont3Color," --")
+	ui.dockBarWidth += 25
+	ui.dockbarWin2Icon		:= ui.dockBarGui.addPicture("x+0 ys w25 h25 background" cfg.themePanel1Color,"./img/sleep_icon.png")
+	ui.dockBarWidth += 25
+
+	
+}
+showDockBar() {
+	
+		winGetPos(&tmpX,&tmpY,&tmpW,&tmpH,ui.mainGui)
+		ui.dockBarGui.show("x" (a_ScreenWidth/2)-(ui.dockBarWidth/2) " y0 w" ui.dockBarWidth " h26 noActivate")
+		drawOutlineNamed("dockBarOutline",ui.dockBarGui,0,0,ui.dockBarWidth,26,cfg.themeBorderLightColor,cfg.themeBorderDarkColor,1)
+	if (cfg.topDockEnabled) {
+	guiVis(ui.dockBarGui,true)
+	}
+}
+
+dockBarIcons(game,operation := "") {
+	if (operation == "Add") {
+		switch game {
+			case "Shatterline":
+				;TBD
+			case "Destiny 2":
+				; ui.dockBarD2label := ui.dockbarGui.addText("ys w35 h25 section c" cfg.themeFont2color " background" cfg.themeEditboxColor,"D2")
+				; ui.dockBarWidth += 35
+				; ui.dockBarD2label.setFont("s14")
+				ui.dockBarRunIcon := ui.dockBarGui.addPicture("x+-2 ys w25 h25 section background" cfg.themeDisabledColor, 
+				"./img/icon_running.png")
+				ui.dockBarWidth += 23
+				ui.dockBarRunIcon.opt("Background" cfg.ThemeButtonAlertColor)
+					
+				ui.dockBarD2AlwaysRun := ui.dockBarGui.addPicture("x+0 ys w30 h25 section vd2AlwaysRun " 
+				((cfg.d2AlwaysRunEnabled) 
+					? ("Background" cfg.ThemeButtonOnColor) 
+						: ("Background" cfg.themeButtonReadyColor)),
+				((cfg.d2AlwaysRunEnabled) 
+					? ("./img/toggle_vertical_trans_on.png") 
+						: ("./img/toggle_vertical_trans_off.png")))			
+				ui.dockBarWidth += 30
+			case "World//Zero":
+				; ui.dockBarW0label		:= ui.dockBarGui.addText("x+0 ys w35 h25 section background" cfg.themeEditboxColor " c" cfg.themeFont2Color,"W0")
+				; ui.dockBarW0label.setFont("s14")
+				; ui.dockBarWidth += 35
+				ui.dockBarAfkButton 	:= ui.dockBarGui.addPicture("x+0 ys w25 h25 section background" cfg.themeButtonReadyColor,ui.buttonStartAfk.value)
+				ui.dockBarWidth += 25
+				ui.dockBarTowerButton	:= ui.dockBarGui.addPicture("x+0 ys w25 h25 section background" cfg.themeButtonReadyColor,ui.buttonTower.value)
+				ui.dockBarWidth += 25
+				((ui.towerEnabled) 
+					? ("Background" cfg.ThemeButtonOnColor) 
+						: ("Background" cfg.themeButtonReadyColor),
+				((ui.towerEnabled) 
+					? ("./img/toggle_vertical_trans_on.png") 
+						: ("./img/toggle_vertical_trans_off.png")))
+						
+				ui.dockBarAfkButton.onEvent("click",dockToggleAfk)
+				ui.dockBarTowerButton.onEvent("click",dockToggleTower)
+				dockToggleAfk(*) {
+					toggleAfk()
+					controlFocus(ui.dockBarTowerButton)
+				}
+				dockToggleTower(*) {
+					toggleTower()
+					controlFocus(ui.dockBarTowerButton)
+				}
+			case "Clear": 
+				ui.dockBarGui.destroy()
+				createDockBar()
+		}
+	}
+}
+
+
+
 ui.topDocPrevTab	:= ""
+
 toggleTopDock(*) {
-		(ui.topDockEnabled := !ui.topDockEnabled)
+		(cfg.topDockEnabled := !cfg.topDockEnabled)
 			? topDockOn()
 			: topDockOff()
-	}
+}
 	
-topDockOn() {
-	ui.topDockPrevTab := ui.mainGuiTabs.Text
-	ui.mainGuiTabs.choose(cfg.mainTabList[1])
-	winSetTransparent(0,ui.titleBarButtonGui)
+topDockOn(*) {
+	showDockBar()
+	cfg.topDockEnabled := true
+	saveGuiPos()
+	guiVis(ui.titleBarButtonGui,false)
 	transparent := 255
 	while transparent > 20 {
 		transparent -= 10
 		winSetTransparent(transparent,ui.mainGui)
 		sleep(10)
 	}
-	winSetTransparent(0,ui.mainGui)
-
-	winGetPos(&vX,&vY,&vW,&vH,ui.mainGui)
-	ui.prevGuiX := vX
-	ui.prevGuiY := vY
-	ui.prevGuiW := vW
-	ui.prevGuiH := vH
-	ui.mainGui.move((a_screenWidth/2)-((vW+(vw-255))/2),-35,900,63)
-	ui.buttonDebug.opt("hidden")
-	ui.refreshWindowHandlesbutton.opt("hidden")
-	ui.gameAddButton.opt("hidden")
-	ui.gameRemoveButton.opt("hidden")
-	ui.gameRemoveButton
-	ui.buttonHelp.opt("hidden")
-	ui.gameDDL.move(445,35,120,25)
-	winSetRegion("38-35 w490 h25",ui.mainGui)	
-	while transparent < 170 {
+	guiVis(ui.mainGui,false)
+	
+	try {	
+		winGetPos(&vX,&vY,&vW,&vH,ui.mainGui)
+		ui.prevGuiX := vX
+		ui.prevGuiY := vY
+		ui.prevGuiW := vW
+		ui.prevGuiH := vH
+	}
+	
+	while transparent < 245 {
 		transparent += 10
-		winSetTransparent(transparent, ui.mainGui)
+		winSetTransparent(transparent, ui.dockBarGui)
 		sleep(10)
 	}
-	guiVis(ui.titleBarButtonGui,false)
-	winSetTransparent(180,ui.mainGui)
 	ui.opsDockButton.opt("background" cfg.themeButtonOnColor)
 	guiVis(ui.dockBarGui,true)
 }
 
 topDockOff(*) {
+	cfg.topDockEnabled := false
 	guiVis(ui.titleBarButtonGui,false)
 	transparent := 255
-	winSetTransparent(0,ui.titleBarButtonGui)
+
 	while transparent > 10 {
 		transparent -= 10
-		winSetTransparent(transparent,ui.mainGui)
-		sleep(10)
+		winSetTransparent(transparent,ui.dockBarGui)
+			sleep(10)
 	}
+	guiVis(ui.dockBarGui,false)
+	guiVis(ui.mainGui,false)
+	
 	winSetTransparent(0,ui.mainGui)
-	winSetTransColor("Off",ui.titleBarButtonGui)
-	winSetRegion(,ui.mainGui)
-
 	
-	
-	ui.mainGui.move(ui.prevGuiX,ui.prevGuiY,ui.prevGuiW,ui.prevGuiH)
-	
-while transparent < 245 {
+	while transparent < 245 {
 		transparent += 10
 		winSetTransparent(transparent, ui.mainGui)
 		sleep(10)
 	}
-	winSetTransparent(255,ui.mainGui)
-	ui.mainGuiTabs.choose(ui.topDockPrevTab)
+	;guiVis(ui.mainGui,true)
+	;ui.mainGuiTabs.choose(ui.topDockPrevTab)
 	guivis(ui.titleBarbuttonGui,true)
 	ui.opsDockButton.opt("background" cfg.themeButtonReadyColor)
-	guiVis(ui.dockBarGui,false)
+	ui.titleBarButtonGui.Show("x" cfg.GuiX " y" cfg.GuiY-5 " w562 h218 NoActivate")
+	
 }
+
+

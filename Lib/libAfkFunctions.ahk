@@ -501,7 +501,10 @@ autoFire(initWinNumber := GetWinNumber()) {
 		&& !(cfg.win%winNumber%disabled)
 		&& WinExist("ahk_id " ui.win%winNumber%hwnd) 		
 		{
-			ui.Win%WinNumber%AfkIcon.value := "./Img/attack_icon.png"
+			ui.Win%WinNumber%AfkIcon.value 		:= "./Img/attack_icon.png"
+			ui.dockBarWin%winNumber%Icon.Value	:= "./img/attack_icon.png"
+			ui.dockBarWin%winNumber%cmd.text 	:= " " Command
+			ui.dockBarWin%winNumber%cmd.setFont("c" cfg.themeFont2Color)
 			ui.Win%WinNumber%AfkStatus.SetFont("c" cfg.ThemeFont2Color)
 			ui.Win%WinNumber%AfkStatus.text := "  " Command
 			ui.opsWin%WinNumber%AfkIcon.value := "./Img/attack_icon.png"

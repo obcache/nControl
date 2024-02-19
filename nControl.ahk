@@ -1,4 +1,4 @@
-A_FileVersion := "3.6.1.6"
+A_FileVersion := "3.6.1.8"
 ;@Ahk2Exe-Let FileVersion=%A_PriorLine~U)^(.+"){1}(.+)".*$~$2% 
 
 A_AppName := "nControl"
@@ -98,9 +98,10 @@ autoUpdate()
 
 if (cfg.startMinimizedEnabled)
 	hideGui()
-ui.mainGui.getPos(&MainGuiX,&MainGuiY,,)
+winGetPos(&MainGuiX,&MainGuiY,,,ui.mainGui)
 createDockBar()
-
+if cfg.topDockEnabled
+	showDockBar()
 fadeIn()
 changeGameDDL()
 ui.MainGuiTabs.Choose(cfg.mainTabList[cfg.activeMainTab])

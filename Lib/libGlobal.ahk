@@ -240,6 +240,11 @@ preAutoExec(InstallDir,ConfigFileName) {
 			fileInstall("./img/toggle_vertical_trans_on.png",installDir "/img/toggle_vertical_trans_on.png",1)
 			fileInstall("./img/toggle_vertical_trans_off.png",installDir "/img/toggle_vertical_trans_off.png",1)
 			fileInstall("./img/icon_running.png",installDir "/img/icon_running.png",1)
+			fileInstall("./img/button_dockDown_on.png",installDir "/img/button_dockDown_on.png")
+			fileInstall("./img/button_dockDown_ready.png",installDir "/img/button_dockDown_ready.png")
+			fileInstall("./img/button_dockUp_on.png",installDir "/img/button_dockUp_on.png")
+			fileInstall("./img/button_dockUp_ready.png",installDir "/img/button_dockUp_ready.png")
+			
 			persistLog("Copied Assets to: " InstallDir)
 			
 
@@ -405,6 +410,7 @@ cfgLoad(&cfg, &ui) {
 	cfg.AfkY					:= IniRead(cfg.file,"Interface","AfkY",cfg.GuiY+35)
 	cfg.AfkSnapEnabled			:= IniRead(cfg.file,"Interface","AfkSnapEnabled",false)
 	cfg.GuiSnapEnabled			:= IniRead(cfg.file,"Interface","GuiSnapEnabled",true)
+	cfg.topDockEnabled			:= iniRead(cfg.file,"Interface","TopDockEnabled",false)
 
 
 	cfg.AutoDetectGame			:= IniRead(cfg.file,"Game","AutoDetectGame",true)
@@ -574,6 +580,7 @@ WriteConfig() {
 		IniWrite(cfg.d2HoldWalkKey,cfg.file,"Game","d2HoldWalkKey")
 		IniWrite(cfg.activeMainTab,cfg.file,"Interface","ActiveMainTab")
 		IniWrite(cfg.activeGameTab,cfg.file,"Interface","ActiveGameTab")
+		iniWrite(cfg.topDockEnabled,cfg.file,"Interface","TopDockEnabled")
 		ui.mainTabListString := ""
 		loop cfg.mainTabList.length {
 			ui.mainTabListString .= cfg.mainTabList[a_index] ','
@@ -857,8 +864,9 @@ exitFunc(ExitReason,ExitCode) {
 	winSetTransparent(0,ui.afkGui)
 	winSetTransparent(0,ui.gameSettingsGui)
 	winSetTransparent(0,ui.mainGui)
-	if (ui.topDockEnabled)
-	ui.mainGui.move(ui.prevGuiX,ui.prevGuiY,ui.prevGuiW,ui.prevGuiH)
+	if (cfg.topDockEnabled) {
+		topDockOff()
+	}
 	WriteConfig()
 	Return
 }

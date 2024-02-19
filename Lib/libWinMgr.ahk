@@ -65,7 +65,7 @@ WM_LBUTTONDOWN(wParam, lParam, msg, Hwnd) {
 	if !(hwnd == ui.afkGui.hwnd && ui.afkAnchoredToGui) {
 		
 		
-		if !ui.topDockEnabled && ((Hwnd = ui.MainGui.hwnd) || (Hwnd = ui.titleBarButtonGui.Hwnd) || (hwnd == ui.dividerGui.hwnd) || (hwnd == ui.afkGui.hwnd))
+		if !cfg.topDockEnabled && ((Hwnd = ui.MainGui.hwnd) || (Hwnd = ui.titleBarButtonGui.Hwnd) || (hwnd == ui.dividerGui.hwnd) || (hwnd == ui.afkGui.hwnd))
 			PostMessage("0xA1",2)
 
 		if (hwnd == ui.dividerGui.hwnd)
