@@ -13,6 +13,7 @@ if (InStr(A_LineFile,A_ScriptFullPath))
 	
 GuiSetupTab(&ui,&cfg)
 {
+	global
 	ui.MainGuiTabs.UseTab("Setup")
 	ui.MainGui.SetFont("s09")
 	ui.AutoClickerSpeedSlider := ui.MainGui.AddSlider("x40 y40 w25 h160 Range1-64 Vertical Left TickInterval8 Invert ToolTipTop",cfg.AutoClickerSpeed)
@@ -83,12 +84,12 @@ GuiSetupTab(&ui,&cfg)
 	ui.checkForUpdatesButton := ui.mainGui.addPicture("xs y+5 w30 h30 section background" cfg.themeButtonReadyColor,"./img/button_update.png")
 	ui.checkForUpdatesButton.onEvent("Click",checkForUpdates)
 	ui.checkForUpdatesButton.Tooltip := "Checks to see if a more recent version is available"	
-	ui.checkForUpdatesLabel := ui.mainGui.addText("ys-4 x+5 section w70 backgroundTrans","Update Now")
-	ui.releaseChannelLabel := ui.mainGui.addText("ys+21 x+-50 w100 right backgroundTrans","Release Channel")
-	ui.releaseChannelDDL := ui.mainGui.AddDDL("xs-35 y+-20 w155 r3 choose" cfg.releaseChannel " background" cfg.themeBackgroundColor,["Dev","Beta","Stable"])
+	ui.installedVersionText := ui.mainGui.addText("ys x+5 section w100 backgroundTrans","Installed:" ui.installedVersion)
+	ui.latestVersionText := ui.mainGui.addText("xs y+-5 w100 backgroundTrans","Latest:" ui.latestVersion)
+	ui.releaseChannelDDL := ui.mainGui.AddDDL("xs-35 w155 r3 choose" cfg.releaseChannel " background" cfg.themeBackgroundColor,["Dev","Beta","Stable"])
 
-	ui.releaseChannelLabel.setFont("s10")
-	ui.checkForUpdatesLabel.setFont("s10")
+	ui.installedVersionText.setFont("s10")
+	ui.latestVersionText.setFont("s10")
 
 	ui.ColorSelectorLabel2 := ui.MainGui.AddText("x226 y37 h21 section w75 BackgroundTrans c"
 		((cfg.ColorPickerEnabled) 

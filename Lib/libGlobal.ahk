@@ -255,6 +255,7 @@ preAutoExec(InstallDir,ConfigFileName) {
 	}
 }
 
+
 FileFound(fileName,destination,fileDescription) {
 	source := fileName
 	dest := destination
@@ -299,17 +300,22 @@ CheckForUpdates(msg,*) {
 		whr.Open("GET", "https://raw.githubusercontent.com/obcache/nControl/main/nControl_currentBuild.dat", true)
 		whr.Send()
 		whr.WaitForResponse()
-		latestVersion := whr.ResponseText
-		currentVersion := fileRead("./nControl_currentBuild.dat")
-		if (currentVersion < latestVersion) {
+		ui.latestVersion := whr.ResponseText
+		ui.installedVersion := fileRead("./nControl_currentBuild.dat")
+		ui.installedVersionText.text := "Installed:`t" ui.installedVersion
+		ui.latestVersionText.text := "Latest:`t*****"
+		if (ui.installedVersion < ui.latestVersion) {
 			guiVis(ui.mainGui,false)
 			guiVis(ui.titleBarButtonGui,false)
 			guiVis(ui.afkGui,false)
 			guiVis(ui.gameSettingsGui,false)
 			run("./nControl_updater.exe")
 		} else {
-			 if(msg)
-				pbNotify("No upgraded needed`nCurrent Version: " currentVersion "`nLatest Version: " latestVersion,3000)
+			 if(msg) {
+				ui.latestVersionText.text := "Latest:`t" ui.latestVersion
+				pbNotify("No upgraded needed`nCurrent Version: " ui.installedVersion "`nLatest Version: " ui.latestVersion,3000)
+				setTimer () => ui.latestVersionText.text := "Latest:`t*****",-300000
+			 }
 		}
 		winSetAlwaysOnTop(cfg.AlwaysOnTopEnabled,ui.mainGui.hwnd)
 } 

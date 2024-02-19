@@ -1,4 +1,4 @@
-A_FileVersion := "3.6.1.8"
+A_FileVersion := "3.6.1.9"
 ;@Ahk2Exe-Let FileVersion=%A_PriorLine~U)^(.+"){1}(.+)".*$~$2% 
 
 A_AppName := "nControl"
@@ -38,6 +38,8 @@ ui.hidden 		:= 0
 ui.hwndAfkGui 	:= ""
 LogData 		:= ""
 ui.AfkHeight 	:= 170
+ui.latestVersion := ""
+ui.installedVersion := ""
 
 MonitorGet(MonitorGetPrimary(),
 	&PrimaryMonitorLeft,
