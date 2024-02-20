@@ -85,7 +85,7 @@ initGui(&cfg, &ui) {
 	winSetTransparent(0,ui.gameSettingsGui)
 	winSetTransparent(0,ui.afkGui)
 
-	ui.titleBarButtonGui.Show("x" cfg.GuiX " y" cfg.GuiY-5 " w562 h218 NoActivate")
+	ui.titleBarButtonGui.Show("x" cfg.GuiX " y" cfg.GuiY-4 " w562 h218 NoActivate")
 	ui.MainGui.Show("x" cfg.GuiX " y" cfg.GuiY " w562 h214 NoActivate")
 	ui.MainGuiTabs.Choose(cfg.mainTabList[cfg.activeMainTab])
 
@@ -139,40 +139,40 @@ initOSDGui() {
 	ui.win2statusBg := ui.afkGui.addText("x5 y72 w85 h30 background" cfg.themeEditboxColor,"")
 	
 
-	ui.buttonDockAfk := ui.AfkGui.AddPicture("x7 y2 w30 h30 section Background" cfg.ThemeButtonReadyColor,"./Img/button_dockLeft_ready.png")
+	ui.buttonDockAfk := ui.AfkGui.AddPicture("x7 y2 w32 h32 section Background" cfg.ThemeButtonReadyColor,"./Img/button_dockLeft_ready.png")
 	ui.buttonDockAfk.OnEvent("Click",ToggleAfkDock)
 	ui.buttonDockAfk.ToolTip := "Dock AFK Panel"	
 	
-	ui.buttonStartAFK := ui.AfkGui.AddPicture("x+0 y2 section w30 h30 Background" cfg.ThemeButtonReadyColor,"./Img/button_afk_ready.png")
+	ui.buttonStartAFK := ui.AfkGui.AddPicture("x+0 y2 section w32 h32 Background" cfg.ThemeButtonReadyColor,"./Img/button_afk_ready.png")
 	ui.buttonStartAFK.OnEvent("Click",ToggleAFK)
 	ui.buttonStartAFK.ToolTip := "Toggle AFK"
 	
-	ui.buttonTower := ui.AfkGui.AddPicture("x+0 ys0 w30 h30 section Background" cfg.ThemeButtonReadyColor,"./Img/button_tower_ready.png")
+	ui.buttonTower := ui.AfkGui.AddPicture("x+0 ys0 w32 h32 section Background" cfg.ThemeButtonReadyColor,"./Img/button_tower_ready.png")
 	ui.buttonTower.OnEvent("Click",ToggleTower)
 	ui.buttonTower.ToolTip := "Starts Infinte Tower"
 	
-	ui.buttonAutoClicker := ui.AfkGui.AddPicture("x+0 ys0 w30 h30 Background" cfg.ThemeButtonReadyColor,"./Img/button_AutoClicker_ready.png")
+	ui.buttonAutoClicker := ui.AfkGui.AddPicture("x+0 ys0 w32 h32 Background" cfg.ThemeButtonReadyColor,"./Img/button_AutoClicker_ready.png")
 	ui.buttonAutoClicker.OnEvent("Click",ToggleAutoClicker)
 	ui.buttonAutoClicker.ToolTip := "Toggles AutoClicker"
-	ui.buttonAntiIdle1 := ui.AfkGui.AddPicture("x+0 ys0 w30 h30 hidden Background" cfg.ThemeButtonReadyColor,"./Img/button_antiIdle_ready.png")
+	ui.buttonAntiIdle1 := ui.AfkGui.AddPicture("x+0 ys0 w32 h32 hidden Background" cfg.ThemeButtonReadyColor,"./Img/button_antiIdle_ready.png")
 	ui.buttonAntiIdle1.OnEvent("Click",ToggleAntiIdleBoth)
 	ui.buttonAntiIdle1.ToolTip := "Toggles AntiIdle Mode On/Off"
 	
-	ui.buttonAutoFire := ui.AfkGui.AddPicture("x+0 ys0 w30 h30 hidden Background" cfg.ThemeButtonReadyColor,"./Img/button_AutoFire_ready.png")
+	ui.buttonAutoFire := ui.AfkGui.AddPicture("x+0 ys0 w32 h32 hidden Background" cfg.ThemeButtonReadyColor,"./Img/button_AutoFire_ready.png")
 	ui.buttonAutoFire.OnEvent("Click",toggleAutoFire)
 	ui.buttonAutoFire.ToolTip := "Toggles AutoFire on Current Window"
 	
 
 
 
-	ui.buttonAfkHide := ui.AfkGui.AddPicture("x+0 ys0 w30 h30 hidden Background" cfg.ThemeButtonReadyColor,"./Img/button_hide.png")
+	ui.buttonAfkHide := ui.AfkGui.AddPicture("x+0 ys0 w32 h32 hidden Background" cfg.ThemeButtonReadyColor,"./Img/button_hide.png")
 	ui.buttonAfkHide.OnEvent("Click",HideAfkGui)
 	hideAfkGui(*) {
 		guiVis(ui.afkGui,false)
 	}
 	ui.buttonAfkHide.ToolTip := "Minimizes AFK Window to System Tray"
 	
-	ui.buttonPopout := ui.AfkGui.AddPicture("x+-0 ys0 w30 h30 Background" cfg.ThemeButtonReadyColor,"./Img/button_popout_ready.png")
+	ui.buttonPopout := ui.AfkGui.AddPicture("x+-0 ys0 w32 h32 Background" cfg.ThemeButtonReadyColor,"./Img/button_popout_ready.png")
 	ui.buttonPopout.OnEvent("Click",AfkPopoutButtonPushed)
 	
 	ui.Win1Label := ui.AfkGui.AddPicture("x6 y+8 section w30 h23 background" cfg.themeEditboxColor,"./Img/arrow_left.png")
@@ -233,14 +233,6 @@ toggleChanged(toggleControl,*) {
 		; reload()
 		}
 		
-toggleVerticalChanged(toggleControl,*) {
-	toggleControl.value := 
-		(cfg.%toggleControl.name%Enabled := !cfg.%toggleControl.name%Enabled)
-			? (toggleControl.Opt("Background" cfg.ThemeButtonOnColor),"./img/toggle_vertical_trans_on.png")
-			: (toggleControl.Opt("Background" cfg.ThemeButtonReadyColor),"./img/toggle_vertical_trans_off.png")
-		; reload()
-		}
-		
 toggleChange(name,onOff := "",toggleOnImg := cfg.toggleOn,toggleOffImg := cfg.toggleOff,toggleOnColor := cfg.themeButtonOnColor,toggleOffColor := cfg.themeButtonReadyColor) {
 	 (onOff)
 		? (%name%.Opt("Background" toggleOnColor),toggleOnImg) 
@@ -251,22 +243,43 @@ fadeIn() {
 	if (cfg.AnimationsEnabled) && !(inStr(DllCall("GetCommandLine","Str"),"/restart")) {
 		Transparency := 0
 		guiVis(ui.titleBarButtonGui,false)
-		guiVis(ui.gameSettingsGui,false)
-		guiVis(ui.afkGui,false)
-		While Transparency < 253
-		{
-			Transparency += 2.5
-			WinSetTransparent(Round(Transparency),ui.MainGui)			
-			Sleep(1)
+		; guiVis(ui.gameSettingsGui,false)
+		; guiVis(ui.afkGui,false)
+	winSetTransparent(0,ui.titleBarButtonGui)
+	winSetTransparent(0,ui.gameSettingsGui)
+	winSetTransparent(0,ui.afkGui)
+	winGetPos(&mainGuiX,&mainGuiY,,,ui.mainGui)
+	ui.titleBarButtonGui.Move(mainGuiX,mainGuiY-4)
+	ui.gameSettingsGui.show("x" mainGuiX+35 " y" mainGuiY+35 " w495 h170 noActivate")
+	ui.AfkGui.Show("x" mainGuiX+40 " y" mainGuiY+50 " w280 h140 NoActivate")
+	drawAfkOutlines()
+	switch ui.mainGuiTabs.text {
+			case "AFK":
+				while transparency < 253 {
+					transparency += 2.5
+					winSetTransparent(round(transparency),ui.mainGui)			
+					winSetTransparent(round(transparency),ui.afkGui)
+					sleep(1)
+				}
+				guiVis(ui.afkGui,true)
+			case "Game":
+				while transparency < 253 {
+					transparency += 2.5
+					winSetTransparent(round(transparency),ui.mainGui)			
+					winSetTransparent(round(transparency),ui.gameSettingsGui)
+					sleep(1)
+				}
+				guiVis(ui.gameSettingsGui)
+			default:
+			while transparency < 253 {
+				transparency += 2.5
+				winSetTransparent(round(transparency),ui.mainGui)			
+				sleep(1)
+			}
 		}
 	}
 	guiVis(ui.mainGui,true)
-	winGetPos(&mainGuiX,&mainGuiY,,,ui.mainGui)
-	drawAfkOutlines()		
-	ui.titleBarButtonGui.Move(mainGuiX,mainGuiY-5)
-	ui.gameSettingsGui.show("x" mainGuiX+35 " y" mainGuiY+35 " w495 h170 noActivate")
-	ui.AfkGui.Show("x" mainGuiX+40 " y" mainGuiY+50 " w280 h140 NoActivate")
-	; guiVis(ui.MainGui,true)
+	
 	guiVis(ui.titleBarButtonGui,true)
 
 }
@@ -378,7 +391,7 @@ undockAfkGui(*) {
 	ui.buttonDockAfk.value := "./img/button_dockLeft_ready.png"
 	ui.mainGui.move(cfg.guiX,cfg.guiY)
 	ui.AfkGui.Move(cfg.guiX+40,cfg.guiY+50,,)
-	ui.titleBarButtonGui.Move(cfg.guiX,cfg.guiY-5,575,220)
+	ui.titleBarButtonGui.Move(cfg.guiX,cfg.guiY-4,575,220)
 	ui.gameSettingsGui.move(cfg.guiX+35,cfg.guiY+35)
 	ui.HandlebarAfkGui.Opt("Hidden")	
 	ui.buttonPopout.Opt("-Hidden")
@@ -679,8 +692,8 @@ initConsole(&ui) {
 	drawAfkOutlines() {	
 	ui.mainGuiTabs.UseTab("AFK")
 		drawOutlineNamed("afkToolbarOutline",ui.afkGui,5,0,123,34,cfg.ThemeBright1Color,cfg.ThemeBright1Color,1)
-		drawOutlineNamed("win1statusRow",ui.afkGui,5,38,240,27,cfg.themeBright1Color,cfg.themeBright1Color,2)
-		drawOutlineNamed("win2statusRow",ui.afkGui,5,72,240,27,cfg.themeBright1Color,cfg.themeBright1Color,2)
+		drawOutlineNamed("win1statusRow",ui.afkGui,4,40,246,26,cfg.themeBright1Color,cfg.themeBright1Color,2)
+		drawOutlineNamed("win2statusRow",ui.afkGui,4,74,246,26,cfg.themeBright1Color,cfg.themeBright1Color,2)
 		drawOutlineNamed("afkTimeStatusOutline",ui.afkGui,5,104,240,28,cfg.themeBright1Color,cfg.themeBright2Color,2)
 		drawOutlineNamed("afkRoutine1Outline",ui.mainGui,322,34,205,84,cfg.ThemeBright1Color,cfg.ThemeBright1Color,1)
 		drawOutlineNamed("afkRoutine2Outline",ui.mainGui,322,122,205,84,cfg.ThemeBright1Color,cfg.ThemeBright1Color,1)
@@ -696,12 +709,12 @@ initConsole(&ui) {
 	drawOpsOutlines() {
 		ui.mainGuiTabs.useTab("")
 		drawOutlineNamed("bottomLine",ui.mainGui,36,211,494,2,cfg.themeBright2Color,cfg.themeBright2Color,1)
-		drawOutlineNamed("bottomLine",ui.mainGui,36,208,494,3,cfg.themeBright1Color,cfg.themeBright1Color,2)
+		drawOutlineNamed("bottomLine2",ui.mainGui,36,208,494,3,cfg.themeBright1Color,cfg.themeBright1Color,2)
 		ui.mainGuiTabs.useTab("Sys")
 		drawGridlines()
 		drawOutlineNamed("tabsUnderline",ui.MainGui,35,29,502,3,cfg.ThemeBackgroundColor,cfg.ThemeBackgroundColor,2)
 		drawOutlineNamed("opsClock",ui.mainGui,103,33,139,28,cfg.ThemeBorderDarkColor,cfg.ThemeBorderDarkColor,2)		;Ops Clock
-		drawOutlineNamed("opsClock",ui.mainGui,325,33,138,28,cfg.ThemeBorderDarkColor,cfg.ThemeBorderDarkColor,2)		;Ops Clock
+		drawOutlineNamed("opsClassDDL",ui.mainGui,325,33,138,28,cfg.ThemeBorderDarkColor,cfg.ThemeBorderDarkColor,1)		;Ops Clock
 		drawOutlineNamed("opsToolbarOutline2",ui.mainGui,36,33,494,30,cfg.ThemeBright1Color,cfg.ThemeBright1Color,1)	;Ops Toolbar Outline
 
 		drawOutlineNamed("opsMiddleColumnOutlineLight",ui.mainGui,259,62,51,141,cfg.themeDark1Color,cfg.themeDark1Color,2)		;Ops Toolbar
@@ -769,56 +782,60 @@ createDockBar() {
 	guiVis(ui.dockBarGui,false)
 	ui.dockBarWidth := 0
 	ui.dockBarGui.SetFont("s14","Calibri Thin")
-	ui.dockOpsDockButton := ui.dockBarGui.AddPicture("x1 y0 w30 h30 section Background" cfg.ThemeButtonReadyColor,"./Img/button_dockLeft_ready.png")
-	ui.dockOpsDockButton.OnEvent("Click",toggleAfkDock)
-	ui.dockOpsDockButton.ToolTip 		:= "Dock AFK Panel"
-	ui.dockBarWidth += 31
+	; ui.dockOpsDockButton := ui.dockBarGui.AddPicture("x1 y0 w32 h35 section Background" cfg.ThemeButtonReadyColor,"./Img/button_dockLeft_ready.png")
+	; ui.dockOpsDockButton.OnEvent("Click",toggleAfkDock)
+	; ui.dockOpsDockButton.ToolTip 		:= "Dock AFK Panel"
+	; ui.dockBarWidth += 33
 	
-	ui.docktopDockButton := ui.dockBarGui.addPicture("x+0 ys w30 h30 section background" cfg.themeButtonOnColor,"./img/button_dockDown_ready.png")
+	ui.docktopDockButton := ui.dockBarGui.addPicture("x1 y0 w32 h33 section background" cfg.themeButtonOnColor,"./img/button_dockDown_ready.png")
 	ui.docktopDockButton.onEvent("click",topDockOff)
 	ui.docktopDockButton.toolTip := "Dock to top of screen"
-	ui.dockBarWidth += 30
-	ui.dockAutoClicker 		:= ui.dockBarGui.addPicture("x+0 ys w30 h30 section background" cfg.themeButtonReadyColor,"./img/button_AutoClicker_ready.png")
+	ui.dockBarWidth += 32
+	ui.dockAutoClicker 		:= ui.dockBarGui.addPicture("x+0 ys w32 h33 section background" cfg.themeButtonReadyColor,"./img/button_AutoClicker_ready.png")
 	ui.dockAutoClicker.onEvent("click", ToggleAutoClicker)
 	ui.dockAutoClicker.ToolTip := "AutoClicker Status. (Use settings screen to adjust timing)"
-	ui.dockBarWidth += 30
-	ui.dockPadBar1 			:= ui.dockBarGui.addText("x+0 ys w1 h30 section background" cfg.themeBright1Color,"")
+	ui.dockBarWidth += 32
+	ui.dockPadBar1 			:= ui.dockBarGui.addText("x+0 ys w1 h33 section background" cfg.themeBright1Color,"")
 	ui.dockBarWidth += 1
-	ui.dockBarWin1Icon		:= ui.dockBarGui.addPicture("x+0 ys w30 h30 section background" cfg.themePanel1Color,"./img/sleep_icon.png")
-	ui.dockBarWidth	+= 30
-	ui.dockBarWin1Cmd		:= ui.dockBarGui.addText("x+0 ys w30 h30 section center background" cfg.themePanel3Color " c" cfg.themeFont3Color,"--")
+	ui.dockBarWin1Icon		:= ui.dockBarGui.addPicture("x+0 ys w32 h33 section background" cfg.themePanel1Color,"./img/sleep_icon.png")
+	ui.dockBarWidth	+= 32
+	ui.dockBarGui.addText("x+0 ys w1 h33 section background" cfg.themeBright1Color,"")
+	ui.dockBarWidth += 1
+	ui.dockBarWin1Cmd		:= ui.dockBarGui.addText("x+0 ys w32 h33 section center background" cfg.themePanel3Color " c" cfg.themeFont3Color,"--")
 	ui.dockBarWin1Cmd.setFont("s14")
-	ui.dockBarWidth += 30
-	ui.dockBarGui.addPicture("x+0 ys w30 h30 section background" cfg.themeBackgroundColor,"./img/arrow_left.png")
-	ui.dockBarWidth += 30
+	ui.dockBarWidth += 32
+	ui.dockBarGui.addPicture("x+0 ys w32 h34 section background" cfg.themeBackgroundColor,"./img/arrow_left.png")
+	ui.dockBarWidth += 32
 	; ui.dockBarGamelabel		:= ui.dockBarGui.addText("x+0 ys w40 h30 section backgroundTrans c" cfg.themeButtonOnColor,"AFK")
 	; ui.dockBarGamelabel.setFont("s14")
 	; ui.dockBarWidth += 40
-	ui.dockGameDDL := ui.dockBarGui.AddDropDownList("x+0 ys-1 w137 Background" cfg.ThemeEditboxColor " -E0x200 Choose" cfg.game,cfg.GameList)
-	ui.dockBarWidth += 137
+	ui.dockGameDDL := ui.dockBarGui.AddDropDownList("x+0 ys+2 w145 Background" cfg.ThemeEditboxColor " -E0x200 Choose" cfg.game,cfg.GameList)
+	ui.dockBarWidth += 145
 	ui.dockGameDDL.ToolTip := "Select the Game You Are Playing"
 	ui.dockGameDDL.OnEvent("Change",ChangeDockGameDDL)
-	ui.dockGameDDL.SetFont("s11.8 c" cfg.ThemeFont1Color)
+	;ui.dockGameDDL.SetFont("s14 c" cfg.ThemeFont1Color)
 
-	postMessage("0x153", -1, 20,, "AHK_ID " ui.gameDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153
-	postMessage("0x153", 0, 20,, "AHK_ID " ui.gameDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153
+	postMessage("0x153", -1, 35,, "AHK_ID " ui.gameDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153
+	postMessage("0x153", 0, 35,, "AHK_ID " ui.gameDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153
 
-ui.dockBarGui.addPicture("x+0 ys w30 h30 section backgroundTrans","./img/arrow_right.png")
-	ui.dockBarWidth += 30
-	ui.dockBarWin2Cmd		:= ui.dockBarGui.addText("x+0 ys w30 h30 section center background" cfg.themePanel3Color " c" cfg.themeFont3Color," --")
-	ui.dockBarWidth += 30
-	ui.dockbarWin2Icon		:= ui.dockBarGui.addPicture("x+0 ys w30 h30 background" cfg.themePanel1Color,"./img/sleep_icon.png")
-	ui.dockBarWidth += 30
+ui.dockBarGui.addPicture("x+0 ys w32 h34 section backgroundTrans","./img/arrow_right.png")
+	ui.dockBarWidth += 32
+	ui.dockBarWin2Cmd		:= ui.dockBarGui.addText("x+0 ys w32 h33 section center background" cfg.themePanel3Color " c" cfg.themeFont3Color,"--")
+	ui.dockBarWidth += 32
+	ui.dockBarGui.addText("x+0 ys w1 h33 section background" cfg.themeBright1Color,"")
+	ui.dockBarWidth += 1
+	ui.dockbarWin2Icon		:= ui.dockBarGui.addPicture("x+0 ys w32 h33 background" cfg.themePanel1Color,"./img/sleep_icon.png")
+	ui.dockBarWidth += 32
 
 	
 }
 showDockBar() {
-	
 		winGetPos(&tmpX,&tmpY,&tmpW,&tmpH,ui.mainGui)
 		ui.dockBarGui.show("x" (a_ScreenWidth/2)-(ui.dockBarWidth/2) " y0 w" ui.dockBarWidth " h34 noActivate")
-		drawOutlineNamed("dockBarOutline",ui.dockBarGui,0,0,ui.dockBarWidth,34,cfg.themeBorderLightColor,cfg.themeBorderDarkColor,1)
-		drawOutlineNamed("dockBarOutline2",ui.dockBarGui,1,0,ui.dockBarWidth,33,cfg.themeDark1Color,cfg.themeDark1Color,2)
-	if (cfg.topDockEnabled) {
+
+		drawOutlineNamed("dockBarOutline2",ui.dockBarGui,1,0,ui.dockBarWidth,34,cfg.themeDark1Color,cfg.themeDark1Color,2)
+		drawOutlineNamed("dockBarOutline",ui.dockBarGui,0,0,ui.dockBarWidth,35,cfg.themeBorderDarkColor,cfg.themeBorderDarkColor,2)
+if (cfg.topDockEnabled) {
 	guiVis(ui.dockBarGui,true)
 	}
 }
@@ -829,32 +846,29 @@ dockBarIcons(game,operation := "") {
 			case "Shatterline":
 				;TBD
 			case "Destiny 2":
-				; ui.dockBarD2label := ui.dockbarGui.addText("ys w35 h30 section c" cfg.themeFont2color " background" cfg.themeEditboxColor,"D2")
-				; ui.dockBarWidth += 35
-				; ui.dockBarD2label.setFont("s14")
-				ui.dockBarRunIcon := ui.dockBarGui.addPicture("x+-2 ys w30 h30 section background" cfg.themeDisabledColor, 
-				"./img/icon_running.png")
-				ui.dockBarWidth += 23
+				ui.dockBarRunIcon 		:= ui.dockBarGui.addPicture("x+0 ys w32 h33 section background" cfg.themeDisabledColor, "./img/icon_running.png")
+				ui.dockBarWidth 		+= 32
+
 				ui.dockBarRunIcon.opt("Background" cfg.ThemeButtonAlertColor)
-					
-				ui.dockBarD2AlwaysRun := ui.dockBarGui.addPicture("x+0 ys w30 h30 section vd2AlwaysRun " 
+				ui.dockBarD2AlwaysRun 	:= ui.dockBarGui.addPicture("x+0 ys+1 w25 h33 section " 
 				((cfg.d2AlwaysRunEnabled) 
 					? ("Background" cfg.ThemeButtonOnColor) 
 						: ("Background" cfg.themeButtonReadyColor)),
 				((cfg.d2AlwaysRunEnabled) 
 					? ("./img/toggle_vertical_trans_on.png") 
 						: ("./img/toggle_vertical_trans_off.png")))			
-				ui.dockBarWidth += 30
-			case "World//Zero":
-				; ui.dockBarW0label		:= ui.dockBarGui.addText("x+0 ys w35 h30 section background" cfg.themeEditboxColor " c" cfg.themeFont2Color,"W0")
-				; ui.dockBarW0label.setFont("s14")
-				; ui.dockBarWidth += 35
-				ui.dockBarAfkButton 	:= ui.dockBarGui.addPicture("x+0 ys w30 h30 section background" cfg.themeButtonReadyColor,ui.buttonStartAfk.value)
-				ui.dockBarWidth += 30
-				ui.dockBarTowerButton	:= ui.dockBarGui.addPicture("x+0 ys w30 h30 section background" cfg.themeButtonReadyColor,ui.buttonTower.value)
-				ui.dockBarWidth += 30
+				ui.dockBarWidth 		+= 25
+				ui.dockBarD2AlwaysRun.onEvent("click",toggleAlwaysRun)
+				ui.dockBarGui.addText("x+-2 ys w1 h33 section background" cfg.themeBright1Color,"")
+				ui.dockBarWidth 		+= 2
+				
+case "World//Zero":
+				ui.dockBarAfkButton 	:= ui.dockBarGui.addPicture("x+0 ys w32 h33 section background" cfg.themeButtonReadyColor,ui.buttonStartAfk.value)
+				ui.dockBarWidth 		+= 32
+				ui.dockBarTowerButton	:= ui.dockBarGui.addPicture("x+0 ys w32 h33 section background" cfg.themeButtonReadyColor,ui.buttonTower.value)
+				ui.dockBarWidth 		+= 32
 				((ui.towerEnabled) 
-					? ("Background" cfg.ThemeButtonOnColor) 
+					? ("Background" cfg.Them eButtonOnColor) 
 						: ("Background" cfg.themeButtonReadyColor),
 				((ui.towerEnabled) 
 					? ("./img/toggle_vertical_trans_on.png") 
@@ -941,7 +955,7 @@ topDockOff(*) {
 	;ui.mainGuiTabs.choose(ui.topDockPrevTab)
 	guivis(ui.titleBarbuttonGui,true)
 	ui.opsDockButton.opt("background" cfg.themeButtonReadyColor)
-	ui.titleBarButtonGui.Show("x" cfg.GuiX " y" cfg.GuiY-5 " w562 h218 NoActivate")
+	ui.titleBarButtonGui.Show("x" cfg.GuiX " y" cfg.GuiY-4 " w562 h218 NoActivate")
 	
 }
 

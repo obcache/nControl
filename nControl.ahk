@@ -1,4 +1,4 @@
-A_FileVersion := "3.6.1.9"
+A_FileVersion := "3.6.2.0"
 ;@Ahk2Exe-Let FileVersion=%A_PriorLine~U)^(.+"){1}(.+)".*$~$2% 
 
 A_AppName := "nControl"
@@ -18,6 +18,11 @@ InstallKeybdHook()
 KeyHistory(10)
 SetWorkingDir(A_ScriptDir)
 
+A_Restarted := 
+	(inStr(DllCall("GetCommandLine","Str"),"/restart"))
+		? true
+		: false
+		
 cfg				:= Object()
 ui 				:= Object()
 InstallDir 		:= A_MyDocuments "\nControl"
@@ -76,7 +81,6 @@ InitConsole(&ui)
 #include <Class_SQLiteDB>
 #include <libThemeCreator>
 
-
 debugLog("Interface Initialized")
 
 OnExit(ExitFunc)
@@ -98,14 +102,23 @@ ui.gameTabs.choose(cfg.gameModuleList[cfg.activeGameTab])
 
 autoUpdate()
 
-if (cfg.startMinimizedEnabled)
-	hideGui()
+
 winGetPos(&MainGuiX,&MainGuiY,,,ui.mainGui)
+if cfg.startMinimizedEnabled
+	hideGui()
+
 createDockBar()
 if cfg.topDockEnabled
 	showDockBar()
-fadeIn()
+
+;tabsChanged()
+
 changeGameDDL()
 ui.MainGuiTabs.Choose(cfg.mainTabList[cfg.activeMainTab])
-tabsChanged()
-
+fadeIn()
+switch ui.mainGuiTabs.text {
+	case "AFK":
+		guiVis(ui.afkGui,true)
+	case "Game":
+		guiVis(ui.gameSettingsGui,true)
+}

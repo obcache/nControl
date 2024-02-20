@@ -113,7 +113,7 @@ ui.RefreshWindowHandlesButton := ui.MainGui.AddPicture("x+1 ys section w27 h27 B
 	ui.ButtonHelp.OnEvent("Click",ToggleHelp)
 
 
-	ui.GameDDL := ui.MainGui.AddDropDownList("x+1 ys+0 w137 Background" cfg.ThemeEditboxColor " -E0x200 Choose" cfg.game,cfg.GameList)
+	ui.GameDDL := ui.MainGui.AddDropDownList("x+1 ys+1 w135 Background" cfg.ThemeEditboxColor " -E0x200 Choose" cfg.game,cfg.GameList)
 	ui.GameDDL.ToolTip := "Select the Game You Are Playing"
 	ui.GameDDL.OnEvent("Change",ChangeGameDDL)
 	ui.gameDDL.SetFont("s11.8 c" cfg.ThemeFont1Color)

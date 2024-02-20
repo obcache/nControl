@@ -72,7 +72,7 @@ loop cfg.gameModuleList.length {
 	ui.gameSettingsGui.addText("x20 y-5 w80 h20 c" cfg.themeFont1Color " background" cfg.themeBackgroundColor," Always Run")
 	;UI.alwaysRunGb := ui.gameSettingsGui.addGroupbox("x10 y0 w270 h70","Always Run")
 	
-	ui.d2AlwaysRun := ui.gameSettingsGui.addPicture("x22 y17 w30 h45 section vd2AlwaysRun " 
+	ui.d2AlwaysRun := ui.gameSettingsGui.addPicture("x22 y17 w30 h45 section " 
 		((cfg.d2AlwaysRunEnabled) 
 			? ("Background" cfg.ThemeButtonOnColor) 
 				: ("Background" cfg.themeButtonReadyColor)),
@@ -128,7 +128,7 @@ loop cfg.gameModuleList.length {
 	ui.d2ToggleWalkKeyLabel.setFont("s11")
 	ui.d2HoldWalkKeyLabel.setFont("s11")
 	
-	ui.d2AlwaysRun.OnEvent("Click", toggleVerticalChanged)
+	ui.d2AlwaysRun.OnEvent("Click", toggleAlwaysRun)
 	ui.d2CrouchKey.onEvent("click",d2CrouchKeyClicked)
 	ui.d2SprintKey.onEvent("click",d2SprintKeyClicked)
 	ui.d2ToggleWalkKey.onEvent("click",d2ToggleWalkKeyClicked)
@@ -139,6 +139,31 @@ loop cfg.gameModuleList.length {
 	ui.d2HoldWalkKeyData.onEvent("click",d2HoldWalkKeyClicked)
 	ui.d2LaunchDIMbutton.onEvent("click",d2launchDIMbuttonClicked)
 	ui.d2LaunchLightGGbutton.onEvent("click",d2launchLightGGbuttonClicked)
+	
+	toggleAlwaysRun(*) {
+		(cfg.d2AlwaysRunEnabled := !cfg.d2AlwaysRunEnabled)
+			? thisToggleOn()
+			: thisToggleOff()
+
+		thisToggleOn() {
+			ui.d2AlwaysRun.Opt("Background" cfg.ThemeButtonOnColor)
+			ui.d2AlwaysRun.value := "./img/toggle_vertical_trans_on.png"
+			ui.dockBarD2AlwaysRun.Opt("Background" cfg.ThemeButtonOnColor)
+			ui.dockBarD2AlwaysRun.value := "./img/toggle_vertical_trans_on.png"
+			
+		}
+		thisToggleOff() {
+			ui.d2AlwaysRun.opt("background" cfg.ThemeButtonReadyColor)
+			ui.d2AlwaysRun.value := "./img/toggle_vertical_trans_off.png"
+			ui.dockBarD2AlwaysRun.opt("background" cfg.ThemeButtonReadyColor)
+			ui.dockBarD2AlwaysRun.value := "./img/toggle_vertical_trans_off.png"
+		}
+	 send("{" cfg.d2ToggleWalkKey " Down}")
+	 sleep(150)
+	 send("{" cfg.d2ToggleWalkKey "}")
+	 SetCapsLockState("Off")
+
+}
 	
 
 d2LaunchDIMButtonClicked(*) {
@@ -256,7 +281,7 @@ d2IsRunning(*) {
 
 HotIfWinActive("ahk_exe destiny2.exe")
 	hotKey("~" cfg.d2holdWalkKey,holdToWalk)
-	hotKey(cfg.d2ToggleWalkKey,toggleToWalk)
+	hotKey(cfg.d2ToggleWalkKey,toggleAlwaysRun)
 	hotKey("r",d2reload)
 HotIf()
 
@@ -270,7 +295,7 @@ readyToRun(*) {
 holdToWalk(*) {
 	if ui.d2Running 
 		send("{" strLower(cfg.d2SprintKey) " up}")
-	
+	ui.dockBarWin1Cmd.text := "L"
 	send("{" cfg.d2holdWalkKey " Down}")
 	keyWait(cfg.d2HoldWalkKey,"L")
 	send("{" cfg.d2HoldWalkKey "}")
@@ -282,10 +307,12 @@ holdToWalk(*) {
 stopRunning(*) {
 	ui.d2Running := false
 	send("{" strLower(cfg.d2SprintKey) " up}{w up}")
+		ui.dockBarWin1Cmd.text := "--"
 }
 
 startRunning(*) {
 	ui.d2Running := true
+		ui.dockBarWin1Cmd.text := subStr(cfg.d2SprintKey,1,2)
 	send("{w down}{" strLower(cfg.d2sprintKey) " down}")
 }
 
@@ -295,10 +322,7 @@ toggleToWalk(*) {
 			? (ui.d2AlwaysRun.opt("background" cfg.themeButtonOnColor),"./img/toggle_vertical_trans_on.png")
 			: (ui.d2AlwaysRun.opt("background" cfg.themeButtonReadyColor),"./img/toggle_vertical_trans_off.png")
 
-	send("{" cfg.d2ToggleWalkKey " Down}")
-	sleep(150)
-	send("{" cfg.d2ToggleWalkKey "}")
-	SetCapsLockState("Off")
+
 }
 
 d2reload(*) {

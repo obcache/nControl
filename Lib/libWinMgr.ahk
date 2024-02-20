@@ -26,15 +26,15 @@ WM_WINDOWPOSCHANGED(wParam, lParam, msg, Hwnd)
 				if (!ui.afkDocked) {
 					winGetPos(&winX,&winY,,,ui.mainGui)
 					ui.AfkGui.Move(winX+40,winY+50,,)
-					ui.titleBarButtonGui.Move(winX,WinY-5)
-					ui.gameSettingsGui.move(winx+35,winy+35)
+					ui.titleBarButtonGui.Move(winX,winY-3)
+					ui.gameSettingsGui.move(winx+35,winy+36)
 				}
 			case ui.titleBarButtonGui.hwnd:
 				if (!ui.afkDocked) {
 					winGetPos(&winX,&winY,,,ui.titleBarButtonGui)
 					ui.gameSettingsGui.move(winx+35,winy+40)
-					ui.afkGui.move(winX+40,winY+55,,)
-					ui.mainGui.move(winX,winY+5,,)
+					ui.afkGui.move(winX+40,winY+53,,)
+					ui.mainGui.move(winX,winY+3,,)
 				}
 			case ui.dividerGui.hwnd:
 				if (Hwnd == ui.dividerGui.hwnd) {
