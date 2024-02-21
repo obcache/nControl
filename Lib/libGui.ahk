@@ -172,14 +172,14 @@ initOSDGui() {
 	}
 	ui.buttonAfkHide.ToolTip := "Minimizes AFK Window to System Tray"
 	
-	ui.buttonPopout := ui.AfkGui.AddPicture("x+-0 ys0 w32 h32 Background" cfg.ThemeButtonReadyColor,"./Img/button_popout_ready.png")
+	ui.buttonPopout := ui.AfkGui.AddPicture("x+-13 ys0 w32 h32 Background" cfg.ThemeButtonReadyColor,"./Img/button_popout_ready.png")
 	ui.buttonPopout.OnEvent("Click",AfkPopoutButtonPushed)
 	
 	ui.Win1Label := ui.AfkGui.AddPicture("x6 y+8 section w30 h23 background" cfg.themeEditboxColor,"./Img/arrow_left.png")
 
 	ui.AfkGui.SetFont("s14","Calibri")
-	ui.Win1AfkIcon := ui.AfkGui.AddPicture("x+0 ys w28 h23 right background" cfg.themeEditboxColor,"./Img/sleep_icon.png")
-	ui.Win1AfkStatus := ui.AfkGui.AddText("x+0 ys w28 h23 background" cfg.themeEditboxColor,"")
+	ui.Win1AfkIcon := ui.AfkGui.AddPicture("x+0 ys+2 w28 h20 right background" cfg.themeEditboxColor,"./Img/sleep_icon.png")
+	ui.Win1AfkStatus := ui.AfkGui.AddText("x+0 ys w28 h20 background" cfg.themeEditboxColor,"")
 	ui.AfkGui.SetFont("s12","Calibri")
 	ui.afkWin1ClassDDL := ui.AfkGui.AddDDL("x+0 ys-1 w158 altSubmit choose" cfg.win1class " background" cfg.ThemeEditboxColor, ui.profileList)
 	ui.afkWin1ClassDDL.OnEvent("Change",afkWin1ClassChange)
@@ -195,8 +195,8 @@ initOSDGui() {
 		; }
 	; }
 	ui.AfkGui.SetFont("s14","Calibri")
-	ui.Win2AfkIcon := ui.AfkGui.AddPicture("x+0 ys w28 h23 background" cfg.themeEditboxColor,"./Img/sleep_icon.png")
-	ui.Win2AfkStatus := ui.AfkGui.AddText("x+0 ys w28 h23 background" cfg.themeEditboxColor,"")
+	ui.Win2AfkIcon := ui.AfkGui.AddPicture("x+0 ys w28 h20 background" cfg.themeEditboxColor,"./Img/sleep_icon.png")
+	ui.Win2AfkStatus := ui.AfkGui.AddText("x+0 ys w28 h20 background" cfg.themeEditboxColor,"")
 	ui.AfkGui.SetFont("s12","Calibri")
 	ui.afkWin2ClassDDL := ui.AfkGui.AddDDL("x+0 ys-2 w158 altSubmit choose" cfg.win2class " background" cfg.ThemeEditboxColor,ui.profileList)
 	ui.afkWin2ClassDDL.OnEvent("Change",afkWin2ClassChange)
@@ -204,10 +204,10 @@ initOSDGui() {
 	postMessage("0x153", 0, 20,, "AHK_ID " ui.afkWin2ClassDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153
 	ui.Title := ui.AfkGui.AddText("x0 y+13","")
 	ui.AfkGui.SetFont("s16 bold")  ; Set a large font size (32-point).
-	ui.AfkGui.AddPicture("x+-8 ys+30 w10 h28","./Img/label_left_trim.png")
+	ui.AfkGui.AddPicture("x+-6 ys+30 w10 h28","./Img/label_left_trim.png")
 	ui.AfkStatus1 := ui.AfkGui.AddPicture("x+0 ys+30 w65 h28 Background" cfg.ThemeButtonReadyColor,"./Img/label_timer_off.png")  ; XX & YY serve to auto-size the window.
 	ui.AfkGui.AddPicture("x+0 ys+30 w10 h28 section","./Img/label_right_trim.png")
-	ui.afkProgress := ui.AfkGui.AddProgress("x+-1 ys+3 w155 h22 c" cfg.ThemeBright2Color " vTimerProgress Smooth Range0-" cfg.towerInterval " Background" cfg.themeEditboxColor " ",0)
+	ui.afkProgress := ui.AfkGui.AddProgress("x+-1 ys+3 w159 h22 c" cfg.ThemeBright2Color " vTimerProgress Smooth Range0-" cfg.towerInterval " Background" cfg.themeEditboxColor " ",0)
 	ui.AfkGui.Opt("+LastFound")
 	WinSetTransparent(210)
 
@@ -691,10 +691,11 @@ initConsole(&ui) {
 { ;BEGIN = outline parameters
 	drawAfkOutlines() {	
 	ui.mainGuiTabs.UseTab("AFK")
-		drawOutlineNamed("afkToolbarOutline",ui.afkGui,5,0,123,34,cfg.ThemeBright1Color,cfg.ThemeBright1Color,1)
+		drawOutlineNamed("afkToolbarOutline",ui.afkGui,5,0,132,35,cfg.ThemeBright1Color,cfg.ThemeBright1Color,1)
+		drawOutlineNamed("afkPopoutButtonOutline",ui.afkGui,216,0,34,35,cfg.ThemeBright1Color,cfg.ThemeBright1Color,1)
 		drawOutlineNamed("win1statusRow",ui.afkGui,4,40,246,26,cfg.themeBright1Color,cfg.themeBright1Color,2)
 		drawOutlineNamed("win2statusRow",ui.afkGui,4,74,246,26,cfg.themeBright1Color,cfg.themeBright1Color,2)
-		drawOutlineNamed("afkTimeStatusOutline",ui.afkGui,5,104,240,28,cfg.themeBright1Color,cfg.themeBright2Color,2)
+		drawOutlineNamed("afkTimeStatusOutline",ui.afkGui,4,106,246,28,cfg.themeBright1Color,cfg.themeBright1Color,2)
 		drawOutlineNamed("afkRoutine1Outline",ui.mainGui,322,34,205,84,cfg.ThemeBright1Color,cfg.ThemeBright1Color,1)
 		drawOutlineNamed("afkRoutine2Outline",ui.mainGui,322,122,205,84,cfg.ThemeBright1Color,cfg.ThemeBright1Color,1)
 

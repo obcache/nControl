@@ -87,8 +87,8 @@ loop cfg.gameModuleList.length {
 			? ("./img/toggle_vertical_trans_on.png") 
 				: ("./img/toggle_vertical_trans_off.png")))
 
-	ui.panelColoring			:= ui.gameSettingsGui.addText("x12 y75 w472 h67 background" cfg.themePanel1Color,"")
-	drawOutlineNamed("gameSettingsD2Panel",ui.gameSettingsGui,10,73,475,71,cfg.themeDark2Color,cfg.themeBright2Color,1)
+	ui.panelColoring			:= ui.gameSettingsGui.addText("x12 y77 w472 h65 background" cfg.themePanel1Color,"")
+	drawOutlineNamed("gameSettingsD2Panel",ui.gameSettingsGui,10,75,475,69,cfg.themeDark1Color,cfg.themeBright1Color,1)
 	ui.d2SprintKey				:= ui.gameSettingsGui.AddPicture("xs+38 ys+0 w100 h30 section backgroundTrans","./img/keyboard_key_up.png")
 	ui.d2SprintKeyData 			:= ui.gameSettingsGui.addText("xs y+-26 w100 h25 center c" cfg.themeButtonAlertColor " backgroundTrans",subStr(strUpper(cfg.d2SprintKey),1,8))
 	ui.d2SprintKeyLabel			:= ui.gameSettingsGui.addText("xs-2 y+-2 w100 h20 center c" cfg.themeFont1Color " backgroundTrans","Sprint")
@@ -101,8 +101,9 @@ loop cfg.gameModuleList.length {
 	ui.d2HoldWalkKey			:= ui.gameSettingsGui.addPicture("x+7 ys w100 h30 section backgroundTrans","./img/keyboard_key_up.png")
 	ui.d2HoldWalkKeyData 		:= ui.gameSettingsGui.addText("xs y+-26 w100 h25 center c" cfg.themeButtonAlertColor " backgroundTrans",subStr(strUpper(cfg.d2HoldWalkKey),1,8))
 	ui.d2HoldWalkKeyLabel		:= ui.gameSettingsGui.addText("xs-2 y+-2 w100 h20 center c" cfg.themeFont1Color " backgroundTrans","Hold to Walk")
-	ui.d2LaunchDIMbutton		:= ui.gameSettingsGui.addPicture("xs-285 y+15 section w160 h60 backgroundTrans","./Img/button_launchDIM.png")
-	ui.d2LaunchLightGGbutton	:= ui.gameSettingsGui.addPicture("ys w160 h60 backgroundTrans","./Img/button_launchLightGG.png")
+	ui.d2LaunchDIMbutton		:= ui.gameSettingsGui.addPicture("xs-364 y+14 section w160 h60 backgroundTrans","./Img/button_launchDIM.png")
+	ui.d2LaunchLightGGbutton	:= ui.gameSettingsGui.addPicture("x+-4 ys w160 h60 backgroundTrans","./Img/button_launchLightGG.png")
+	ui.d2LaunchBlueberriesButton := ui.gameSettingsGui.addPicture("x+-4 ys w160 h60 backgroundTrans","./Img/button_launchBlueberries.png")
 	
 
 	ui.d2AlwaysRun.ToolTip := "Toggles holdToCrouch"
@@ -118,6 +119,9 @@ loop cfg.gameModuleList.length {
 	ui.d2HoldWalkKey.ToolTip		:= "Click to Assign"
 	ui.d2HoldWalkKeyData.ToolTip  := "Click to Assign"
 	ui.d2HoldWalkKeyLabel.ToolTip	:= "Click to Assign"
+	ui.d2LaunchDIMbutton.ToolTip	:= "Launch DIM in Browser"
+	ui.d2LaunchLightGGbutton.toolTip := "Launch Light.gg in Browser"
+	ui.d2LaunchBlueberriesButton.toolTip	:= "Launch Blueberries.gg in Browser"
 
 	ui.d2CrouchKeyData.setFont("s13")
 	ui.d2SprintKeyData.setFont("s13")
@@ -139,6 +143,8 @@ loop cfg.gameModuleList.length {
 	ui.d2HoldWalkKeyData.onEvent("click",d2HoldWalkKeyClicked)
 	ui.d2LaunchDIMbutton.onEvent("click",d2launchDIMbuttonClicked)
 	ui.d2LaunchLightGGbutton.onEvent("click",d2launchLightGGbuttonClicked)
+	ui.d2LaunchBlueberriesButton.onEvent("click",d2LaunchBlueBerriesButtonClicked)
+	
 	
 	toggleAlwaysRun(*) {
 		(cfg.d2AlwaysRunEnabled := !cfg.d2AlwaysRunEnabled)
@@ -178,6 +184,14 @@ d2LaunchLightGGbuttonClicked(*) {
 	setTimer () => ui.d2LaunchLightGGbutton.value := "./Img/button_launchLightGG.png",-400
 	run("chrome.exe https://www.light.gg/god-roll/roll-appraiser/")	
 }
+
+d2LaunchBlueBerriesButtonClicked(*) {
+	ui.d2LaunchBlueberriesButton.value := "./Img/button_launchBlueberries_down.png"
+	setTimer () => ui.d2LaunchBlueberriesButton.value := "./Img/button_launchBlueberries.png",-400
+	run("chrome.exe https://www.blueberries.gg")
+	
+	}
+
 d2SprintKeyClicked(*) {
 	DialogBox('Press "Hold to Sprint" Key`n Bound in Destiny 2',"Center")
 	Sleep(100)
