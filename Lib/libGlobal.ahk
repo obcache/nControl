@@ -173,11 +173,6 @@ preAutoExec(InstallDir,ConfigFileName) {
 			FileInstall("./Img/button_tower.png",InstallDir "/Img/button_tower.png",true)
 			FileInstall("./Img/button_afk.png",InstallDir "/Img/button_afk.png",true)
 			FileInstall("./Img/button_antiIdle.png",InstallDir "/Img/button_antiIdle.png",true)
-			FileInstall("./Img/button_dockleft_ready.png",InstallDir "/Img/button_dockleft_ready.png",true)
-			FileInstall("./Img/button_dockleft_on.png",InstallDir "/Img/button_dockleft_on.png",true)
-			FileInstall("./Img/button_dockleft.png",InstallDir "/Img/button_dockleft.png",true)
-			FileInstall("./Img/button_dockright_ready.png",InstallDir "/Img/button_dockright_ready.png",true)
-			FileInstall("./Img/button_dockright_on.png",InstallDir "/Img/button_dockright_on.png",true)
 			FileInstall("./Img/button_tower_ready.png",InstallDir "/Img/button_tower_ready.png",true)
 			FileInstall("./Img/button_tower_on.png",InstallDir "/Img/button_tower_on.png",true)
 			FileInstall("./Img/button_dockright.png",InstallDir "/Img/button_dockright.png",true)
@@ -237,14 +232,22 @@ preAutoExec(InstallDir,ConfigFileName) {
 			FileInstall("./Img/button_launchLightGG_down.png",InstallDir "/Img/button_launchLightGG_down.png",1)
 			FileInstall("./Img/button_launchDIM.png",InstallDir "/Img/button_launchDIM.png",1)
 			FileInstall("./Img/button_launchDIM_down.png",InstallDir "/Img/button_launchDIM_down.png",1)
+			FileInstall("./Img/button_launchBlueberries.png",InstallDir "/Img/button_launchBlueberries.png",1)
+			FileInstall("./Img/button_launchBlueberries_down.png",InstallDir "/Img/button_launchBlueBerries_down.png",1)
+
 			fileInstall("./img/toggle_vertical_trans_on.png",installDir "/img/toggle_vertical_trans_on.png",1)
 			fileInstall("./img/toggle_vertical_trans_off.png",installDir "/img/toggle_vertical_trans_off.png",1)
 			fileInstall("./img/icon_running.png",installDir "/img/icon_running.png",1)
-			fileInstall("./img/button_dockDown_on.png",installDir "/img/button_dockDown_on.png")
-			fileInstall("./img/button_dockDown_ready.png",installDir "/img/button_dockDown_ready.png")
-			fileInstall("./img/button_dockUp_on.png",installDir "/img/button_dockUp_on.png")
-			fileInstall("./img/button_dockUp_ready.png",installDir "/img/button_dockUp_ready.png")
-			
+			fileInstall("./img/button_dockDown_on.png",installDir "/img/button_dockDown_on.png",1)
+			fileInstall("./img/button_dockUp_on.png",installDir "/img/button_dockUp_on.png",1)
+			FileInstall("./Img/button_dockleft_on.png",InstallDir "/Img/button_dockleft_on.png",1)
+			FileInstall("./Img/button_dockright_on.png",InstallDir "/Img/button_dockright_on.png",1)			
+			fileInstall("./img/button_dockDown_ready.png",installDir "/img/button_dockDown_ready.png",1)
+			fileInstall("./img/button_dockUp_ready.png",installDir "/img/button_dockUp_ready.png",1)
+			FileInstall("./Img/button_dockleft_ready.png",InstallDir "/Img/button_dockleft_ready.png",1)
+			FileInstall("./Img/button_dockright_ready.png",InstallDir "/Img/button_dockright_ready.png",1)
+			FileInstall("./Img/button_dockleft.png",InstallDir "/Img/button_dockleft.png",1)
+			FileInstall("./Img/button_dockright.png",InstallDir "/Img/button_dockright.png",1)
 			persistLog("Copied Assets to: " InstallDir)
 			
 
@@ -722,7 +725,8 @@ DialogBox(Msg,Alignment := "Left")
 DialogBoxClose(*)
 {
 	Global
-	ui.notifyGui.Destroy()
+	Try
+		ui.notifyGui.Destroy()
 }
 
 NotifyOSD(NotifyMsg,Duration := 10,Alignment := "Left",YN := "")

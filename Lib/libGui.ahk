@@ -245,15 +245,15 @@ fadeIn() {
 		guiVis(ui.titleBarButtonGui,false)
 		; guiVis(ui.gameSettingsGui,false)
 		; guiVis(ui.afkGui,false)
-	winSetTransparent(0,ui.titleBarButtonGui)
-	winSetTransparent(0,ui.gameSettingsGui)
-	winSetTransparent(0,ui.afkGui)
-	winGetPos(&mainGuiX,&mainGuiY,,,ui.mainGui)
-	ui.titleBarButtonGui.Move(mainGuiX,mainGuiY-4)
-	ui.gameSettingsGui.show("x" mainGuiX+35 " y" mainGuiY+35 " w495 h170 noActivate")
-	ui.AfkGui.Show("x" mainGuiX+40 " y" mainGuiY+50 " w280 h140 NoActivate")
-	drawAfkOutlines()
-	switch ui.mainGuiTabs.text {
+		winSetTransparent(0,ui.titleBarButtonGui)
+		winSetTransparent(0,ui.gameSettingsGui)
+		winSetTransparent(0,ui.afkGui)
+		winGetPos(&mainGuiX,&mainGuiY,,,ui.mainGui)
+		ui.titleBarButtonGui.Move(mainGuiX,mainGuiY-4)
+		ui.gameSettingsGui.show("x" mainGuiX+35 " y" mainGuiY+35 " w495 h170 noActivate")
+		ui.AfkGui.Show("x" mainGuiX+40 " y" mainGuiY+50 " w280 h140 NoActivate")
+		drawAfkOutlines()
+		switch ui.mainGuiTabs.text {
 			case "AFK":
 				while transparency < 253 {
 					transparency += 2.5
@@ -278,8 +278,8 @@ fadeIn() {
 			}
 		}
 	}
-	guiVis(ui.mainGui,true)
 	
+	guiVis(ui.mainGui,true)
 	guiVis(ui.titleBarButtonGui,true)
 
 }
@@ -718,9 +718,9 @@ initConsole(&ui) {
 		drawOutlineNamed("opsClassDDL",ui.mainGui,325,33,138,28,cfg.ThemeBorderDarkColor,cfg.ThemeBorderDarkColor,1)		;Ops Clock
 		drawOutlineNamed("opsToolbarOutline2",ui.mainGui,36,33,494,30,cfg.ThemeBright1Color,cfg.ThemeBright1Color,1)	;Ops Toolbar Outline
 
-		drawOutlineNamed("opsMiddleColumnOutlineLight",ui.mainGui,259,62,51,141,cfg.themeDark1Color,cfg.themeDark1Color,2)		;Ops Toolbar
-		drawOutlineNamed("opsMiddleColumnOutlineDark",ui.mainGui,258,62,53,141,cfg.themeBright1Color,cfg.themeBright1Color,2)	;Ops Toolbar Outline
-		drawOutlineNamed("opsMiddleColumnOutlineDark",ui.mainGui,258,62,50,141,cfg.themeBright1Color,cfg.themeBright1Color,1)	;Ops Toolbar Outline
+		drawOutlineNamed("opsMiddleColumnOutlineDark",ui.mainGui,257,62,53,139,cfg.themeBright1Color,cfg.themeBright1Color,2)	;Ops Toolbar Outline
+		drawOutlineNamed("opsMiddleColumnOutlineDark",ui.mainGui,258,62,49,138,cfg.themeBright1Color,cfg.themeBright1Color,1)	;Ops Toolbar Outline
+		drawOutlineNamed("opsMiddleColumnOutlineLight",ui.mainGui,259,62,49,137,cfg.themeDark1Color,cfg.themeDark1Color,1)		;Ops Toolbar
 		drawOutlineNamed("opsAfkStatusLeft",ui.mainGui,36,107,66,24,cfg.themeBright1Color,cfg.themeBright1Color,1)
 		drawOutlineNamed("opsAfkStatusRight",ui.mainGui,464,107,66,24,cfg.themeBright1Color,cfg.themeBright1Color,1)	
 		drawOutlineNamed("opsAfkStatusLeft",ui.mainGui,36,132,66,30,cfg.themeBright1Color,cfg.themeBright1Color,1)
@@ -729,10 +729,10 @@ initConsole(&ui) {
 
 	drawGridLines() {
 	ui.MainGuiTabs.UseTab("Sys")
-		drawOutline(ui.MainGui,103,77,157,15,cfg.ThemeBright2Color,cfg.ThemeBright2Color,1)		;Win1 Info Gridlines  
-		drawOutline(ui.MainGui,308,77,155,15,cfg.ThemeBright2Color,cfg.ThemeBright2Color,1)		;Win2 Info Gridlines
+		; drawOutline(ui.MainGui,103,77,157,15,cfg.ThemeBright2Color,cfg.ThemeBright2Color,1)		;Win1 Info Gridlines  
+		; drawOutline(ui.MainGui,308,77,155,15,cfg.ThemeBright2Color,cfg.ThemeBright2Color,1)		;Win2 Info Gridlines
 		drawOutline(ui.MainGui,308,62,155,100,cfg.ThemeBright1Color,cfg.ThemeBright1Color,2)	;WIn2 Info Frame
-		drawOutline(ui.MainGui,103,62,157,100,cfg.ThemeBright1Color,cfg.ThemeBright1Color,2) 	;Win1 Info Frame
+		drawOutline(ui.MainGui,103,62,156,100,cfg.ThemeBright1Color,cfg.ThemeBright1Color,2) 	;Win1 Info Frame
 
 	}
 } ;END - outline parameters
@@ -803,7 +803,7 @@ createDockBar() {
 	ui.dockBarGui.addText("x+0 ys w1 h33 section background" cfg.themeBright1Color,"")
 	ui.dockBarWidth += 1
 	ui.dockBarWin1Cmd		:= ui.dockBarGui.addText("x+0 ys w32 h33 section center background" cfg.themePanel3Color " c" cfg.themeFont3Color,"--")
-	ui.dockBarWin1Cmd.setFont("s14")
+	ui.dockBarWin1Cmd.setFont("s18")
 	ui.dockBarWidth += 32
 	ui.dockBarGui.addPicture("x+0 ys w32 h34 section background" cfg.themeBackgroundColor,"./img/arrow_left.png")
 	ui.dockBarWidth += 32

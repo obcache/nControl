@@ -1,4 +1,4 @@
-A_FileVersion := "3.6.2.1"
+A_FileVersion := "3.6.2.3"
 ;@Ahk2Exe-Let FileVersion=%A_PriorLine~U)^(.+"){1}(.+)".*$~$2% 
 
 A_AppName := "nControl"
@@ -111,7 +111,6 @@ createDockBar()
 if cfg.topDockEnabled
 	showDockBar()
 
-;tabsChanged()
 
 changeGameDDL()
 ui.MainGuiTabs.Choose(cfg.mainTabList[cfg.activeMainTab])
@@ -122,3 +121,4 @@ switch ui.mainGuiTabs.text {
 	case "Game":
 		guiVis(ui.gameSettingsGui,true)
 }
+tabsChanged()

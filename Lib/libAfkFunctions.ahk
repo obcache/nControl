@@ -379,9 +379,11 @@ startAFK(*) {
 	ui.opsAfkButton.Value := "./Img/button_afk_on.png"
 	ui.buttonStartAFK.Opt("Background" cfg.ThemeButtonOnColor)
 	ui.buttonStartAfk.value := "./Img/button_afk_on.png"
-	ui.dockBarAfkButton.Opt("Background" cfg.ThemeButtonOnColor)
-	ui.dockBarAfkButton.value := "./Img/button_afk_on.png"
-	; ui.OpsAfkButton.Redraw()
+	try {
+		ui.dockBarAfkButton.Opt("Background" cfg.ThemeButtonOnColor)
+		ui.dockBarAfkButton.value := "./Img/button_afk_on.png"
+	} 	
+; ui.OpsAfkButton.Redraw()
 	; ui.buttonStartAFK.Redraw()	
 	setTimer(afkBeta,-100)
 	; SetTimer(runAfkRoutine,4000)
@@ -395,8 +397,10 @@ stopAFK(*) {
 	ui.opsAfkButton.Value := "./Img/button_afk_ready.png"
 	ui.buttonStartAFK.Opt("Background" cfg.ThemeButtonReadyColor)
 	ui.buttonStartAfk.value := "./Img/button_afk_ready.png"
-	ui.dockBarAfkButton.Opt("Background" cfg.ThemeButtonReadyColor)
-	ui.dockBarAfkButton.value := "./Img/button_afk_ready.png"
+	try {
+		ui.dockBarAfkButton.Opt("Background" cfg.ThemeButtonReadyColor)
+		ui.dockBarAfkButton.value := "./Img/button_afk_ready.png"
+	}
 	ui.OpsAfkButton.Redraw()
 	ui.buttonStartAFK.Redraw()	
 	SendEvent("{LButton Up}")
