@@ -71,8 +71,8 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 	global
 
 	ui.MainGuiTabs.UseTab("Sys")
-	ui.win1GridLines := ui.mainGui.addText("x105 y62 w151 h40 background" cfg.themeDark1color,"")
-	ui.win2GridLines := ui.mainGui.addText("x285 y62 w200 h40 background" cfg.themeDark1color,"")
+	ui.win1GridLines := ui.mainGui.addText("x105 y63 w155 h44 background" cfg.themeDisabledcolor,"")
+	ui.win2GridLines := ui.mainGui.addText("x285 y62 w200 h40 background" cfg.themeDisabledcolor,"")
 	ui.MainGui.SetFont("s14","Calibri Thin")
 
 	ui.OpsDockButton := ui.MainGui.AddPicture("x38 y34 w32 h27 section Background" cfg.ThemeButtonReadyColor,"./Img/button_dockLeft_ready.png")
@@ -143,7 +143,7 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 		ui.Win1EnabledToggle := ui.mainGui.AddPicture("xs-1 y+0 section w68 h25 Background" cfg.ThemeButtonReadyColor, cfg.toggleOff)
 
 
-		ui.MainGui.SetFont("s8 c" cfg.ThemeFont4Color,"Calibri")
+		ui.MainGui.SetFont("s8 c" cfg.ThemeFont4Color,"System Bold")
 
 		ui.Win1Name := ui.MainGui.AddText("ys-17 x+2 section w151 Right Background" cfg.ThemePanel4Color,"Game  ")
 		ui.Win1ProcessName := ui.MainGui.AddText("xs y+1 section w151 Right Background" cfg.ThemePanel4Color,"Not  ")
@@ -194,25 +194,25 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 		;ui.OpsAntiIdle1Button.OnEvent("Click",ToggleAntiIdle1)
 		ui.OpsAntiIdle1Button.ToolTip := "Toggle Anti-Idle"
 		
-		ui.autoFireWin1Button := ui.MainGui.AddPicture("x+-68 ys w34 h30 Disabled Background" cfg.ThemeButtonReadyColor,"./Img/button_autoFire1_ready.png")
+		ui.autoFireWin1Button := ui.MainGui.AddPicture("x+-68 ys w34 h30 Disabled Background" cfg.ThemeDisabledColor,"./Img/button_autoFire1_ready.png")
 		ui.autoFireWin1Button.Tooltip := "Window1 AutoFire"
 		;ui.autoFireWin1Button.OnEvent("Click",autoFireWin1)
 
 
 		
-		ui.OpsProgress1 := ui.MainGui.AddProgress("ys x+30 section w156 h28 c" cfg.ThemeFont1Color " Smooth Range0-" cfg.towerInterval " Background" cfg.ThemePanel1Color,0)	
+		ui.OpsProgress1 := ui.MainGui.AddProgress("ys+1 x+30 section w156 h28 c" cfg.ThemeFont1Color " Smooth Range0-" cfg.towerInterval " Background" cfg.ThemePanel1Color,0)	
 	
-		ui.OpsTowerButton := ui.MainGui.AddPicture("x+3 ys+22 w48 h45 section Background" cfg.ThemeButtonReadyColor,"./Img/button_tower_ready.png")
+		ui.OpsTowerButton := ui.MainGui.AddPicture("x+2 ys+22 w48 h45 section Background" cfg.ThemeDisabledColor,"./Img/button_tower_ready.png")
 		ui.OpsTowerButton.OnEvent("Click",ToggleTower)
 		ui.OpsTowerButton.ToolTip := "Toggle Tower Timer + AFK"
 	
-		ui.OpsProgress2 := ui.MainGui.AddProgress("x+4 ys-22 section w153 h28 c" cfg.ThemeFont1Color " Smooth Range0-" cfg.towerInterval " Background" cfg.ThemePanel1Color,0)	
+		ui.OpsProgress2 := ui.MainGui.AddProgress("x+5 ys-22 section w153 h28 c" cfg.ThemeFont1Color " Smooth Range0-" cfg.towerInterval " Background" cfg.ThemePanel1Color,0)	
 
-		ui.OpsAntiIdle2Button := ui.MainGui.AddPicture("x+1 ys w33 h30 section Background" cfg.ThemeButtonReadyColor,"./Img/button_antiIdle_ready.png")
+		ui.OpsAntiIdle2Button := ui.MainGui.AddPicture("x+-1 ys-1 w33 h30 section Background" cfg.ThemeDisabledColor,"./Img/button_antiIdle_ready.png")
 		;ui.OpsAntiIdle2Button.OnEvent("Click",ToggleAntiIdle2)
 		ui.OpsAntiIdle2Button.ToolTip := "Toggle Anti-Idle"
 		ui.mainGui.addText("ys w1 h30 section background" cfg.themeBright1Color,"")
-		ui.autoFireWin2Button := ui.MainGui.AddPicture("ys x+0 section w33 h30 Disabled Background" cfg.ThemeButtonReadyColor,"./Img/button_autoFire2_ready.png")
+		ui.autoFireWin2Button := ui.MainGui.AddPicture("ys x+0 section w33 h30 Disabled Background" cfg.ThemeDisabledColor,"./Img/button_autoFire2_ready.png")
 		ui.autoFireWin2Button.Tooltip := "Window2 AutoFire"
 		;ui.autoFireWin2Button.OnEvent("Click",autoFireWin2)
 		
@@ -564,8 +564,8 @@ RefreshAfkRoutine(*) {
 gameInfoUpdate(winNumber,OnOff := false) {
 
 	if (OnOff) {
-		fontColor 	:= cfg.themeFont2Color
-		bgColor		:= cfg.themePanel2Color
+		fontColor 	:= cfg.themeFont3Color
+		bgColor		:= cfg.themePanel3Color
 	} else {
 		fontColor	:= cfg.ThemeFont4Color
 		bgColor		:= cfg.ThemePanel4Color
@@ -579,15 +579,16 @@ gameInfoUpdate(winNumber,OnOff := false) {
 		ui.win%WinNumber%%opsTextControls[A_Index]%.opt("Background" bgColor)
 		ui.win%WinNumber%%opsTextControls[A_Index]%.redraw()
 	}
-	ui.autoFireWin%winNumber%Button.Opt("Background" bgColor)
 	if OnOff {
 		ui.autoFireWin%winNumber%Button.Value := "./Img/button_autoFire" winNumber "_on.png"
+		ui.autoFireWin%winNumber%Button.opt("background" cfg.themeButtonOnColor)
 		ui.win%winNumber%classDDL.opt("-disabled background" cfg.themePanel3Color " c" cfg.themeFont3Color)
 		ui.afkWin%winNumber%classDDL.opt("-disabled background" cfg.themePanel3Color " c" cfg.themeFont3Color)
-		ui.win%winNumber%gridLines.opt("background" cfg.themeBright2Color)
+		ui.win%winNumber%gridLines.opt("background" cfg.themeFont2Color)
 		ui.win%winNumber%gridLines.redraw()
 	} else {
 		ui.autoFireWin%winNumber%Button.Value := "./Img/button_autoFire" winNumber "_disabled.png"
+		ui.autoFireWin%winNumber%button.opt("background" cfg.themeDisabledColor)
 		ui.win%winNumber%classDDL.opt("disabled background" cfg.themeDisabledColor " c" cfg.themeFont4Color)
 		ui.afkWin%winNumber%classDDL.opt("disabled background" cfg.themeDisabledColor " c" cfg.themeFont4Color)
 		ui.win%winNumber%gridLines.opt("background" cfg.themeDisabledColor)
@@ -617,7 +618,8 @@ refreshWinHwnd(*) {
 	setTimer () => 	(ui.RefreshWindowHandlesButton.opt("background" cfg.themeButtonReadyColor),ui.refreshWindowHandlesButton.redraw()),-1250
 	refreshWin(1)
 	refreshWin(2)
-	if !ui.win1enabled && !ui.win2enabled {
+
+	if (!ui.win1enabled && !ui.win2enabled) {
 		ui.gameDDL.setFont("c" cfg.themeFont1color,"calibri bold")
 		ui.gameDDL.opt("background" cfg.themeEditboxColor)
 		ui.gameDDL.redraw()
@@ -642,6 +644,38 @@ refreshWinHwnd(*) {
 }
 
 watchForGames(*) {
+	ui.RefreshWindowHandlesButton.opt("background" cfg.themeButtonAlertColor)
+	ui.refreshWindowHandlesButton.redraw()
+	setTimer () => 	(ui.RefreshWindowHandlesButton.opt("background" cfg.themeButtonReadyColor),ui.refreshWindowHandlesButton.redraw()),-1250
+	if inStr(ui.win1name.text,"Game") {
+		refreshWin(1)
+	}
+	if !winExist(ui.win2hwnd) || inStr(ui.win2name.text,"Game") {
+		refreshWin(2)
+	}
+	if !(ui.win1enabled && ui.win2enabled) {
+		ui.gameDDL.setFont("c" cfg.themeFont1color,"calibri bold")
+		ui.gameDDL.opt("background" cfg.themeEditboxColor)
+		ui.gameDDL.redraw()
+		ui.dockGameDDL.setFont("c" cfg.themeFont1Color,"calibri bold")
+		ui.dockGameDDL.opt("background" cfg.themeEditboxColor)
+		ui.dockGameDDL.redraw()
+		controlFocus(ui.mainGuiTabs)
+		controlFocus(ui.dockTopDockButton)
+		; setTimer(watchForGames,3000)
+	} else {
+		ui.gameDDL.setFont("c" cfg.themeFont3Color,"calibri bold")
+		ui.gameDDL.opt("background" cfg.themePanel3Color)
+		ui.gameDDL.redraw()
+		ui.dockGameDDL.setFont("c" cfg.themeFont3Color,"calibri bold")
+		ui.dockGameDDL.opt("background" cfg.themePanel3Color)
+		ui.dockGameDDL.redraw()
+		controlFocus(ui.mainGuiTabs)
+		controlFocus(ui.dockTopDockButton)
+		; setTimer(watchForGames,0)
+	}
+	
+	
 	loop cfg.gameList.length {
 		winGetID(cfg.gameList[a_index])
 		if !InStr(cfg.excludedProcesses,WinGetProcessName("ahk_id " winGetId(cfg.gameList[A_Index]))) {
