@@ -709,8 +709,8 @@ initConsole(&ui) {
 
 	drawOpsOutlines() {
 		ui.mainGuiTabs.useTab("")
-		drawOutlineNamed("bottomLine",ui.mainGui,36,211,494,2,cfg.themeBright2Color,cfg.themeBright2Color,1)
-		drawOutlineNamed("bottomLine2",ui.mainGui,36,208,494,3,cfg.themeBright1Color,cfg.themeBright1Color,2)
+		drawOutlineNamed("bottomLine",ui.mainGui,37,208,494,2,cfg.themeBright2Color,cfg.themeBright2Color,1)
+		drawOutlineNamed("bottomLine2",ui.mainGui,37,207,494,2,cfg.themeBright1Color,cfg.themeBright1Color,1)
 		ui.mainGuiTabs.useTab("Sys")
 		drawGridlines()
 		drawOutlineNamed("tabsUnderline",ui.MainGui,35,29,502,3,cfg.ThemeBackgroundColor,cfg.ThemeBackgroundColor,2)
@@ -810,8 +810,8 @@ createDockBar() {
 	; ui.dockBarGamelabel		:= ui.dockBarGui.addText("x+0 ys w40 h30 section backgroundTrans c" cfg.themeButtonOnColor,"AFK")
 	; ui.dockBarGamelabel.setFont("s14")
 	; ui.dockBarWidth += 40
-	ui.dockGameDDL := ui.dockBarGui.AddDropDownList("x+0 ys+2 w145 Background" cfg.ThemeEditboxColor " -E0x200 Choose" cfg.game,cfg.GameList)
-	ui.dockBarWidth += 145
+	ui.dockGameDDL := ui.dockBarGui.AddDropDownList("x+0 ys+2 w185 Background" cfg.ThemeEditboxColor " -E0x200 Choose" cfg.game,cfg.GameList)
+	ui.dockBarWidth += 185
 	ui.dockGameDDL.ToolTip := "Select the Game You Are Playing"
 	ui.dockGameDDL.OnEvent("Change",ChangeDockGameDDL)
 	;ui.dockGameDDL.SetFont("s14 c" cfg.ThemeFont1Color)

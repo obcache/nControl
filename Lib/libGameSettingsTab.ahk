@@ -31,7 +31,7 @@ loop cfg.gameModuleList.length {
 	ui.gameTabs := ui.gameSettingsGui.addTab3("x2 y-5 w490 h181 bottom c" cfg.themeFont2Color " choose" cfg.activeGameTab,cfg.gameModuleList)
 	drawOutlineNamed("gameSettingsOutline",ui.gameSettingsGui,0,170,488,6,cfg.themeBorderDarkColor,cfg.themeBorderLightColor,3)
 	ui.gameTabs.choose(cfg.gameModuleList[cfg.activeGameTab])
-	ui.gameTabs.setFont("s12")
+	ui.gameTabs.setFont("s14")
 	ui.gameTabs.onEvent("Change",gameTabChanged)
 	ui.MainGui.GetPos(&winX,&winY,,)
 
@@ -68,27 +68,27 @@ loop cfg.gameModuleList.length {
 	ui.d2HoldingRun := false                           
 
 	ui.gameSettingsGui.setFont("s12")
-	drawOutlineNamed("d2AlwaysRunOutline",ui.gameSettingsGui,10,5,475,65,cfg.themeBright1Color,cfg.themeBright2Color,2)
+	drawOutlineNamed("d2AlwaysRunOutline",ui.gameSettingsGui,10,5,475,60,cfg.themeBright1Color,cfg.themeBright2Color,2)
 	ui.gameSettingsGui.addText("x20 y-5 w80 h20 c" cfg.themeFont1Color " background" cfg.themeBackgroundColor," Always Run")
 	;UI.alwaysRunGb := ui.gameSettingsGui.addGroupbox("x10 y0 w270 h70","Always Run")
 	
-	ui.d2AlwaysRun := ui.gameSettingsGui.addPicture("x22 y17 w30 h45 section " 
+	ui.d2AlwaysRun := ui.gameSettingsGui.addPicture("x18 y14 w30 h45 section " 
 		((cfg.d2AlwaysRunEnabled) 
 			? ("Background" cfg.ThemeButtonOnColor) 
 				: ("Background" cfg.themeButtonReadyColor)),
 		((cfg.d2AlwaysRunEnabled) 
 			? ("./img/toggle_vertical_trans_on.png") 
 				: ("./img/toggle_vertical_trans_off.png")))
-	ui.dockBarD2AlwaysRun := ui.gameSettingsGui.addPicture("x22 y17 w30 h45 section " 
-		((cfg.d2AlwaysRunEnabled) 
-			? ("Background" cfg.ThemeButtonOnColor) 
-				: ("Background" cfg.themeButtonReadyColor)),
-		((cfg.d2AlwaysRunEnabled) 
-			? ("./img/toggle_vertical_trans_on.png") 
-				: ("./img/toggle_vertical_trans_off.png")))
+	; ui.dockBarD2AlwaysRun := ui.gameSettingsGui.addPicture("x22 y17 w30 h45 section " 
+		; ((cfg.d2AlwaysRunEnabled) 
+			; ? ("Background" cfg.ThemeButtonOnColor) 
+				; : ("Background" cfg.themeButtonReadyColor)),
+		; ((cfg.d2AlwaysRunEnabled) 
+			; ? ("./img/toggle_vertical_trans_on.png") 
+				; : ("./img/toggle_vertical_trans_off.png")))
 
-	ui.panelColoring			:= ui.gameSettingsGui.addText("x12 y77 w472 h65 background" cfg.themePanel1Color,"")
-	drawOutlineNamed("gameSettingsD2Panel",ui.gameSettingsGui,10,75,475,69,cfg.themeDark1Color,cfg.themeBright1Color,1)
+	ui.panelColoring			:= ui.gameSettingsGui.addText("x12 y72 w472 h65 background" cfg.themePanel1Color,"")
+	drawOutlineNamed("gameSettingsD2Panel",ui.gameSettingsGui,10,71,475,67,cfg.themeDark1Color,cfg.themeBright1Color,1)
 	ui.d2SprintKey				:= ui.gameSettingsGui.AddPicture("xs+38 ys+0 w100 h30 section backgroundTrans","./img/keyboard_key_up.png")
 	ui.d2SprintKeyData 			:= ui.gameSettingsGui.addText("xs y+-26 w100 h25 center c" cfg.themeButtonAlertColor " backgroundTrans",subStr(strUpper(cfg.d2SprintKey),1,8))
 	ui.d2SprintKeyLabel			:= ui.gameSettingsGui.addText("xs-2 y+-2 w100 h20 center c" cfg.themeFont1Color " backgroundTrans","Sprint")
@@ -154,15 +154,18 @@ loop cfg.gameModuleList.length {
 		thisToggleOn() {
 			ui.d2AlwaysRun.Opt("Background" cfg.ThemeButtonOnColor)
 			ui.d2AlwaysRun.value := "./img/toggle_vertical_trans_on.png"
-			ui.dockBarD2AlwaysRun.Opt("Background" cfg.ThemeButtonOnColor)
-			ui.dockBarD2AlwaysRun.value := "./img/toggle_vertical_trans_on.png"
-			
+			try {
+				ui.dockBarD2AlwaysRun.Opt("Background" cfg.ThemeButtonOnColor)
+				ui.dockBarD2AlwaysRun.value := "./img/toggle_vertical_trans_on.png"
+			}
 		}
 		thisToggleOff() {
 			ui.d2AlwaysRun.opt("background" cfg.ThemeButtonReadyColor)
 			ui.d2AlwaysRun.value := "./img/toggle_vertical_trans_off.png"
-			ui.dockBarD2AlwaysRun.opt("background" cfg.ThemeButtonReadyColor)
-			ui.dockBarD2AlwaysRun.value := "./img/toggle_vertical_trans_off.png"
+			try {
+				ui.dockBarD2AlwaysRun.opt("background" cfg.ThemeButtonReadyColor)
+				ui.dockBarD2AlwaysRun.value := "./img/toggle_vertical_trans_off.png"
+			}
 		}
 	 send("{" cfg.d2ToggleWalkKey " Down}")
 	 sleep(150)
