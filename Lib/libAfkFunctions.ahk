@@ -384,7 +384,7 @@ startAFK(*) {
 stopAFK(*) {
 	ui.afkEnabled := false
 	; SetTimer(runAfkRoutine,0)
-	ui.OpsAfkButton.Opt("Background" cfg.ThemeButtonReadyColor)
+	ui.OpsAfkButton.Opt("Background" cfg.ThemeDisabledColor)
 	ui.opsAfkButton.Value := "./Img/button_afk_ready.png"
 	ui.buttonStartAFK.Opt("Background" cfg.ThemeButtonReadyColor)
 	ui.buttonStartAfk.value := "./Img/button_afk_ready.png"

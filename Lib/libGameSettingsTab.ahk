@@ -28,7 +28,7 @@ loop cfg.gameModuleList.length {
 	ui.gameSettingsGui.Opt("-Caption -Border +AlwaysOnTop +ToolWindow +Owner" ui.MainGui.Hwnd)
 	ui.gameSettingsGui.SetFont("s14 c" cfg.ThemeFont1Color,"Calibri")
 ;	winSetTransColor(ui.transparentColor,ui.gameSettingsGui)
-	ui.gameTabs := ui.gameSettingsGui.addTab3("x2 y-5 w490 h181 bottom c" cfg.themeFont2Color " choose" cfg.activeGameTab,cfg.gameModuleList)
+	ui.gameTabs := ui.gameSettingsGui.addTab3("x2 y-5 w490 h181 bottom c" cfg.themeFont1Color " choose" cfg.activeGameTab,cfg.gameModuleList)
 	drawOutlineNamed("gameSettingsOutline",ui.gameSettingsGui,0,170,488,6,cfg.themeBorderDarkColor,cfg.themeBorderLightColor,3)
 	ui.gameTabs.choose(cfg.gameModuleList[cfg.activeGameTab])
 	ui.gameTabs.setFont("s14")

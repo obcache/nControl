@@ -246,12 +246,9 @@ fadeIn() {
 		; guiVis(ui.gameSettingsGui,false)
 		; guiVis(ui.afkGui,false)
 		winSetTransparent(0,ui.titleBarButtonGui)
-		winSetTransparent(0,ui.gameSettingsGui)
-		winSetTransparent(0,ui.afkGui)
 		winGetPos(&mainGuiX,&mainGuiY,,,ui.mainGui)
 		ui.titleBarButtonGui.Move(mainGuiX,mainGuiY-4)
-		ui.gameSettingsGui.show("x" mainGuiX+35 " y" mainGuiY+35 " w495 h170 noActivate")
-		ui.AfkGui.Show("x" mainGuiX+40 " y" mainGuiY+50 " w280 h140 NoActivate")
+
 		drawAfkOutlines()
 		switch ui.mainGuiTabs.text {
 			case "AFK":
@@ -847,6 +844,8 @@ dockBarIcons(game,operation := "") {
 			case "Shatterline":
 				;TBD
 			case "Destiny 2":
+				ui.dockBarAfkButton 	:= ui.dockBarGui.addPicture("x+0 ys w32 h33 section background" cfg.themeButtonReadyColor,ui.buttonStartAfk.value)
+				ui.dockBarWidth 		+= 32
 				ui.dockBarRunIcon 		:= ui.dockBarGui.addPicture("x+0 ys w32 h33 section background" cfg.themeDisabledColor, "./img/icon_running.png")
 				ui.dockBarWidth 		+= 32
 
@@ -862,6 +861,8 @@ dockBarIcons(game,operation := "") {
 				ui.dockBarD2AlwaysRun.onEvent("click",toggleAlwaysRun)
 				ui.dockBarGui.addText("x+-2 ys w1 h33 section background" cfg.themeBright1Color,"")
 				ui.dockBarWidth 		+= 2
+
+				ui.dockBarAfkButton.onEvent("click",dockToggleAfk)
 				
 case "World//Zero":
 				ui.dockBarAfkButton 	:= ui.dockBarGui.addPicture("x+0 ys w32 h33 section background" cfg.themeButtonReadyColor,ui.buttonStartAfk.value)
@@ -879,7 +880,7 @@ case "World//Zero":
 				ui.dockBarTowerButton.onEvent("click",dockToggleTower)
 				dockToggleAfk(*) {
 					toggleAfk()
-					controlFocus(ui.dockBarTowerButton)
+					controlFocus(ui.docktopDockButton)
 				}
 				dockToggleTower(*) {
 					toggleTower()
