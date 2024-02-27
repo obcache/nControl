@@ -212,7 +212,7 @@ initOSDGui() {
 	WinSetTransparent(210)
 
 	ui.AfkAnchoredToGui := true
-	ui.HandlebarAfkGui := ui.AfkGui.AddPicture("x245 y35 w30 h100 +Hidden","./Img/handlebar_vertical.png")
+	ui.HandlebarAfkGui := ui.AfkGui.AddPicture("x250 y-2 w30 h138 +Hidden","./Img/handlebar_vertical.png")
 	ui.AfkGui.Opt("+LastFound")
 	guiVis(ui.afkGui,false)
 }
@@ -358,11 +358,10 @@ dockAfkGui(*) {
 	winGetPos(&AfkGuiX,&AfkGuiY,,,ui.afkGui)
 	ui.titleBarButtonGui.move(afkGuiX+185,afkGuiY,90,50)
 	ui.mainGui.move(afkGuiX-45,afkGuiX-35)
-	ui.handleBarAfkGui.move(245,35,25,100)
+
 	ui.buttonDockAfk.opt("background" cfg.themeButtonAlertColor)
 	ui.buttonDockAfk.value := "./img/button_dockright_ready.png"
 	ui.handleBarAfkGui.opt("-hidden")
-	ui.buttonPopout.Opt("Hidden")
 	ui.downButton.opt("hidden")
 	guiVis(ui.afkGui,true)
 	guiVis(ui.titleBarButtonGui,true)
@@ -391,7 +390,6 @@ undockAfkGui(*) {
 	ui.titleBarButtonGui.Move(cfg.guiX,cfg.guiY-4,575,220)
 	ui.gameSettingsGui.move(cfg.guiX+35,cfg.guiY+35)
 	ui.HandlebarAfkGui.Opt("Hidden")	
-	ui.buttonPopout.Opt("-Hidden")
 	ui.downButton.opt("-hidden")
 	; ui.downButton.Move(456,0)
 	; ui.exitButton.Move(494,0)
@@ -440,26 +438,28 @@ afkPopoutButtonPushed(*) {
 		WinSetTransparent(210,ui.AfkGui)
 		ui.buttonPopout.Value := "./Img/button_popout_on.png"
 		ui.buttonPopout.Opt("Background" cfg.ThemeButtonOnColor)
-		ui.buttonPopout.move(245,2)
+		; ui.buttonPopout.move(245,2)
 	}
 	
 	afkPopIn() {
 		ui.AfkDocked := false
 		ui.buttonAfkHide.opt("+hidden")
-		ui.handleBarAfkGui.opt("+hidden")
-		ui.mainGui.move(ui.prevGuiX,ui.prevGuiY)
-		guiVis(ui.titleBarButtonGui,true)
-		guiVis(ui.mainGui,true)
-		ui.AfkGui.Move(ui.prevGuiX+40,ui.prevGuiY+50,,)
+		ui.handleBarAfkGui.opt("hidden") 
+
+
 		ui.buttonPopout.Value := "./Img/button_popout_ready.png"
 		ui.buttonPopout.Opt("Background" cfg.ThemeButtonReadyColor)
-		ui.buttonPopout.move(217,2)
+
 		
 		if !(ui.MainGuiTabs.Text == "AFK")
 		{
 			guiVis(ui.afkGui,false)
 		}
 
+		winGetPos(&afkX,&afkY,,,ui.afkGui)
+		ui.mainGui.move(afkX-40,afkY-50)
+		guiVis(ui.titleBarButtonGui,true)
+		guiVis(ui.mainGui,true)
 	}
 }
 
@@ -863,7 +863,18 @@ dockBarIcons(game,operation := "") {
 				ui.dockBarWidth 		+= 2
 
 				ui.dockBarAfkButton.onEvent("click",dockToggleAfk)
-				
+				ui.topDockDIMbutton			:= ui.dockBarGui.addPicture("x+8 ys+4 w24 h24 section backgroundTrans","./img/icon_DIM.png")
+				ui.dockBarWidth 		+= 32
+				ui.topDockDIMbutton.onEvent("click",d2LaunchDIMButtonClicked)
+				ui.topDocklightGGbutton		:= ui.dockBarGui.addPicture("x+2 ys-2 w28 h28 section backgroundTrans","./img/icon_lightGG.png")
+				ui.dockBarWidth 		+= 32
+				ui.topDockBBGGbutton		:= ui.dockBarGui.addPicture("x+2 ys w28 h28 section backgroundTrans","./img/icon_blueberries.png")
+				ui.topDockLightGGbutton.onEvent("click",d2LaunchLightGGButtonClicked)
+				ui.topDockLightGGbutton.toolTip := "Launch light.gg"
+				ui.topDockDIMbutton.toolTip := "Launch DIM"
+				ui.topDockBBGGbutton.toolTip := "Launch Blueberries"
+				ui.dockBarWidth 		+= 32
+				ui.topDockBBGGbutton.onEvent("click",d2LaunchBlueBerriesButtonClicked)
 case "World//Zero":
 				ui.dockBarAfkButton 	:= ui.dockBarGui.addPicture("x+0 ys w32 h33 section background" cfg.themeButtonReadyColor,ui.buttonStartAfk.value)
 				ui.dockBarWidth 		+= 32
