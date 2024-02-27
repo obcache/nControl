@@ -248,6 +248,10 @@ preAutoExec(InstallDir,ConfigFileName) {
 			FileInstall("./Img/button_dockright_ready.png",InstallDir "/Img/button_dockright_ready.png",1)
 			FileInstall("./Img/button_dockleft.png",InstallDir "/Img/button_dockleft.png",1)
 			FileInstall("./Img/button_dockright.png",InstallDir "/Img/button_dockright.png",1)
+			fileInstall("./img/icon_DIM.png",installDir "/img/icon_dim.png",1)
+			fileInstall("./img/icon_blueberries.png",installDir "/img/icon_blueberries.png",1)
+			fileInstall("./img/icon_lightgg.png",installDir "/img/icon_lightgg.png",1)
+			
 			persistLog("Copied Assets to: " InstallDir)
 			
 
