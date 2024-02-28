@@ -423,9 +423,8 @@ cfgLoad(&cfg, &ui) {
 	cfg.AfkY					:= IniRead(cfg.file,"Interface","AfkY",cfg.GuiY+35)
 	cfg.AfkSnapEnabled			:= IniRead(cfg.file,"Interface","AfkSnapEnabled",false)
 	cfg.GuiSnapEnabled			:= IniRead(cfg.file,"Interface","GuiSnapEnabled",true)
-	cfg.topDockEnabled 			:= 
-		(A_Restarted) 	? iniRead(cfg.file,"Interface","TopDockEnabled",false)
-						: false
+	cfg.topDockEnabled 			:= iniRead(cfg.file,"Interface","TopDockEnabled",false)
+						
 	cfg.AutoDetectGame			:= IniRead(cfg.file,"Game","AutoDetectGame",true)
 	cfg.excludedProcesses		:= IniRead(cfg.file,"Game","ExcludedProcesses",true)
 	cfg.gameModuleList			:= strSplit(iniRead(cfg.file,"Game","GameModuleList","World//Zero,Destiny2,CS2,Fortnite"),",")
@@ -878,9 +877,9 @@ exitFunc(ExitReason,ExitCode) {
 	winSetTransparent(0,ui.afkGui)
 	winSetTransparent(0,ui.gameSettingsGui)
 	winSetTransparent(0,ui.mainGui)
-	if (cfg.topDockEnabled) {
-		topDockOff()
-	}
+	; if (cfg.topDockEnabled) {
+		; topDockOff()
+	; }
 	WriteConfig()
 	Return
 }

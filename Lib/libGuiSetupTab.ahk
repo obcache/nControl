@@ -230,7 +230,7 @@ GuiSetupTab(&ui,&cfg)
 				Return ChosenColor	
 			}
 		} else {
-			ui.MainGui.GetPos(&DialogX,&DialogY,&DialogW,&DialogH)
+			winGetPos(&DialogX,&DialogY,&DialogW,&DialogH,ui.mainGui)
 			ui.colorGui := Gui()
 			ui.colorGui.Opt("+AlwaysOnTop -Caption +Owner" ui.MainGui.Hwnd)
 			ui.ColorPicker := ui.colorGui.AddPicture("w515 h1000","./Img/color_swatches.png")

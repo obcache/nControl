@@ -529,11 +529,12 @@ exitMenuShow() {
 	drawOutlineNamed("exitMenuBorder",ui.exitMenuGui,0,0,74,68,cfg.themeFont3Color,cfg.themeFont3Color,2)
 	ui.exitMenuGui.show("x" tbX+470 " y" tbY-70 " AutoSize noActivate")
 	
-	exitAppCallback(*) {
-		ExitApp
-	}
-}
 
+}
+exitAppCallback(*) {
+	ExitApp
+}
+	
 hideGui(*) {
 	saveGuiPos()
 	winMinimize(ui.mainGui)
@@ -706,8 +707,8 @@ initConsole(&ui) {
 
 	drawOpsOutlines() {
 		ui.mainGuiTabs.useTab("")
-		drawOutlineNamed("bottomLine",ui.mainGui,37,208,494,2,cfg.themeBright2Color,cfg.themeBright2Color,1)
-		drawOutlineNamed("bottomLine2",ui.mainGui,37,207,494,2,cfg.themeBright1Color,cfg.themeBright1Color,1)
+		drawOutlineNamed("bottomLine",ui.mainGui,36,211,495,2,cfg.themeBright2Color,cfg.themeBright2Color,2)
+		drawOutlineNamed("bottomLine2",ui.mainGui,36,211,495,1,cfg.themeBright1Color,cfg.themeBright1Color,1)
 		ui.mainGuiTabs.useTab("Sys")
 		drawGridlines()
 		drawOutlineNamed("tabsUnderline",ui.MainGui,35,29,502,3,cfg.ThemeBackgroundColor,cfg.ThemeBackgroundColor,2)
@@ -726,8 +727,12 @@ initConsole(&ui) {
 
 	drawGridLines() {
 	ui.MainGuiTabs.UseTab("Sys")
-		; drawOutline(ui.MainGui,103,77,157,15,cfg.ThemeBright2Color,cfg.ThemeBright2Color,1)		;Win1 Info Gridlines  
-		; drawOutline(ui.MainGui,308,77,155,15,cfg.ThemeBright2Color,cfg.ThemeBright2Color,1)		;Win2 Info Gridlines
+		 drawOutline(ui.MainGui,103,77,157,16,cfg.ThemeBright2Color,cfg.ThemeBright2Color,2)		;Win1 Info Gridlines  
+		 drawOutline(ui.MainGui,308,77,155,16,cfg.ThemeBright2Color,cfg.ThemeBright2Color,2)		;Win2 Info Gridlines
+		 drawOutline(ui.MainGui,103,77,157,15,cfg.ThemeBright1Color,cfg.ThemeBright1Color,1)		;Win1 Info Gridlines  
+		 drawOutline(ui.MainGui,308,77,155,15,cfg.ThemeBright1Color,cfg.ThemeBright1Color,1)		;Win2 Info Gridlines
+		drawOutline(ui.MainGui,308,63,154,98,cfg.ThemeBright2Color,cfg.ThemeBright2Color,2)	;WIn2 Info Frame
+		drawOutline(ui.MainGui,103,63,155,98,cfg.ThemeBright2Color,cfg.ThemeBright2Color,2) 	;Win1 Info Frame
 		drawOutline(ui.MainGui,308,62,155,100,cfg.ThemeBright1Color,cfg.ThemeBright1Color,2)	;WIn2 Info Frame
 		drawOutline(ui.MainGui,103,62,156,100,cfg.ThemeBright1Color,cfg.ThemeBright1Color,2) 	;Win1 Info Frame
 
@@ -819,6 +824,7 @@ createDockBar() {
 ui.dockBarGui.addPicture("x+0 ys w32 h34 section backgroundTrans","./img/arrow_right.png")
 	ui.dockBarWidth += 32
 	ui.dockBarWin2Cmd		:= ui.dockBarGui.addText("x+0 ys w32 h33 section center background" cfg.themePanel3Color " c" cfg.themeFont3Color,"--")
+	ui.dockBarWin2Cmd.setFont("s18")
 	ui.dockBarWidth += 32
 	ui.dockBarGui.addText("x+0 ys w1 h33 section background" cfg.themeBright1Color,"")
 	ui.dockBarWidth += 1
@@ -844,37 +850,42 @@ dockBarIcons(game,operation := "") {
 			case "Shatterline":
 				;TBD
 			case "Destiny 2":
-				ui.dockBarAfkButton 	:= ui.dockBarGui.addPicture("x+0 ys w32 h33 section background" cfg.themeButtonReadyColor,ui.buttonStartAfk.value)
-				ui.dockBarWidth 		+= 32
-				ui.dockBarRunIcon 		:= ui.dockBarGui.addPicture("x+0 ys w32 h33 section background" cfg.themeDisabledColor, "./img/icon_running.png")
-				ui.dockBarWidth 		+= 32
-
-				ui.dockBarRunIcon.opt("Background" cfg.ThemeButtonAlertColor)
-				ui.dockBarD2AlwaysRun 	:= ui.dockBarGui.addPicture("x+0 ys+1 w25 h33 section " 
-				((cfg.d2AlwaysRunEnabled) 
-					? ("Background" cfg.ThemeButtonOnColor) 
-						: ("Background" cfg.themeButtonReadyColor)),
-				((cfg.d2AlwaysRunEnabled) 
-					? ("./img/toggle_vertical_trans_on.png") 
-						: ("./img/toggle_vertical_trans_off.png")))			
-				ui.dockBarWidth 		+= 25
-				ui.dockBarD2AlwaysRun.onEvent("click",toggleAlwaysRun)
 				ui.dockBarGui.addText("x+-2 ys w1 h33 section background" cfg.themeBright1Color,"")
 				ui.dockBarWidth 		+= 2
-
-				ui.dockBarAfkButton.onEvent("click",dockToggleAfk)
-				ui.topDockDIMbutton			:= ui.dockBarGui.addPicture("x+8 ys+4 w24 h24 section backgroundTrans","./img/icon_DIM.png")
+				ui.topDockDIMbutton			:= ui.dockBarGui.addPicture("x+8 ys+6 w24 h24 section backgroundTrans","./img/icon_DIM.png")
 				ui.dockBarWidth 		+= 32
 				ui.topDockDIMbutton.onEvent("click",d2LaunchDIMButtonClicked)
 				ui.topDocklightGGbutton		:= ui.dockBarGui.addPicture("x+2 ys-2 w28 h28 section backgroundTrans","./img/icon_lightGG.png")
 				ui.dockBarWidth 		+= 32
-				ui.topDockBBGGbutton		:= ui.dockBarGui.addPicture("x+2 ys w28 h28 section backgroundTrans","./img/icon_blueberries.png")
+				ui.topDockBBGGbutton		:= ui.dockBarGui.addPicture("x+0 ys w28 h28 section backgroundTrans","./img/icon_blueberries.png")
 				ui.topDockLightGGbutton.onEvent("click",d2LaunchLightGGButtonClicked)
 				ui.topDockLightGGbutton.toolTip := "Launch light.gg"
 				ui.topDockDIMbutton.toolTip := "Launch DIM"
 				ui.topDockBBGGbutton.toolTip := "Launch Blueberries"
 				ui.dockBarWidth 		+= 32
 				ui.topDockBBGGbutton.onEvent("click",d2LaunchBlueBerriesButtonClicked)
+				ui.dockBarGui.addText("x+5 ys-2 w1 h32 section background" cfg.themeBright1Color,"")
+				ui.dockBarAfkButton 	:= ui.dockBarGui.addPicture("x+-2 ys-1 w32 h33 section background" cfg.themeButtonReadyColor,ui.buttonStartAfk.value)
+				ui.dockBarWidth 		+= 32
+				ui.dockBarRunIcon 		:= ui.dockBarGui.addPicture("x+0 ys w32 h33 section background" cfg.themeDisabledColor, "./img/icon_running.png")
+				ui.dockBarWidth 		+= 32
+
+				ui.dockBarRunIcon.opt("Background" cfg.ThemeButtonAlertColor)
+				ui.dockBarD2AlwaysRun 	:= ui.dockBarGui.addPicture("x+-1 ys-1 w25 h33 section " 
+				((cfg.d2AlwaysRunEnabled) 
+					? ("Background" cfg.ThemeButtonOnColor) 
+						: ("Background" cfg.themeButtonReadyColor)),
+				((cfg.d2AlwaysRunEnabled) 
+					? ("./img/toggle_vertical_trans_on.png") 
+						: ("./img/toggle_vertical_trans_off.png")))			
+				ui.dockBarWidth 		+= 24
+				ui.dockBarD2AlwaysRun.onEvent("click",toggleAlwaysRun)
+
+
+				ui.dockBarAfkButton.onEvent("click",dockToggleAfk)
+				ui.dockBarGui.addText("x+1 ys+3 w0 h33 section background" cfg.themeBright1Color,"")
+				ui.dockBarWidth -= 1
+				
 case "World//Zero":
 				ui.dockBarAfkButton 	:= ui.dockBarGui.addPicture("x+0 ys w32 h33 section background" cfg.themeButtonReadyColor,ui.buttonStartAfk.value)
 				ui.dockBarWidth 		+= 32
@@ -901,6 +912,13 @@ case "World//Zero":
 				ui.dockBarGui.destroy()
 				createDockBar()
 		}
+		ui.dockBarGui.addText("x+-3 ys-2 w1 h32 section background" cfg.themeBright1Color,"")
+		ui.dockBarWidth -= 3
+		ui.dockBarExitButton := ui.dockBarGui.addPicture("x+0 ys w32 h33 section background" cfg.themeButtonOnColor,"./img/button_power_on.png")
+		ui.dockBarWidth += 32
+		ui.dockBarExitButton.onEvent("click",exitAppCallback)
+		ui.dockBarExitButton.toolTip := "Close nControl App"
+		
 	}
 }
 

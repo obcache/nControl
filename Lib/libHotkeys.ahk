@@ -71,7 +71,7 @@ if (InStr(A_LineFile,A_ScriptFullPath))
 !^Backspace::
 {
 ui.MainGui.Move(30,A_ScreenHeight-ui.TaskbarHeight-GuiH)
-ui.MainGui.GetPos(,,,&GuiH)
+winGetPos(,,,&GuiH,,ui.mainGui)
 ToggleGuiCollapse()
 }
 

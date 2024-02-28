@@ -1,4 +1,4 @@
-A_FileVersion := "3.6.4.1"
+A_FileVersion := "3.6.4.2"
 ;@Ahk2Exe-Let FileVersion=%A_PriorLine~U)^(.+"){1}(.+)".*$~$2% 
 
 A_AppName := "nControl"
@@ -119,11 +119,17 @@ ui.gameSettingsGui.show("x" mainGuiX+35 " y" mainGuiY+35 " w495 h170 noActivate"
 ui.AfkGui.Show("x" mainGuiX+40 " y" mainGuiY+50 " w280 h140 NoActivate")
 
 ui.MainGuiTabs.Choose(cfg.mainTabList[cfg.activeMainTab])
-fadeIn()
-switch ui.mainGuiTabs.text {
-	case "AFK":
-		guiVis(ui.afkGui,true)
-	case "Game":
-		guiVis(ui.gameSettingsGui,true)
-}
+if !cfg.topDockEnabled
+{
+	fadeIn()
+	switch ui.mainGuiTabs.text {
+		case "AFK":
+			guiVis(ui.afkGui,true)
+		case "Game":
+			guiVis(ui.gameSettingsGui,true)
+	}
 tabsChanged()
+}
+
+; if (cfg.topDockEnabled)
+	; toggleTopDock()

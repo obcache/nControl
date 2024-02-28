@@ -162,7 +162,7 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 
 		;ui.MainGui.SetFont("s13 c" cfg.ThemeFont1Color,"Calibri")
 		ui.MainGui.SetFont("s8 c" cfg.ThemeFont4Color,"Calibri")
-		ui.Win2Name := ui.MainGui.AddText("x+3 ys+1 section w150 Background" cfg.ThemePanel4Color,"  Game  ")
+		ui.Win2Name := ui.MainGui.AddText("x+3 ys+2 section w150 Background" cfg.ThemePanel4Color,"  Game  ")
 		ui.Win2ProcessName := ui.MainGui.AddText("xs y+1 section w150 Background" cfg.ThemePanel4Color,"  Not  ")
 		ui.Win2HwndText := ui.MainGui.AddText("xs y+1 w150 section Background" cfg.ThemePanel4Color,"  Found  ")
 		ui.Win2HwndText.ToolTip := "Window ID for Game Window 1"
@@ -170,9 +170,9 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 		ui.MainGui.SetFont("s11 c" cfg.ThemeFont1Color,"Calibri")
 		ui.Win2Label := ui.MainGui.AddText("ys-30 section w70 h20 c" cfg.ThemeFont1Color " Center Background" cfg.ThemePanel1Color,"Game2")
 
-		ui.Win2EnabledToggle := ui.MainGui.AddPicture("xs+2 y+0 section w69 h25 Background" cfg.ThemeButtonReadyColor, cfg.toggleOff)
+		ui.Win2EnabledToggle := ui.MainGui.AddPicture("xs+2 y+-2 section w69 h25 Background" cfg.ThemeButtonReadyColor, cfg.toggleOff)
 		
-		ui.opsWin1AfkStatus := ui.MainGui.AddText("xs-429 y+1 section w40 h22 Background" cfg.ThemePanel1Color,"")
+		ui.opsWin1AfkStatus := ui.MainGui.AddText("xs-429 y+2 section w40 h22 Background" cfg.ThemePanel1Color,"")
 		ui.opsWin1AfkStatus.setFont("s14")
 		ui.opsWin1AfkIcon 	:= ui.MainGui.AddPicture("ys-1 section w25 h22 Background" cfg.ThemePanel1Color,"./Img/sleep_icon.png")
 		ui.opsWin1AfkPad	:= ui.MainGui.AddText("ys section w5 h22 Background" cfg.ThemePanel1Color,"")
