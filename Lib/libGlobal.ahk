@@ -101,6 +101,10 @@ preAutoExec(InstallDir,ConfigFileName) {
 			{
 				DirCreate(InstallDir "\Img")
 			}
+			if !(DirExist(InstallDir "\Img2"))
+			{
+				DirCreate(InstallDir "\Img2")
+			}
 			if !(DirExist(InstallDir "\Redist"))
 			{
 				DirCreate(InstallDir "\Redist")
@@ -251,6 +255,11 @@ preAutoExec(InstallDir,ConfigFileName) {
 			fileInstall("./img/icon_DIM.png",installDir "/img/icon_dim.png",1)
 			fileInstall("./img/icon_blueberries.png",installDir "/img/icon_blueberries.png",1)
 			fileInstall("./img/icon_lightgg.png",installDir "/img/icon_lightgg.png",1)
+			
+			
+			;IMGv2 below
+			fileInstall("./img2/button_power.png",installDir "/img/button_power.png",1)
+			fileInstall("./img2/button_power_down.png",installDir "/img/button_power_down.png",1)
 			
 			persistLog("Copied Assets to: " InstallDir)
 			
