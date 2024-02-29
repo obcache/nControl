@@ -1,4 +1,4 @@
-A_FileVersion := "3.6.4.2"
+A_FileVersion := "3.6.4.3"
 ;@Ahk2Exe-Let FileVersion=%A_PriorLine~U)^(.+"){1}(.+)".*$~$2% 
 
 A_AppName := "nControl"
@@ -111,8 +111,8 @@ createDockBar()
 if cfg.topDockEnabled
 	showDockBar()
 
-
 changeGameDDL()
+
 winSetTransparent(0,ui.gameSettingsGui)
 winSetTransparent(0,ui.afkGui)
 ui.gameSettingsGui.show("x" mainGuiX+35 " y" mainGuiY+35 " w495 h170 noActivate")

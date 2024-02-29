@@ -476,14 +476,14 @@ changeDockGameDDL(*) {
 changeGameDDL(*) {
 	debugLog("Game Profile Changed to: " ui.GameDDL.Text)
 	cfg.game := ui.gameDDL.value
-	ui.dockBarGui.destroy()
+	; ui.dockBarGui.destroy()
 	createDockBar()
-	switch ui.gameDDL.text {
-		case "Destiny 2":
-			dockBarIcons("Destiny 2","Add")
-		case "World//Zero":
-			dockBarIcons("World//Zero","Add")
-	}
+	; switch ui.gameDDL.text {
+		; case "Destiny 2":
+			; dockBarIcons("Destiny 2","Add")
+		; case "World//Zero":
+			; dockBarIcons("World//Zero","Add")
+	; }
 	
 	showDockBar()
 
