@@ -258,8 +258,8 @@ preAutoExec(InstallDir,ConfigFileName) {
 			
 			
 			;IMGv2 below
-			fileInstall("./img2/button_power.png",installDir "/img/button_power.png",1)
-			fileInstall("./img2/button_power_down.png",installDir "/img/button_power_down.png",1)
+			fileInstall("./img2/button_power.png",installDir "/img2/button_power.png",1)
+			fileInstall("./img2/button_power_down.png",installDir "/img2/button_power_down.png",1)
 			
 			persistLog("Copied Assets to: " InstallDir)
 			
