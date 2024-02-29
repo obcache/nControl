@@ -303,7 +303,7 @@ HotIfWinActive("ahk_exe destiny2.exe")
 HotIf()
 
 readyToRun(*) {
-	if (winActive("ahk_exe destiny2.exe") && cfg.d2AlwaysRunEnabled && !(getKeyState("LButton") || getKeyState("RButton") || getKeyState(cfg.d2HoldWalkKey)))
+	if (winActive("ahk_exe destiny2.exe") && cfg.d2AlwaysRunEnabled && !(getKeyState("RButton") || getKeyState(cfg.d2HoldWalkKey)))
 		Return 1
 	else
 		Return 0
