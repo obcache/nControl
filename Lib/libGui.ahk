@@ -241,8 +241,16 @@ toggleChange(name,onOff := "",toggleOnImg := cfg.toggleOn,toggleOffImg := cfg.to
 	
 fadeIn() {
 	if (cfg.AnimationsEnabled) && !(inStr(DllCall("GetCommandLine","Str"),"/restart")) {
+		guiVis(ui.titleBarButtonGui,false)
+		; guiVis(ui.gameSettingsGui,false)
+		; guiVis(ui.afkGui,false)
+		winSetTransparent(0,ui.titleBarButtonGui)
+		winGetPos(&mainGuiX,&mainGuiY,,,ui.mainGui)
+		ui.titleBarButtonGui.Move(mainGuiX,mainGuiY-4)
+		drawAfkOutlines()
+		transparency := 0
+
 		if cfg.topDockEnabled {
-			transparency := 0
 			while transparency < 253 {
 				transparency += 2.5
 				winSetTransparent(round(transparency),ui.dockBarGui)
@@ -250,15 +258,6 @@ fadeIn() {
 			}
 			guiVis(ui.dockBarGui,true)
 		} else {
-			Transparency := 0
-			guiVis(ui.titleBarButtonGui,false)
-			; guiVis(ui.gameSettingsGui,false)
-			; guiVis(ui.afkGui,false)
-			winSetTransparent(0,ui.titleBarButtonGui)
-			winGetPos(&mainGuiX,&mainGuiY,,,ui.mainGui)
-			ui.titleBarButtonGui.Move(mainGuiX,mainGuiY-4)
-
-			drawAfkOutlines()
 			switch ui.mainGuiTabs.text {
 				case "AFK":
 					while transparency < 253 {
@@ -958,11 +957,13 @@ topDockOn(*) {
 	cfg.topDockEnabled := true
 	saveGuiPos()
 	guiVis(ui.titleBarButtonGui,false)
-	transparent := 255
-	while transparent > 20 {
-		transparent -= 10
-		winSetTransparent(transparent,ui.mainGui)
-		sleep(10)
+	if cfg.AnimationsEnabled {
+		transparent := 255
+		while transparent > 20 {
+			transparent -= 10
+			winSetTransparent(transparent,ui.mainGui)
+			sleep(10)
+		}
 	}
 	guiVis(ui.mainGui,false)
 	
@@ -973,11 +974,13 @@ topDockOn(*) {
 		ui.prevGuiW := vW
 		ui.prevGuiH := vH
 	}
-	
-	while transparent < 245 {
-		transparent += 10
-		winSetTransparent(transparent, ui.dockBarGui)
-		sleep(10)
+
+	if cfg.AnimationsEnabled {
+		while transparent < 245 {
+			transparent += 10
+			winSetTransparent(transparent, ui.dockBarGui)
+			sleep(10)
+		}
 	}
 	ui.opsDockButton.opt("background" cfg.themeButtonOnColor)
 	guiVis(ui.dockBarGui,true)
@@ -1005,7 +1008,7 @@ topDockOff(*) {
 			sleep(10)
 		}
 	}
-	;guiVis(ui.mainGui,true)
+	guiVis(ui.mainGui,true)
 	;ui.mainGuiTabs.choose(ui.topDockPrevTab)
 	guivis(ui.titleBarbuttonGui,true)
 	ui.opsDockButton.opt("background" cfg.themeButtonReadyColor)

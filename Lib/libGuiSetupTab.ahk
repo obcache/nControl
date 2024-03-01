@@ -93,7 +93,7 @@ GuiSetupTab(&ui,&cfg)
 
 	ui.ColorSelectorLabel2 := ui.MainGui.AddText("x226 y37 h21 section w75 BackgroundTrans c"
 		((cfg.ColorPickerEnabled) 
-			? cfg.ThemePanel3Color " background" cfg.themeFont3Color 
+			? cfg.ThemeFont3Color " background" cfg.themePanel3Color 
 			: cfg.ThemeFont3Color " background" cfg.themePanel3Color) 
 		,((cfg.ColorPickerEnabled) 
 			? (" Color App") 
@@ -110,7 +110,7 @@ GuiSetupTab(&ui,&cfg)
 	{
 		ui.toggleColorSelector.Value := 
 			(cfg.ColorPickerEnabled := !cfg.ColorPickerEnabled) 
-				? (ui.ColorSelectorLabel2.Opt("c" cfg.ThemePanel3Color " background" cfg.themeFont3Color)
+				? (ui.ColorSelectorLabel2.Opt("c" cfg.ThemeFont3Color " background" cfg.themePanel3Color)
 					,ui.ColorSelectorLabel2.Text := " Color App "
 					,"./Img/toggle_right.png")
 				: (ui.ColorSelectorLabel2.Opt("c" cfg.ThemeFont3Color " background" cfg.ThemePanel3Color)
