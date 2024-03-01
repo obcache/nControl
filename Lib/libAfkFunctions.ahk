@@ -12,6 +12,7 @@ if (InStr(A_LineFile,A_ScriptFullPath))
 
 
 
+{ ;Primary Action Interface Functions
 	toggleAutoFire(*) {
 		try {
 			WinNumber := GetWinNumber()
@@ -34,12 +35,15 @@ if (InStr(A_LineFile,A_ScriptFullPath))
 	}
 
 	toggleAutoClicker(*) {
+
 		ui.AutoClickerEnabled := !ui.AutoClickerEnabled
+
 		if (ui.AutoClickerEnabled)
 		{
 			ui.buttonAutoClicker.Opt("Background" cfg.ThemeButtonOnColor)
 			ui.buttonAutoClicker.Value := "./Img/button_autoClicker_on.png"
 		}
+		
 		While (ui.AutoClickerEnabled)
 		{
 			if (A_TimeIdlePhysical > 1500 && A_TimeIdleMouse > 1500)
@@ -51,6 +55,7 @@ if (InStr(A_LineFile,A_ScriptFullPath))
 		ui.buttonAutoClicker.Opt("Background" cfg.ThemeButtonReadyColor)
 		ui.buttonAutoClicker.Value := "./Img/button_autoClicker_ready.png"
 	}
+
 
 	toggleAntiIdle1(*) {
 		(ui.AntiIdle1_enabled := !ui.AntiIdle1_enabled) ? AntiIdle1On() : AntiIdle1Off()
@@ -154,7 +159,7 @@ antiIdle1Off() {
 		Loop 2 {
 			if (winExist("ahk_id " ui.win%a_index%hwnd)) && (cfg.Win%A_Index%Enabled) && ((WinNumber == A_Index) || (WinNumber == 0)) {
 				WinActivate("ahk_id " ui.Win%A_Index%Hwnd)
-				autoFire(0)
+				autoFire()
 				
 				if (cfg.SilentIdleEnabled)
 				{
@@ -224,9 +229,11 @@ antiIdle1Off() {
 
 
 
+} ;End Primary Action Interface Functions
 
+ ;Primary AFK Action Function
 
-	toggleTower(*) {
+toggleTower(*) {
 	global
 	if (ui.gameDDL.text != "World//Zero") {
 		notifyOSD("You must be playing World//Zero`nto use this feature",2000,"Center")
@@ -293,6 +300,7 @@ antiIdle1Off() {
 		)
 
 }
+
 
 restartTower(*) {
 	global
@@ -362,6 +370,7 @@ toggleAFK(*) {
 	}
 }
 
+
 startAFK(*) {
 	global
 	ui.afkEnabled := true
@@ -384,9 +393,9 @@ startAFK(*) {
 stopAFK(*) {
 	ui.afkEnabled := false
 	; SetTimer(runAfkRoutine,0)
-	ui.OpsAfkButton.Opt("Background" cfg.ThemeDisabledColor)
+	ui.OpsAfkButton.Opt("Background" cfg.ThemeButtonDisabledColor)
 	ui.opsAfkButton.Value := "./Img/button_afk_ready.png"
-	ui.buttonStartAFK.Opt("Background" cfg.ThemeButtonReadyColor)
+	ui.buttonStartAFK.Opt("Background" cfg.ThemeButtonDisabledColor)
 	ui.buttonStartAfk.value := "./Img/button_afk_ready.png"
 	try {
 		ui.dockBarAfkButton.Opt("Background" cfg.ThemeButtonReadyColor)
@@ -407,6 +416,8 @@ stopAFK(*) {
 	ui.opsWin2AfkIcon.value := "./Img/sleep_icon.png"
 	ui.opsWin2AfkStatus.text := ""
 }
+	
+
 
 runAfkRoutine(*) {
 	global
@@ -433,29 +444,51 @@ runAfkRoutine(*) {
 	}	
 }
 
-autoFire(winNumber := 0) {
-		if !winExist("ahk_id " ui.win%winNumber%hwnd)	
-			Return
-		WinActivate("ahk_id " ui.Win%WinNumber%Hwnd)
-		CoordMode("Mouse","Client")
-		WinGetPos(&WinX,&WinY,&WinW,&WinH,"ahk_id " ui.Win%WinNumber%Hwnd)
-		mouseTargetX := winW-50
-		mouseTargetY := winY-120
-		MouseMove(mouseTargetX,mouseTargetY)
+autoFire(initWinNumber := GetWinNumber()) {
+	if (initWinNumber == 0) {
+		loopCount := 2
+	} else {
+		loopCount := 1
+	}
+	
+	loop loopCount {
+		if initWinNumber == 0
+			winNumber := A_Index
+		else
+			winNumber := initWinNumber
+			
 
-		MouseClick("Left",mouseTargetX,mouseTargetY)
-		Sleep(150)
-		MouseClick("Left",mouseTargetX,mouseTargetY)
-		Send("{LButton Down}")
-		MouseClickDrag("Left",mouseTargetX,mouseTargetY,mouseTargetX+100,mouseTargetY,5)
-		Sleep(150)
-		Send("{Alt Down}")
-		Send("{Tab}")
-		Send("{Alt}")
-		Sleep(150)
-		Send("{LButton}")
-} 
+			ui.autoFireWin%WinNumber%Button.Opt("Background" cfg.ThemeButtonOnColor)
+			ui.autoFireWin%WinNumber%Button.Value := "./Img/button_autoFire" WinNumber "_on.png"
 
+			SetTimer(ResetAutoFireStatus,-2500)
+			CoordMode("Mouse","Client")
+			WinGetPos(&WinX,&WinY,&WinW,&WinH,"ahk_id " ui.Win%WinNumber%Hwnd)
+			MouseMove(WinW-50,WinH-120)
+			MouseClick("Left",WinW-50,WinH-120)
+			if winExist("ahk_id " ui.win%winNumber%hwnd)	
+				if (WinGetProcessName("ahk_id " ui.Win%WinNumber%Hwnd) == "RobloxPlayerBeta.exe")
+				{	
+					MouseClick("Left",WinW-50,WinH-120)
+					Sleep(250)
+					Send("{LButton Down}")
+					Sleep(250)
+					Send("!{Tab}")
+					Sleep(250)
+					Send("{LButton Up}")
+					Sleep(250)
+					Send("!{Tab}")	
+				} else {
+					Sleep(250)
+					Sleep(250)
+					MouseClickDrag("Left",WinW-50,WinH-120,WinW+50,WinH-120,5)
+				}
+			if (winExist("ahk_id " ui.win%winNumber%hwnd))
+				WinActivate("ahk_id " ui.Win%WinNumber%Hwnd)
+		
+	}
+}
+ ;End Primary AFK Action Functions
 
 { ;Primary Action Helper Functions
 	attackWin(WinNumber,Command,duration := 150) {
@@ -617,4 +650,3 @@ opsWin2ClassChange(*) {
 		controlFocus(ui.win2name,ui.mainGui)
 	RefreshAfkRoutine()
 }
-
