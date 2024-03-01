@@ -241,45 +241,59 @@ toggleChange(name,onOff := "",toggleOnImg := cfg.toggleOn,toggleOffImg := cfg.to
 	
 fadeIn() {
 	if (cfg.AnimationsEnabled) && !(inStr(DllCall("GetCommandLine","Str"),"/restart")) {
-		Transparency := 0
-		guiVis(ui.titleBarButtonGui,false)
-		; guiVis(ui.gameSettingsGui,false)
-		; guiVis(ui.afkGui,false)
-		winSetTransparent(0,ui.titleBarButtonGui)
-		winGetPos(&mainGuiX,&mainGuiY,,,ui.mainGui)
-		ui.titleBarButtonGui.Move(mainGuiX,mainGuiY-4)
-
-		drawAfkOutlines()
-		switch ui.mainGuiTabs.text {
-			case "AFK":
-				while transparency < 253 {
-					transparency += 2.5
-					winSetTransparent(round(transparency),ui.mainGui)			
-					winSetTransparent(round(transparency),ui.afkGui)
-					sleep(1)
-				}
-				guiVis(ui.afkGui,true)
-			case "Game":
-				while transparency < 253 {
-					transparency += 2.5
-					winSetTransparent(round(transparency),ui.mainGui)			
-					winSetTransparent(round(transparency),ui.gameSettingsGui)
-					sleep(1)
-				}
-				guiVis(ui.gameSettingsGui)
-			default:
+		if cfg.topDockEnabled {
+			transparency := 0
 			while transparency < 253 {
 				transparency += 2.5
-				winSetTransparent(round(transparency),ui.mainGui)			
+				winSetTransparent(round(transparency),ui.dockBarGui)
 				sleep(1)
 			}
-		}
-	}
-	
-	guiVis(ui.mainGui,true)
-	guiVis(ui.titleBarButtonGui,true)
+			guiVis(ui.dockBarGui,true)
+		} else {
+			Transparency := 0
+			guiVis(ui.titleBarButtonGui,false)
+			; guiVis(ui.gameSettingsGui,false)
+			; guiVis(ui.afkGui,false)
+			winSetTransparent(0,ui.titleBarButtonGui)
+			winGetPos(&mainGuiX,&mainGuiY,,,ui.mainGui)
+			ui.titleBarButtonGui.Move(mainGuiX,mainGuiY-4)
 
+			drawAfkOutlines()
+			switch ui.mainGuiTabs.text {
+				case "AFK":
+					while transparency < 253 {
+						transparency += 2.5
+						winSetTransparent(round(transparency),ui.mainGui)			
+						winSetTransparent(round(transparency),ui.afkGui)
+						sleep(1)
+					}
+					guiVis(ui.afkGui,true)
+				case "Game":
+					while transparency < 253 {
+						transparency += 2.5
+						winSetTransparent(round(transparency),ui.mainGui)			
+						winSetTransparent(round(transparency),ui.gameSettingsGui)
+						sleep(1)
+					}
+					guiVis(ui.gameSettingsGui)
+				default:
+				while transparency < 253 {
+					transparency += 2.5
+					winSetTransparent(round(transparency),ui.mainGui)			
+					sleep(1)
+				}
+			}
+		}
+	} 
+	if cfg.topDockEnabled
+		guiVis(ui.dockBarGui,true)
+	else {
+		guiVis(ui.mainGui,true)
+		guiVis(ui.titleBarButtonGui,true)
+	}
 }
+	
+
 
 autoFireButtonClicked(*) {
 	ToggleAutoFire()
@@ -691,9 +705,10 @@ initConsole(&ui) {
 	ui.mainGuiTabs.UseTab("AFK")
 		drawOutlineNamed("afkToolbarOutline",ui.afkGui,5,0,132,35,cfg.ThemeBright1Color,cfg.ThemeBright1Color,1)
 		drawOutlineNamed("afkPopoutButtonOutline",ui.afkGui,216,0,34,35,cfg.ThemeBright1Color,cfg.ThemeBright1Color,1)
-		drawOutlineNamed("win1statusRow",ui.afkGui,4,40,246,26,cfg.themeBright1Color,cfg.themeBright1Color,2)
-		drawOutlineNamed("win2statusRow",ui.afkGui,4,74,246,26,cfg.themeBright1Color,cfg.themeBright1Color,2)
+		 drawOutlineNamed("win1statusRow",ui.afkGui,4,40,246,26,cfg.themeBright1Color,cfg.themeBright1Color,2)
+		 drawOutlineNamed("win2statusRow",ui.afkGui,4,74,246,26,cfg.themeBright1Color,cfg.themeBright1Color,2)
 		drawOutlineNamed("afkTimeStatusOutline",ui.afkGui,4,106,246,28,cfg.themeBright1Color,cfg.themeBright1Color,2)
+	
 		drawOutlineNamed("afkRoutine1Outline",ui.mainGui,322,34,205,84,cfg.ThemeBright1Color,cfg.ThemeBright1Color,1)
 		drawOutlineNamed("afkRoutine2Outline",ui.mainGui,322,122,205,84,cfg.ThemeBright1Color,cfg.ThemeBright1Color,1)
 
@@ -799,13 +814,14 @@ createDockBar() {
 	ui.dockBarWidth += 1
 
 	ui.dockBarWin1Cmd		:= ui.dockBarGui.addText("x+0 ys w32 h33 section center background" cfg.themePanel3Color " c" cfg.themeFont3Color,"--")
-	ui.dockBarWin1Cmd.setFont("s18")
+	ui.dockBarWin1Cmd.setFont("s20")
 	ui.dockBarWidth += 32
 	ui.dockBarGui.addPicture("x+0 ys w32 h34 section background" cfg.themeBackgroundColor,"./img/arrow_left.png")
 	ui.dockBarWidth += 32
 	ui.dockBarGui.addText("x+0 ys w1 h33 section background" cfg.themeBright1Color,"")
 	ui.dockBarWidth += 1
 	ui.dockBarWin1Icon		:= ui.dockBarGui.addPicture("x+0 ys w32 h33 section background" cfg.themePanel1Color,"./img/sleep_icon.png")
+
 	ui.dockBarWidth	+= 32
 	ui.dockGameDDL := ui.dockBarGui.AddDropDownList("x+0 ys+2 w185 Background" cfg.ThemeEditboxColor " -E0x200 Choose" cfg.game,cfg.GameList)
 	ui.dockBarWidth += 185
@@ -814,6 +830,7 @@ createDockBar() {
 	; postMessage("0x153", -1, 35,, "AHK_ID " ui.gameDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153
 	; postMessage("0x153", 0, 35,, "AHK_ID " ui.gameDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153
 	ui.dockbarWin2Icon		:= ui.dockBarGui.addPicture("x+0 ys w32 h33 background" cfg.themePanel1Color,"./img/sleep_icon.png")
+
 	ui.dockBarWidth += 32	
 	ui.dockBarGui.addText("x+0 ys w1 h33 section background" cfg.themeBright1Color,"")
 	ui.dockBarWidth += 1
@@ -821,7 +838,7 @@ createDockBar() {
 	ui.dockBarGui.addPicture("x+0 ys w32 h34 section backgroundTrans","./img/arrow_right.png")
 	ui.dockBarWidth += 32
 	ui.dockBarWin2Cmd		:= ui.dockBarGui.addText("x+0 ys w32 h33 section center background" cfg.themePanel3Color " c" cfg.themeFont3Color,"--")
-	ui.dockBarWin2Cmd.setFont("s18")
+	ui.dockBarWin2Cmd.setFont("s20")
 	ui.dockBarWidth += 32
 	; ui.dockBarGui.addText("x+0 ys w1 h33 section background" cfg.themeBright1Color,"")
 	; ui.dockBarWidth += 1
@@ -925,9 +942,6 @@ showDockBar() {
 
 	drawOutlineNamed("dockBarOutline2",ui.dockBarGui,1,0,ui.dockBarWidth,34,cfg.themeDark1Color,cfg.themeDark1Color,2)
 	drawOutlineNamed("dockBarOutline",ui.dockBarGui,0,0,ui.dockBarWidth,35,cfg.themeBorderDarkColor,cfg.themeBorderDarkColor,2)
-	if (cfg.topDockEnabled) {
-		guiVis(ui.dockBarGui,true)
-	}
 }
 
 
@@ -973,21 +987,23 @@ topDockOff(*) {
 	cfg.topDockEnabled := false
 	guiVis(ui.titleBarButtonGui,false)
 	transparent := 255
-
-	while transparent > 10 {
-		transparent -= 10
-		winSetTransparent(transparent,ui.dockBarGui)
+	if (cfg.AnimationsEnabled) {
+		while transparent > 10 {
+			transparent -= 10
+			winSetTransparent(transparent,ui.dockBarGui)
 			sleep(10)
+		}
 	}
 	guiVis(ui.dockBarGui,false)
 	guiVis(ui.mainGui,false)
 	
 	winSetTransparent(0,ui.mainGui)
-	
-	while transparent < 245 {
-		transparent += 10
-		winSetTransparent(transparent, ui.mainGui)
-		sleep(10)
+	if (cfg.AnimationsEnabled) {
+		while transparent < 245 {
+			transparent += 10
+			winSetTransparent(transparent, ui.mainGui)
+			sleep(10)
+		}
 	}
 	;guiVis(ui.mainGui,true)
 	;ui.mainGuiTabs.choose(ui.topDockPrevTab)

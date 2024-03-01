@@ -312,7 +312,7 @@ readyToRun(*) {
 holdToWalk(*) {
 	if ui.d2Running 
 		send("{" strLower(cfg.d2SprintKey) " up}")
-	ui.dockBarWin1Cmd.text := "L"
+	ui.dockBarWin1Cmd.text := strUpper(cfg.d2SprintKeyw)
 	send("{" cfg.d2holdWalkKey " Down}")
 	keyWait(cfg.d2HoldWalkKey,"L")
 	send("{" cfg.d2HoldWalkKey "}")
@@ -329,7 +329,7 @@ stopRunning(*) {
 
 startRunning(*) {
 	ui.d2Running := true
-		ui.dockBarWin1Cmd.text := subStr(cfg.d2SprintKey,1,2)
+		ui.dockBarWin1Cmd.text := strUpper(subStr(cfg.d2SprintKey,1,2))
 	send("{w down}{" strLower(cfg.d2sprintKey) " down}")
 }
 
