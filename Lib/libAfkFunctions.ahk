@@ -437,28 +437,34 @@ autoFire(winNumber := 0) {
 		; ui.autoFireWin%WinNumber%Button.Opt("Background" cfg.ThemeButtonOnColor)
 		; ui.autoFireWin%WinNumber%Button.Value := "./Img/button_autoFire" WinNumber "_on.png"
 		; SetTimer(ResetAutoFireStatus,-2500)
-	if (winNumber != 0) {
-		if (winExist("ahk_id " ui.win%winNumber%hwnd))
-			WinActivate("ahk_id " ui.Win%WinNumber%Hwnd)
+	if (winNumber != 0 && winExist("ahk_id " ui.win%winNumber%hwnd)) {
+		WinActivate("ahk_id " ui.Win%WinNumber%Hwnd)
 		CoordMode("Mouse","Client")
 		WinGetPos(&WinX,&WinY,&WinW,&WinH,"ahk_id " ui.Win%WinNumber%Hwnd)
-		MouseMove(WinW-50,WinH-120)
-		if !winExist("ahk_id " ui.win%winNumber%hwnd)	
+		mouseTargetX := winW-50
+		mouseTargetY := winY-120
+		; if winNumber == 1 {
+			; mouseTargetX := winW-50
+			; mouseTargetY := winH-120
+		; } else {
+			; mouseTargetX := 50
+			; mouseTargetY := winH-120
+		; }
+		MouseMove(mouseTargetX,mouseTargetY)
+			if !winExist("ahk_id " ui.win%winNumber%hwnd)	
 			Return
-		MouseClick("Left",WinW-50,WinH-120)
+		MouseClick("Left",mouseTargetX,mouseTargetY)
 		Sleep(150)
-		MouseClick("Left",WinW-50,WinH-120)
+		MouseClick("Left",mouseTargetX,mouseTargetY)
 		Send("{LButton Down}")
-		MouseClickDrag("Left",WinW-50,WinH-120,WinW+50,WinH-120,5)
+		MouseClickDrag("Left",mouseTargetX,mouseTargetY,WinW+50,WinH-120,5)
 		Sleep(150)
-		Send("!{Tab}")
+		Send("{LAlt Down}{Tab}{LAlt Up}")
 		Sleep(150)
 		Send("{LButton Up}")
-		Sleep(150)
-		Send("!{Tab}")	
+	}
 } 
 
-} ;End Primary AFK Action Functions
 
 { ;Primary Action Helper Functions
 	attackWin(WinNumber,Command,duration := 150) {
