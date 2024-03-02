@@ -306,8 +306,13 @@ persistLog(LogMsg) {
 
 	FileAppend(A_YYYY A_MM A_DD " [" A_Hour ":" A_Min ":" A_Sec "] " LogMsg "`n",InstallDir "/Logs/persist.log")
 }
-autoUpdate() {
-	checkForUpdates(0)
+autoUpdate() {		
+	runWait("cmd /C start /b /wait ping -n 1 8.8.8.8 > " a_scriptDir "/.tmp")
+	if !inStr(fileRead(a_scriptDir "/.tmp"),"100% loss") {
+		checkForUpdates(0)
+		;setTimer () => pbNotify("Checking for Updates",1000),-100
+	}
+		fileDelete("./.tmp")
 }
 
 CheckForUpdates(msg,*) {
@@ -776,8 +781,7 @@ NotifyOSD(NotifyMsg,Duration := 10,Alignment := "Left",YN := "")
 	} else {
 		ui.Transparent := 250
 		WinSetTransparent(ui.Transparent,ui.notifyGui)
-		sleep(duration)
-		fadeOSD()
+		setTimer () => (sleep(duration),fadeOSD()),-100
 	}
 
 	waitOSD() {
@@ -826,8 +830,8 @@ pbNotify(NotifyMsg,Duration := 10,YN := "")
 	drawOutline(ui.notifyGui,0,0,w,h,"202020","808080",3)
 	drawOutline(ui.notifyGui,5,5,w-10,h-10,"BBBBBB","DDDDDD",2)
 	if !(YN) {
-		Sleep(5000)
-		FadeOSD()
+		setTimer () => (sleep(duration),fadeOSD()),-1
+		;FadeOSD()
 	} else {
 		SetTimer(pbWaitOSD,-10000)
 	}

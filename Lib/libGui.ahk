@@ -731,24 +731,30 @@ initConsole(&ui) {
 		drawOutlineNamed("opsToolbarOutline2",ui.mainGui,36,33,494,30,cfg.ThemeBright1Color,cfg.ThemeBright1Color,1)	;Ops Toolbar Outline
 
 		drawOutlineNamed("opsMiddleColumnOutlineDark",ui.mainGui,257,62,53,139,cfg.themeBright1Color,cfg.themeBright1Color,2)	;Ops Toolbar Outline
+		drawOutlineNamed("opsMiddleColumnOutlineLight",ui.mainGui,259,63,49,137,cfg.themeDark1Color,cfg.themeDark1Color,1)		;Ops Toolbar
 		drawOutlineNamed("opsMiddleColumnOutlineDark",ui.mainGui,258,62,49,138,cfg.themeBright1Color,cfg.themeBright1Color,1)	;Ops Toolbar Outline
-		drawOutlineNamed("opsMiddleColumnOutlineLight",ui.mainGui,259,62,49,137,cfg.themeDark1Color,cfg.themeDark1Color,1)		;Ops Toolbar
-		drawOutlineNamed("opsAfkStatusLeft",ui.mainGui,36,107,66,24,cfg.themeBright1Color,cfg.themeBright1Color,1)
-		drawOutlineNamed("opsAfkStatusRight",ui.mainGui,464,107,66,24,cfg.themeBright1Color,cfg.themeBright1Color,1)	
-		drawOutlineNamed("opsAfkStatusLeft",ui.mainGui,36,132,66,30,cfg.themeBright1Color,cfg.themeBright1Color,1)
-		drawOutlineNamed("opsAfkStatusRight",ui.mainGui,464,132,66,30,cfg.themeBright1Color,cfg.themeBright1Color,1)
+		drawOutlineNamed("opsAfkStatusLeft",ui.mainGui,36,104,67,25,cfg.themeBright1Color,cfg.themeBright1Color,1)
+		drawOutlineNamed("opsAfkStatusRight",ui.mainGui,464,104,66,25,cfg.themeBright1Color,cfg.themeBright1Color,1)	
+		drawOutlineNamed("opsAfkStatusLeft",ui.mainGui,36,130,67,32,cfg.themeBright1Color,cfg.themeBright1Color,1)
+		drawOutlineNamed("opsAfkStatusRight",ui.mainGui,464,130,66,32,cfg.themeBright1Color,cfg.themeBright1Color,1)
 	}
 
 	drawGridLines() {
 	ui.MainGuiTabs.UseTab("Sys")
-		 drawOutline(ui.MainGui,103,77,157,16,cfg.ThemeBright2Color,cfg.ThemeBright2Color,2)		;Win1 Info Gridlines  
-		 drawOutline(ui.MainGui,308,77,155,16,cfg.ThemeBright2Color,cfg.ThemeBright2Color,2)		;Win2 Info Gridlines
-		 drawOutline(ui.MainGui,103,77,157,15,cfg.ThemeBright1Color,cfg.ThemeBright1Color,1)		;Win1 Info Gridlines  
-		 drawOutline(ui.MainGui,308,77,155,15,cfg.ThemeBright1Color,cfg.ThemeBright1Color,1)		;Win2 Info Gridlines
-		drawOutline(ui.MainGui,308,63,154,98,cfg.ThemeBright2Color,cfg.ThemeBright2Color,2)	;WIn2 Info Frame
-		drawOutline(ui.MainGui,103,63,155,98,cfg.ThemeBright2Color,cfg.ThemeBright2Color,2) 	;Win1 Info Frame
+		drawOutline(ui.MainGui,103,62,157,100,cfg.ThemeBright2Color,cfg.ThemeBright2Color,2) 	;Win1 Info Frame
+		drawOutline(ui.MainGui,104,62,156,100,cfg.ThemeBright1Color,cfg.ThemeBright1Color,1) 	;Win1 Info Frame
+		drawOutline(ui.MainGui,103,76,157,16,cfg.ThemeBright2Color,cfg.ThemeBright2Color,2)		;Win1 Info Gridlines  
+		drawOutline(ui.MainGui,104,76,156,15,cfg.ThemeBright1Color,cfg.ThemeBright1Color,1)		;Win1 Line above ClassDDL
+		drawOutline(ui.MainGui,103,90,157,16,cfg.ThemeBright2Color,cfg.ThemeBright2Color,2)		;Win1 Line above ClassDDL
+		drawOutline(ui.MainGui,104,90,156,15,cfg.ThemeBright1Color,cfg.ThemeBright1Color,1)		;Win1 Line above ClassDDL
+
+		drawOutline(ui.MainGui,308,62,156,100,cfg.ThemeBright2Color,cfg.ThemeBright2Color,1)		;WIn2 Info Frame
 		drawOutline(ui.MainGui,308,62,155,100,cfg.ThemeBright1Color,cfg.ThemeBright1Color,2)	;WIn2 Info Frame
-		drawOutline(ui.MainGui,103,62,156,100,cfg.ThemeBright1Color,cfg.ThemeBright1Color,2) 	;Win1 Info Frame
+
+		drawOutline(ui.MainGui,308,76,156,16,cfg.ThemeBright2Color,cfg.ThemeBright2Color,2)		;Win2 Info Gridlines
+		drawOutline(ui.MainGui,308,76,155,15,cfg.ThemeBright1Color,cfg.ThemeBright1Color,1)		;Win2 Line above ClassDDL
+		drawOutline(ui.MainGui,308,90,156,16,cfg.ThemeBright2Color,cfg.ThemeBright2Color,2)		;Win2 Line above ClassDDL
+		drawOutline(ui.MainGui,308,90,155,15,cfg.ThemeBright1Color,cfg.ThemeBright1Color,1)		;Win2 Line above ClassDDL
 
 	}
 } ;END - outline parameters
@@ -1012,7 +1018,7 @@ topDockOff(*) {
 	;ui.mainGuiTabs.choose(ui.topDockPrevTab)
 	guivis(ui.titleBarbuttonGui,true)
 	ui.opsDockButton.opt("background" cfg.themeButtonReadyColor)
-	ui.titleBarButtonGui.Show("x" cfg.GuiX " y" cfg.GuiY-4 " w562 h218 NoActivate")
+	ui.titleBarButtonGui.Show("x" cfg.GuiX " y" cfg.GuiY-3 " w562 h218 NoActivate")
 	
 }
 

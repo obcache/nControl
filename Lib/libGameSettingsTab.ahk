@@ -65,7 +65,8 @@ loop cfg.gameModuleList.length {
 
 	ui.gameTabs.useTab("Destiny2") 
 	ui.d2Sliding := false
-	ui.d2HoldingRun := false                           
+	ui.d2HoldingRun := false         
+	ui.d2cleanupNeeded := false
 
 	ui.gameSettingsGui.setFont("s12")
 	drawOutlineNamed("d2AlwaysRunOutline",ui.gameSettingsGui,10,5,475,60,cfg.themeBright1Color,cfg.themeBright2Color,2)
@@ -288,6 +289,21 @@ HotIf(d2IsRunning)
 	hotKey("w up",stopRunning)
 hotIf()
 
+
+d2keyCleanup(this,*) {
+	for keyForCleanup in 
+				[cfg.d2ToggleWalkKey
+				,cfg.d2HoldWalkKey
+				,cfg.d2SprintKey
+				,cfg.d2CrouchKey
+				,"Shift"
+				,"Ctrl"
+				,"Alt"]
+		send("{" keyForCleanup "}")
+		SetCapsLockState("Off")
+		d2cleanupNeeded := false
+}
+
 d2IsRunning(*) {
 	if getKeyState(cfg.d2SprintKey)
 		return 1
@@ -302,6 +318,17 @@ HotIfWinActive("ahk_exe destiny2.exe")
 	hotKey("r",d2reload)
 HotIf()
 
+; hotIf(winActive("ahk_exe destiny2.exe")) {
+	; for keyForCleanup in 
+				; [cfg.d2ToggleWalkKey
+				; ,cfg.d2HoldWalkKey
+				; ,cfg.d2SprintKey
+				; ,cfg.d2CrouchKey
+				; ,"Shift"
+				; ,"Ctrl"
+				; ,"Alt"]
+		; hotkey("{" keyForCleanup "}",d2keyCleanup)
+; hotIf()
 readyToRun(*) {
 	if (winActive("ahk_exe destiny2.exe") && cfg.d2AlwaysRunEnabled && !(getKeyState("RButton") || getKeyState(cfg.d2HoldWalkKey)))
 		Return 1
@@ -319,18 +346,21 @@ holdToWalk(*) {
 
 	if ui.d2Running
 		send("{" strLower(cfg.d2SprintKey) " down}")
+	ui.d2cleanupNeeded := true
 }
 
 stopRunning(*) {
 	ui.d2Running := false
 	send("{" strLower(cfg.d2SprintKey) " up}{w up}")
 		ui.dockBarWin1Cmd.text := "--"
+	ui.d2cleanupNeeded := true
 }
 
 startRunning(*) {
 	ui.d2Running := true
 		ui.dockBarWin1Cmd.text := strUpper(subStr(cfg.d2SprintKey,1,2))
 	send("{w down}{" strLower(cfg.d2sprintKey) " down}")
+	ui.d2cleanupNeeded := true
 }
 
 toggleToWalk(*) {
@@ -338,14 +368,14 @@ toggleToWalk(*) {
 		(cfg.d2AlwaysRunEnabled := !cfg.d2AlwaysRunEnabled)
 			? (ui.d2AlwaysRun.opt("background" cfg.themeButtonOnColor),"./img/toggle_vertical_trans_on.png")
 			: (ui.d2AlwaysRun.opt("background" cfg.themeButtonReadyColor),"./img/toggle_vertical_trans_off.png")
-
-
+	ui.d2cleanupNeeded := true
 }
 
 d2reload(*) {
 	send("{r}")
 	ui.d2Reloading := true
 	setTimer () => ui.d2Reloading := false, -2000
+	ui.d2cleanupNeeded := true
 }
 	
 ui.gameTabs.useTab("Fortnite")

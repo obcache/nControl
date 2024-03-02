@@ -119,16 +119,16 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 	ui.ButtonHelp.OnEvent("Click",ToggleHelp)
 
 
-	ui.GameDDL := ui.MainGui.AddDropDownList("x+1 ys-1 w136 Background" cfg.ThemeEditboxColor " -E0x200 Choose" cfg.game,cfg.GameList)
+	ui.GameDDL := ui.MainGui.AddDropDownList("x+1 ys+0 w136 Background" cfg.ThemeEditboxColor " -E0x200 Choose" cfg.game,cfg.GameList)
 	ui.GameDDL.ToolTip := "Select the Game You Are Playing"
 	ui.GameDDL.OnEvent("Change",ChangeGameDDL)
 	ui.gameDDL.SetFont("s11.8 c" cfg.ThemeFont1Color)
 	postMessage("0x153", -1, 21,, "AHK_ID " ui.gameDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153
 	postMessage("0x153", 0, 20,, "AHK_ID " ui.gameDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153
-	ui.GameAddButton := ui.MainGui.AddPicture("ys+0 x+0 w34 h27 section Background" cfg.ThemeButtonReadyColor,"./Img/button_plus_ready.png")
+	ui.GameAddButton := ui.MainGui.AddPicture("ys+0 x+0 w36 h27 section Background" cfg.ThemeButtonReadyColor,"./Img/button_plus_ready.png")
 	ui.GameAddButton.OnEvent("Click",AddGame)
 	ui.GameAddButton.ToolTip := "Add New Game to List"
-	ui.GameRemoveButton	:= ui.MainGui.AddPicture("x+0 ys w32 h27 Background" cfg.ThemeButtonReadyColor,"./Img/button_minus_ready.png")
+	ui.GameRemoveButton	:= ui.MainGui.AddPicture("x+0 ys w30 h27 Background" cfg.ThemeButtonReadyColor,"./Img/button_minus_ready.png")
 	ui.GameRemoveButton.OnEvent("Click",RemoveGame)
 	ui.GameRemoveButton.ToolTip := "Remove Selected Game from List"
 
@@ -146,17 +146,17 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 		ui.MainGui.SetFont("s11 c" cfg.ThemeFont1Color,"Calibri")
 		ui.Win1Label := ui.MainGui.AddText("xs-2 y62 section w68 h20 Border h20 c" cfg.ThemeFont1Color " Center Background" cfg.ThemePanel1Color,"Game1")
 
-		ui.Win1EnabledToggle := ui.mainGui.AddPicture("xs-1 y+0 section w68 h25 Background" cfg.ThemeButtonReadyColor, cfg.toggleOff)
+		ui.Win1EnabledToggle := ui.mainGui.AddPicture("xs-1 y+-2 section w68 h25 Background" cfg.ThemeButtonReadyColor, cfg.toggleOff)
 
 
-		ui.MainGui.SetFont("s8 c" cfg.ThemeFont4Color,"System Bold")
+		ui.MainGui.SetFont("s7.7 c" cfg.ThemeFont4Color,"Arial Bold")
 
-		ui.Win1Name := ui.MainGui.AddText("ys-17 x+2 section w151 Right Background" cfg.ThemePanel4Color,"Game  ")
-		ui.Win1ProcessName := ui.MainGui.AddText("xs y+1 section w151 Right Background" cfg.ThemePanel4Color,"Not  ")
-		ui.Win1HwndText := ui.MainGui.AddText("xs y+1 section w151 Right Background" cfg.ThemePanel4Color,"Found  ")
+		ui.Win1Name := ui.MainGui.AddText("ys-17 x+2 section w151 h14 Right Background" cfg.ThemePanel4Color,"Game  ")
+		ui.Win1ProcessName := ui.MainGui.AddText("xs y+0 section w151 h14 Right Background" cfg.ThemePanel4Color,"Not  ")
+		ui.Win1HwndText := ui.MainGui.AddText("xs y+0 section w151 h14 Right Background" cfg.ThemePanel4Color,"Found  ")
 		ui.Win1HwndText.ToolTip := "Window ID for Game Window 1"
 		
-		ui.buttonSwapHwnd := ui.MainGui.AddPicture("ys-30 x+4 section w47 h45 Background" (cfg.HwndSwapEnabled ? cfg.ThemeButtonOnColor : cfg.ThemeDisabledColor), (cfg.HwndSwapEnabled ? "./Img/button_swapHwnd_enabled.png" : "./Img/button_swapHwnd_disabled.png"))
+		ui.buttonSwapHwnd := ui.MainGui.AddPicture("ys-29 x+4 section w47 h45 Background" (cfg.HwndSwapEnabled ? cfg.ThemeButtonOnColor : cfg.ThemeDisabledColor), (cfg.HwndSwapEnabled ? "./Img/button_swapHwnd_enabled.png" : "./Img/button_swapHwnd_disabled.png"))
 		ui.buttonSwapHwnd.OnEvent("Click",ToggleHwndSwap)
 		ui.buttonSwapHwnd.ToolTip := "Swap Windows"
 
@@ -168,11 +168,11 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 		ui.Win2HwndText.ToolTip := "Window ID for Game Window 1"
 
 		ui.MainGui.SetFont("s11 c" cfg.ThemeFont1Color,"Calibri")
-		ui.Win2Label := ui.MainGui.AddText("ys-30 section w70 h20 c" cfg.ThemeFont1Color " Center Background" cfg.ThemePanel1Color,"Game2")
+		ui.Win2Label := ui.MainGui.AddText("ys-29 section w70 h20 c" cfg.ThemeFont1Color " Center Background" cfg.ThemePanel1Color,"Game2")
 
-		ui.Win2EnabledToggle := ui.MainGui.AddPicture("xs+2 y+-2 section w69 h25 Background" cfg.ThemeButtonReadyColor, cfg.toggleOff)
+		ui.Win2EnabledToggle := ui.MainGui.AddPicture("xs+2 y+-3 section w69 h25 Background" cfg.ThemeButtonReadyColor, cfg.toggleOff)
 		
-		ui.opsWin1AfkStatus := ui.MainGui.AddText("xs-429 y+2 section w40 h22 Background" cfg.ThemePanel1Color,"")
+		ui.opsWin1AfkStatus := ui.MainGui.AddText("xs-429 y+1 section w40 h22 Background" cfg.ThemePanel1Color,"")
 		ui.opsWin1AfkStatus.setFont("s14")
 		ui.opsWin1AfkIcon 	:= ui.MainGui.AddPicture("ys-1 section w25 h22 Background" cfg.ThemePanel1Color,"./Img/sleep_icon.png")
 		ui.opsWin1AfkPad	:= ui.MainGui.AddText("ys section w5 h22 Background" cfg.ThemePanel1Color,"")
@@ -196,17 +196,17 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 		ui.opsWin2AfkStatus := ui.MainGui.AddText("x+0 ys section w50 h22 +Background" cfg.ThemePanel1Color,"")
 		UI.opsWin2AfkStatus.setFont("s14")
 
-		ui.OpsAntiIdle1Button := ui.MainGui.AddPicture("x69 y132 w35 h30 section Background" cfg.ThemeButtonReadyColor,"./Img/button_antiIdle_ready.png")
+		ui.OpsAntiIdle1Button := ui.MainGui.AddPicture("x69 y130 w35 h30 section Background" cfg.ThemeButtonReadyColor,"./Img/button_antiIdle_ready.png")
 		;ui.OpsAntiIdle1Button.OnEvent("Click",ToggleAntiIdle1)
 		ui.OpsAntiIdle1Button.ToolTip := "Toggle Anti-Idle"
 		
-		ui.autoFireWin1Button := ui.MainGui.AddPicture("x+-68 ys w34 h30 Disabled Background" cfg.ThemeDisabledColor,"./Img/button_autoFire1_ready.png")
+		ui.autoFireWin1Button := ui.MainGui.AddPicture("x+-68 ys+1 w34 h30 Disabled Background" cfg.ThemeDisabledColor,"./Img/button_autoFire1_ready.png")
 		ui.autoFireWin1Button.Tooltip := "Window1 AutoFire"
 		;ui.autoFireWin1Button.OnEvent("Click",autoFireWin1)
 
 
 		
-		ui.OpsProgress1 := ui.MainGui.AddProgress("ys+1 x+30 section w156 h28 c" cfg.ThemeFont1Color " Smooth Range0-" cfg.towerInterval " Background" cfg.ThemePanel1Color,0)	
+		ui.OpsProgress1 := ui.MainGui.AddProgress("ys+1 x+30 section w156 h30 c" cfg.ThemeFont1Color " Smooth Range0-" cfg.towerInterval " Background" cfg.ThemePanel1Color,0)	
 	
 		ui.OpsTowerButton := ui.MainGui.AddPicture("x+3 ys+22 w48 h45 section Background" cfg.ThemeDisabledColor,"./Img/button_tower_ready.png")
 		ui.OpsTowerButton.OnEvent("Click",ToggleTower)
@@ -214,7 +214,7 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 	
 		ui.OpsProgress2 := ui.MainGui.AddProgress("x+5 ys-22 section w153 h28 c" cfg.ThemeFont1Color " Smooth Range0-" cfg.towerInterval " Background" cfg.ThemePanel1Color,0)	
 
-		ui.OpsAntiIdle2Button := ui.MainGui.AddPicture("x+-1 ys-1 w33 h30 section Background" cfg.ThemeDisabledColor,"./Img/button_antiIdle_ready.png")
+		ui.OpsAntiIdle2Button := ui.MainGui.AddPicture("x+-1 ys-1 w33 h30 section Background" cfg.ThemeButtonReadyColor,"./Img/button_antiIdle_ready.png")
 		;ui.OpsAntiIdle2Button.OnEvent("Click",ToggleAntiIdle2)
 		ui.OpsAntiIdle2Button.ToolTip := "Toggle Anti-Idle"
 		ui.mainGui.addText("ys w1 h30 section background" cfg.themeBright1Color,"")
