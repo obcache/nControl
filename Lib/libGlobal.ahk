@@ -26,7 +26,7 @@ initTrayMenu(*) {
 
 preAutoExec(InstallDir,ConfigFileName) {
 	Global
-
+	OnMessage(0x0201, WM_LBUTTONDOWN)
 	if (A_IsCompiled)
 	{
 		; if !(FileExist("./nControl.ini"))
@@ -37,9 +37,12 @@ preAutoExec(InstallDir,ConfigFileName) {
 		; }
 		if StrCompare(A_ScriptDir,InstallDir)
   		{
+			createPbConsole("nControl Install")
+			pbConsole("Running standalone executable, attempting to install")
 			persistLog("Running standalone executable, attempting to auto-install")
 			if !(DirExist(InstallDir))
 			{
+				pbConsole("Attempting to create install folder")
 				persistLog("Attempting to create install folder")
 				try
 				{
@@ -47,11 +50,16 @@ preAutoExec(InstallDir,ConfigFileName) {
 					SetWorkingDir(InstallDir)
 				} catch {
 					persistLog("Couldn't create install location")
-					pbNotify("Cannot Create Folder at the Install Location. `nSuspect permissions issue with the desired install location",3000)
+					pbConsole("Cannot Create Folder at the Install Location.")
+					pbConsole("Suspect permissions issue with the desired install location")
+					pbConsole("`n`nTERMINATING")
+					sleep(4000)
 					ExitApp
 				}
+				pbConsole("Successfully created install location at " InstallDir)
 				persistLog("Successfully created install location at " InstallDir)
 			}
+			pbConsole("Copying executable to install location")
 			persistLog("Copying executable to install location")
 			try{
 				FileCopy(A_ScriptFullPath, InstallDir "/" A_AppName ".exe", true)
@@ -59,12 +67,12 @@ preAutoExec(InstallDir,ConfigFileName) {
 
 			if (FileExist(InstallDir "/nControl.ini"))
 			{
-				msgBoxResult := MsgBox("Previous install detected. `nAttempt to preserve your existing settings?",, "Y/N T10")
+				msgBoxResult := MsgBox("Previous install detected. `nAttempt to preserve your existing settings?",, "Y/N T30")
 				
 				switch msgBoxResult {
 					case "No": 
 					{
-						pbNotify("Replacing existing configuration files with updated and clean files",3000)
+						pbConsole("`nReplacing existing configuration files with updated and clean files")
 						FileInstall("./nControl.ini",InstallDir "/nControl.ini",1)
 						FileInstall("./nControl.themes",InstallDir "/nControl.themes",1)
 						FileInstall("./AfkData.csv",InstallDir "/AfkData.csv",1)
@@ -72,7 +80,8 @@ preAutoExec(InstallDir,ConfigFileName) {
 					case "Yes": 
 					{
 						cfg.ThemeFont1Color := "00FFFF"
-						pbNotify("Using Existing Configuration Files`n`nIf you encounter issues,`nTry installing again and `nchoose 'No' when prompted to `npreserve your existing files.",3000)
+						pbConsole("`nPreserving existing configuration may cause issues.")
+						pbConsole("If you encounter issues,try installing again, choosing NO.")
 						if !(FileExist(InstallDir "/AfkData.csv"))
 							FileInstall("./AfkData.csv",InstallDir "/AfkData.csv",1)
 						if !(FileExist(InstallDir "/nControl.themes"))
@@ -86,7 +95,8 @@ preAutoExec(InstallDir,ConfigFileName) {
 					}
 				}
 			} else {
-				pbNotify("This seems to be the first time you're running nControl. `nA fresh install to [YourUserProfilePath]\Documents\nControl is being performed.")
+				pbConsole("This seems to be the first time you're running nControl.")
+				pbConsole("A fresh install to " A_MyDocuments "\nControl is being performed.")
 
 						FileInstall("./nControl.ini",InstallDir "/nControl.ini",1)
 						FileInstall("./nControl.themes",InstallDir "/nControl.themes",1)
@@ -260,7 +270,7 @@ preAutoExec(InstallDir,ConfigFileName) {
 			;IMGv2 below
 			fileInstall("./img2/button_power.png",installDir "/img2/button_power.png",1)
 			fileInstall("./img2/button_power_down.png",installDir "/img2/button_power_down.png",1)
-			
+			pbConsole("`nInstall completed successfully.")
 			persistLog("Copied Assets to: " InstallDir)
 			
 
@@ -271,6 +281,45 @@ preAutoExec(InstallDir,ConfigFileName) {
 	}
 }
 
+createPbConsole(title) {
+	transColor := "010203"
+	ui.pbConsoleBg := gui()
+	ui.pbConsoleBg.opt("+toolWindow -caption alwaysOnTop")
+	ui.pbConsoleBg.backColor := "151515"
+	ui.pbConsoleBg.show("w700 h400 noActivate")
+	winSetTransparent(80,ui.pbConsoleBg)
+	ui.pbConsole := gui()
+	ui.pbConsole.opt("+toolWindow -caption alwaysOnTop")
+	ui.pbConsole.backColor := transColor
+	ui.pbConsole.color := transColor
+	winSetTransColor(transColor,ui.pbConsole)
+	ui.pbConsoleTitle := ui.pbConsole.addText("x8 y8 w680 h35 center backgroundTrans cFFFFFF",title)
+	ui.pbConsoleTitle.setFont("s20","Verdana Bold")
+	drawOutlineNamed("pbConsoleTitle",ui.pbConsole,8,8,686,35,"FFFFFF","CCCCCC",2)
+	ui.pbConsoleData := ui.pbConsole.addText("xs w680 h380 backgroundTrans cCCCCCC","")
+	ui.pbConsoleData.setFont("s16")
+	drawOutlineNamed("pbConsoleOutside",ui.pbConsole,2,2,698,398,"AAAAAA","151515",1)
+	drawOutlineNamed("pbConsoleOutside2",ui.pbConsole,3,3,696,396,"CCCCCC","858585",1)
+	drawOutlineNamed("pbConsoleOutside3",ui.pbConsole,4,4,694,394,"353535","555555",1)
+	ui.pbConsole.show("w700 h400 noActivate")
+	
+}
+
+pbConsole(msg) {
+	ui.pbConsoleData.text := msg "`n" ui.pbConsoleData.text
+	;ui.pbConsoleData.text := msg "`n" subStr(ui.pbConsoleData.text, inStr(ui.pbConsoleData.text,"`n") - 10)
+}
+
+testPbConsole() {
+	createPbConsole("Test Console")
+	loop 40 {
+		pbConsole("This is test console message #" a_index)
+		sleep(1500)
+	}
+	ui.pbConsole.destroy()
+}
+
+; testPbConsole()
 
 FileFound(fileName,destination,fileDescription) {
 	source := fileName
@@ -306,14 +355,13 @@ persistLog(LogMsg) {
 
 	FileAppend(A_YYYY A_MM A_DD " [" A_Hour ":" A_Min ":" A_Sec "] " LogMsg "`n",InstallDir "/Logs/persist.log")
 }
+
 autoUpdate() {		
-	runWait("cmd /C start /b /wait ping -n 1 8.8.8.8 > " a_scriptDir "/.tmp",,"Hide")
-	if !inStr(fileRead(a_scriptDir "/.tmp"),"100% loss") {
+	if (dllCall("Wininet.dll\InternetGetConnectedState", "Str", "0x40","Int",0))
 		checkForUpdates(0)
-		;setTimer () => pbNotify("Checking for Updates",1000),-100
-	}
-		fileDelete("./.tmp")
-}
+	else 
+		setTimer () => pbNotify("Network Down. Bypassing Auto-Update.",1000),-100
+}	
 
 CheckForUpdates(msg,*) {
 		winSetAlwaysOnTop(0,ui.mainGui.hwnd)
@@ -334,7 +382,7 @@ CheckForUpdates(msg,*) {
 		} else {
 			 if(msg) {
 				ui.latestVersionText.text := "Latest:`t" ui.latestVersion
-				pbNotify("No upgraded needed`nCurrent Version: " ui.installedVersion "`nLatest Version: " ui.latestVersion,3000)
+				pbConsole("No upgraded needed`nCurrent Version: " ui.installedVersion "`nLatest Version: " ui.latestVersion)
 				setTimer () => ui.latestVersionText.text := "Latest:`t*****",-300000
 			 }
 		}
@@ -343,32 +391,27 @@ CheckForUpdates(msg,*) {
 
 cfgLoad(&cfg, &ui) {
 	global
-
+	ui.guiH					:= 220  	;430 for Console Mode
 
 	cfg.gamingStopProcString	:= "foobar2000.exe,discord.exe,shatterline.exe,rocketLeague.exe,destiny2.exe,robloxPlayerBeta.exe,applicationFrameHost.exe,steam.exe,epicGamesLauncher.exe"
 	cfg.gamingStartProcString 	:= "E:\Music\foobar2000\foobar2000.exe,C:\Users\cashm\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\5) Utilities\Discord.lnk,C:\Program Files (x86)\Steam\steam.exe,C:\Program Files (x86)\Epic Games\Launcher\Portal\Binaries\Win32\EpicGamesLauncher.exe"
 		
-	cfg.gamingStartProc 	:= strSplit(IniRead(cfg.file,"System","GamingStartProcesses",cfg.gamingStartProcString),",")
-	cfg.gamingStopProc 		:= strSplit(IniRead(cfg.file,"System","GamingStopProcesses",cfg.gamingStopProcString),",")
+	ui.gameWindowsList 		:= array()
+	cfg.gameWindowsList 	:= array()
 	ui.d2AlwaysRunPaused 	:= false
 	ui.d2Running			:= false
 	ui.d2Sliding			:= false
 	ui.d2Reloading			:= false
 	ui.d2ToggleWalkEnabled	:= false
-	ui.gameWindowsList 		:= array()
-	cfg.gameWindowsList 	:= array()
-	cfg.mainGui				:= IniRead(cfg.file,"System","MainGui","MainGui")
-	cfg.startMinimizedEnabled	:= iniRead(cfg.file,"System","StartMinimizedEnabled",false)
-	ui.guiH					:= 220  	;430 for Console Mode
 	ui.clockTimerStarted 	:= false
 	ui.clockMode			:= "Clock"
 	ui.autoFire1Enabled		:= false
 	ui.autoFire2Enabled		:= false
-	ui.autoClickerEnabled 	:= false
-	ui.antiIdle_enabled 	:= false
 	ui.antiIdle1_enabled 	:= false
 	ui.antiIdle2_enabled 	:= false
+	ui.antiIdle_enabled 	:= false
 	ui.antiIdleInterval		:= 900000
+	ui.autoClickerEnabled 	:= false
 	ui.previousTab			:= ""
 	ui.activeTab			:= ""
 	ui.lastWindowHwnd		:= 0
@@ -388,44 +431,51 @@ cfgLoad(&cfg, &ui) {
 	ui.inGameChat			:= false
 	ui.reloading			:= false
 	
-	afk						:= object()
-	ui.profileList			:= array()
-	ui.profileListStr		:= ""
-	win1afk 				:= object()
-	win2afk					:= object()
-	win1afk.steps			:= array()
-	win2afk.steps			:= array()
-	win1afk.nextStep		:= ""
-	win2afk.nextStep 		:= ""
-	win1afk.waits 			:= array()
-	win2afk.waits			:= array()
-	win1afk.nextWait		:= ""
-	win2afk.nextWait		:= ""
-	win1afk.waiting			:= false
-	win2afk.waiting			:= false
-	win1afk.currStepNum		:= ""
-	win2afk.currStepNum 	:= ""
+	afk							:= object()
+	ui.profileList				:= array()
+	ui.profileListStr			:= ""
+	win1afk 					:= object()
+	win2afk						:= object()
+	win1afk.steps				:= array()
+	win2afk.steps				:= array()
+	win1afk.nextStep			:= ""
+	win2afk.nextStep 			:= ""
+	win1afk.waits 				:= array()
+	win2afk.waits				:= array()
+	win1afk.nextWait			:= ""
+	win2afk.nextWait			:= ""
+	win1afk.waiting				:= false
+	win2afk.waiting				:= false
+	win1afk.currStepNum			:= ""
+	win2afk.currStepNum 		:= ""
 	
-	ui.dividerGui			:= gui()
-	cfg.excludedApps		:= IniRead(cfg.file,"System","ExcludedApps","Windows10Universal.exe,explorer.exe,RobloxPlayerInstaller.exe,RobloxPlayerLauncher.exe,Chrome.exe,msedge.exe")
-	cfg.MainGui				:= IniRead(cfg.file,"System","MainGui","MainGui")
-	cfg.InstallDir			:= IniRead(cfg.file,"System","InstallDir", A_MyDocuments "\nControl")
-	cfg.MainScriptName		:= IniRead(cfg.file,"System","MainScriptName", "nControl")
-	cfg.debugEnabled		:= IniRead(cfg.file,"System","debugEnabled",false)
-	cfg.consoleVisible		:= IniRead(cfg.file,"System","consoleVisible",false)
-	cfg.ToolTipsEnabled 	:= IniRead(cfg.file,"System","ToolTipsEnabled",true)
-	cfg.releaseChannel		:= IniRead(cfg.file,"System","ReleaseChannel","Stable")
-	cfg.toggleOn			:= IniRead(cfg.file,"Interface","ToggleOnImage","./Img/toggle_on.png")
-	cfg.toggleOff			:= IniRead(cfg.file,"Interface","ToggleOffImage","./Img/toggle_off.png")
-	cfg.activeMainTab		:= IniRead(cfg.file,"Interface","activeMainTab",1)
-	cfg.activeGameTab  		:= IniRead(cfg.file,"Interface","ActiveGameTab",1)
-	cfg.AlwaysOnTopEnabled	:= IniRead(cfg.file,"Interface","AlwaysOnTopEnabled",true)
-	cfg.AnimationsEnabled	:= IniRead(cfg.file,"Interface","AnimationsEnabled",true)
-	cfg.ColorPickerEnabled 	:= IniRead(cfg.file,"Interface","ColorPickerEnabled",true)
-	cfg.GuiX 				:= IniRead(cfg.file,"Interface","GuiX",PrimaryWorkAreaLeft + 200)
-	cfg.GuiY 				:= IniRead(cfg.file,"Interface","GuiY",PrimaryWorkAreaTop + 200)
-	cfg.GuiW				:= IniRead(cfg.file,"Interface","GuiW",545)
-	cfg.GuiH				:= IniRead(cfg.file,"Interface","GuiH",210)
+	ui.dividerGui				:= gui()
+	cfg.gamingStartProc 		:= strSplit(IniRead(cfg.file,"System","GamingStartProcesses",cfg.gamingStartProcString),",")
+	cfg.gamingStopProc 			:= strSplit(IniRead(cfg.file,"System","GamingStopProcesses",cfg.gamingStopProcString),",")
+	cfg.gameModuleList			:= strSplit(iniRead(cfg.file,"Game","GameModuleList","World//Zero,Destiny2,CS2,Fortnite"),",")
+	cfg.GameList				:= StrSplit(IniRead(cfg.file,"Game","GameList","Roblox,Rocket League"),",")
+	cfg.mainTabList				:= strSplit(IniRead(cfg.file,"Interface","MainTabList","Sys,AFK,Game,Dock,Setup,Audio"),",")
+	cfg.mainGui					:= IniRead(cfg.file,"System","MainGui","MainGui")
+	cfg.startMinimizedEnabled	:= iniRead(cfg.file,"System","StartMinimizedEnabled",false)
+	cfg.excludedApps			:= IniRead(cfg.file,"System","ExcludedApps","Windows10Universal.exe,explorer.exe,RobloxPlayerInstaller.exe,RobloxPlayerLauncher.exe,Chrome.exe,msedge.exe")
+	cfg.MainGui					:= IniRead(cfg.file,"System","MainGui","MainGui")
+	cfg.InstallDir				:= IniRead(cfg.file,"System","InstallDir", A_MyDocuments "\nControl")
+	cfg.MainScriptName			:= IniRead(cfg.file,"System","MainScriptName", "nControl")
+	cfg.debugEnabled			:= IniRead(cfg.file,"System","debugEnabled",false)
+	cfg.consoleVisible			:= IniRead(cfg.file,"System","consoleVisible",false)
+	cfg.ToolTipsEnabled 		:= IniRead(cfg.file,"System","ToolTipsEnabled",true)
+	cfg.releaseChannel			:= IniRead(cfg.file,"System","ReleaseChannel","Stable")
+	cfg.toggleOn				:= IniRead(cfg.file,"Interface","ToggleOnImage","./Img/toggle_on.png")
+	cfg.toggleOff				:= IniRead(cfg.file,"Interface","ToggleOffImage","./Img/toggle_off.png")
+	cfg.activeMainTab			:= IniRead(cfg.file,"Interface","activeMainTab",1)
+	cfg.activeGameTab  			:= IniRead(cfg.file,"Interface","ActiveGameTab",1)
+	cfg.AlwaysOnTopEnabled		:= IniRead(cfg.file,"Interface","AlwaysOnTopEnabled",true)
+	cfg.AnimationsEnabled		:= IniRead(cfg.file,"Interface","AnimationsEnabled",true)
+	cfg.ColorPickerEnabled 		:= IniRead(cfg.file,"Interface","ColorPickerEnabled",true)
+	cfg.GuiX 					:= IniRead(cfg.file,"Interface","GuiX",PrimaryWorkAreaLeft + 200)
+	cfg.GuiY 					:= IniRead(cfg.file,"Interface","GuiY",PrimaryWorkAreaTop + 200)
+	cfg.GuiW					:= IniRead(cfg.file,"Interface","GuiW",545)
+	cfg.GuiH					:= IniRead(cfg.file,"Interface","GuiH",210)
 
 	MonitorGet(MonitorGetPrimary(),&L,&T,&R,&B)
 	if (cfg.GuiX < L)
@@ -441,9 +491,6 @@ cfgLoad(&cfg, &ui) {
 						
 	cfg.AutoDetectGame			:= IniRead(cfg.file,"Game","AutoDetectGame",true)
 	cfg.excludedProcesses		:= IniRead(cfg.file,"Game","ExcludedProcesses",true)
-	cfg.gameModuleList			:= strSplit(iniRead(cfg.file,"Game","GameModuleList","World//Zero,Destiny2,CS2,Fortnite"),",")
-	cfg.GameList				:= StrSplit(IniRead(cfg.file,"Game","GameList","Roblox,Rocket League"),",")
-	cfg.mainTabList				:= strSplit(IniRead(cfg.file,"Interface","MainTabList","Sys,AFK,Game,Dock,Setup,Audio"),",")
 	cfg.game					:= IniRead(cfg.file,"Game","Game","2")
 	cfg.HwndSwapEnabled			:= IniRead(cfg.file,"Game","HwndSwapEnabled",false)
 	ui.win1enabled 				:= IniRead(cfg.file,"Game","Win1Enabled",true)

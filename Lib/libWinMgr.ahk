@@ -50,6 +50,9 @@ WM_WINDOWPOSCHANGED(wParam, lParam, msg, Hwnd)
 					ui.titleBarButtonGui.move(afkGuiX+185,afkGuiY)
 					ui.mainGui.move(afkGuiX-40,afkGuiX-50)
 				}
+			case ui.pbConsoleBg.hwnd:
+				winGetPos(&winX,&winY,,,ui.pbConsoleBg)
+				ui.pbConsole.move(winX,winY)
 		} 
 			
 	}
@@ -65,7 +68,7 @@ WM_LBUTTONDOWN(wParam, lParam, msg, Hwnd) {
 	if !(hwnd == ui.afkGui.hwnd && ui.afkAnchoredToGui) {
 		
 		
-		if !cfg.topDockEnabled && ((Hwnd = ui.MainGui.hwnd) || (Hwnd = ui.titleBarButtonGui.Hwnd) || (hwnd == ui.dividerGui.hwnd) || (hwnd == ui.afkGui.hwnd))
+		if !cfg.topDockEnabled && ((Hwnd = ui.MainGui.hwnd) || (hwnd == ui.pbConsoleBg.hwnd) || (hwnd == ui.pbConsole.hwnd) || (Hwnd = ui.titleBarButtonGui.Hwnd) || (hwnd == ui.dividerGui.hwnd) || (hwnd == ui.afkGui.hwnd))
 			PostMessage("0xA1",2)
 
 		if (hwnd == ui.dividerGui.hwnd)

@@ -111,7 +111,7 @@ initGui(&cfg, &ui) {
 	ui.MainGuiTabs.UseTab("")
 
 	OnMessage(0x0200, WM_MOUSEMOVE)
-	OnMessage(0x0201, WM_LBUTTONDOWN)
+	
 	;OnMessage(0x0202, WM_LBUTTONUP)
 	OnMessage(0x47, WM_WINDOWPOSCHANGED)
 }
@@ -801,7 +801,7 @@ createDockBar() {
 	try
 		ui.dockBarGui.destroy()
 	ui.dockBarGui := gui()
-	ui.dockBarGui.opt("alwaysOnTop owner" ui.mainGui.hwnd " -caption")
+	ui.dockBarGui.opt("alwaysOnTop +toolWindow -caption +owner" ui.mainGui.hwnd)
 	ui.dockBarGui.backColor := cfg.themeBackgroundColor
 	ui.dockBarGui.color := cfg.themeBackgroundColor
 	guiVis(ui.dockBarGui,false)
@@ -989,7 +989,6 @@ topDockOn(*) {
 		}
 	}
 	ui.opsDockButton.opt("background" cfg.themeButtonOnColor)
-
 }
 
 topDockOff(*) {
@@ -1019,7 +1018,6 @@ topDockOff(*) {
 	guivis(ui.titleBarbuttonGui,true)
 	ui.opsDockButton.opt("background" cfg.themeButtonReadyColor)
 	ui.titleBarButtonGui.Show("x" cfg.GuiX " y" cfg.GuiY-3 " w562 h218 NoActivate")
-	
 }
 
 
