@@ -178,7 +178,7 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 		ui.opsWin1AfkPad	:= ui.MainGui.AddText("ys section w5 h22 Background" cfg.ThemePanel1Color,"")
 
 		ui.Win1ClassDDL := ui.MainGui.AddDDL("ys-1 x+1 w155 r6 AltSubmit choose" cfg.win1class " Background" cfg.ThemeEditBoxColor, ui.ProfileList)
-		ui.Win1ClassDDL.SetFont("s12")
+		ui.Win1ClassDDL.SetFont("s12","eras bold")
 		ui.Win1ClassDDL.OnEvent("Change",opsWin1ClassChange)
 		PostMessage("0x153", -1, 20,, "AHK_ID " ui.Win1ClassDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153
 		PostMessage("0x153", 0, 23,, "AHK_ID " ui.Win1ClassDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153	
@@ -187,7 +187,7 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 		ui.OpsAfkButton.ToolTip := "Toggle AFK"
 	
 		ui.Win2ClassDDL := ui.MainGui.AddDDL("x+2 ys-1 w154 r6 section AltSubmit choose" cfg.win2class " Background" cfg.ThemeEditBoxColor, ui.ProfileList)
-		ui.Win2ClassDDL.SetFont("s12","impact light")
+		ui.Win2ClassDDL.SetFont("s12","eras bold")
 		ui.Win2ClassDDL.OnEvent("Change",opsWin2ClassChange)
 		PostMessage("0x153", -1, 20,, "AHK_ID " ui.Win2ClassDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153
 		PostMessage("0x153", 0, 23,, "AHK_ID " ui.Win2ClassDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153		
@@ -719,7 +719,7 @@ refreshWin(winNumber) { ;Performs Window Discovery, Game Identification and Gui 
 	if (ui.filteredGameWindowsList.length >= origWinNumber && winExist("ahk_id " ui.filteredGameWindowsList[origWinNumber])) {
 		ui.win%winNumber%enabled := true
 		ui.win%WinNumber%Hwnd := ui.filteredGameWindowsList[origWinNumber]
-		ui.win%winNumber%HwndText.text := ui.Win%WinNumber%Hwnd
+		ui.win%winNumber%HwndText.text := " " ui.Win%WinNumber%Hwnd " "
 		ui.win%winNumber%Name.text
 		updateWin(winNumber)
 		ui.win%winNumber%enabledToggle.opt("-disabled")

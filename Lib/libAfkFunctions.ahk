@@ -252,8 +252,8 @@ toggleTower(*) {
 					,ui.opsTowerButton.value := "./img/button_tower_on.png"
 					,ui.buttonTower.opt("Background" cfg.ThemeButtonOnColor)
 					,ui.buttonTower.value := "./img/button_tower_on.png"
-					,ui.dockBarTowerButton.opt("background" cfg.themeButtonOnColor)
-					ui.dockBarTowerButton.value := "./img/button_tower_on.png"
+					,(cfg.topDockEnabled) ? ui.dockBarTowerButton.opt("background" cfg.themeButtonOnColor) : 0
+					,(cfg.topDockEnabled) ? ui.dockBarTowerButton.value := "./img/button_tower_on.png" : 0
 					,restartTower()
 				) : (
 					ui.afkStatus1.value		:= "./Img/label_infinite_tower.png"
@@ -265,8 +265,8 @@ toggleTower(*) {
 					,ui.buttonTower.value		:= "./img/button_tower_on.png"
 					,ui.opsTowerButton.opt("Background" cfg.ThemeButtonOnColor)
 					,ui.buttonTower.Opt("Background" cfg.ThemeButtonOnColor)
-					,ui.dockBarTowerButton.opt("background" cfg.themeButtonOnColor)
-					,ui.dockBarTowerButton.value := "./img/button_tower_on.png"
+					,(cfg.topDockEnabled) ? ui.dockBarTowerButton.opt("background" cfg.themeButtonOnColor) : 0
+					,(cfg.topDockEnabled) ? ui.dockBarTowerButton.value := "./img/button_tower_on.png" : 0
 					,restartTower()
 				)			
 			) : (
