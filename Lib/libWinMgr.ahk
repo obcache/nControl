@@ -211,6 +211,46 @@ ChangeWindowFocus()
 	}
 }
 
+setGlass(accent_state, rgb_in:=0x0, alpha_in:=0xFF, hwnd:=0) {
+    Static WCA_ACCENT_POLICY := 19, pad := A_PtrSize = 8 ? 4 : 0
+        , max_rgb := 0xFFFFFF, max_alpha := 0xFF, max_accent := 3
+    
+    If (accent_state < 0) || (accent_state > max_accent)
+        Return "Bad state value passed in.`nValue must be 0-" max_accent "."
+    
+    If (StrSplit(A_OSVersion, ".")[1] < 10)
+        Return "Must be running > Windows 10"
+    
+    If (alpha_in < 0) || (alpha_in > max_alpha)
+        Return "Bad alpha value passed in.`nMust be between 0x00 and 0xFF."
+            . "`nGot: " alpha_in
+    
+    rgb_in += 0
+    If (rgb_in < 0) || (rgb_in > max_rgb)
+        Return "Bad RGB value passed in.`nMust be between 0x000000 and 0xFFFFFF."
+            . "`nGot: " rgb_in
+    
+    (!hwnd) ? hwnd := WinActive("A") : 0
+    ,abgr := (alpha_in << 24) | (rgb_in << 16 & 0xFF0000) | (rgb_in & 0xFF00) | (rgb_in >> 16 & 0xFF)
+    ,accent_size := 16
+    ,ACCENT_POLICY := Buffer(accent_size, 0)
+    ,NumPut("int", accent_size, ACCENT_POLICY)
+    ,(accent_state = 1 || accent_state = 2) ? NumPut("Int", abgr, ACCENT_POLICY, 8) : 0
+    ,WINCOMPATTRDATA := Buffer(4 + pad + A_PtrSize + 4 + pad, 0)
+    ,NumPut("int", WCA_ACCENT_POLICY, WINCOMPATTRDATA, 0)
+    ,NumPut("ptr", ACCENT_POLICY.Ptr, WINCOMPATTRDATA, 4 + pad)
+    ,NumPut("uint", accent_size, WINCOMPATTRDATA, 4 + pad + A_PtrSize)
+    
+    If !DllCall("user32\SetWindowCompositionAttribute"
+            ,"ptr"   ,hwnd
+            ,"ptr"   ,WINCOMPATTRDATA.Ptr)
+        Return "SetWindowCompositionAttribute failed"
+    
+    ; This sets window transparency and is optional
+    ; It can be commented in/out or have a permanent value set
+    ;WinSetTransparent(alpha_in, "ahk_id " hwnd)
+    Return 0
+}
 
 ; Gui +LastFound 
 ; hWnd := WinExist()

@@ -307,7 +307,7 @@ persistLog(LogMsg) {
 	FileAppend(A_YYYY A_MM A_DD " [" A_Hour ":" A_Min ":" A_Sec "] " LogMsg "`n",InstallDir "/Logs/persist.log")
 }
 autoUpdate() {		
-	runWait("cmd /C start /b /wait ping -n 1 8.8.8.8 > " a_scriptDir "/.tmp")
+	runWait("cmd /C start /b /wait ping -n 1 8.8.8.8 > " a_scriptDir "/.tmp",,"Hide")
 	if !inStr(fileRead(a_scriptDir "/.tmp"),"100% loss") {
 		checkForUpdates(0)
 		;setTimer () => pbNotify("Checking for Updates",1000),-100

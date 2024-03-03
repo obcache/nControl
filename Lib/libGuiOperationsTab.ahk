@@ -151,24 +151,24 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 
 		ui.MainGui.SetFont("s7.7 c" cfg.ThemeFont4Color,"Arial Bold")
 
-		ui.Win1Name := ui.MainGui.AddText("ys-17 x+2 section w151 h14 Right Background" cfg.ThemePanel4Color,"Game  ")
-		ui.Win1ProcessName := ui.MainGui.AddText("xs y+0 section w151 h14 Right Background" cfg.ThemePanel4Color,"Not  ")
-		ui.Win1HwndText := ui.MainGui.AddText("xs y+0 section w151 h14 Right Background" cfg.ThemePanel4Color,"Found  ")
+		ui.Win1Name := ui.MainGui.AddText("ys-17 x+2 section w152 h14 Right Background" cfg.ThemePanel4Color,"Game  ")
+		ui.Win1ProcessName := ui.MainGui.AddText("xs y+0 section w152 h14 Right Background" cfg.ThemePanel4Color,"Not  ")
+		ui.Win1HwndText := ui.MainGui.AddText("xs y+0 section w152 h14 Right Background" cfg.ThemePanel4Color,"Found  ")
 		ui.Win1HwndText.ToolTip := "Window ID for Game Window 1"
 		
-		ui.buttonSwapHwnd := ui.MainGui.AddPicture("ys-29 x+4 section w47 h45 Background" (cfg.HwndSwapEnabled ? cfg.ThemeButtonOnColor : cfg.ThemeDisabledColor), (cfg.HwndSwapEnabled ? "./Img/button_swapHwnd_enabled.png" : "./Img/button_swapHwnd_disabled.png"))
+		ui.buttonSwapHwnd := ui.MainGui.AddPicture("ys-27 x+3 section w47 h45 Background" (cfg.HwndSwapEnabled ? cfg.ThemeButtonOnColor : cfg.ThemeDisabledColor), (cfg.HwndSwapEnabled ? "./Img/button_swapHwnd_enabled.png" : "./Img/button_swapHwnd_disabled.png"))
 		ui.buttonSwapHwnd.OnEvent("Click",ToggleHwndSwap)
 		ui.buttonSwapHwnd.ToolTip := "Swap Windows"
 
 		;ui.MainGui.SetFont("s13 c" cfg.ThemeFont1Color,"Calibri")
-		ui.MainGui.SetFont("s8 c" cfg.ThemeFont4Color,"Calibri")
-		ui.Win2Name := ui.MainGui.AddText("x+3 ys+2 section w150 Background" cfg.ThemePanel4Color,"  Game  ")
-		ui.Win2ProcessName := ui.MainGui.AddText("xs y+1 section w150 Background" cfg.ThemePanel4Color,"  Not  ")
-		ui.Win2HwndText := ui.MainGui.AddText("xs y+1 w150 section Background" cfg.ThemePanel4Color,"  Found  ")
+		ui.MainGui.SetFont("s7.7 c" cfg.ThemeFont4Color,"Arial Bold")
+		ui.Win2Name := ui.MainGui.AddText("x+3 ys-1 section w150 h14 Background" cfg.ThemePanel4Color,"  Game  ")
+		ui.Win2ProcessName := ui.MainGui.AddText("xs y+0 section w150 h14 Background" cfg.ThemePanel4Color,"  Not  ")
+		ui.Win2HwndText := ui.MainGui.AddText("xs y+0 w150 section h14 Background" cfg.ThemePanel4Color,"  Found  ")
 		ui.Win2HwndText.ToolTip := "Window ID for Game Window 1"
 
 		ui.MainGui.SetFont("s11 c" cfg.ThemeFont1Color,"Calibri")
-		ui.Win2Label := ui.MainGui.AddText("ys-29 section w70 h20 c" cfg.ThemeFont1Color " Center Background" cfg.ThemePanel1Color,"Game2")
+		ui.Win2Label := ui.MainGui.AddText("ys-28 section w70 h20 c" cfg.ThemeFont1Color " Center Background" cfg.ThemePanel1Color,"Game2")
 
 		ui.Win2EnabledToggle := ui.MainGui.AddPicture("xs+2 y+-3 section w69 h25 Background" cfg.ThemeButtonReadyColor, cfg.toggleOff)
 		
@@ -469,23 +469,23 @@ toggleWinEnabled(toggleControl,instance,*) {
 
 changeDockGameDDL(*) {
 	cfg.game := ui.dockGameDDL.value
+	createDockBar()
+	showDockBar()
+	guiVis(ui.dockBarGui,true)
 	ui.gameDDL.choose(cfg.game)
 	changeGameDDL()
+
+	if ui.profileList.length > cfg.win1class && cfg.win1class > 0
+		ui.Win1ClassDDL.Choose(ui.profileList[cfg.win1class])
+	if ui.profileList.length > cfg.win2class && cfg.win2class > 0
+		ui.Win2ClassDDL.Choose(ui.profileList[cfg.win2class])
+
 }
 
 changeGameDDL(*) {
 	debugLog("Game Profile Changed to: " ui.GameDDL.Text)
 	cfg.game := ui.gameDDL.value
-	; ui.dockBarGui.destroy()
-	createDockBar()
-	; switch ui.gameDDL.text {
-		; case "Destiny 2":
-			; dockBarIcons("Destiny 2","Add")
-		; case "World//Zero":
-			; dockBarIcons("World//Zero","Add")
-	; }
-	
-	showDockBar()
+
 
 ;If !(WinExist("ahk_id " ui.Win1Hwnd) || WinExist("ahk_id " ui.Win2Hwnd))
 	populateClassList()
@@ -493,7 +493,8 @@ changeGameDDL(*) {
 	controlFocus(ui.buttonSwapHwnd,ui.mainGui)
 	refreshAfkRoutine()
 	ui.dockGameDDL.value := cfg.game
-	
+	;changeDockGameDDL()
+	;createDockBar()
 	if ui.profileList.length > cfg.win1class && cfg.win1class > 0
 		ui.Win1ClassDDL.Choose(ui.profileList[cfg.win1class])
 	if ui.profileList.length > cfg.win2class && cfg.win2class > 0

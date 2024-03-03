@@ -32,7 +32,7 @@ initGui(&cfg, &ui) {
 	ui.DownButton.OnEvent("Click",HideGui)
 	ui.DownButton.ToolTip := "Minimizes nControl App"
 	
-	ui.ExitButton 	:= ui.titleBarButtonGui.AddPicture("x+3 ys section w35 h35 Background" cfg.ThemeFont1Color,"./Img/button_power_ready.png")
+	ui.ExitButton 	:= ui.titleBarButtonGui.AddPicture("x+3 ys section w35 h35 Background" cfg.ThemeButtonOnColor,"./Img/button_power_ready.png")
 	ui.ExitButton.OnEvent("Click",ExitButtonPushed)
 	ui.ExitButton.ToolTip := "Terminates nControl App"
 
@@ -85,8 +85,8 @@ initGui(&cfg, &ui) {
 	winSetTransparent(0,ui.gameSettingsGui)
 	winSetTransparent(0,ui.afkGui)
 
-	ui.titleBarButtonGui.Show("x" cfg.GuiX " y" cfg.GuiY-4 " w562 h218 NoActivate")
 	ui.MainGui.Show("x" cfg.GuiX " y" cfg.GuiY " w562 h214 NoActivate")
+	ui.titleBarButtonGui.Show("x" cfg.GuiX " y" cfg.GuiY-3 " w562 h218 NoActivate")
 	ui.MainGuiTabs.Choose(cfg.mainTabList[cfg.activeMainTab])
 
 	InitOSDGui()
@@ -831,7 +831,7 @@ createDockBar() {
 	ui.dockGameDDL := ui.dockBarGui.AddDropDownList("x+0 ys+2 w185 Background" cfg.ThemeEditboxColor " -E0x200 Choose" cfg.game,cfg.GameList)
 	ui.dockBarWidth += 185
 	ui.dockGameDDL.ToolTip := "Select the Game You Are Playing"
-	ui.dockGameDDL.OnEvent("Change",ChangeDockGameDDL)
+	ui.dockGameDDL.OnEvent("Change",changeDockGameDDL)
 	; postMessage("0x153", -1, 35,, "AHK_ID " ui.gameDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153
 	; postMessage("0x153", 0, 35,, "AHK_ID " ui.gameDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153
 	ui.dockbarWin2Icon		:= ui.dockBarGui.addPicture("x+0 ys w32 h33 background" cfg.themePanel1Color,"./img/sleep_icon.png")
@@ -848,7 +848,7 @@ createDockBar() {
 	; ui.dockBarGui.addText("x+0 ys w1 h33 section background" cfg.themeBright1Color,"")
 	; ui.dockBarWidth += 1
 	
-		switch ui.gameDDL.text {
+		switch ui.dockGameDDL.text {
 		case "Destiny 2":
 			dockBarIcons("Destiny 2","Add")
 		case "World//Zero":
@@ -934,17 +934,15 @@ dockBarIcons(game,operation := "") {
 					toggleTower()
 					controlFocus(ui.dockBarTowerButton)
 				}
-			case "Clear": 
-				ui.dockBarGui.destroy()
-				createDockBar()
+			; case "Clear": 
+				; ui.dockBarGui.destroy()
+				; createDockBar()
 		}
 	}
 }
 
 showDockBar() {
-	winGetPos(&tmpX,&tmpY,&tmpW,&tmpH,ui.mainGui)
 	ui.dockBarGui.show("x" (a_ScreenWidth/2)-(ui.dockBarWidth/2) " y0 w" ui.dockBarWidth " h34 noActivate")
-
 	drawOutlineNamed("dockBarOutline2",ui.dockBarGui,1,0,ui.dockBarWidth,34,cfg.themeDark1Color,cfg.themeDark1Color,2)
 	drawOutlineNamed("dockBarOutline",ui.dockBarGui,0,0,ui.dockBarWidth,35,cfg.themeBorderDarkColor,cfg.themeBorderDarkColor,2)
 }
@@ -959,7 +957,8 @@ toggleTopDock(*) {
 }
 	
 topDockOn(*) {
-	showDockBar()
+	createDockBar()
+	
 	cfg.topDockEnabled := true
 	saveGuiPos()
 	guiVis(ui.titleBarButtonGui,false)
@@ -972,7 +971,8 @@ topDockOn(*) {
 		}
 	}
 	guiVis(ui.mainGui,false)
-	
+	showDockBar()
+	guiVis(ui.dockBarGui,true)	
 	try {	
 		winGetPos(&vX,&vY,&vW,&vH,ui.mainGui)
 		ui.prevGuiX := vX
@@ -989,7 +989,7 @@ topDockOn(*) {
 		}
 	}
 	ui.opsDockButton.opt("background" cfg.themeButtonOnColor)
-	guiVis(ui.dockBarGui,true)
+
 }
 
 topDockOff(*) {

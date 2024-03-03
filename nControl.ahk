@@ -1,4 +1,4 @@
-A_FileVersion := "4.0.0.9"
+A_FileVersion := "4.0.1.0"
 ;@Ahk2Exe-Let FileVersion=%A_PriorLine~U)^(.+"){1}(.+)".*$~$2% 
 
 A_AppName := "nControl"
@@ -108,10 +108,11 @@ if cfg.startMinimizedEnabled
 	hideGui()
 
 createDockBar()
+changeGameDDL()
+; createDockBar()
 if cfg.topDockEnabled
 	showDockBar()
 
-changeGameDDL()
 
 winSetTransparent(0,ui.gameSettingsGui)
 winSetTransparent(0,ui.afkGui)
