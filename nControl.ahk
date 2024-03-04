@@ -1,4 +1,4 @@
-A_FileVersion := "4.0.1.2"
+A_FileVersion := "4.0.3.0"
 ;@Ahk2Exe-Let FileVersion=%A_PriorLine~U)^(.+"){1}(.+)".*$~$2% 
 
 A_AppName := "nControl"
@@ -18,11 +18,19 @@ InstallKeybdHook()
 KeyHistory(10)
 SetWorkingDir(A_ScriptDir)
 
+
+
 A_Restarted := 
 	(inStr(DllCall("GetCommandLine","Str"),"/restart"))
 		? true
 		: false
-		
+
+
+
+	OnMessage(0x0202, WM_LBUTTONDOWN)
+	OnMessage(0x47, WM_WINDOWPOSCHANGED)
+	
+	
 cfg				:= Object()
 ui 				:= Object()
 InstallDir 		:= A_MyDocuments "\nControl"
@@ -109,10 +117,6 @@ if cfg.startMinimizedEnabled
 
 createDockBar()
 changeGameDDL()
-; createDockBar()
-if cfg.topDockEnabled
-	showDockBar()
-
 
 winSetTransparent(0,ui.gameSettingsGui)
 winSetTransparent(0,ui.afkGui)
@@ -132,7 +136,11 @@ if !cfg.topDockEnabled
 			guiVis(ui.gameSettingsGui,true)
 	}
 tabsChanged()
+} else {
+
+	showDockBar()
 }
+
 
 ; if (cfg.topDockEnabled)
 	; toggleTopDock()

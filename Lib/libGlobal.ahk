@@ -23,10 +23,10 @@ initTrayMenu(*) {
 	Try
 		persistLog("Tray Initialized")
 }
-
+	OnMessage(0x0202, WM_LBUTTONDOWN)
+	OnMessage(0x47, WM_WINDOWPOSCHANGED)	
 preAutoExec(InstallDir,ConfigFileName) {
 	Global
-	OnMessage(0x0201, WM_LBUTTONDOWN)
 	if (A_IsCompiled)
 	{
 		; if !(FileExist("./nControl.ini"))
@@ -50,6 +50,7 @@ preAutoExec(InstallDir,ConfigFileName) {
 					SetWorkingDir(InstallDir)
 				} catch {
 					persistLog("Couldn't create install location")
+					sleep(1500)
 					pbConsole("Cannot Create Folder at the Install Location.")
 					pbConsole("Suspect permissions issue with the desired install location")
 					pbConsole("`n`nTERMINATING")
@@ -58,9 +59,11 @@ preAutoExec(InstallDir,ConfigFileName) {
 				}
 				pbConsole("Successfully created install location at " InstallDir)
 				persistLog("Successfully created install location at " InstallDir)
+				sleep(1000)
 			}
 			pbConsole("Copying executable to install location")
 			persistLog("Copying executable to install location")
+			sleep(1000)
 			try{
 				FileCopy(A_ScriptFullPath, InstallDir "/" A_AppName ".exe", true)
 			}
@@ -72,6 +75,7 @@ preAutoExec(InstallDir,ConfigFileName) {
 				switch msgBoxResult {
 					case "No": 
 					{
+						sleep(1000)
 						pbConsole("`nReplacing existing configuration files with updated and clean files")
 						FileInstall("./nControl.ini",InstallDir "/nControl.ini",1)
 						FileInstall("./nControl.themes",InstallDir "/nControl.themes",1)
@@ -80,6 +84,7 @@ preAutoExec(InstallDir,ConfigFileName) {
 					case "Yes": 
 					{
 						cfg.ThemeFont1Color := "00FFFF"
+						sleep(1000)
 						pbConsole("`nPreserving existing configuration may cause issues.")
 						pbConsole("If you encounter issues,try installing again, choosing NO.")
 						if !(FileExist(InstallDir "/AfkData.csv"))
@@ -89,12 +94,14 @@ preAutoExec(InstallDir,ConfigFileName) {
 					}
 					case "Timeout":
 					{
+						sleep(1000)
 						pbNotify("Timed out waiting for your response. `nExiting program",5000)
-						Sleep(5000)
+						Sleep(3000)
 						exitApp
 					}
 				}
 			} else {
+				sleep(1000)
 				pbConsole("This seems to be the first time you're running nControl.")
 				pbConsole("A fresh install to " A_MyDocuments "\nControl is being performed.")
 
@@ -265,14 +272,15 @@ preAutoExec(InstallDir,ConfigFileName) {
 			fileInstall("./img/icon_DIM.png",installDir "/img/icon_dim.png",1)
 			fileInstall("./img/icon_blueberries.png",installDir "/img/icon_blueberries.png",1)
 			fileInstall("./img/icon_lightgg.png",installDir "/img/icon_lightgg.png",1)
+
 			
 			
 			;IMGv2 below
 			fileInstall("./img2/button_power.png",installDir "/img2/button_power.png",1)
 			fileInstall("./img2/button_power_down.png",installDir "/img2/button_power_down.png",1)
-			pbConsole("`nInstall completed successfully.")
+			pbConsole("`nINSTALL COMPLETED SUCCESSFULLY!")
 			persistLog("Copied Assets to: " InstallDir)
-			
+			sleep(4500)
 
 			Run(InstallDir "\" A_AppName ".exe")
 		ExitApp
@@ -282,27 +290,37 @@ preAutoExec(InstallDir,ConfigFileName) {
 }
 
 createPbConsole(title) {
+
 	transColor := "010203"
 	ui.pbConsoleBg := gui()
-	ui.pbConsoleBg.opt("+toolWindow -caption alwaysOnTop")
-	ui.pbConsoleBg.backColor := "151515"
+	ui.pbConsoleBg.opt("-caption")
+	ui.pbConsoleBg.backColor := "304030"
+	ui.pbConsoleHandle := ui.pbConsoleBg.addPicture("w700 h400 background203020","")
 	ui.pbConsoleBg.show("w700 h400 noActivate")
-	winSetTransparent(80,ui.pbConsoleBg)
+	winSetTransparent(160,ui.pbConsoleBg)
 	ui.pbConsole := gui()
-	ui.pbConsole.opt("+toolWindow -caption alwaysOnTop")
+	ui.pbConsole.opt("-caption AlwaysOnTop owner" ui.pbConsoleBg.hwnd)
 	ui.pbConsole.backColor := transColor
 	ui.pbConsole.color := transColor
 	winSetTransColor(transColor,ui.pbConsole)
-	ui.pbConsoleTitle := ui.pbConsole.addText("x8 y8 w680 h35 center backgroundTrans cFFFFFF",title)
+	ui.pbConsoleTitle := ui.pbConsole.addText("x8 y4 w680 h35 section center background303530 c859585",title)
 	ui.pbConsoleTitle.setFont("s20","Verdana Bold")
-	drawOutlineNamed("pbConsoleTitle",ui.pbConsole,8,8,686,35,"FFFFFF","CCCCCC",2)
-	ui.pbConsoleData := ui.pbConsole.addText("xs w680 h380 backgroundTrans cCCCCCC","")
+	ui.pbConsoleMinimize := ui.pbConsole.addText("x+-35 ys+7 w50 h35 backgroundTrans c35A535","HIDE")
+	ui.pbConsoleMinimize.setFont("s10 Underline","Verdana Bold")
+	ui.pbConsoleMinimize.onEvent("click",hidePbConsole)
+	hidePbConsole(*) {
+		guiVis(ui.pbConsole,false)
+		guiVis(ui.pbConsoleBg,false)
+	}
+	drawOutlineNamed("pbConsoleTitle",ui.pbConsole,6,4,692,35,"253525","202520",2)
+	ui.pbConsoleData := ui.pbConsole.addText("xs+10 w680 h380 backgroundTrans cA5C5A5","")
 	ui.pbConsoleData.setFont("s16")
-	drawOutlineNamed("pbConsoleOutside",ui.pbConsole,2,2,698,398,"AAAAAA","151515",1)
-	drawOutlineNamed("pbConsoleOutside2",ui.pbConsole,3,3,696,396,"CCCCCC","858585",1)
-	drawOutlineNamed("pbConsoleOutside3",ui.pbConsole,4,4,694,394,"353535","555555",1)
+	drawOutlineNamed("pbConsoleOutside",ui.pbConsole,2,2,698,398,"355535","355535",2)
+	drawOutlineNamed("pbConsoleOutside2",ui.pbConsole,3,3,696,396,"457745","457745",1)
+	drawOutlineNamed("pbConsoleOutside3",ui.pbConsole,4,4,694,394,"353535","353535",2)
 	ui.pbConsole.show("w700 h400 noActivate")
-	
+	ui.pbConsoleHandle.onEvent("click",WM_LBUTTONDOWN_pBcallback)
+
 }
 
 pbConsole(msg) {
@@ -319,7 +337,7 @@ testPbConsole() {
 	ui.pbConsole.destroy()
 }
 
-; testPbConsole()
+ ;testPbConsole()
 
 FileFound(fileName,destination,fileDescription) {
 	source := fileName
@@ -378,6 +396,7 @@ CheckForUpdates(msg,*) {
 			guiVis(ui.titleBarButtonGui,false)
 			guiVis(ui.afkGui,false)
 			guiVis(ui.gameSettingsGui,false)
+			sleep(2500)
 			run("./nControl_updater.exe")
 		} else {
 			 if(msg) {

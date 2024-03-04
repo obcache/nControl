@@ -111,8 +111,7 @@ initGui(&cfg, &ui) {
 	ui.MainGuiTabs.UseTab("")
 
 	OnMessage(0x0200, WM_MOUSEMOVE)
-	
-	;OnMessage(0x0202, WM_LBUTTONUP)
+	OnMessage(0x0202, WM_LBUTTONDOWN)
 	OnMessage(0x47, WM_WINDOWPOSCHANGED)
 }
 
@@ -251,6 +250,7 @@ fadeIn() {
 		transparency := 0
 
 		if cfg.topDockEnabled {
+			showDockBar()
 			while transparency < 253 {
 				transparency += 2.5
 				winSetTransparent(round(transparency),ui.dockBarGui)

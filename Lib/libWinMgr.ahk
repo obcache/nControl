@@ -37,13 +37,11 @@ WM_WINDOWPOSCHANGED(wParam, lParam, msg, Hwnd)
 					ui.mainGui.move(winX,winY+3,,)
 				}
 			case ui.dividerGui.hwnd:
-				if (Hwnd == ui.dividerGui.hwnd) {
 					MonitorGetWorkArea(cfg.nControlMonitor, &Left, &Top, &Right, &Bottom)
 					winGetPos(&divX,&divY,&divW,&divH,ui.dividerGui)
 					ui.dividerGui.move(Left,,Right-Left,)	
 					winMove(,,,divY,"ahk exe " ui.app1filename.text)
 					winMove(,divY,,,"ahk_exe " ui.app2filename.text)
-				}
 			case ui.afkGui.hwnd:
 				if (ui.afkdocked || !ui.afkAnchoredToGui) {
 					winGetPos(&AfkGuiX,&AfkGuiY,,,ui.afkGui)
@@ -51,10 +49,9 @@ WM_WINDOWPOSCHANGED(wParam, lParam, msg, Hwnd)
 					ui.mainGui.move(afkGuiX-40,afkGuiX-50)
 				}
 			case ui.pbConsoleBg.hwnd:
-				winGetPos(&winX,&winY,,,ui.pbConsoleBg)
+				winGetPos(&winX,&winY,,,ui.pbConsoleBg.hwnd)
 				ui.pbConsole.move(winX,winY)
 		} 
-			
 	}
 }
 
@@ -62,15 +59,38 @@ WM_LBUTTONDOWN_callback(*) {
 	WM_LBUTTONDOWN(0,0,0,ui.MainGui.Hwnd)
 }
 
+WM_LBUTTONDOWN_pBcallback(*) {
+	WM_LBUTTONDOWN(0,0,0,ui.pbConsole.Hwnd)
+}
+
 ;###########MOUSE EVENTS##############
 WM_LBUTTONDOWN(wParam, lParam, msg, Hwnd) {
 	;ShowMouseClick()
-	if !(hwnd == ui.afkGui.hwnd && ui.afkAnchoredToGui) {
-		
-		
-		if !cfg.topDockEnabled && ((Hwnd = ui.MainGui.hwnd) || (hwnd == ui.pbConsoleBg.hwnd) || (hwnd == ui.pbConsole.hwnd) || (Hwnd = ui.titleBarButtonGui.Hwnd) || (hwnd == ui.dividerGui.hwnd) || (hwnd == ui.afkGui.hwnd))
+		try {
+			if (Hwnd = ui.MainGui.hwnd) 
 			PostMessage("0xA1",2)
-
+		}
+		try {	
+			if (Hwnd = ui.titleBarButtonGui.Hwnd) 
+			PostMessage("0xA1",2)
+		}
+		try {
+			if (hwnd == ui.dividerGui.hwnd) 
+			PostMessage("0xA1",2)
+		}
+		try {
+			if (hwnd == ui.afkGui.hwnd)
+			PostMessage("0xA1",2)
+		}
+		try {
+			if (hwnd == ui.pbConsole.hwnd)
+			PostMessage("0xA1",2)
+		}
+		try {
+			if (hwnd == ui.pbConsoleHandle.hwnd)
+			PostMessage("0xA1",2)
+		}
+		try {
 		if (hwnd == ui.dividerGui.hwnd)
 		{
 		keyWait("LButton")
@@ -81,8 +101,11 @@ WM_LBUTTONDOWN(wParam, lParam, msg, Hwnd) {
 		winMove(,Top,,mY-Top,"ahk_exe " ui.app1filename.text)
 		winActivate(ui.dividerGui)
 		}
-	}
+		}
 }
+
+
+
 
 ; WM_LBUTTONUP(wParam, lParam, msg, Hwnd) {
 
