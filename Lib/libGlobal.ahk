@@ -320,7 +320,8 @@ createPbConsole(title) {
 	drawOutlineNamed("pbConsoleOutside3",ui.pbConsole,4,4,694,394,"353535","353535",2)
 	ui.pbConsole.show("w700 h400 noActivate")
 	ui.pbConsoleHandle.onEvent("click",WM_LBUTTONDOWN_pBcallback)
-
+	OnMessage(0x0202, WM_LBUTTONDOWN)
+	OnMessage(0x47, WM_WINDOWPOSCHANGED)
 }
 
 pbConsole(msg) {
@@ -375,9 +376,10 @@ persistLog(LogMsg) {
 }
 
 autoUpdate() {		
-	if (dllCall("Wininet.dll\InternetGetConnectedState", "Str", "0x40","Int",0))
+	runWait("cmd /C start /b /wait ping -n 1 8.8.8.8 > " a_scriptDir "/.tmp",,"Hide")
+	if !inStr(fileRead(a_scriptDir "/.tmp"),"100% loss") {
 		checkForUpdates(0)
-	else 
+	} else 
 		setTimer () => pbNotify("Network Down. Bypassing Auto-Update.",1000),-100
 }	
 
@@ -396,6 +398,7 @@ CheckForUpdates(msg,*) {
 			guiVis(ui.titleBarButtonGui,false)
 			guiVis(ui.afkGui,false)
 			guiVis(ui.gameSettingsGui,false)
+			guiVis(ui.gameTabGui,false)
 			sleep(2500)
 			run("./nControl_updater.exe")
 		} else {
@@ -471,9 +474,9 @@ cfgLoad(&cfg, &ui) {
 	ui.dividerGui				:= gui()
 	cfg.gamingStartProc 		:= strSplit(IniRead(cfg.file,"System","GamingStartProcesses",cfg.gamingStartProcString),",")
 	cfg.gamingStopProc 			:= strSplit(IniRead(cfg.file,"System","GamingStopProcesses",cfg.gamingStopProcString),",")
-	cfg.gameModuleList			:= strSplit(iniRead(cfg.file,"Game","GameModuleList","World//Zero,Destiny2,CS2,Fortnite"),",")
+	cfg.gameModuleList			:= strSplit(iniRead(cfg.file,"Game","GameModuleList","  Destiny2  ,  World//Zero  "),",")
 	cfg.GameList				:= StrSplit(IniRead(cfg.file,"Game","GameList","Roblox,Rocket League"),",")
-	cfg.mainTabList				:= strSplit(IniRead(cfg.file,"Interface","MainTabList","Sys,AFK,Game,Dock,Setup,Audio"),",")
+	cfg.mainTabList				:= strSplit(IniRead(cfg.file,"Interface","MainTabList","Sys,AFK,Game,Dock,Editor,Setup"),",")
 	cfg.mainGui					:= IniRead(cfg.file,"System","MainGui","MainGui")
 	cfg.startMinimizedEnabled	:= iniRead(cfg.file,"System","StartMinimizedEnabled",false)
 	cfg.excludedApps			:= IniRead(cfg.file,"System","ExcludedApps","Windows10Universal.exe,explorer.exe,RobloxPlayerInstaller.exe,RobloxPlayerLauncher.exe,Chrome.exe,msedge.exe")
@@ -782,19 +785,19 @@ DialogBox(Msg,Alignment := "Left")
 	ui.notifyGui.Title 		:= "Notify"
 
 	ui.notifyGui.Opt("+AlwaysOnTop -Caption +ToolWindow +Owner" ui.mainGui.hwnd)  ; +ToolWindow avoids a taskbar button and an alt-tab menu item.
-	ui.notifyGui.BackColor := cfg.ThemePanel2Color  ; Can be any RGB color (it will be made transparent below).
+	ui.notifyGui.BackColor := cfg.ThemePanel1Color  ; Can be any RGB color (it will be made transparent below).
 	ui.notifyGui.SetFont("s16")  ; Set a large font size (32-point).
-	ui.notifyGui.AddText("c" cfg.ThemeFont2Color " " Alignment " BackgroundTrans",Msg)  ; XX & YY serve to 00auto-size the window.
+	ui.notifyGui.AddText("c" cfg.ThemeFont1Color " " Alignment " BackgroundTrans",Msg)  ; XX & YY serve to 00auto-size the window.
 	ui.notifyGui.AddText("xs hidden")
 	
 	WinSetTransparent(0,ui.notifyGui)
 	ui.notifyGui.Show("NoActivate Autosize")  ; NoActivate avoids deactivating the currently active window.
 	ui.notifyGui.GetPos(&x,&y,&w,&h)
 	
-	ui.MainGui.GetPos(&GuiX,&GuiY,&GuiW,&GuiH)
+	winGetPos(&GuiX,&GuiY,&GuiW,&GuiH,ui.mainGui.hwnd)
 	ui.notifyGui.Show("x" (GuiX+(GuiW/2)-(w/2)) " y" GuiY+(100-(h/2)) " NoActivate")
-	drawOutlineNotifyGui(0,0,w,h,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,3)
-	drawOutlineNotifyGui(5,5,w-10,h-10,cfg.ThemeBright1Color,cfg.ThemeBright2Color,2)
+	drawOutlineNotifyGui(1,1,w,h,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,1)
+	drawOutlineNotifyGui(2,2,w-2,h-2,cfg.ThemeBright2Color,cfg.ThemeBright2Color,1)
 	
 	Transparency := 0
 	
@@ -818,24 +821,26 @@ NotifyOSD(NotifyMsg,Duration := 10,Alignment := "Left",YN := "")
 		Alignment := "Left"
 		
 	Transparent := 250
-	
+	try
+		ui.notifyGui.Destroy()
 	ui.notifyGui			:= Gui()
 	ui.notifyGui.Title 		:= "Notify"
 
 	ui.notifyGui.Opt("+AlwaysOnTop -Caption +ToolWindow +Owner" ui.mainGui.hwnd)  ; +ToolWindow avoids a taskbar button and an alt-tab menu item.
-	ui.notifyGui.BackColor := cfg.ThemePanel2Color  ; Can be any RGB color (it will be made transparent below).
+	ui.notifyGui.BackColor := cfg.ThemePanel1Color  ; Can be any RGB color (it will be made transparent below).
 	ui.notifyGui.SetFont("s16")  ; Set a large font size (32-point).
-	ui.notifyGui.AddText("c" cfg.ThemeFont2Color " " Alignment " BackgroundTrans",NotifyMsg)  ; XX & YY serve to 00auto-size the window.
+	ui.notifyGui.AddText("c" cfg.ThemeFont1Color " " Alignment " BackgroundTrans",NotifyMsg)  ; XX & YY serve to 00auto-size the window.
 	ui.notifyGui.AddText("xs hidden")
 	
 	WinSetTransparent(0,ui.notifyGui)
 	ui.notifyGui.Show("NoActivate Autosize")  ; NoActivate avoids deactivating the currently active window.
 	ui.notifyGui.GetPos(&x,&y,&w,&h)
 	
-	ui.MainGui.GetPos(&GuiX,&GuiY,&GuiW,&GuiH)
+	winGetPos(&GuiX,&GuiY,&GuiW,&GuiH,ui.mainGui.hwnd)
 	ui.notifyGui.Show("x" (GuiX+(GuiW/2)-(w/2)) " y" GuiY+(100-(h/2)) " NoActivate")
-	drawOutlineNotifyGui(0,0,w,h,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,3)
-	drawOutlineNotifyGui(5,5,w-10,h-10,cfg.ThemeBright1Color,cfg.ThemeBright2Color,2)
+	guiVis(ui.notifyGui,true)
+	drawOutlineNotifyGui(1,1,w,h,cfg.ThemeBorderDarkColor,cfg.ThemeBorderLightColor,1)
+	drawOutlineNotifyGui(2,2,w-2,h-2,cfg.ThemeBright2Color,cfg.ThemeBright2Color,1)
 	
 	if (YN) {
 		ui.notifyGui.AddText("xs hidden")
@@ -851,8 +856,10 @@ NotifyOSD(NotifyMsg,Duration := 10,Alignment := "Left",YN := "")
 	}
 
 	waitOSD() {
+	
 		ui.notifyGui.destroy()
 		notifyOSD("Timed out waiting for response.`nPlease try your action again",-1000)
+	
 	}
 
 
@@ -862,12 +869,16 @@ NotifyOSD(NotifyMsg,Duration := 10,Alignment := "Left",YN := "")
 fadeOSD() {
 	ui.transparent := 250
 	While ui.Transparent > 10 { 	
+	
 		WinSetTransparent(ui.Transparent,ui.notifyGui)
 		ui.Transparent -= 3
 		Sleep(1)
 	}
+	
+	guiVis(ui.notifyGui,false)
+	
 	ui.Transparent := ""
-	ui.notifyGui.Destroy()
+	
 }
 
 pbNotify(NotifyMsg,Duration := 10,YN := "")
@@ -933,16 +944,16 @@ resetWindowPosition(*) {
 	guiVis(ui.afkGui,false)
 	guiVis(ui.gameSettingsGui,false)
 	guiVis(ui.mainGui,false)
-	
-	ui.MainGui.Move(200,200,,)
-	Reload()
+	guiVis(ui.gameTabGui,false)
+	ui.MainGui.Move(PrimaryWorkAreaLeft+200,PrimaryWorkAreaTop+200,,)
+	tabsChanged()
+	guiVis(ui.mainGui,true)
+	guiVis(ui.titleBarButtonGui,true)
 }
 
 exitFunc(ExitReason,ExitCode) {
 	debugLog("Exit Command Received")
 	ui.MainGui.Opt("-AlwaysOnTop")
-
-
 	If !InStr("Logoff Shutdown Reload Single Close",ExitReason)
 	{
 		Result := MsgBox("Are you sure you want to`nTERMINATE nControl?",,4)
@@ -950,17 +961,19 @@ exitFunc(ExitReason,ExitCode) {
 			if cfg.AlwaysOnTopEnabled
 				ui.mainGui.opt("AlwaysOnTop")
 			Return 1
+		}
 	}
-	}
-	winSetTransparent(0,ui.titleBarButtonGui)
-	winSetTransparent(0,ui.afkGui)
-	winSetTransparent(0,ui.gameSettingsGui)
-	winSetTransparent(0,ui.mainGui)
+	guiVis(ui.titlebarButtonGui,false)
+	guiVis(ui.afkGui,false)
+	guiVis(ui.gameSettingsGui,false)
+	guiVis(ui.mainGui,false)
 	; if (cfg.topDockEnabled) {
 		; topDockOff()
 	; }
+	winGetPos(&winX,&winY,,,ui.mainGui.hwnd)
+	cfg.guiX := winX
+	cfg.guiY := winY
 	WriteConfig()
-	Return
 }
 
 restartApp(*) {
@@ -973,4 +986,11 @@ arr2str(arrayName) {
 		stringFromArray .= arrayName[a_index] ","
 	}
 	return rtrim(stringFromArray,",")
+}
+
+resetKeyStates() {
+	Loop 0xFF {
+		if getKeyState(key := format("vk{:x}",a_index))
+		sendInput("{%key% up}")
+	}	
 }

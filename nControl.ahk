@@ -1,4 +1,4 @@
-A_FileVersion := "4.2.0.0"
+A_FileVersion := "4.2.0.2"
 ;@Ahk2Exe-Let FileVersion=%A_PriorLine~U)^(.+"){1}(.+)".*$~$2% 
 
 A_AppName := "nControl"
@@ -25,10 +25,8 @@ A_Restarted :=
 		? true
 		: false
 
-
-
-	OnMessage(0x0202, WM_LBUTTONDOWN)
-	OnMessage(0x47, WM_WINDOWPOSCHANGED)
+OnMessage(0x0202, WM_LBUTTONDOWN)
+OnMessage(0x47, WM_WINDOWPOSCHANGED)
 	
 	
 cfg				:= Object()
@@ -81,7 +79,7 @@ InitConsole(&ui)
 #include <libGuiSetupTab>
 #include <libGuiAppDockTab>
 #include <libGameSettingsTab>
-#include <libGuiAudioTab>
+#include <libEditorTab>
 
 #include <libGuiSystemTab>
 #include <libHotkeys>
@@ -120,26 +118,18 @@ changeGameDDL()
 
 winSetTransparent(0,ui.gameSettingsGui)
 winSetTransparent(0,ui.afkGui)
-ui.gameSettingsGui.show("x" mainGuiX+35 " y" mainGuiY+35 " w495 h170 noActivate")
+ui.gameSettingsGui.show("x" mainGuiX+35 " y" mainGuiY+32 " w495 h176 noActivate")
+drawAfkOutlines()
 ui.AfkGui.Show("x" mainGuiX+40 " y" mainGuiY+50 " w280 h140 NoActivate")
 
 ui.MainGuiTabs.Choose(cfg.mainTabList[cfg.activeMainTab])
 fadeIn()
 	
-if !cfg.topDockEnabled
-{
 
-	switch ui.mainGuiTabs.text {
-		case "AFK":
-			guiVis(ui.afkGui,true)
-		case "Game":
-			guiVis(ui.gameSettingsGui,true)
-	}
 tabsChanged()
-} else {
 
-	showDockBar()
-}
+
+
 
 
 ; if (cfg.topDockEnabled)

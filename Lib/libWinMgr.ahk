@@ -26,15 +26,10 @@ WM_WINDOWPOSCHANGED(wParam, lParam, msg, Hwnd)
 				if (!ui.afkDocked) {
 					winGetPos(&winX,&winY,,,ui.mainGui)
 					ui.AfkGui.Move(winX+40,winY+50,,)
-					ui.titleBarButtonGui.Move(winX,winY-3)
-					ui.gameSettingsGui.move(winx+35,winy+36)
-				}
-			case ui.titleBarButtonGui.hwnd:
-				if (!ui.afkDocked) {
-					winGetPos(&winX,&winY,,,ui.titleBarButtonGui)
-					ui.gameSettingsGui.move(winx+35,winy+40)
-					ui.afkGui.move(winX+40,winY+53,,)
-					ui.mainGui.move(winX,winY+3,,)
+					ui.titleBarButtonGui.Move(winX+457,winY-3)
+					ui.gameSettingsGui.move(winx+35,winy+32)
+					ui.editorGui.move(winX+35,winY+32)
+					ui.gameTabGui.move(winX+35,winY+184)
 				}
 			case ui.dividerGui.hwnd:
 					MonitorGetWorkArea(cfg.nControlMonitor, &Left, &Top, &Right, &Bottom)
@@ -42,12 +37,6 @@ WM_WINDOWPOSCHANGED(wParam, lParam, msg, Hwnd)
 					ui.dividerGui.move(Left,,Right-Left,)	
 					winMove(,,,divY,"ahk exe " ui.app1filename.text)
 					winMove(,divY,,,"ahk_exe " ui.app2filename.text)
-			case ui.afkGui.hwnd:
-				if (ui.afkdocked || !ui.afkAnchoredToGui) {
-					winGetPos(&AfkGuiX,&AfkGuiY,,,ui.afkGui)
-					ui.titleBarButtonGui.move(afkGuiX+185,afkGuiY)
-					ui.mainGui.move(afkGuiX-40,afkGuiX-50)
-				}
 			case ui.pbConsoleBg.hwnd:
 				winGetPos(&winX,&winY,,,ui.pbConsoleBg.hwnd)
 				ui.pbConsole.move(winX,winY)

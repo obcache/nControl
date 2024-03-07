@@ -360,7 +360,11 @@ RemoveNotice()
 }
 dockApps(*) {
 	global
-	ui.dockApp_enabled := !ui.dockApp_enabled
+	try {
+		ui.dockApp_enabled := !ui.dockApp_enabled
+	} catch {
+		ui.dockApp_enabled := true
+	}
 	
 	if (ui.dockApp_enabled)
 	{

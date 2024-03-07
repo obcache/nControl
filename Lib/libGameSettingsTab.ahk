@@ -28,10 +28,10 @@ loop cfg.gameModuleList.length {
 	ui.gameSettingsGui.Opt("-Caption -Border +AlwaysOnTop +ToolWindow +Owner" ui.MainGui.Hwnd)
 	ui.gameSettingsGui.SetFont("s14 c" cfg.ThemeFont1Color,"Calibri")
 ;	winSetTransColor(ui.transparentColor,ui.gameSettingsGui)
-	ui.gameTabs := ui.gameSettingsGui.addTab3("x2 y-5 w490 h181 bottom c" cfg.themeFont1Color " choose" cfg.activeGameTab,cfg.gameModuleList)
-	drawOutlineNamed("gameSettingsOutline",ui.gameSettingsGui,0,170,488,6,cfg.themeBorderDarkColor,cfg.themeBorderLightColor,3)
+	ui.gameTabs := ui.gameSettingsGui.addTab3("x-1 y-5 w497 h181 0x400 bottom c" cfg.themeFont1Color " choose" cfg.activeGameTab,cfg.gameModuleList)
+	;drawOutlineNamed("gameSettingsOutline",ui.gameSettingsGui,0,180,488,20,cfg.themeBackgroundColor,cfg.themeBackgroundColor,10)
 	ui.gameTabs.choose(cfg.gameModuleList[cfg.activeGameTab])
-	ui.gameTabs.setFont("s14")
+	ui.gameTabs.setFont("s10")
 	ui.gameTabs.onEvent("Change",gameTabChanged)
 	ui.MainGui.GetPos(&winX,&winY,,)
 
@@ -62,18 +62,22 @@ loop cfg.gameModuleList.length {
 	; tmpStatusText := ""
 
 
-
 	ui.gameTabs.useTab("Destiny2") 
 	ui.d2Sliding := false
 	ui.d2HoldingRun := false         
 	ui.d2cleanupNeeded := false
 
-	ui.gameSettingsGui.setFont("s12")
-	drawOutlineNamed("d2AlwaysRunOutline",ui.gameSettingsGui,10,5,475,60,cfg.themeBright1Color,cfg.themeBright2Color,2)
-	ui.gameSettingsGui.addText("x20 y-5 w80 h20 c" cfg.themeFont1Color " background" cfg.themeBackgroundColor," Always Run")
+	ui.gameSettingsGui.setFont("s10")
+
 	;UI.alwaysRunGb := ui.gameSettingsGui.addGroupbox("x10 y0 w270 h70","Always Run")
-	
-	ui.d2AlwaysRun := ui.gameSettingsGui.addPicture("x18 y14 w30 h45 section " 
+	ui.gameSettingsGui.addText("x10 y7 w475 h65 background" cfg.themePanel1Color,"")
+	drawOutlineNamed("d2AlwaysRunOutline",ui.gameSettingsGui,10,6,475,67,cfg.themeBright2Color,cfg.themeDark2Color,1)
+	drawOutlineNamed("d2AlwaysRunOutline",ui.gameSettingsGui,20,6,70,1,cfg.themeBackgroundColor,cfg.themeBackgroundColor,2)
+	drawOutlineNamed("d2AlwaysRunOutline",ui.gameSettingsGui,20,6,70,7,cfg.themeBackgroundColor,cfg.themeBright2Color,1)
+	ui.gameSettingsGui.addText("x21 y-2 w68 h14 c" cfg.themeFont1Color " background" cfg.themeBackgroundColor," Always Run")
+	drawOutlineNamed("d2AlwaysRunOutline",ui.gameSettingsGui,20,6,1,7,cfg.themeDark1Color,cfg.themeBright2Color,1)
+
+	ui.d2AlwaysRun := ui.gameSettingsGui.addPicture("x19 y18 w30 h45 section " 
 		((cfg.d2AlwaysRunEnabled) 
 			? ("Background" cfg.ThemeButtonOnColor) 
 				: ("Background" cfg.themeButtonReadyColor)),
@@ -88,25 +92,24 @@ loop cfg.gameModuleList.length {
 			; ? ("./img/toggle_vertical_trans_on.png") 
 				; : ("./img/toggle_vertical_trans_off.png")))
 
-	ui.panelColoring			:= ui.gameSettingsGui.addText("x12 y72 w472 h65 background" cfg.themePanel1Color,"")
-	drawOutlineNamed("gameSettingsD2Panel",ui.gameSettingsGui,10,71,475,67,cfg.themeDark1Color,cfg.themeBright1Color,1)
-	ui.d2SprintKey				:= ui.gameSettingsGui.AddPicture("xs+38 ys+0 w100 h30 section backgroundTrans","./img/keyboard_key_up.png")
-	ui.d2SprintKeyData 			:= ui.gameSettingsGui.addText("xs y+-26 w100 h25 center c" cfg.themeButtonAlertColor " backgroundTrans",subStr(strUpper(cfg.d2SprintKey),1,8))
-	ui.d2SprintKeyLabel			:= ui.gameSettingsGui.addText("xs-2 y+-2 w100 h20 center c" cfg.themeFont1Color " backgroundTrans","Sprint")
-	ui.d2CrouchKey				:= ui.gameSettingsGui.addPicture("x+7 ys w100 h30 section backgroundTrans","./img/keyboard_key_up.png")
-	ui.d2CrouchKeyData 			:= ui.gameSettingsGui.addText("xs y+-26 w100 h25 center c" cfg.themeButtonAlertColor " backgroundTrans",subStr(strUpper(cfg.d2CrouchKey),1,8))
-	ui.d2CrouchKeyLabel 		:= ui.gameSettingsGui.addText("xs-2 y+-2 w100 h20 center c" cfg.themeFont1Color " backgroundTrans","Crouch")
-	ui.d2ToggleWalkKey			:= ui.gameSettingsGui.addPicture("x+7 ys w100 h30 section backgroundTrans","./img/keyboard_key_up.png")
-	ui.d2ToggleWalkKeyData 		:= ui.gameSettingsGui.addText("xs y+-26 w100 h25 center c" cfg.themeButtonAlertColor " backgroundTrans",subStr(strUpper(cfg.d2ToggleWalkKey),1,8))
-	ui.d2ToggleWalkKeyLabel		:= ui.gameSettingsGui.addText("xs-2 y+-2 w100 h20 center c" cfg.themeFont1Color " backgroundTrans","Toggle Walk")
-	ui.d2HoldWalkKey			:= ui.gameSettingsGui.addPicture("x+7 ys w100 h30 section backgroundTrans","./img/keyboard_key_up.png")
-	ui.d2HoldWalkKeyData 		:= ui.gameSettingsGui.addText("xs y+-26 w100 h25 center c" cfg.themeButtonAlertColor " backgroundTrans",subStr(strUpper(cfg.d2HoldWalkKey),1,8))
-	ui.d2HoldWalkKeyLabel		:= ui.gameSettingsGui.addText("xs-2 y+-2 w100 h20 center c" cfg.themeFont1Color " backgroundTrans","Hold to Walk")
-	ui.d2LaunchDIMbutton		:= ui.gameSettingsGui.addPicture("xs-364 y+14 section w160 h60 backgroundTrans","./Img/button_launchDIM.png")
+	ui.panelColoring			:= ui.gameSettingsGui.addText("x11 y79 w475 h67 background" cfg.themePanel1Color,"")
+	drawOutlineNamed("gameSettingsD2Panel",ui.gameSettingsGui,10,79,475,65,cfg.themeBright2Color,cfg.themeDark2Color,1)
+	ui.d2SprintKey				:= ui.gameSettingsGui.AddPicture("xs+38 ys+0 w100 h33 section backgroundTrans","./img/keyboard_key_up.png")
+	ui.d2SprintKeyData 			:= ui.gameSettingsGui.addText("xs y+-28 w100 h25 center c" cfg.themeButtonAlertColor " backgroundTrans",subStr(strUpper(cfg.d2SprintKey),1,8))
+	ui.d2SprintKeyLabel			:= ui.gameSettingsGui.addText("xs-1 y+0 w100 h20 center c" cfg.themeFont1Color " backgroundTrans","Sprint")
+	ui.d2CrouchKey				:= ui.gameSettingsGui.addPicture("x+8 ys w100 h33 section backgroundTrans","./img/keyboard_key_up.png")
+	ui.d2CrouchKeyData 			:= ui.gameSettingsGui.addText("xs y+-28 w100 h25 center c" cfg.themeButtonAlertColor " backgroundTrans",subStr(strUpper(cfg.d2CrouchKey),1,8))
+	ui.d2CrouchKeyLabel 		:= ui.gameSettingsGui.addText("xs-1 y+0 w100 h20 center c" cfg.themeFont1Color " backgroundTrans","Crouch")
+	ui.d2ToggleWalkKey			:= ui.gameSettingsGui.addPicture("x+8 ys w100 h33 section backgroundTrans","./img/keyboard_key_up.png")
+	ui.d2ToggleWalkKeyData 		:= ui.gameSettingsGui.addText("xs y+-28 w100 h25 center c" cfg.themeButtonAlertColor " backgroundTrans",subStr(strUpper(cfg.d2ToggleWalkKey),1,8))
+	ui.d2ToggleWalkKeyLabel		:= ui.gameSettingsGui.addText("xs-1 y+0 w100 h20 center c" cfg.themeFont1Color " backgroundTrans","Toggle Walk")
+	ui.d2HoldWalkKey			:= ui.gameSettingsGui.addPicture("x+8 ys w100 h33 section backgroundTrans","./img/keyboard_key_up.png")
+	ui.d2HoldWalkKeyData 		:= ui.gameSettingsGui.addText("xs y+-28 w100 h25 center c" cfg.themeButtonAlertColor " backgroundTrans",subStr(strUpper(cfg.d2HoldWalkKey),1,8))
+	ui.d2HoldWalkKeyLabel		:= ui.gameSettingsGui.addText("xs-1 y+0 w100 h20 center c" cfg.themeFont1Color " backgroundTrans","Hold to Walk")
+	ui.d2LaunchDIMbutton		:= ui.gameSettingsGui.addPicture("xs-288 y+15 section w160 h60 backgroundTrans","./Img/button_launchDIM.png")
 	ui.d2LaunchLightGGbutton	:= ui.gameSettingsGui.addPicture("x+-4 ys w160 h60 backgroundTrans","./Img/button_launchLightGG.png")
-	ui.d2LaunchBlueberriesButton := ui.gameSettingsGui.addPicture("x+-4 ys w160 h60 backgroundTrans","./Img/button_launchBlueberries.png")
+	; ui.d2LaunchBlueberriesButton := ui.gameSettingsGui.addPicture("x+-4 ys w160 h60 backgroundTrans","./Img/button_launchBlueberries.png")
 	
-
 	ui.d2AlwaysRun.ToolTip := "Toggles holdToCrouch"
 	ui.d2SprintKey.ToolTip 		:= "Click to Assign"
 	ui.d2SprintKeyData.ToolTip  := "Click to Assign"
@@ -122,12 +125,12 @@ loop cfg.gameModuleList.length {
 	ui.d2HoldWalkKeyLabel.ToolTip	:= "Click to Assign"
 	ui.d2LaunchDIMbutton.ToolTip	:= "Launch DIM in Browser"
 	ui.d2LaunchLightGGbutton.toolTip := "Launch Light.gg in Browser"
-	ui.d2LaunchBlueberriesButton.toolTip	:= "Launch Blueberries.gg in Browser"
+	; ui.d2LaunchBlueberriesButton.toolTip	:= "Launch Blueberries.gg in Browser"
 
 	ui.d2CrouchKeyData.setFont("s13")
 	ui.d2SprintKeyData.setFont("s13")
 	ui.d2ToggleWalkKeyData.setFont("s13")
-	ui.d2ToggleWalkKeyData.setFont("s13")
+	ui.d2HoldWalkKeyData.setFont("s13")
 	ui.d2CrouchKeyLabel.setFont("s11")
 	ui.d2SprintKeyLabel.setFont("s11")
 	ui.d2ToggleWalkKeyLabel.setFont("s11")
@@ -144,7 +147,7 @@ loop cfg.gameModuleList.length {
 	ui.d2HoldWalkKeyData.onEvent("click",d2HoldWalkKeyClicked)
 	ui.d2LaunchDIMbutton.onEvent("click",d2launchDIMbuttonClicked)
 	ui.d2LaunchLightGGbutton.onEvent("click",d2launchLightGGbuttonClicked)
-	ui.d2LaunchBlueberriesButton.onEvent("click",d2LaunchBlueBerriesButtonClicked)
+	; ui.d2LaunchBlueberriesButton.onEvent("click",d2LaunchBlueBerriesButtonClicked)
 	
 	
 	toggleAlwaysRun(*) {
@@ -290,7 +293,7 @@ HotIf(d2IsRunning)
 hotIf()
 
 
-d2keyCleanup(this,*) {
+keyCleanUp(this,*) {
 	for keyForCleanup in 
 				[cfg.d2ToggleWalkKey
 				,cfg.d2HoldWalkKey
@@ -327,7 +330,7 @@ HotIf()
 				; ,"Shift"
 				; ,"Ctrl"
 				; ,"Alt"]
-		; hotkey("{" keyForCleanup "}",d2keyCleanup)
+		; hotkey("{" keyForCleanup "}",keyCleanUp)
 ; hotIf()
 readyToRun(*) {
 	if (winActive("ahk_exe destiny2.exe") && cfg.d2AlwaysRunEnabled && !(getKeyState("RButton") || getKeyState(cfg.d2HoldWalkKey)))
@@ -378,34 +381,34 @@ d2reload(*) {
 	ui.d2cleanupNeeded := true
 }
 	
-ui.gameTabs.useTab("Fortnite")
-	ui.holdToCrouchToggle := ui.gameSettingsGui.AddPicture("x15 y15 w60 h25 section vHoldToCrouch " ((cfg.holdToCrouchEnabled) 
-		? ("Background" cfg.ThemeButtonOnColor) 
-			: ("Background" cfg.ThemeButtonReadyColor)),((cfg.holdToCrouchEnabled) 
-		? (cfg.toggleOn) 
-			: (cfg.toggleOff)))
+; ui.gameTabs.useTab("Fortnite")
+	; ui.holdToCrouchToggle := ui.gameSettingsGui.AddPicture("x15 y15 w60 h25 section vHoldToCrouch " ((cfg.holdToCrouchEnabled) 
+		; ? ("Background" cfg.ThemeButtonOnColor) 
+			; : ("Background" cfg.ThemeButtonReadyColor)),((cfg.holdToCrouchEnabled) 
+		; ? (cfg.toggleOn) 
+			; : (cfg.toggleOff)))
 
-	ui.holdToCrouchToggle.OnEvent("Click", toggleChanged)
-	ui.holdToCrouchToggle.ToolTip := "Toggles holdToCrouch"
-	ui.leeabelToolTips := ui.gameSettingsGui.AddText("x+3 ys+3 BackgroundTrans","Hold to Crouch")
-	ToggleHoldToCrouch(*)
-	{
-		ui.toggleHoldToCrouch.Opt((cfg.holdToCrouch := !cfg.holdToCrouchEnabled) ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor))
-		ui.ToggleHoldToCrouch.Redraw()
-	}
+	; ui.holdToCrouchToggle.OnEvent("Click", toggleChanged)
+	; ui.holdToCrouchToggle.ToolTip := "Toggles holdToCrouch"
+	; ui.leeabelToolTips := ui.gameSettingsGui.AddText("x+3 ys+3 BackgroundTrans","Hold to Crouch")
+	; ToggleHoldToCrouch(*)
+	; {
+		; ui.toggleHoldToCrouch.Opt((cfg.holdToCrouch := !cfg.holdToCrouchEnabled) ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor))
+		; ui.ToggleHoldToCrouch.Redraw()
+	; }
 
 
-	ui.gameTabs.useTab("CS2")
-	ui.cs2holdScope := ui.gameSettingsGui.addPicture("x15 y15 w60 h25 section vAholdScope " 
-		((cfg.d2AlwaysRunEnabled) 
-			? ("Background" cfg.ThemeButtonOnColor) 
-				: ("Background" cfg.themeButtonReadyColor)),((cfg.cs2holdToScopeEnabled) 
-			? (cfg.toggleOn) 
-				: (cfg.toggleOff)))
+	; ui.gameTabs.useTab("CS2")
+	; ui.cs2holdScope := ui.gameSettingsGui.addPicture("x15 y15 w60 h25 section vAholdScope " 
+		; ((cfg.d2AlwaysRunEnabled) 
+			; ? ("Background" cfg.ThemeButtonOnColor) 
+				; : ("Background" cfg.themeButtonReadyColor)),((cfg.cs2holdToScopeEnabled) 
+			; ? (cfg.toggleOn) 
+				; : (cfg.toggleOff)))
 
-	ui.cs2holdScope.OnEvent("Click", toggleChanged)
-	ui.cs2holdScope.ToolTip := "Toggles holdToScope"
-	ui.labelToolTips := ui.gameSettingsGui.AddText("x+3 ys-1 BackgroundTrans","Hold to Scope")	
+	; ui.cs2holdScope.OnEvent("Click", toggleChanged)
+	; ui.cs2holdScope.ToolTip := "Toggles holdToScope"
+	; ui.labelToolTips := ui.gameSettingsGui.AddText("x+3 ys-1 BackgroundTrans","Hold to Scope")	
 
 ; drawOutlineNamed("osdMessage",ui.osd,2,2,120,126,"FF55bb","BB00fF",2)
 ; drawOutlineNamed("gameSettingsExterior",ui.gameSettingsGui,5,0,485,170,cfg.themeBorderDarkColor,cfg.themeBorderLightColor,2)	
@@ -422,11 +425,15 @@ ui.gameTabs.useTab("Fortnite")
 
 gameTabChanged(*) {
 	cfg.activeGameTab := ui.gametabs.value
+	drawGameTabs(ui.gameTabs.value)
+	guiVis(ui.gameTabGui,true)
 	controlFocus(ui.buttonDockAfk)
 }	
 ;ui.gameTabs.useTab("")
 ;drawOutlineNamed("GameSettingsOutline",ui.gameSettingsGui,5,0,485,173,cfg.themeFont3Color,cfg.themeFont3Color,3)
 	ui.gameTabs.useTab("World//Zero")
+	ui.gameSettingsGui.addText("x10 y5 w475 h140 background" cfg.themePanel1Color,"")
+	drawOutlineNamed("d2AlwaysRunOutline",ui.gameSettingsGui,10,4,475,140,cfg.themeBright2Color,cfg.themeDark2Color,1)
 
 	ui.gameSettingsGui.setFont("s10")
 	ui.w0dualPerkSwap := ui.gameSettingsGui.addPicture("x20 y15 w60 h25 section "
@@ -465,9 +472,31 @@ gameTabChanged(*) {
 		cfg.towerInterval := ui.towerIntervalSlider.Value
 	}
 
+drawGameTabs(tabNum := 1) {	
+	try	 
+		ui.gameTabGui.destroy()
+	ui.gameTabGui := gui()
+	ui.gameTabGui.opt("-caption toolWindow alwaysOnTop +E0x20 owner" ui.gameSettingsGui.hwnd)
+	ui.gameTabGui.backColor := ui.transparentColor
+	ui.gameTabGui.color := ui.transparentColor
+	drawOutlineNamed("gameTabOutline",ui.gameTabGui,0,0,227,28,cfg.themeBright1Color,cfg.themeBright1Color,1)
 	
-	
+	winSetTransColor(ui.transparentColor,ui.gameTabGui)
+	ui.gameTabGui.addText("x1 y0 w0 h27 section background" cfg.themeBright1Color,"")
+	ui.gameTab1Skin := ui.gameTabGui.addText((tabNum == 1 ? "ys+0 h27" : "ys+1 h26") " x+0 w110 section center background" (tabNum == 1 ? cfg.themeBackgroundColor : cfg.themePanel4Color) " c" (tabNum == 1 ? cfg.themeFont1Color : cfg.themeFont4Color),"Destiny 2")
+	ui.gameTab1Skin.setFont((tabNum == 1 ? "s14" : "s12"),"Impact")
+	ui.gameTabGui.addText("ys x+0  w2 h27 section background" cfg.themeBright1Color,"")
+	ui.gameTab2Skin := ui.gameTabGui.addText((tabNum == 2 ? "ys-1 h26" : "ys+2 h25") " x+0 w112 section center background" (tabNum == 2 ? cfg.themeBackgroundColor : cfg.themePanel4Color) " c" (tabNum == 2 ? cfg.themeFont1Color : cfg.themeFont4Color),"World//Zero")
+	ui.gameTab2Skin.setFont((tabNum == 2 ? "s14" : "s12"),"Impact")
+	ui.gameTabGui.addText("ys+0 x+0 w2 " (tabNum == 1 ? "h26" : "h27") " section background" cfg.themeBright1Color,"")
+	; ui.gameTabPadding := ui.gameTabGui.addText("x227 y1 w275 h28 section background" cfg.themeBackgroundColor)
+	; ui.gameTabPadding.setFont("s14")
+	guiVis(ui.gameTabGui,false)
+	ui.gameTabGui.show("w227 h29 x" cfg.guiX+35 " y" cfg.guiY+184 " noActivate")
+}
 
+drawGameTabs(cfg.activeGameTab)
+;gameTabChanged()
 
 	ToggleSilentIdle(*)
 	{

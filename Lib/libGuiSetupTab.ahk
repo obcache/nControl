@@ -177,7 +177,7 @@ GuiSetupTab(&ui,&cfg)
 		IniWrite(cfg.%this_color%,cfg.themeFile,cfg.Theme,this_color)
 		;ui.ThemeDDL.Choose("Custom")
 		;Sleep(1000)
-		Reload
+		Reload()
 	}
   
   	AutoClickerSpeedChanged(*) {
@@ -218,12 +218,10 @@ GuiSetupTab(&ui,&cfg)
 			DialogBoxClose()
 			if (ChosenColor == 0) || (ChosenColor == "")
 			{
-				DialogBox("No Color Chosen")
-				SetTimer(DialogBoxClose,-3000)
+				NotifyOSD("No Color Chosen",3000)
 				Return prev_color
 			} else {
-				DialogBox("You have selected: " ChosenColor "`nfor the " ColorType " category.")
-				SetTimer(DialogBoxClose,-3000)
+				NotifyOSD("You have selected: " ChosenColor "`nfor the " ColorType " category.",3000)
 				if (InStr(ChosenColor,"0x")) {
 					ChosenColor := SubStr(ChosenColor,3,6)
 				}
