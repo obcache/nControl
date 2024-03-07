@@ -9,17 +9,10 @@ if (InStr(A_LineFile,A_ScriptFullPath))
 	Return
 }
 
-GetTaskbarHeight()
-{
-	MonitorGet(MonitorGetPrimary(),,,,&TaskbarBottom)
-	MonitorGetWorkArea(MonitorGetPrimary(),,,,&TaskbarTop)
-		
-	TaskbarHeight := TaskbarBottom - TaskbarTop
-	Return TaskbarHeight
-}
 
-WM_WINDOWPOSCHANGED(wParam, lParam, msg, Hwnd)
-{
+
+{ ;window events
+WM_WINDOWPOSCHANGED(wParam, lParam, msg, Hwnd) {
 	try {
 		switch hwnd {
 			case ui.mainGui.hwnd:
@@ -43,6 +36,9 @@ WM_WINDOWPOSCHANGED(wParam, lParam, msg, Hwnd)
 		} 
 	}
 }
+} ;end window events
+
+{ ;mouse events
 
 WM_LBUTTONDOWN_callback(*) {
 	WM_LBUTTONDOWN(0,0,0,ui.MainGui.Hwnd)
@@ -52,7 +48,6 @@ WM_LBUTTONDOWN_pBcallback(*) {
 	WM_LBUTTONDOWN(0,0,0,ui.pbConsole.Hwnd)
 }
 
-;###########MOUSE EVENTS##############
 WM_LBUTTONDOWN(wParam, lParam, msg, Hwnd) {
 	;ShowMouseClick()
 		try {
@@ -93,64 +88,33 @@ WM_LBUTTONDOWN(wParam, lParam, msg, Hwnd) {
 		}
 }
 
-
-
-
-; WM_LBUTTONUP(wParam, lParam, msg, Hwnd) {
-
-; }	
-
-wmAfkLButtonDown(wParam, lParam, msg, hwnd) {
-	if !(ui.AfkAnchoredToGui)
-		PostMessage(0xA1, 2)
-}
-
-WM_MOUSEMOVE(wParam, lParam, msg, Hwnd) {
+wm_mouseMove(wParam, lParam, msg, hwnd) {
 	static prevHwnd := 0
-    if (Hwnd != PrevHwnd) {
-        text := ""
+    if (hwnd != prevHwnd) {
 		toolTip()
-        currControl := GuiCtrlFromHwnd(Hwnd)
-		if cfg.toolTipsEnabled && currControl.hasProp("ToolTip") {
-            text := currControl.ToolTip
-            setTimer () => toolTip(text), -400
-            setTimer () => toolTip(), -5500
-        }
-        prevHwnd := Hwnd
-    }
+		if cfg.toolTipsEnabled && guiCtrlFromHwnd(Hwnd).hasProp("ToolTip") {
+			setTimer () => toolTipDelayStart(guiCtrlFromHwnd(hwnd)), -850
+		}
+		prevHwnd := Hwnd
+	}
 }
-	; (hwnd != prevHwnd) 
-		; ? (Hnwd == ui.stopGamingButton.hwnd 
-			; ? stopGamingButtonHover() 
-			; : stopGamingButtonNormal()) 
-		; : doNothing()
+
+toolTipDelayStart(origGuiCtrl) {
+	mouseGetPos(,,&currCtrlWin,&currCtrlClass)
+	if origGuiCtrl.hwnd == controlGetHwnd(currCtrlClass,currCtrlWin) {
+		toolTip(origGuiCtrl.toolTip)
+		setTimer () => toolTip(), -2500
+	}
+}
+
+
+} ;end mouse EVENTS##############
+
+;end modal guis
 	
-	; (hwnd != prevHwnd)
-		; ? (Hnwd == ui.startGamingButton.hwnd 
-			; ? startGamingButtonHover() 
-			; : startGamingButtonNormal()) 
-		; : doNothing()
-		
-; }
-; stopGamingButtonHover() {
-	; ui.stopGamingButton.opt("background" cfg.themeButtonAlertColor)
-; }
-; stopGamingButtonNormal() {
-	; ui.stopGamingButton.opt("background" cfg.themeButtonReadyColor)
-; }
-; startGamingButtonHover() {
-	; ui.startGamingButton.opt("background" cfg.themeButtonAlertColor)
-; }
-; startGamingButtonNormal() {
-	; ui.startGamingButton.opt("background" cfg.themeButtonReadyColor)
-; }
-; doNothing() {
-; }
+{ ;window utilities
 
-
-
-togglePIP()
-{
+togglePIP() {
 	if (!WinExist("ahk_id " ui.Win2Hwnd) 
 		|| !WinExist("ahk_id " ui.Win1Hwnd)) {
 		debugLog("PiP: Can't find 2 Game Windows.")
@@ -209,23 +173,6 @@ togglePIP()
 	}
 }
 	
-
-ChangeWindowFocus()
-{
-	CoordMode("Mouse","Screen")
-	if WinExist("A") == WinGetID("ahk_exe RobloxPlayerBeta.exe")
-	{
-		CoordMode("Mouse","Screen")
-		MouseClick("Right",A_ScreenWidth-50,A_ScreenHeight-100)
-		WinActivate("ahk_exe ApplicationFrameHost.exe")
-
-	} else {
-		CoordMode("Mouse","Screen")
-		MouseClick("Left",(A_ScreenWidth/2)-50,A_ScreenHeight-100)
-		WinActivate("ahk_exe RobloxPlayerBeta.exe")
-	}
-}
-
 setGlass(accent_state, rgb_in:=0x0, alpha_in:=0xFF, hwnd:=0) {
     Static WCA_ACCENT_POLICY := 19, pad := A_PtrSize = 8 ? 4 : 0
         , max_rgb := 0xFFFFFF, max_alpha := 0xFF, max_accent := 3
@@ -267,19 +214,13 @@ setGlass(accent_state, rgb_in:=0x0, alpha_in:=0xFF, hwnd:=0) {
     Return 0
 }
 
-; Gui +LastFound 
-; hWnd := WinExist()
-; DllCall( "RegisterShellHookWindow", UInt,Hwnd )
-; MsgNum := DllCall( "RegisterWindowMessage", Str,"SHELLHOOK" )
-; OnMessage( MsgNum, "ShellMessage" )
-; Return
 
-; ShellMessage( wParam,lParam )
-; {
- ; WinGetTitle, title, ahk_id %lParam%
- ; If (wParam=4) { ;HSHELL_WINDOWACTIVATED
-  ; ToolTip WinActivated`n%Title%
-  ; sleep 1000
-  ; ToolTip
- ; }
-; }
+GetTaskbarHeight() {
+	MonitorGet(MonitorGetPrimary(),,,,&TaskbarBottom)
+	MonitorGetWorkArea(MonitorGetPrimary(),,,,&TaskbarTop)
+	TaskbarHeight := TaskbarBottom - TaskbarTop
+	Return TaskbarHeight
+}
+
+
+} ;end utility functions
