@@ -394,11 +394,17 @@ CheckForUpdates(msg,*) {
 		ui.installedVersionText.text := "Installed:`t" ui.installedVersion
 		ui.latestVersionText.text := "Latest:`t*****"
 		if (ui.installedVersion < ui.latestVersion) {
-			guiVis(ui.mainGui,false)
-			guiVis(ui.titleBarButtonGui,false)
-			guiVis(ui.afkGui,false)
-			guiVis(ui.gameSettingsGui,false)
-			guiVis(ui.gameTabGui,false)
+			try 
+				guiVis(ui.mainGui,false)
+			try
+				guiVis(ui.titleBarButtonGui,false)
+			try
+				guiVis(ui.afkGui,false)
+			try
+				guiVis(ui.gameSettingsGui,false)
+			try 
+				guiVis(ui.gameTabGui,false)
+				
 			sleep(2500)
 			run("./nControl_updater.exe")
 		} else {
