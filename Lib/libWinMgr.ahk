@@ -101,9 +101,11 @@ wm_mouseMove(wParam, lParam, msg, hwnd) {
 
 toolTipDelayStart(origGuiCtrl) {
 	mouseGetPos(,,&currCtrlWin,&currCtrlClass)
-	if origGuiCtrl.hwnd == controlGetHwnd(currCtrlClass,currCtrlWin) {
-		toolTip(origGuiCtrl.toolTip)
-		setTimer () => toolTip(), -2500
+	try {
+		if origGuiCtrl.hwnd == controlGetHwnd(currCtrlClass,currCtrlWin) {
+			toolTip(origGuiCtrl.toolTip)
+			setTimer () => toolTip(), -2500
+		}
 	}
 }
 

@@ -280,8 +280,8 @@ toggleTower(*) {
 				,ui.opsStatus2.value 		:= "./Img/label_timer_off.png"
 				,ui.opsTowerButton.Value	:= "./img/button_tower_ready.png"
 				,ui.buttonTower.Value		:= "./img/button_tower_ready.png"
-				,ui.dockBarTowerButton.opt("background" cfg.themeButtonReadyColor)
-				,ui.dockBarTowerButton.value := "./img/button_tower_ready.png"
+				,(cfg.topDockEnabled) ? ui.dockBarTowerButton.opt("background" cfg.themeButtonReadyColor) : 0
+				,(cfg.topDockEnabled) ? ui.dockBarTowerButton.value := "./img/button_tower_ready.png" : 0
 		) : (
 			ui.afkProgress.value 		:= 0
 			,ui.opsProgress1.value 		:= 0
@@ -293,8 +293,8 @@ toggleTower(*) {
 			,ui.opsStatus2.value 		:= "./Img/label_timer_off.png"
 			,ui.opsTowerButton.Value	:= "./img/button_tower_ready.png"
 			,ui.buttonTower.Value		:= "./img/button_tower_ready.png"				
-			,ui.dockBarTowerButton.opt("background" cfg.themeButtonReadyColor)
-			,ui.dockBarTowerButton.value := "./img/button_tower_ready.png"
+			,(cfg.topDockEnabled) ? ui.dockBarTowerButton.opt("background" cfg.themeButtonReadyColor) : 0
+			,(cfg.topDockEnabled) ? ui.dockBarTowerButton.value := "./img/button_tower_ready.png" : 0			
 			,debugLog("AutoTower: Failed to start. No game windows found.")
 			,notifyOSD("AutoTower Failed: No valid game windows found.",3000)
 		)
