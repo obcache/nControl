@@ -349,34 +349,56 @@ helpScreen(*) {
 }
 
 changeClockMode(*) {
-	if (GetKeyState("Ctrl"))
-	{
-		ViewStopwatch()
-		StopwatchToggle()
+	if !ui.gameWindowFound && !ui.clearClockAlert {
+		ui.clearClockAlert := true
+		ui.OpsClockModeLabel.text := " Clock"
+		ui.clockMode := "Clock"
+		ui.OpsClock.ToolTip := "Left Click Starts/Stops Timer. `nRight Click Resets Timer. `nDouble-Click to Return to Time Mode."
+
 	} else {
 	
-		Switch
+		if (GetKeyState("Ctrl"))
 		{
-			case ui.ClockMode == "Clock":
+			ViewStopwatch()
+			StopwatchToggle()
+		} else {
+		
+			Switch
 			{
-				ViewStopwatch()
-			}
-			case ui.ClockMode == "Stopwatch":
-			{
-				ViewTimer()
-			}
-			Default:
-			{
-				ViewClock()
+				case ui.ClockMode == "Clock":
+				{
+					ViewStopwatch()
+				}
+				case ui.ClockMode == "Stopwatch":
+				{
+					ViewTimer()
+				}
+				Default:
+				{
+					ViewClock()
+				}
 			}
 		}
 	}
 }
 
 opsClickTimeUpdate(*) {
+	static frameNum := 1
+	static msg := "....Waiting"
 	ui.ClockTime := FormatTime("T12","Time")
-	if (ui.ClockMode == "Clock")
+	if (ui.ClockMode == "Clock" && (ui.gameWindowFound || ui.clearClockAlert))
 		ui.OpsClock.Value := ui.ClockTime " "
+	else {
+			ui.OpsClockModeLabel.Text := "   NO `n GAME"
+				ui.OpsClock.ToolTip := "Click to return to clock"
+			if frameNum == 11 
+				frameNum := 0
+			frameNum += 1
+			
+			msg := subStr(msg subStr(msg,1,1),2)
+			ui.opsClock.value := msg
+			
+		}
 }
 
 stopwatchToggle(*) {
@@ -486,13 +508,13 @@ changeGameDDL(*) {
 	debugLog("Game Profile Changed to: " ui.GameDDL.Text)
 	cfg.game := ui.gameDDL.value
 
-
 ;If !(WinExist("ahk_id " ui.Win1Hwnd) || WinExist("ahk_id " ui.Win2Hwnd))
 	populateClassList()
 	RefreshWinHwnd()
 	controlFocus(ui.buttonSwapHwnd,ui.mainGui)
 	refreshAfkRoutine()
-	ui.dockGameDDL.value := cfg.game
+	try
+		ui.dockGameDDL.value := cfg.game
 	;changeDockGameDDL()
 	;createDockBar()
 	if ui.profileList.length > cfg.win1class && cfg.win1class > 0
@@ -636,7 +658,10 @@ refreshWinHwnd(*) {
 		ui.dockGameDDL.redraw()
 		controlFocus(ui.mainGuiTabs)
 		controlFocus(ui.dockTopDockButton)
-		; setTimer(watchForGames,3000)
+		if ui.gameWindowFound == true
+			ui.clearClockAlert := false
+		setTimer(watchForGames,5000)
+		ui.gameWindowFound := false
 	} else {
 		ui.gameDDL.setFont("c" cfg.themeFont3Color,"calibri bold")
 		ui.gameDDL.opt("background" cfg.themePanel3Color)
@@ -646,53 +671,32 @@ refreshWinHwnd(*) {
 		ui.dockGameDDL.redraw()
 		controlFocus(ui.mainGuiTabs)
 		controlFocus(ui.dockTopDockButton)
-		; setTimer(watchForGames,0)
+		setTimer(watchForGames,0)
+		ui.gameWindowFound := true
 	}
 
 }
 
 watchForGames(*) {
-	ui.RefreshWindowHandlesButton.opt("background" cfg.themeButtonAlertColor)
-	ui.refreshWindowHandlesButton.redraw()
-	setTimer () => 	(ui.RefreshWindowHandlesButton.opt("background" cfg.themeButtonReadyColor),ui.refreshWindowHandlesButton.redraw()),-1250
-	if inStr(ui.win1name.text,"Game") {
-		refreshWin(1)
-	}
-	if inStr(ui.win2name.text,"Game") {
-		refreshWin(2)
-	}
-	if !(ui.win1enabled && ui.win2enabled) {
-		ui.gameDDL.setFont("c" cfg.themeFont1color,"calibri bold")
-		ui.gameDDL.opt("background" cfg.themeEditboxColor)
-		ui.gameDDL.redraw()
-		ui.dockGameDDL.setFont("c" cfg.themeFont1Color,"calibri bold")
-		ui.dockGameDDL.opt("background" cfg.themeEditboxColor)
-		ui.dockGameDDL.redraw()
-		controlFocus(ui.mainGuiTabs)
-		controlFocus(ui.dockTopDockButton)
-		; setTimer(watchForGames,3000)
-	} else {
-		ui.gameDDL.setFont("c" cfg.themeFont3Color,"calibri bold")
-		ui.gameDDL.opt("background" cfg.themePanel3Color)
-		ui.gameDDL.redraw()
-		ui.dockGameDDL.setFont("c" cfg.themeFont3Color,"calibri bold")
-		ui.dockGameDDL.opt("background" cfg.themePanel3Color)
-		ui.dockGameDDL.redraw()
-		controlFocus(ui.mainGuiTabs)
-		controlFocus(ui.dockTopDockButton)
-		; setTimer(watchForGames,0)
-	}
-	
-	
 	loop cfg.gameList.length {
-		winGetID(cfg.gameList[a_index])
-		if !InStr(cfg.excludedProcesses,WinGetProcessName("ahk_id " winGetId(cfg.gameList[A_Index]))) {
-			ui.gameDDL.choose(a_index)
-			changeGameDDL()
-		}		
-	}
+		currGame := cfg.gameList[a_index]
+		ui.windowList := "win" strReplace(currGame," ",,)
+		ui.%ui.windowList% := winGetList(currGame)
+		if ui.%ui.windowList%.length > 0
+			for window in ui.%ui.windowList% {
+				if winExist("ahk_id " window) && !inStr(cfg.excludedApps,winGetProcessName("ahk_id " window)) {
+						cfg.game := currGame
+						ui.gameDDL.text := cfg.game
+						if cfg.topDockEnabled {
+							ui.dockGameDDL.text := cfg.game
+							changeDockGameDDL()
+						} else {
+							changeGameDDL()
+						}
+				}
+			}
+	 }
 }
-
 refreshWin(winNumber) { ;Performs Window Discovery, Game Identification and Gui Data Updates
 	Thread("NoTimers")
 	debugLog("Refreshing Game Window HWND IDs") 

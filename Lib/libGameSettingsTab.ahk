@@ -432,35 +432,53 @@ gameTabChanged(*) {
 ;ui.gameTabs.useTab("")
 ;drawOutlineNamed("GameSettingsOutline",ui.gameSettingsGui,5,0,485,173,cfg.themeFont3Color,cfg.themeFont3Color,3)
 	ui.gameTabs.useTab("World//Zero")
-	ui.gameSettingsGui.addText("x10 y5 w475 h140 background" cfg.themePanel1Color,"")
-	drawOutlineNamed("d2AlwaysRunOutline",ui.gameSettingsGui,10,4,475,140,cfg.themeBright2Color,cfg.themeDark2Color,1)
+	
+	ui.gameSettingsGui.addText("x10 y7 w475 h65 background" cfg.themePanel1Color,"")
+	drawOutlineNamed("w0AutoTowerOutline",ui.gameSettingsGui,10,6,475,67,cfg.themeBright2Color,cfg.themeDark2Color,1)
+	drawOutlineNamed("w0AutoTowerHorizLine",ui.gameSettingsGui,20,6,70,1,cfg.themeBackgroundColor,cfg.themeBackgroundColor,2)
+	drawOutlineNamed("w0AutoTowerVertLine",ui.gameSettingsGui,20,6,70,7,cfg.themeBackgroundColor,cfg.themeBright2Color,1)
+	ui.gameSettingsGui.addText("x21 y-2 w68 h14 c" cfg.themeFont1Color " background" cfg.themeBackgroundColor," Auto Tower")
+	drawOutlineNamed("w0AutoAfkTabs",ui.gameSettingsGui,20,6,1,7,cfg.themeDark1Color,cfg.themeBright2Color,1)
+	
+	
+	;ui.gameSettingsGui.addText("x10 y5 w475 h140 background" cfg.themePanel1Color,"")
+	;drawOutlineNamed("d2AlwaysRunOutline",ui.gameSettingsGui,10,4,475,140,cfg.themeBright2Color,cfg.themeDark2Color,1)
 
 	ui.gameSettingsGui.setFont("s10")
-	ui.w0dualPerkSwap := ui.gameSettingsGui.addPicture("x20 y15 w60 h25 section "
-		((cfg.w0DualPerkSwapEnabled)
-			? ("Background" cfg.ThemeButtonOnColor)
-				: ("Background" cfg.themeButtonReadyColor)),((cfg.w0DualPerkSwapEnabled)
-			? (cfg.toggleOn)
-				: (cfg.toggleOff)))
+	; ui.w0dualPerkSwap := ui.gameSettingsGui.addPicture("x20 y15 w60 h25 section "
+		; ((cfg.w0DualPerkSwapEnabled)
+			; ? ("Background" cfg.ThemeButtonOnColor)
+				; : ("Background" cfg.themeButtonReadyColor)),((cfg.w0DualPerkSwapEnabled)
+			; ? (cfg.toggleOn)
+				; : (cfg.toggleOff)))
 				
-	ui.w0dualPerkSwap.onEvent("Click",PerkSwapToggleChanged)
-	ui.w0DualPerkSwap.toolTip := "Ctrl+Alt+LeftClick swaps effective perks between weapons (dual wielders only)"
-	ui.labelW0DualPerkSwap := ui.gameSettingsGui.addText("ys w80 backgroundTrans","Perk Swap")
+	; ui.w0dualPerkSwap.onEvent("Click",PerkSwapToggleChanged)
+	; ui.w0DualPerkSwap.toolTip := "Ctrl+Alt+LeftClick swaps effective perks between weapons (dual wielders only)"
+	; ui.labelW0DualPerkSwap := ui.gameSettingsGui.addText("ys w80 backgroundTrans","Perk Swap")
 	
-	perkSwapToggleChanged(toggleControl,*) {
-		toggleControl.value := 
-			(cfg.w0DualPerkSwapEnabled := !cfg.w0DualPerkSwapEnabled)
-				? (toggleControl.Opt("Background" cfg.ThemeButtonOnColor),cfg.toggleOn)
-				: (toggleControl.Opt("Background" cfg.ThemeButtonReadyColor),cfg.toggleOff)
+	; perkSwapToggleChanged(toggleControl,*) {
+		; toggleControl.value := 
+			; (cfg.w0DualPerkSwapEnabled := !cfg.w0DualPerkSwapEnabled)
+				; ? (toggleControl.Opt("Background" cfg.ThemeButtonOnColor),cfg.toggleOn)
+				; : (toggleControl.Opt("Background" cfg.ThemeButtonReadyColor),cfg.toggleOff)
 		
-	}	
-	ui.toggleCelestialTower := ui.gameSettingsGui.AddPicture("xs  w60 h25 section vCelestialTower " (cfg.CelestialTowerEnabled ? ("Background" cfg.ThemeButtonAlertColor) : ("Background" cfg.ThemeButtonAlertColor)),((cfg.CelestialTowerEnabled) ? "./img/towerToggle_celestial.png" : "./img/towerToggle_infinite.png"))
+	; }	
+	ui.toggleCelestialTower := ui.gameSettingsGui.AddPicture("x20 y20 w60 h25 section vCelestialTower " (cfg.CelestialTowerEnabled ? ("Background" cfg.ThemeButtonAlertColor) : ("Background" cfg.ThemeButtonAlertColor)),((cfg.CelestialTowerEnabled) ? "./img/towerToggle_celestial.png" : "./img/towerToggle_infinite.png"))
 	ui.toggleCelestialTower.OnEvent("Click", towerToggleChanged)
 	ui.toggleCelestialTower.ToolTip := "Toggles between Infinite and Celestial Towers."
-	ui.labelCelestialTower:= ui.gameSettingsGui.AddText("x+3 ys+3 backgroundTrans","Tower Settings")	
+	ui.towerIntervalSlider := ui.gameSettingsGui.addSlider("x+0 ys-4 w160 h30 tickInterval5 altSubmit vTowerCycleLength thick18 center section Range1-50  background" 
+	cfg.themePanel1Color " ToolTip",cfg.towerInterval)
+	ui.towerIntervalSlider.onEvent("change",towerCycleChange)
+	towerCycleChange(*) {
+		ui.cycleLengthData.value := ui.towerIntervalSlider.value
+		controlFocus(ui.gameTabs)
+	}
+	ui.cycleLengthData := ui.gameSettingsGui.AddText("x+0 ys+3 w35 h30 section center background" cfg.themeBackgroundColor,ui.towerIntervalSlider.value)
+	ui.cycleLengthData.setFont("s18")
+	ui.labelCelestialTower:= ui.gameSettingsGui.AddText("xs-220 y+-1 w60 section backgroundTrans","Tower Type")
+	ui.labelTowerTiming := ui.gameSettingsGui.AddText("ys w160 center section backgroundTrans","Cycle Length")	
+	drawOutlineNamed("towerCycleLength",ui.gameSettingsGui,239,19,36,31,cfg.themeDark2Color,cfg.themeBright2Color,1)
 	
-	
-	ui.towerIntervalSlider := ui.gameSettingsGui.addSlider("xs y+10 w160 h20 Range1-50  Left background" ui.transparentColor " ToolTipTop",cfg.towerInterval)
 	ui.towerIntervalSlider.OnEvent("Change",towerIntervalChanged)
 	ui.towerIntervalSlider.ToolTip := "Tower Restart Interval"
 	ToggleCelestialTower(*)
@@ -483,16 +501,37 @@ drawGameTabs(tabNum := 1) {
 	
 	winSetTransColor(ui.transparentColor,ui.gameTabGui)
 	ui.gameTabGui.addText("x1 y0 w0 h27 section background" cfg.themeBright1Color,"")
-	ui.gameTab1Skin := ui.gameTabGui.addText((tabNum == 1 ? "ys+0 h27" : "ys+1 h26") " x+0 w110 section center background" (tabNum == 1 ? cfg.themeBackgroundColor : cfg.themePanel4Color) " c" (tabNum == 1 ? cfg.themeFont1Color : cfg.themeFont4Color),"Destiny 2")
+	ui.gameTab1Skin := ui.gameTabGui.addText(
+		((tabNum == 1) ? "ys+0 h27" : "ys+1 h26")
+		" x+0 w110 section center background" 
+		((tabNum == 1) ? cfg.themeBackgroundColor : cfg.themePanel4Color) 
+		" c" ((tabNum == 1) ? cfg.themeFont1Color : cfg.themeFont4Color)
+		,"Destiny 2")
 	ui.gameTab1Skin.setFont((tabNum == 1 ? "s14" : "s12"),"Impact")
 	ui.gameTabGui.addText("ys x+0  w2 h27 section background" cfg.themeBright1Color,"")
-	ui.gameTab2Skin := ui.gameTabGui.addText((tabNum == 2 ? "ys-1 h26" : "ys+2 h25") " x+0 w112 section center background" (tabNum == 2 ? cfg.themeBackgroundColor : cfg.themePanel4Color) " c" (tabNum == 2 ? cfg.themeFont1Color : cfg.themeFont4Color),"World//Zero")
-	ui.gameTab2Skin.setFont((tabNum == 2 ? "s14" : "s12"),"Impact")
+	ui.gameTab2Skin := ui.gameTabGui.addText(
+		((tabNum == 2) 
+			? "ys-1 h26" 
+			: "ys+2 h25")
+		" x+0 w112 section center background" 
+		((tabNum == 2) 
+			? cfg.themeBackgroundColor 
+			: cfg.themePanel4Color)
+		" c" ((tabNum == 2)
+			? cfg.themeFont1Color 
+			: cfg.themeFont4Color)
+		,"World//Zero")
+	ui.gameTab2Skin.setFont(
+		((tabNum == 2)
+			? "s14" 
+			: "s12")
+		,"Impact")
 	ui.gameTabGui.addText("ys+0 x+0 w2 " (tabNum == 1 ? "h26" : "h27") " section background" cfg.themeBright1Color,"")
 	; ui.gameTabPadding := ui.gameTabGui.addText("x227 y1 w275 h28 section background" cfg.themeBackgroundColor)
 	; ui.gameTabPadding.setFont("s14")
 	guiVis(ui.gameTabGui,false)
-	ui.gameTabGui.show("w227 h29 x" cfg.guiX+35 " y" cfg.guiY+184 " noActivate")
+	winGetPos(&winX,&winY,,,ui.mainGui.hwnd)
+	ui.gameTabGui.show("w227 h29 x" winX+35 " y" winY+184 " noActivate")
 }
 
 drawGameTabs(cfg.activeGameTab)
@@ -503,8 +542,8 @@ drawGameTabs(cfg.activeGameTab)
 		ui.toggleSilentIdle.Opt((cfg.SilentIdleEnabled := !cfg.SilentIdleEnabled) ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor))
 		ui.toggleSilentIdle.Redraw()
 	}
-	ui.toggleSilentIdle := ui.gameSettingsGui.AddPicture("xs w60 h25 section vSilentIdle " (cfg.SilentIdleEnabled ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor)),((cfg.SilentIdleEnabled) ? (cfg.toggleOn) : (cfg.toggleOff)))
+	ui.toggleSilentIdle := ui.gameSettingsGui.AddPicture("xs-60 y+45 w60 h25 section vSilentIdle " (cfg.SilentIdleEnabled ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor)),((cfg.SilentIdleEnabled) ? (cfg.toggleOn) : (cfg.toggleOff)))
 	ui.toggleSilentIdle.OnEvent("Click", toggleChanged)
 	ui.toggleSilentIdle.ToolTip := "Minimizes Roblox Windows While Anti-Idling"
-	ui.labelSilentIdle:= ui.gameSettingsGui.AddText("x+3 ys+3 backgroundTrans","Silent AntiIdle")
+	ui.labelSilentIdle:= ui.gameSettingsGui.AddText("xs-8 y+0 w80 center backgroundTrans","Silent AntiIdle")
 	

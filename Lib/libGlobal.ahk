@@ -27,6 +27,8 @@ initTrayMenu(*) {
 	OnMessage(0x47, WM_WINDOWPOSCHANGED)	
 preAutoExec(InstallDir,ConfigFileName) {
 	Global
+	cfg				:= object()
+	ui 				:= object()
 	if (A_IsCompiled)
 	{
 		; if !(FileExist("./nControl.ini"))
@@ -458,7 +460,7 @@ cfgLoad(&cfg, &ui) {
 	ui.pauseAlwaysRun		:= false
 	ui.inGameChat			:= false
 	ui.reloading			:= false
-	
+	ui.gameWindowFound		:= false
 	afk							:= object()
 	ui.profileList				:= array()
 	ui.profileListStr			:= ""
@@ -476,6 +478,7 @@ cfgLoad(&cfg, &ui) {
 	win2afk.waiting				:= false
 	win1afk.currStepNum			:= ""
 	win2afk.currStepNum 		:= ""
+	ui.clearClockAlert			:= false
 	
 	ui.dividerGui				:= gui()
 	cfg.gamingStartProc 		:= strSplit(IniRead(cfg.file,"System","GamingStartProcesses",cfg.gamingStartProcString),",")
@@ -590,7 +593,9 @@ cfgLoad(&cfg, &ui) {
 	cfg.d2CrouchKey				:= IniRead(cfg.file,"Game","d2CrouchKey","<UNSET>")
 	cfg.d2ToggleWalkKey			:= IniRead(cfg.file,"Game","d2ToggleWalkKey","<UNSET>")
 	cfg.d2HoldWalkKey			:= IniRead(cfg.file,"Game","d2HoldWalkKey","<UNSET>")
+	cfg.SLBHopKey				:= iniRead(cfg.file,"Game","ShatterLineBunnyHopKey","<UNSET>")
 }
+
 WriteConfig() {
 	Global
 	tmpGameList := ""
@@ -673,15 +678,17 @@ WriteConfig() {
 		IniWrite(cfg.themeButtonOnColor,cfg.themeFile,"Custom","ThemeButtonOnColor")
 		IniWrite(cfg.themeButtonReadyColor,cfg.themeFile,"Custom","ThemeButtonReadyColor")
 		IniWrite(cfg.themeButtonAlertColor,cfg.themeFile,"Custom","ThemeButtonAlertColor")
-		IniWrite(cfg.holdToCrouchEnabled,cfg.file,"game","HoldToCrouch")
+		IniWrite(cfg.activeMainTab,cfg.file,"Interface","ActiveMainTab")
+		IniWrite(cfg.activeGameTab,cfg.file,"Interface","ActiveGameTab")
+		iniWrite(cfg.topDockEnabled,cfg.file,"Interface","TopDockEnabled")
+		
+		iniWrite(cfg.SLBHopKey,cfg.file,"Game","ShatterLineBunnyHopKey")
 		IniWrite(cfg.d2AlwaysRunEnabled,cfg.file,"Game","d2AlwaysRunEnabled")
 		IniWrite(cfg.d2SprintKey,cfg.file,"Game","d2SprintKey")
 		IniWrite(cfg.d2CrouchKey,cfg.file,"Game","d2CrouchKey")
 		IniWrite(cfg.d2ToggleWalkKey,cfg.file,"Game","d2ToggleWalkKey")
 		IniWrite(cfg.d2HoldWalkKey,cfg.file,"Game","d2HoldWalkKey")
-		IniWrite(cfg.activeMainTab,cfg.file,"Interface","ActiveMainTab")
-		IniWrite(cfg.activeGameTab,cfg.file,"Interface","ActiveGameTab")
-		iniWrite(cfg.topDockEnabled,cfg.file,"Interface","TopDockEnabled")
+
 		ui.mainTabListString := ""
 		loop cfg.mainTabList.length {
 			ui.mainTabListString .= cfg.mainTabList[a_index] ','
@@ -973,6 +980,9 @@ exitFunc(ExitReason,ExitCode) {
 	guiVis(ui.afkGui,false)
 	guiVis(ui.gameSettingsGui,false)
 	guiVis(ui.mainGui,false)
+	try {
+		guiVis(ui.gameTabGui,false)
+	}
 	; if (cfg.topDockEnabled) {
 		; topDockOff()
 	; }

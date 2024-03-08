@@ -89,7 +89,13 @@ initGui(&cfg, &ui) {
 	WinSetTransparent(0,ui.MainGui)
 	WinSetTransparent(0,ui.titleBarButtonGui)
 	winSetTransparent(0,ui.gameSettingsGui)
-	winSetTransparent(0,ui.afkGui)
+	
+	try
+	guiVis(ui.mainGui,false)
+	try
+	guiVis(ui.titleBarButtonGui,false)
+	try
+	guiVis(ui.gameSettingsGui,false)
 
 
 	ui.MainGui.Show("x" cfg.GuiX " y" cfg.GuiY " w562 h214 NoActivate")
@@ -137,6 +143,7 @@ initOSDGui() {
 	RunCount := 0
 
 	ui.AfkGui := Gui()
+	winSetTransparent(0,ui.afkGui)
 	ui.AfkGui.Name := "nControlMain"
 	ui.AfkGui.BackColor := cfg.ThemeBackgroundColor
 	ui.AfkGui.Color := ui.TransparentColor
@@ -673,7 +680,7 @@ initConsole(&ui) {
 		ui.NewGameGui.AddProgress("x" X " y" Y " w" Thickness " h" H " Background" Color1) 
 		ui.NewGameGui.AddProgress("x" X " y" Y + H - Thickness " w" W " h" Thickness " Background" Color2) 
 		ui.NewGameGui.AddProgress("x" X + W - Thickness " y" Y " w" Thickness " h" H " Background" Color2) 	
-	}
+		}
 
 	drawOutlineNotifyGui(X, Y, W, H, Color1 := "Black", Color2 := "Black", Thickness := 1) {	
 		ui.NotifyGui.AddProgress("x" X " y" Y " w" W " h" Thickness " Background" Color1) 

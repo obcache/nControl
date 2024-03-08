@@ -18,11 +18,11 @@ WM_WINDOWPOSCHANGED(wParam, lParam, msg, Hwnd) {
 			case ui.mainGui.hwnd:
 				if (!ui.afkDocked) {
 					winGetPos(&winX,&winY,,,ui.mainGui)
-					ui.AfkGui.Move(winX+40,winY+50,,)
-					ui.titleBarButtonGui.Move(winX+457,winY-3)
-					ui.gameSettingsGui.move(winx+35,winy+32)
-					ui.editorGui.move(winX+35,winY+32)
-					ui.gameTabGui.move(winX+35,winY+184)
+					ui.AfkGui.Move((winX+40)/(A_ScreenDPI/96),(winY+50)/(A_ScreenDPI/96),,)
+					ui.titleBarButtonGui.Move((winX+457)*(A_ScreenDPI/96),(winY-3)*(A_ScreenDPI/96))
+					ui.gameSettingsGui.move((winx+35)*(A_ScreenDPI/96),(winy+32)*(A_ScreenDPI/96))
+					ui.editorGui.move((winX+35)*(A_ScreenDPI/96),(winY+32)*(A_ScreenDPI/96))
+					ui.gameTabGui.move((winX+35)*(A_ScreenDPI/96),(winY+184)*(A_ScreenDPI/96))
 				}
 			case ui.dividerGui.hwnd:
 					MonitorGetWorkArea(cfg.nControlMonitor, &Left, &Top, &Right, &Bottom)

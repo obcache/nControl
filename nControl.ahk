@@ -1,4 +1,4 @@
-A_FileVersion := "4.2.1.0"
+A_FileVersion := "4.2.1.2"
 ;@Ahk2Exe-Let FileVersion=%A_PriorLine~U)^(.+"){1}(.+)".*$~$2% 
 
 A_AppName := "nControl"
@@ -27,19 +27,16 @@ A_Restarted :=
 
 OnMessage(0x0202, WM_LBUTTONDOWN)
 OnMessage(0x47, WM_WINDOWPOSCHANGED)
-	
-	
-cfg				:= Object()
-ui 				:= Object()
-InstallDir 		:= A_MyDocuments "\nControl"
-ConfigFileName 	:= "nControl.ini"
-ThemeFileName	:= "nControl.themes"
-ErrorLevel 		:= 0 
 
-PreAutoExec(InstallDir,ConfigFileName)
+
+installDir 		:= a_myDocuments "\nControl"
+configFileName 	:= "nControl.ini"
+themeFileName	:= "nControl.themes"
+
+preAutoExec(InstallDir,ConfigFileName)
 InitTrayMenu()
 
-ui.AfkGui 		:= Gui()
+; ui.AfkGui 		:= Gui()
 dockApp 		:= Object()
 workApp			:= Object()
 cfg.file 		:= "./" ConfigFileName
@@ -126,3 +123,5 @@ ui.MainGuiTabs.Choose(cfg.mainTabList[cfg.activeMainTab])
 fadeIn()
 
 tabsChanged()
+
+setTimer () => (!winExist("ahk_id " ui.win1hwnd) && !winExist("ahk_id " ui.win2hwnd)) ? refreshWinHwnd() : 0,5000

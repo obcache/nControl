@@ -24,6 +24,33 @@ if (InStr(A_LineFile,A_ScriptFullPath))
 	}
 }
 
+hotIf(SLCapsOn)
+	hotKey("w down",SLBHop)
+hotIf()
+
+SLCapsOn(*) {
+	if getKeyState("CapsLock","T") && winActive("ahk_exe shatterline.exe")
+		return 1
+	else
+		return 0
+}
+
+SLBHop(*) {
+	CoordMode("Mouse","Client")
+	send("{w down}")
+	sleep(400)
+	send("{LShift}")
+	Sleep(400)
+	MouseMove(-100,0,30,"R")
+	MouseMove(100,0,30,"R")
+	send("{Space}")
+	sleep(300)
+	while getKeyState("W") {
+		send("{Space}")
+		sleep(50)
+	}
+}
+
 !+F::
 {
 	keyWait("F")
