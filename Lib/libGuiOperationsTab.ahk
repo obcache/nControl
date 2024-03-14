@@ -384,18 +384,18 @@ changeClockMode(*) {
 
 opsClickTimeUpdate(*) {
 	static frameNum := 1
-	static msg := "....Waiting"
+	static msg := "..Waiting for Game.."
 	ui.ClockTime := FormatTime("T12","Time")
 	if (ui.ClockMode == "Clock" && (ui.gameWindowFound || ui.clearClockAlert))
 		ui.OpsClock.Value := ui.ClockTime " "
 	else {
 			ui.OpsClockModeLabel.Text := "   NO `n GAME"
 				ui.OpsClock.ToolTip := "Click to return to clock"
-			if frameNum == 11 
-				frameNum := 0
-			frameNum += 1
+			if frameNum == 0
+				frameNum := 20
+			frameNum -= 1
 			
-			msg := subStr(msg subStr(msg,1,1),2)
+			msg := subStr(msg,frameNum,20-frameNum) subStr(msg,frameNum,19-frameNum) 
 			ui.opsClock.value := msg
 			
 		}

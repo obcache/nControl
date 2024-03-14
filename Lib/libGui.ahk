@@ -795,6 +795,8 @@ tabsChanged(*) {
 
 	switch ui.activeTab {
 		case "AFK":
+			if tabDisabled()
+				Return
 			guiVis(ui.mainGui,true)
 			guiVis(ui.afkGui,true)
 			guiVis(ui.gameSettingsGui,false)
@@ -803,6 +805,8 @@ tabsChanged(*) {
 			controlFocus(ui.buttonTower,ui.afkGui)
 			ui.previousTab := ui.activeTab			
 		case "Game":
+			if tabDisabled()
+				return
 			guiVis(ui.mainGui,true)
 			guiVis(ui.gameSettingsGui,true)
 			guiVis(ui.afkGui,false)
@@ -811,14 +815,13 @@ tabsChanged(*) {
 			controlFocus(ui.d2AlwaysRun,ui.gameSettingsGui)
 			ui.previousTab := ui.activeTab
 		case "Editor":
-			ui.mainGuiTabs.choose(ui.previousTab)
-			tabsChanged()
-			notifyOSD("This tab has been`ndisabled by the developer",2000)
-			; guiVis(ui.mainGui,true)
-			; guiVis(ui.afkGui,false)
-			; guiVis(ui.gameSettingsGui,false)
-			; guiVis(ui.editorGui,true)
-			; guiVis(ui.gameTabGui,false)
+			if tabDisabled()
+				Return
+			guiVis(ui.mainGui,true)
+			guiVis(ui.afkGui,false)
+			guiVis(ui.gameSettingsGui,false)
+			guiVis(ui.editorGui,true)
+			guiVis(ui.gameTabGui,false)
 		default:
 			guiVis(ui.gameSettingsGui,false)
 			guiVis(ui.afkGui,false)
@@ -827,9 +830,20 @@ tabsChanged(*) {
 			guiVis(ui.gameTabGui,false)
 			controlFocus(ui.mainGuiTabs,ui.mainGui)
 			ui.previousTab := ui.activeTab
-		} 
-			
+	}
 }
+
+tabDisabled() {
+	if inStr(cfg.disabledTabs,ui.activeTab) {
+		ui.mainGuiTabs.choose(ui.previousTab)
+		tabsChanged()
+		notifyOSD("This tab has been`ndisabled by the developer",2000)
+		return 1
+	}
+	return 0
+} 
+			
+
 
 guiVis(guiName,isVisible:= true) {
 	if (isVisible) {
@@ -926,16 +940,24 @@ dockBarIcons(game,operation := "") {
 				ui.dockBarWidth 		+= 1
 				ui.topDockDIMbutton			:= ui.dockBarGui.addPicture("x+8 ys+6 w24 h24 section backgroundTrans","./img/icon_DIM.png")
 				ui.dockBarWidth 		+= 32
-				ui.topDockDIMbutton.onEvent("click",d2LaunchDIMButtonClicked)
-				ui.topDocklightGGbutton		:= ui.dockBarGui.addPicture("x+2 ys-2 w28 h28 section backgroundTrans","./img/icon_lightGG.png")
+		 		ui.topDocklightGGbutton		:= ui.dockBarGui.addPicture("x+2 ys-2 w28 h28 section backgroundTrans","./img/icon_lightGG.png")
 				ui.dockBarWidth 		+= 32
 				ui.topDockBBGGbutton		:= ui.dockBarGui.addPicture("x+0 ys w28 h28 section backgroundTrans","./img/icon_blueberries.png")
+				ui.dockBarWidth 		+= 32
+				ui.topDockd2Checklistbutton		:= ui.dockBarGui.addPicture("x+0  ys w28 h28 section backgroundTrans","./img/icon_d2Checklist.png")
+				 ui.dockBarWidth 		+= 32
+				ui.topDockDIMbutton.onEvent("click",d2LaunchDIMButtonClicked)
 				ui.topDockLightGGbutton.onEvent("click",d2LaunchLightGGButtonClicked)
+				ui.topDockBBGGbutton.onEvent("click",d2LaunchBlueBerriesButtonClicked)
+				ui.topDockd2Checklistbutton.onEvent("click",d2Launchd2ChecklistButtonClicked)
 				ui.topDockLightGGbutton.toolTip := "Launch light.gg"
 				ui.topDockDIMbutton.toolTip := "Launch DIM"
 				ui.topDockBBGGbutton.toolTip := "Launch Blueberries"
-				ui.dockBarWidth 		+= 32
-				ui.topDockBBGGbutton.onEvent("click",d2LaunchBlueBerriesButtonClicked)
+				ui.topDockd2Checklistbutton.toolTip := "Launch D2 Checklist"
+				; ui.dockBarWidth 		+= 32
+				; ui.dockBarGui.addText("x+5 ys-2 w1 h32 section background" cfg.themeBright1Color,"")
+				
+
 				ui.dockBarGui.addText("x+5 ys-2 w1 h32 section background" cfg.themeBright1Color,"")
 				ui.dockBarAfkButton 	:= ui.dockBarGui.addPicture("x+-2 ys-1 w32 h33 section background" cfg.themeButtonReadyColor,ui.buttonStartAfk.value)
 				ui.dockBarWidth 		+= 32
@@ -956,7 +978,7 @@ dockBarIcons(game,operation := "") {
 
 				ui.dockBarAfkButton.onEvent("click",dockToggleAfk)
 				ui.dockBarGui.addText("x+1 ys+3 w0 h33 section background" cfg.themeBright1Color,"")
-				ui.dockBarWidth -= 1
+				ui.dockBarWidth -= 5
 				
 		case "World//Zero":
 				ui.dockBarAfkButton 	:= ui.dockBarGui.addPicture("x+0 ys w32 h33 section background" cfg.themeButtonReadyColor,ui.buttonStartAfk.value)

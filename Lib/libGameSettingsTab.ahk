@@ -90,7 +90,7 @@ loop cfg.gameModuleList.length {
 				; : ("Background" cfg.themeButtonReadyColor)),
 		; ((cfg.d2AlwaysRunEnabled) 
 			; ? ("./img/toggle_vertical_trans_on.png") 
-				; : ("./img/toggle_vertical_trans_off.png")))
+	; : ("./img/toggle_vertical_trans_off.png")))
 
 	ui.panelColoring			:= ui.gameSettingsGui.addText("x11 y79 w475 h67 background" cfg.themePanel1Color,"")
 	drawOutlineNamed("gameSettingsD2Panel",ui.gameSettingsGui,10,79,475,65,cfg.themeBright2Color,cfg.themeDark2Color,1)
@@ -106,26 +106,28 @@ loop cfg.gameModuleList.length {
 	ui.d2HoldWalkKey			:= ui.gameSettingsGui.addPicture("x+8 ys w100 h33 section backgroundTrans","./img/keyboard_key_up.png")
 	ui.d2HoldWalkKeyData 		:= ui.gameSettingsGui.addText("xs y+-28 w100 h25 center c" cfg.themeButtonAlertColor " backgroundTrans",subStr(strUpper(cfg.d2HoldWalkKey),1,8))
 	ui.d2HoldWalkKeyLabel		:= ui.gameSettingsGui.addText("xs-1 y+0 w100 h20 center c" cfg.themeFont1Color " backgroundTrans","Hold to Walk")
-	ui.d2LaunchDIMbutton		:= ui.gameSettingsGui.addPicture("xs-288 y+15 section w160 h60 backgroundTrans","./Img/button_launchDIM.png")
-	ui.d2LaunchLightGGbutton	:= ui.gameSettingsGui.addPicture("x+-4 ys w160 h60 backgroundTrans","./Img/button_launchLightGG.png")
-	; ui.d2LaunchBlueberriesButton := ui.gameSettingsGui.addPicture("x+-4 ys w160 h60 backgroundTrans","./Img/button_launchBlueberries.png")
+	ui.d2LaunchDIMbutton		:= ui.gameSettingsGui.addPicture("xs-355 y+18 section w53 h53 backgroundTrans","./Img2/d2_button_DIM.png")
+	ui.d2LaunchLightGGbutton	:= ui.gameSettingsGui.addPicture("x+10 ys w53 h53 backgroundTrans","./Img2/d2_button_LightGG.png")
+	ui.d2LaunchBlueberriesButton := ui.gameSettingsGui.addPicture("x+10 ys w53 h53 backgroundTrans","./Img2/d2_button_bbgg.png")
+	ui.d2LaunchD2CheckListButton := ui.gameSettingsGui.addPicture("x+10 ys w53 h53 backgroundTrans","./Img2/d2_button_d2CheckList.png")
 	
-	ui.d2AlwaysRun.ToolTip := "Toggles holdToCrouch"
-	ui.d2SprintKey.ToolTip 		:= "Click to Assign"
-	ui.d2SprintKeyData.ToolTip  := "Click to Assign"
-	ui.d2SprintKeyLabel.ToolTip	:= "Click to Assign"
-	ui.d2CrouchKey.ToolTip		:= "Click to Assign"
-	ui.d2CrouchKeyData.ToolTip  := "Click to Assign"
-	ui.d2CrouchKeyLabel.ToolTip	:= "Click to Assign"
+	ui.d2AlwaysRun.ToolTip 			:= "Toggles holdToCrouch"
+	ui.d2SprintKey.ToolTip 			:= "Click to Assign"
+	ui.d2SprintKeyData.ToolTip  	:= "Click to Assign"
+	ui.d2SprintKeyLabel.ToolTip		:= "Click to Assign"
+	ui.d2CrouchKey.ToolTip			:= "Click to Assign"
+	ui.d2CrouchKeyData.ToolTip  	:= "Click to Assign"
+	ui.d2CrouchKeyLabel.ToolTip		:= "Click to Assign"
 	ui.d2ToggleWalkKey.ToolTip		:= "Click to Assign"
 	ui.d2ToggleWalkKeyData.ToolTip  := "Click to Assign"
 	ui.d2ToggleWalkKeyLabel.ToolTip	:= "Click to Assign"
 	ui.d2HoldWalkKey.ToolTip		:= "Click to Assign"
-	ui.d2HoldWalkKeyData.ToolTip  := "Click to Assign"
+	ui.d2HoldWalkKeyData.ToolTip  	:= "Click to Assign"
 	ui.d2HoldWalkKeyLabel.ToolTip	:= "Click to Assign"
 	ui.d2LaunchDIMbutton.ToolTip	:= "Launch DIM in Browser"
 	ui.d2LaunchLightGGbutton.toolTip := "Launch Light.gg in Browser"
-	; ui.d2LaunchBlueberriesButton.toolTip	:= "Launch Blueberries.gg in Browser"
+	ui.d2LaunchBlueberriesButton.toolTip	:= "Launch Blueberries.gg in Browser"
+	ui.d2Launchd2CheckListButton.toolTip	:= "Launch D2Checklist.com in Browser"
 
 	ui.d2CrouchKeyData.setFont("s13")
 	ui.d2SprintKeyData.setFont("s13")
@@ -147,9 +149,15 @@ loop cfg.gameModuleList.length {
 	ui.d2HoldWalkKeyData.onEvent("click",d2HoldWalkKeyClicked)
 	ui.d2LaunchDIMbutton.onEvent("click",d2launchDIMbuttonClicked)
 	ui.d2LaunchLightGGbutton.onEvent("click",d2launchLightGGbuttonClicked)
-	; ui.d2LaunchBlueberriesButton.onEvent("click",d2LaunchBlueBerriesButtonClicked)
+	ui.d2LaunchD2checkListButton.onEvent("click",d2launchd2checklistButtonClicked)
+	 ui.d2LaunchBlueberriesButton.onEvent("click",d2LaunchBlueBerriesButtonClicked
+	 )
 	
-	
+	; createGameButtonBar(*) {
+		; for linkTarget in ui.%game%links
+			; ui.%game%%linkTargetName%%a_index%
+		
+		; }
 	toggleAlwaysRun(*) {
 		(cfg.d2AlwaysRunEnabled := !cfg.d2AlwaysRunEnabled)
 			? thisToggleOn()
@@ -180,23 +188,27 @@ loop cfg.gameModuleList.length {
 	
 
 d2LaunchDIMButtonClicked(*) {
-	ui.d2LaunchDIMbutton.value := "./Img/button_launchDIM_down.png"
-	setTimer () => ui.d2LaunchDIMbutton.value := "./Img/button_launchDIM.png",-400
+	ui.d2LaunchDIMbutton.value := "./Img2/d2_button_DIM_down.png"
+	setTimer () => ui.d2LaunchDIMbutton.value := "./Img2/d2_button_DIM.png",-400
 	
 	run("chrome.exe http://app.destinyitemmanager.com")
 }
 
 d2LaunchLightGGbuttonClicked(*) {
-	ui.d2LaunchLightGGbutton.value := "./Img/button_launchLightGG_down.png"
-	setTimer () => ui.d2LaunchLightGGbutton.value := "./Img/button_launchLightGG.png",-400
+	ui.d2LaunchLightGGbutton.value := "./Img2/d2_button_LightGG_down.png"
+	setTimer () => ui.d2LaunchLightGGbutton.value := "./Img2/d2_button_LightGG.png",-400
 	run("chrome.exe https://www.light.gg/god-roll/roll-appraiser/")	
 }
 
 d2LaunchBlueBerriesButtonClicked(*) {
-	ui.d2LaunchBlueberriesButton.value := "./Img/button_launchBlueberries_down.png"
-	setTimer () => ui.d2LaunchBlueberriesButton.value := "./Img/button_launchBlueberries.png",-400
+	ui.d2LaunchBlueberriesButton.value := "./Img2/d2_button_bbgg_down.png"
+	setTimer () => ui.d2LaunchBlueberriesButton.value := "./Img2/d2_button_bbgg.png",-400
 	run("chrome.exe https://www.blueberries.gg")
-	
+	}
+d2Launchd2CheckListButtonClicked(*) {
+	ui.d2Launchd2ChecklistButton.value := "./Img2/d2_button_d2Checklist_down.png"
+	setTimer () => ui.d2Launchd2ChecklistButton.value := "./Img2/d2_button_d2Checklist.png",-400
+	run("chrome.exe https://www.d2checklist.com")
 	}
 
 d2SprintKeyClicked(*) {
@@ -314,7 +326,6 @@ d2IsRunning(*) {
 		return 0
 }
 
-
 HotIfWinActive("ahk_exe destiny2.exe")
 	hotKey("~" cfg.d2holdWalkKey,holdToWalk)
 	hotKey(cfg.d2ToggleWalkKey,toggleAlwaysRun)
@@ -428,18 +439,17 @@ gameTabChanged(*) {
 	drawGameTabs(ui.gameTabs.value)
 	guiVis(ui.gameTabGui,true)
 	controlFocus(ui.buttonDockAfk)
-}	
+}
+
 ;ui.gameTabs.useTab("")
 ;drawOutlineNamed("GameSettingsOutline",ui.gameSettingsGui,5,0,485,173,cfg.themeFont3Color,cfg.themeFont3Color,3)
 	ui.gameTabs.useTab("World//Zero")
-	
 	ui.gameSettingsGui.addText("x10 y7 w475 h65 background" cfg.themePanel1Color,"")
 	drawOutlineNamed("w0AutoTowerOutline",ui.gameSettingsGui,10,6,475,67,cfg.themeBright2Color,cfg.themeDark2Color,1)
 	drawOutlineNamed("w0AutoTowerHorizLine",ui.gameSettingsGui,20,6,70,1,cfg.themeBackgroundColor,cfg.themeBackgroundColor,2)
 	drawOutlineNamed("w0AutoTowerVertLine",ui.gameSettingsGui,20,6,70,7,cfg.themeBackgroundColor,cfg.themeBright2Color,1)
 	ui.gameSettingsGui.addText("x21 y-2 w68 h14 c" cfg.themeFont1Color " background" cfg.themeBackgroundColor," Auto Tower")
 	drawOutlineNamed("w0AutoAfkTabs",ui.gameSettingsGui,20,6,1,7,cfg.themeDark1Color,cfg.themeBright2Color,1)
-	
 	
 	;ui.gameSettingsGui.addText("x10 y5 w475 h140 background" cfg.themePanel1Color,"")
 	;drawOutlineNamed("d2AlwaysRunOutline",ui.gameSettingsGui,10,4,475,140,cfg.themeBright2Color,cfg.themeDark2Color,1)
@@ -542,7 +552,7 @@ drawGameTabs(cfg.activeGameTab)
 		ui.toggleSilentIdle.Opt((cfg.SilentIdleEnabled := !cfg.SilentIdleEnabled) ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor))
 		ui.toggleSilentIdle.Redraw()
 	}
-	ui.toggleSilentIdle := ui.gameSettingsGui.AddPicture("xs-60 y+45 w60 h25 section vSilentIdle " (cfg.SilentIdleEnabled ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor)),((cfg.SilentIdleEnabled) ? (cfg.toggleOn) : (cfg.toggleOff)))
+	ui.toggleSilentIdle := ui.gameSettingsGui.AddPicture("xs-60 y+45 w60 h25 section vSilentIdle " (r)),((cfg.SilentIdleEnabled ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor) ? (cfg.toggleOn) : (cfg.toggleOff)))
 	ui.toggleSilentIdle.OnEvent("Click", toggleChanged)
 	ui.toggleSilentIdle.ToolTip := "Minimizes Roblox Windows While Anti-Idling"
 	ui.labelSilentIdle:= ui.gameSettingsGui.AddText("xs-8 y+0 w80 center backgroundTrans","Silent AntiIdle")

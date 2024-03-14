@@ -24,6 +24,8 @@ if (InStr(A_LineFile,A_ScriptFullPath))
 	}
 }
 
+
+
 hotIf(SLCapsOn)
 	hotKey("w down",SLBHop)
 hotIf()
@@ -92,20 +94,23 @@ SLBHop(*) {
 	if winExist("ahk_exe discord.exe") && winExist("ahk_exe foobar2000.exe")
 		dockApps()
 		
-}		
-
-
-!^Backspace::
-{
-ui.MainGui.Move(30,A_ScreenHeight-ui.TaskbarHeight-GuiH)
-winGetPos(,,,&GuiH,,ui.mainGui)
-ToggleGuiCollapse()
 }
 
+
+!^Backspace:: {
+	ui.MainGui.Move(30,A_ScreenHeight-ui.TaskbarHeight-GuiH)
+	winGetPos(,,,&GuiH,,ui.mainGui)
+	ToggleGuiCollapse()
+}
+
++Esc:: {
+	resetWindowPosition()
+}
 
 
 ^Enter::
 {
+	
 		togglePip()
 	
 	}
@@ -119,7 +124,8 @@ ToggleGuiCollapse()
 !^F1::
 {
 	Global
-	RobloxLauncher()
+
+RobloxLauncher()
 }	
 
 ;AFK Hotkeys

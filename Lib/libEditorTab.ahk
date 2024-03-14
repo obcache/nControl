@@ -16,46 +16,59 @@ inputHookAllowedKeys := "{All}{LControl}{RControl}{LAlt}{RAlt}{LShift}{RShift}{L
 GuiEditorTab() {
 	ui.editorGui := Gui()
 	ui.editorGui.Name := "nControl Game Settings"
-	ui.editorGui.BackColor := cfg.themeBackgroundColor
-	ui.editorGui.Color := cfg.themeBackgroundColor
-	ui.editorGui.MarginX := 5
-	ui.editorGui.Opt("-Caption -Border +AlwaysOnTop +ToolWindow +Owner" ui.MainGui.Hwnd)
-	ui.editorGui.SetFont("s14 c" cfg.ThemeFont1Color,"Calibri")
-	cfg.activeEditorTab := iniRead(cfg.file,"Interface","ActiveEditorTab","Hotkeys")
-	ui.editorTabs := ui.editorGui.addTab3("x-1 y-5 w497 h181 bottom c" cfg.themeFont1Color " choose" cfg.activeEditorTab,["Hotkeys","Keybinds","Macros"])
-	drawOutlineNamed("gameSettingsOutline",ui.editorGui,0,0,488,180,cfg.themeBorderDarkColor,cfg.themeBorderLightColor,0)
-	ui.editorTabs.choose(cfg.activeEditorTab)
-	ui.editorTabs.setFont("s14")
-	ui.editorTabs.onEvent("Change",editorTabChanged)
+; ui.editorGui.BackColor := cfg.themeBackgroundColor
+	; ui.editorGui.Color := cfg.themeBackgroundColor
+	; ui.editorGui.MarginX := 5
+	; ui.editorGui.Opt("-Caption -Border +AlwaysOnTop +ToolWindow +Owner" ui.MainGui.Hwnd)
+	; ui.editorGui.SetFont("s14 c" cfg.ThemeFont1Color,"Calibri")
+	; cfg.activeEditorTab := iniRead(cfg.file,"Interface","ActiveEditorTab","Hotkeys")
+	; ui.editorTabs := ui.editorGui.addTab3("x-1 y-5 w497 h181 altSubmit bottom c" cfg.themeFont1Color " choose" cfg.activeEditorTab,["Hotkeys","Keybinds","Macros"])
+	; drawOutlineNamed("gameSettingsOutline",ui.editorGui,0,0,488,180,cfg.themeBorderDarkColor,cfg.themeBorderLightColor,0)
+	; ui.editorTabs.value := cfg.activeEditorTab
+	; ui.editorTabs.setFont("s14")
+	; ui.editorTabs.onEvent("Change",editorTabChanged)
 	
 	
 
-	ui.editorTabs.useTab("Hotkeys") 
+	; ui.editorTabs.useTab("Hotkeys") 
 
-	ui.editorGui.setFont("s10")
-	ui.editorGui.addText("x5 y5 w480 h130 background" cfg.themePanel1Color,"")
-	drawOutlineNamed("d2AlwaysRunOutline",ui.editorGui,5,4,480,132,cfg.themeBright2Color,cfg.themeDark2Color,1)
-	drawOutlineNamed("d2AlwaysRunOutline",ui.editorGui,15,4,93,1,cfg.themeBackgroundColor,cfg.themeBackgroundColor,2)
-	drawOutlineNamed("d2AlwaysRunOutline",ui.editorGui,15,4,93,7,cfg.themeBackgroundColor,cfg.themeBright2Color,1)
-	ui.editorGui.addText("x16 y-4 w91 h14 c" cfg.themeFont1Color " background" cfg.themeBackgroundColor,"  App Shortcuts")
-	drawOutlineNamed("d2AlwaysRunOutline",ui.editorGui,15,4,1,7,cfg.themeDark1Color,cfg.themeBright2Color,1)
-	ui.hotKeyLV := ui.editorGui.addListView("x7 y0 w470 h126",["Name","Keybind","Exe","Desc"])
-	guiVis(ui.editorGui,false)
-	ui.editorGui.show("w485 h175 noActivate")
+	; ui.editorGui.setFont("s10")
+	; ui.editorGui.addText("x5 y5 w480 h130 background" cfg.themePanel1Color,"")
+	; drawOutlineNamed("d2AlwaysRunOutline",ui.editorGui,5,4,480,132,cfg.themeBright2Color,cfg.themeDark2Color,1)
+	; drawOutlineNamed("d2AlwaysRunOutline",ui.editorGui,15,4,93,1,cfg.themeBackgroundColor,cfg.themeBackgroundColor,2)
+	; drawOutlineNamed("d2AlwaysRunOutline",ui.editorGui,15,4,93,7,cfg.themeBackgroundColor,cfg.themeBright2Color,1)
+	; ui.editorGui.addText("x16 y-4 w91 h14 c" cfg.themeFont1Color " background" cfg.themeBackgroundColor,"  App Shortcuts")
+	; drawOutlineNamed("d2AlwaysRunOutline",ui.editorGui,15,4,1,7,cfg.themeDark1Color,cfg.themeBright2Color,1)
+	; ui.listList := ui.editorGui.addListBox("background" cfg.themeBackgroundColor)
+
+	; guiVis(ui.editorGui,false)
+	; ui.editorGui.show("w485 h175 noActivate")
 
 		
 		
 
 		
-	editorTabChanged(*) {
-		cfg.activeEditorTab := ui.editorTabs.value
-		iniWrite(cfg.activeEditorTab,cfg.file,"Interface","ActiveEditorTab")
-		controlFocus(ui.editorTabs)
-	}	
-;ui.editorTabs.useTab("")
+; editorTabChanged(*) {
+	; cfg.activeEditorTab := ui.editorTabs.value
+	; iniWrite(cfg.activeEditorTab,cfg.file,"Interface","ActiveEditorTab")
+	; controlFocus(ui.editorTabs)
+; }	
 
-	
+; readListFile()
+; readListFile() {
+	; cfg.listIndex	:= strSplit(iniRead(cfg.listDataFile,"ReadOnly","ListIndex","0:ListIndex,1:ExcludedApps,2:AutoStartApps,3:AutoStopApps,4:Hotkeys,5:KeyBinds"),":")
+	; for line in cfg.listIndex {
+		; ui.listList.add([line[1],line[2]])
+	; }
+; }
 
+; getValue(&key,&value,arrayData) {
+	; key 	:= strSplit(arrayData,":")[1]
+	; value	:= strSplit(arrayData,":")[2]
+; }
+; writeListFile() {
+	; iniWrite(cfg.listIndex,cfg.listDataFile,"ReadOnly","ListIndex")
+; }
 
 }	; ui.keyInputGui	:= gui()
 	; ui.keyInputGui.opt("-caption toolWindow owner" ui.editorGui.hwnd)

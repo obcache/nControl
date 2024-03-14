@@ -274,7 +274,15 @@ preAutoExec(InstallDir,ConfigFileName) {
 			fileInstall("./img/icon_DIM.png",installDir "/img/icon_dim.png",1)
 			fileInstall("./img/icon_blueberries.png",installDir "/img/icon_blueberries.png",1)
 			fileInstall("./img/icon_lightgg.png",installDir "/img/icon_lightgg.png",1)
-
+			fileInstall("./img2/d2_button_dim.png",installDir "/img2/d2_button_dim.png",1)
+			fileInstall("./img2/d2_button_dim_down.png",installDir "/img2/d2_button_dim_down.png",1)
+			fileInstall("./img2/d2_button_bbgg.png",installDir "/img2/d2_button_bbgg.png",1)
+			fileInstall("./img2/d2_button_bbgg_down.png",installDir "/img2/d2_button_bbgg_down.png",1)
+			fileInstall("./img2/d2_button_lightgg.png",installDir "/img2/d2_button_lightgg.png",1)
+			fileInstall("./img2/d2_button_lightgg_down.png",installDir "/img2/d2_button_lightgg_down.png",1)
+			fileInstall("./img2/d2_button_d2Checklist.png",installDir "/img2/d2_button_d2Checklist.png",1)
+			fileInstall("./img2/d2_button_d2Checklist_down.png",installDir "/img2/d2_button_d2Checklist_down.png",1)
+			
 			
 			
 			;IMGv2 below
@@ -496,10 +504,13 @@ cfgLoad(&cfg, &ui) {
 	cfg.consoleVisible			:= IniRead(cfg.file,"System","consoleVisible",false)
 	cfg.ToolTipsEnabled 		:= IniRead(cfg.file,"System","ToolTipsEnabled",true)
 	cfg.releaseChannel			:= IniRead(cfg.file,"System","ReleaseChannel","Stable")
+	cfg.disabledTabs 			:= iniRead(cfg.file,"System","DisabledTabs","Audio,Editor")
+	cfg.listDataFile			:= iniRead(cfg.file,"System","ListDataFile","./listData.ini")
 	cfg.toggleOn				:= IniRead(cfg.file,"Interface","ToggleOnImage","./Img/toggle_on.png")
 	cfg.toggleOff				:= IniRead(cfg.file,"Interface","ToggleOffImage","./Img/toggle_off.png")
 	cfg.activeMainTab			:= IniRead(cfg.file,"Interface","activeMainTab",1)
 	cfg.activeGameTab  			:= IniRead(cfg.file,"Interface","ActiveGameTab",1)
+	cfg.activeEditorTab			:= iniRead(cfg.file,"Interface","ActiveEditorTab",1)
 	cfg.AlwaysOnTopEnabled		:= IniRead(cfg.file,"Interface","AlwaysOnTopEnabled",true)
 	cfg.AnimationsEnabled		:= IniRead(cfg.file,"Interface","AnimationsEnabled",true)
 	cfg.ColorPickerEnabled 		:= IniRead(cfg.file,"Interface","ColorPickerEnabled",true)
@@ -613,9 +624,12 @@ WriteConfig() {
 	IniWrite(cfg.autoDetectGame,cfg.file,"Game","AutoDetectGame")
 	iniWrite(cfg.excludedApps,cfg.file,"System","ExcludedApps")
 	IniWrite(cfg.game,cfg.file,"Game","Game")
+	iniWrite(cfg.listDataFile,cfg.file,"System","ListDataFile")
 	IniWrite(cfg.mainScriptName,cfg.file,"System","ScriptName")
 	IniWrite(cfg.installDir,cfg.file,"System","InstallDir")
 	IniWrite(cfg.mainGui,cfg.file,"System","MainGui")
+	iniWrite(cfg.disabledTabs,cfg.file,"System","DisabledTabs")
+
 	iniWrite(cfg.startMinimizedEnabled,cfg.file,"System","StartMinimizedEnabled")
 	IniWrite(ui.releaseChannelDDL.value,cfg.file,"System","ReleaseChannel")
 	IniWrite(arr2str(cfg.gameModuleList),cfg.file,"Game","GameModuleList")
@@ -680,6 +694,7 @@ WriteConfig() {
 		IniWrite(cfg.themeButtonAlertColor,cfg.themeFile,"Custom","ThemeButtonAlertColor")
 		IniWrite(cfg.activeMainTab,cfg.file,"Interface","ActiveMainTab")
 		IniWrite(cfg.activeGameTab,cfg.file,"Interface","ActiveGameTab")
+		iniWrite(cfg.activeEditorTab,cfg.file,"Interface","ActiveEditorTab")
 		iniWrite(cfg.topDockEnabled,cfg.file,"Interface","TopDockEnabled")
 		
 		iniWrite(cfg.SLBHopKey,cfg.file,"Game","ShatterLineBunnyHopKey")

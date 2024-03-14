@@ -419,7 +419,7 @@ nControl(Status,&cfg)
 		
 		DockX := Left - cfg.DockMarginSize
 		DockY := Top + WorkAreaHeightWhenDocked - cfg.DockMarginSize
-		DockW := Right - Left + (cfg.DockMarginSize * 2)
+		DockW := Right - Left + ((cfg.DockMarginSize-1) * 2)
 		DockH := cfg.DockHeight + (cfg.DockMarginSize * 2)
 		debugLog("DockApp Pos: x" DockX " y" DockY " w" DockW " h" DockH)
 		;MsgBox("about to move")
