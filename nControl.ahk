@@ -1,4 +1,4 @@
-A_FileVersion := "4.2.1.7"
+A_FileVersion := "4.2.3.1"
 ;@Ahk2Exe-Let FileVersion=%A_PriorLine~U)^(.+"){1}(.+)".*$~$2% 
 
 A_AppName := "nControl"
@@ -123,5 +123,3 @@ ui.MainGuiTabs.Choose(cfg.mainTabList[cfg.activeMainTab])
 fadeIn()
 
 tabsChanged()
-
-setTimer () => (!winExist("ahk_id " ui.win1hwnd) && !winExist("ahk_id " ui.win2hwnd)) ? refreshWinHwnd() : 0,5000

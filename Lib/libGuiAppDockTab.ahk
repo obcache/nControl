@@ -460,7 +460,7 @@ nControl(Status,&cfg)
 		SetWinDelay(150)
 
 
-		Send "^+{PgDn}"
+		;Send "^+{PgDn}"
 		WinRedraw("ahk_exe " ui.app2filename.text)
 		WinMove(DockX,DockY-4,DockW,DockH+4, "ahk_exe " ui.app2filename.text)
 		; drawDivider(DockY)

@@ -332,7 +332,7 @@ CollapseGui() {
 	guiVis(ui.afkGui,false)
 	guiVis(ui.gameSettingsGui,false)
 	if (cfg.AnimationsEnabled) {
-		While GuiWidth > 115 {
+		While GuiWidth > 250 {
 			ui.MainGui.Move(mainX,mainY,GuiWidth,)
 			GuiWidth -= 30
 			sleep(20)
@@ -365,7 +365,7 @@ UncollapseGui() {
 			sleep(20)
 		}
 	}
-	guiVis(ui.gameTabGui,true)
+
 	if (cfg.AnimationsEnabled) {
 		While GuiWidth < 575 {
 			ui.MainGui.Move(mainX,mainY,GuiWidth,)
@@ -374,7 +374,10 @@ UncollapseGui() {
 		}
 	}
 	ui.mainGui.move(,,562,)
-}
+	guiVis(ui.gameTabGui,true)
+	tabsChanged()
+	guiVis(ui.titleBarButtonGui,true)
+	}
 
 mainGuiMove() {
 	winGetPos(&mainX,&mainY,&mainW,&mainH,ui.mainGui)
@@ -559,16 +562,46 @@ stopGaming(*) {
 }
 	
 startGaming(*) {
-	while a_index <= cfg.gamingStartProc.length {
-		try
-			run(cfg.gamingStartProc[a_index])
-	}
+	; while a_index <= cfg.gamingStartProc.length {
+		; try
+			; run(cfg.gamingStartProc[a_index])
+		run('C:\Users\cashm\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\5) Utilities\Discord.lnk')
+		launchSuccessful := false
+		timeoutCount := 0
+		while !launchSuccessful and timeoutCount < 60 {
+			timeoutCount += 1
+			sleep(1000)
+			if winExist("ahk_exe discord.exe")
+				launchSuccessful := true
+		}
+		if (launchSuccessful) {
+			winActivate("ahk_exe discord.exe")
+		} else {
+			notifyOSD("Problems launching Discord",2000)
+			Return
+		}
 	
-	; try {
-		; run('./redist/nircmd setdefaultsounddevice "Microphone"')
-		; run('./redist/nircmd setdefaultsounddevice "Speakers"')
-		; run('./redist/nircmd setdefaultsounddevice "Headphones"')
-	; }	
+		run('E:\Music\foobar2000\foobar2000.exe')
+		launchSuccessful := false
+		timeoutCount := 0
+		while !launchSuccessful and timeoutCount < 60 {
+			timeoutCount += 1
+			sleep(1000)
+			if winExist("ahk_exe foobar2000.exe") {
+				launchSuccessful := true
+			}
+		}
+		if (launchSuccessful) {
+			winActivate("ahk_exe foobar2000.exe")
+
+		} else {
+			notifyOSD("Problems launching Foobar2000",2000)
+			Return
+		}
+		if winExist("ahk_exe discord.exe") && winExist("ahk_exe foobar2000.exe")
+			dockApps()
+		
+	
 }
 
 exitMenuShow() {
@@ -587,7 +620,7 @@ exitMenuShow() {
 	ui.startGamingButton.onEvent("Click",stopGaming)
 	WinSetTransColor(ui.transparentColor,ui.exitMenuGui)
 	drawOutlineNamed("exitMenuBorder",ui.exitMenuGui,0,0,74,68,cfg.themeFont3Color,cfg.themeFont3Color,2)
-	ui.exitMenuGui.show("x" tbX+470 " y" tbY-70 " AutoSize noActivate")
+	ui.exitMenuGui.show("x" tbX " y" tbY-70 " AutoSize noActivate")
 	
 
 }
