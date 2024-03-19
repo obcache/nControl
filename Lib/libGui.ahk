@@ -332,6 +332,12 @@ CollapseGui() {
 	guiVis(ui.afkGui,false)
 	guiVis(ui.gameSettingsGui,false)
 	if (cfg.AnimationsEnabled) {
+		While GuiWidth > 115 {
+			ui.MainGui.Move(mainX,mainY,GuiWidth,)
+			GuiWidth -= 30
+			sleep(20)
+		}		
+		guiVis(ui.gameTabGui,false)
 		While GuiWidth > 5 {
 			ui.MainGui.Move(mainX,mainY,GuiWidth,)
 			GuiWidth -= 30
@@ -353,6 +359,14 @@ UncollapseGui() {
 	GuiWidth := 0
 	guiVis(ui.titleBarButtonGui,false)
 	if (cfg.AnimationsEnabled) {
+		While GuiWidth < 160 {
+			ui.MainGui.Move(mainX,mainY,GuiWidth,)
+			GuiWidth += 30
+			sleep(20)
+		}
+	}
+	guiVis(ui.gameTabGui,true)
+	if (cfg.AnimationsEnabled) {
 		While GuiWidth < 575 {
 			ui.MainGui.Move(mainX,mainY,GuiWidth,)
 			GuiWidth += 30
@@ -360,9 +374,14 @@ UncollapseGui() {
 		}
 	}
 	ui.mainGui.move(,,562,)
+}
+
+mainGuiMove() {
 	winGetPos(&mainX,&mainY,&mainW,&mainH,ui.mainGui)
 	ui.gameSettingsGui.move(mainX+35,mainY+35,495,)
 	ui.afkGui.move(mainX+40,mainY+50,275,)
+	ui.gameSettingsGui.move((winx+35)*(A_ScreenDPI/96),(winy+32)*(A_ScreenDPI/96))
+	ui.gameTabGui.move((mainX+35)*(A_ScreenDPI/96),(mainY+184)*(A_ScreenDPI/96))
 	guiVis(ui.titleBarButtonGui,true)
 	tabsChanged()
 }

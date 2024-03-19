@@ -970,7 +970,4 @@ removeGame(*) {
 	ui.GameDDL.Choose(1)
 }
 
-	
-
-	
-	
+ 

@@ -12,13 +12,12 @@ if (InStr(A_LineFile,A_ScriptFullPath))
 ;libGuiSetupTab
 	
 inputHookAllowedKeys := "{All}{LControl}{RControl}{LAlt}{RAlt}{LShift}{RShift}{LWin}{RWin}{AppsKey}{F1}{F2}{F3}{F4}{F5}{F6}{F7}{F8}{F9}{F10}{F11}{F12}{Home}{End}{PgUp}{PgDn}{Del}{Ins}{Left}{Right}{Up}{Down}{BS}{CapsLock}{NumLock}{PrintScreen}{Pause}{Tab}{Enter}{ScrollLock}"	
-GuiGameTab(&ui,&cfg)
-{
-global
-loop cfg.gameModuleList.length {
-	if fileExist("./lib/lib" cfg.gameModuleList[A_Index])
-		runWait("./lib/lib" cfg.gameModuleList[A_Index])
-}
+GuiGameTab(&ui,&cfg) {
+	global	
+	loop cfg.gameModuleList.length {
+		if fileExist("./lib/lib" cfg.gameModuleList[A_Index])
+			runWait("./lib/lib" cfg.gameModuleList[A_Index])
+	}
 
 	ui.gameSettingsGui := Gui()
 	ui.gameSettingsGui.Name := "nControl Game Settings"
@@ -27,9 +26,7 @@ loop cfg.gameModuleList.length {
 	ui.gameSettingsGui.MarginX := 5
 	ui.gameSettingsGui.Opt("-Caption -Border +AlwaysOnTop +ToolWindow +Owner" ui.MainGui.Hwnd)
 	ui.gameSettingsGui.SetFont("s14 c" cfg.ThemeFont1Color,"Calibri")
-;	winSetTransColor(ui.transparentColor,ui.gameSettingsGui)
 	ui.gameTabs := ui.gameSettingsGui.addTab3("x-1 y-5 w497 h181 0x400 bottom c" cfg.themeFont1Color " choose" cfg.activeGameTab,cfg.gameModuleList)
-	;drawOutlineNamed("gameSettingsOutline",ui.gameSettingsGui,0,180,488,20,cfg.themeBackgroundColor,cfg.themeBackgroundColor,10)
 	ui.gameTabs.choose(cfg.gameModuleList[cfg.activeGameTab])
 	ui.gameTabs.setFont("s10")
 	ui.gameTabs.onEvent("Change",gameTabChanged)
@@ -42,27 +39,9 @@ loop cfg.gameModuleList.length {
 			ui.gameTabs.useTab(cfg.gameList[a_index])
 		}
 	}
-} ;End Game Profile List Modal Gui
- 
+} 
 
-	; ui.osd := gui()
-	; ui.osd.opt("-caption +alwaysOnTop -Border 0x4000000 +owner" ui.MainGui.Hwnd)
-	; ui.osd.color := "020301"
-	; ui.osd.backColor := "020301"
-	; ui.osdText := ui.osd.addText("w110 r9 background020301" ,"Text Here")
-	; ui.osdText.setFont("c00FFFF")
-	; ui.pauseIcon := ui.osd.addText("x108 y6 w10 h10 background880000"," ")
-	; ui.pauseIcon.onEvent("Click",toggleOSD)
-	; WinSetTransColor("020301",ui.osd.hwnd)
-	; winSetTransparent(100,ui.osd.hwnd)
-	; ui.osd.show("x10 y" A_ScreenHeight/2 "w130 noActivate")
-	; ui.osdHidden := false
-	; toggleOSD()
-	; ui.osdText.text := "`n`n`n`n`n`n`n`n`n"
-	; tmpStatusText := ""
-
-
-	ui.gameTabs.useTab("Destiny2") 
+ui.gameTabs.useTab("Destiny2") 
 	ui.d2Sliding := false
 	ui.d2HoldingRun := false         
 	ui.d2cleanupNeeded := false
@@ -78,19 +57,12 @@ loop cfg.gameModuleList.length {
 	drawOutlineNamed("d2AlwaysRunOutline",ui.gameSettingsGui,20,6,1,7,cfg.themeDark1Color,cfg.themeBright2Color,1)
 
 	ui.d2AlwaysRun := ui.gameSettingsGui.addPicture("x19 y18 w30 h45 section " 
-		((cfg.d2AlwaysRunEnabled) 
-			? ("Background" cfg.ThemeButtonOnColor) 
-				: ("Background" cfg.themeButtonReadyColor)),
-		((cfg.d2AlwaysRunEnabled) 
-			? ("./img/toggle_vertical_trans_on.png") 
-				: ("./img/toggle_vertical_trans_off.png")))
-	; ui.dockBarD2AlwaysRun := ui.gameSettingsGui.addPicture("x22 y17 w30 h45 section " 
-		; ((cfg.d2AlwaysRunEnabled) 
-			; ? ("Background" cfg.ThemeButtonOnColor) 
-				; : ("Background" cfg.themeButtonReadyColor)),
-		; ((cfg.d2AlwaysRunEnabled) 
-			; ? ("./img/toggle_vertical_trans_on.png") 
-	; : ("./img/toggle_vertical_trans_off.png")))
+	((cfg.d2AlwaysRunEnabled) 
+		? ("Background" cfg.ThemeButtonOnColor) 
+			: ("Background" cfg.themeButtonReadyColor)),
+	((cfg.d2AlwaysRunEnabled) 
+		? ("./img/toggle_vertical_trans_on.png") 
+			: ("./img/toggle_vertical_trans_off.png")))
 
 	ui.panelColoring			:= ui.gameSettingsGui.addText("x11 y79 w475 h67 background" cfg.themePanel1Color,"")
 	drawOutlineNamed("gameSettingsD2Panel",ui.gameSettingsGui,10,79,475,65,cfg.themeBright2Color,cfg.themeDark2Color,1)
@@ -110,7 +82,7 @@ loop cfg.gameModuleList.length {
 	ui.d2LaunchLightGGbutton	:= ui.gameSettingsGui.addPicture("x+10 ys w53 h53 backgroundTrans","./Img2/d2_button_LightGG.png")
 	ui.d2LaunchBlueberriesButton := ui.gameSettingsGui.addPicture("x+10 ys w53 h53 backgroundTrans","./Img2/d2_button_bbgg.png")
 	ui.d2LaunchD2CheckListButton := ui.gameSettingsGui.addPicture("x+10 ys w53 h53 backgroundTrans","./Img2/d2_button_d2CheckList.png")
-	
+
 	ui.d2AlwaysRun.ToolTip 			:= "Toggles holdToCrouch"
 	ui.d2SprintKey.ToolTip 			:= "Click to Assign"
 	ui.d2SprintKeyData.ToolTip  	:= "Click to Assign"
@@ -137,7 +109,7 @@ loop cfg.gameModuleList.length {
 	ui.d2SprintKeyLabel.setFont("s11")
 	ui.d2ToggleWalkKeyLabel.setFont("s11")
 	ui.d2HoldWalkKeyLabel.setFont("s11")
-	
+
 	ui.d2AlwaysRun.OnEvent("Click", toggleAlwaysRun)
 	ui.d2CrouchKey.onEvent("click",d2CrouchKeyClicked)
 	ui.d2SprintKey.onEvent("click",d2SprintKeyClicked)
@@ -150,39 +122,34 @@ loop cfg.gameModuleList.length {
 	ui.d2LaunchDIMbutton.onEvent("click",d2launchDIMbuttonClicked)
 	ui.d2LaunchLightGGbutton.onEvent("click",d2launchLightGGbuttonClicked)
 	ui.d2LaunchD2checkListButton.onEvent("click",d2launchd2checklistButtonClicked)
-	 ui.d2LaunchBlueberriesButton.onEvent("click",d2LaunchBlueBerriesButtonClicked
-	 )
-	
-	; createGameButtonBar(*) {
-		; for linkTarget in ui.%game%links
-			; ui.%game%%linkTargetName%%a_index%
-		
-		; }
-	toggleAlwaysRun(*) {
-		(cfg.d2AlwaysRunEnabled := !cfg.d2AlwaysRunEnabled)
-			? thisToggleOn()
-			: thisToggleOff()
+	ui.d2LaunchBlueberriesButton.onEvent("click",d2LaunchBlueBerriesButtonClicked
+)
 
-		thisToggleOn() {
-			ui.d2AlwaysRun.Opt("Background" cfg.ThemeButtonOnColor)
-			ui.d2AlwaysRun.value := "./img/toggle_vertical_trans_on.png"
-			try {
-				ui.dockBarD2AlwaysRun.Opt("Background" cfg.ThemeButtonOnColor)
-				ui.dockBarD2AlwaysRun.value := "./img/toggle_vertical_trans_on.png"
-			}
+toggleAlwaysRun(*) {
+	(cfg.d2AlwaysRunEnabled := !cfg.d2AlwaysRunEnabled)
+		? thisToggleOn()
+		: thisToggleOff()
+
+	thisToggleOn() {
+		ui.d2AlwaysRun.Opt("Background" cfg.ThemeButtonOnColor)
+		ui.d2AlwaysRun.value := "./img/toggle_vertical_trans_on.png"
+		try {
+			ui.dockBarD2AlwaysRun.Opt("Background" cfg.ThemeButtonOnColor)
+			ui.dockBarD2AlwaysRun.value := "./img/toggle_vertical_trans_on.png"
 		}
-		thisToggleOff() {
-			ui.d2AlwaysRun.opt("background" cfg.ThemeButtonReadyColor)
-			ui.d2AlwaysRun.value := "./img/toggle_vertical_trans_off.png"
-			try {
-				ui.dockBarD2AlwaysRun.opt("background" cfg.ThemeButtonReadyColor)
-				ui.dockBarD2AlwaysRun.value := "./img/toggle_vertical_trans_off.png"
-			}
+	}
+	thisToggleOff() {
+		ui.d2AlwaysRun.opt("background" cfg.ThemeButtonReadyColor)
+		ui.d2AlwaysRun.value := "./img/toggle_vertical_trans_off.png"
+		try {
+			ui.dockBarD2AlwaysRun.opt("background" cfg.ThemeButtonReadyColor)
+			ui.dockBarD2AlwaysRun.value := "./img/toggle_vertical_trans_off.png"
 		}
-	 send("{" cfg.d2ToggleWalkKey " Down}")
-	 sleep(150)
-	 send("{" cfg.d2ToggleWalkKey "}")
-	 SetCapsLockState("Off")
+	}
+send("{" cfg.d2ToggleWalkKey " Down}")
+sleep(150)
+send("{" cfg.d2ToggleWalkKey "}")
+SetCapsLockState("Off")
 
 }
 	
@@ -391,58 +358,8 @@ d2reload(*) {
 	setTimer () => ui.d2Reloading := false, -2000
 	ui.d2cleanupNeeded := true
 }
-	
-; ui.gameTabs.useTab("Fortnite")
-	; ui.holdToCrouchToggle := ui.gameSettingsGui.AddPicture("x15 y15 w60 h25 section vHoldToCrouch " ((cfg.holdToCrouchEnabled) 
-		; ? ("Background" cfg.ThemeButtonOnColor) 
-			; : ("Background" cfg.ThemeButtonReadyColor)),((cfg.holdToCrouchEnabled) 
-		; ? (cfg.toggleOn) 
-			; : (cfg.toggleOff)))
-
-	; ui.holdToCrouchToggle.OnEvent("Click", toggleChanged)
-	; ui.holdToCrouchToggle.ToolTip := "Toggles holdToCrouch"
-	; ui.leeabelToolTips := ui.gameSettingsGui.AddText("x+3 ys+3 BackgroundTrans","Hold to Crouch")
-	; ToggleHoldToCrouch(*)
-	; {
-		; ui.toggleHoldToCrouch.Opt((cfg.holdToCrouch := !cfg.holdToCrouchEnabled) ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor))
-		; ui.ToggleHoldToCrouch.Redraw()
-	; }
 
 
-	; ui.gameTabs.useTab("CS2")
-	; ui.cs2holdScope := ui.gameSettingsGui.addPicture("x15 y15 w60 h25 section vAholdScope " 
-		; ((cfg.d2AlwaysRunEnabled) 
-			; ? ("Background" cfg.ThemeButtonOnColor) 
-				; : ("Background" cfg.themeButtonReadyColor)),((cfg.cs2holdToScopeEnabled) 
-			; ? (cfg.toggleOn) 
-				; : (cfg.toggleOff)))
-
-	; ui.cs2holdScope.OnEvent("Click", toggleChanged)
-	; ui.cs2holdScope.ToolTip := "Toggles holdToScope"
-	; ui.labelToolTips := ui.gameSettingsGui.AddText("x+3 ys-1 BackgroundTrans","Hold to Scope")	
-
-; drawOutlineNamed("osdMessage",ui.osd,2,2,120,126,"FF55bb","BB00fF",2)
-; drawOutlineNamed("gameSettingsExterior",ui.gameSettingsGui,5,0,485,170,cfg.themeBorderDarkColor,cfg.themeBorderLightColor,2)	
-	
-; osdMessage(msgText) {
-	; global
-	; tmpOsdText := SubStr(ui.osdText.text, InStr(ui.osdText.text,"`n") + 1)
-	; ui.osdText.text := tmpOsdText "`n" msgText
-; }
-
-; toggleOSD(*) {
-	; (ui.osdHidden := !ui.osdHidden) ? winSetTransparent(0,ui.osd) : (winSetTransparent(255,ui.osd),WinSetTransColor("020301",ui.osd))
-; }
-
-gameTabChanged(*) {
-	cfg.activeGameTab := ui.gametabs.value
-	drawGameTabs(ui.gameTabs.value)
-	guiVis(ui.gameTabGui,true)
-	controlFocus(ui.buttonDockAfk)
-}
-
-;ui.gameTabs.useTab("")
-;drawOutlineNamed("GameSettingsOutline",ui.gameSettingsGui,5,0,485,173,cfg.themeFont3Color,cfg.themeFont3Color,3)
 	ui.gameTabs.useTab("World//Zero")
 	ui.gameSettingsGui.addText("x10 y7 w475 h65 background" cfg.themePanel1Color,"")
 	drawOutlineNamed("w0AutoTowerOutline",ui.gameSettingsGui,10,6,475,67,cfg.themeBright2Color,cfg.themeDark2Color,1)
@@ -450,29 +367,7 @@ gameTabChanged(*) {
 	drawOutlineNamed("w0AutoTowerVertLine",ui.gameSettingsGui,20,6,70,7,cfg.themeBackgroundColor,cfg.themeBright2Color,1)
 	ui.gameSettingsGui.addText("x21 y-2 w68 h14 c" cfg.themeFont1Color " background" cfg.themeBackgroundColor," Auto Tower")
 	drawOutlineNamed("w0AutoAfkTabs",ui.gameSettingsGui,20,6,1,7,cfg.themeDark1Color,cfg.themeBright2Color,1)
-	
-	;ui.gameSettingsGui.addText("x10 y5 w475 h140 background" cfg.themePanel1Color,"")
-	;drawOutlineNamed("d2AlwaysRunOutline",ui.gameSettingsGui,10,4,475,140,cfg.themeBright2Color,cfg.themeDark2Color,1)
-
 	ui.gameSettingsGui.setFont("s10")
-	; ui.w0dualPerkSwap := ui.gameSettingsGui.addPicture("x20 y15 w60 h25 section "
-		; ((cfg.w0DualPerkSwapEnabled)
-			; ? ("Background" cfg.ThemeButtonOnColor)
-				; : ("Background" cfg.themeButtonReadyColor)),((cfg.w0DualPerkSwapEnabled)
-			; ? (cfg.toggleOn)
-				; : (cfg.toggleOff)))
-				
-	; ui.w0dualPerkSwap.onEvent("Click",PerkSwapToggleChanged)
-	; ui.w0DualPerkSwap.toolTip := "Ctrl+Alt+LeftClick swaps effective perks between weapons (dual wielders only)"
-	; ui.labelW0DualPerkSwap := ui.gameSettingsGui.addText("ys w80 backgroundTrans","Perk Swap")
-	
-	; perkSwapToggleChanged(toggleControl,*) {
-		; toggleControl.value := 
-			; (cfg.w0DualPerkSwapEnabled := !cfg.w0DualPerkSwapEnabled)
-				; ? (toggleControl.Opt("Background" cfg.ThemeButtonOnColor),cfg.toggleOn)
-				; : (toggleControl.Opt("Background" cfg.ThemeButtonReadyColor),cfg.toggleOff)
-		
-	; }	
 	ui.toggleCelestialTower := ui.gameSettingsGui.AddPicture("x20 y20 w60 h25 section vCelestialTower " (cfg.CelestialTowerEnabled ? ("Background" cfg.ThemeButtonAlertColor) : ("Background" cfg.ThemeButtonAlertColor)),((cfg.CelestialTowerEnabled) ? "./img/towerToggle_celestial.png" : "./img/towerToggle_infinite.png"))
 	ui.toggleCelestialTower.OnEvent("Click", towerToggleChanged)
 	ui.toggleCelestialTower.ToolTip := "Toggles between Infinite and Celestial Towers."
@@ -488,7 +383,6 @@ gameTabChanged(*) {
 	ui.labelCelestialTower:= ui.gameSettingsGui.AddText("xs-220 y+-1 w60 section backgroundTrans","Tower Type")
 	ui.labelTowerTiming := ui.gameSettingsGui.AddText("ys w160 center section backgroundTrans","Cycle Length")	
 	drawOutlineNamed("towerCycleLength",ui.gameSettingsGui,239,19,36,31,cfg.themeDark2Color,cfg.themeBright2Color,1)
-	
 	ui.towerIntervalSlider.OnEvent("Change",towerIntervalChanged)
 	ui.towerIntervalSlider.ToolTip := "Tower Restart Interval"
 	ToggleCelestialTower(*)
@@ -500,7 +394,20 @@ gameTabChanged(*) {
 		cfg.towerInterval := ui.towerIntervalSlider.Value
 	}
 
-drawGameTabs(tabNum := 1) {	
+	ToggleSilentIdle(*)
+	{
+		ui.toggleSilentIdle.Opt((cfg.SilentIdleEnabled := !cfg.SilentIdleEnabled) ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor))
+		ui.toggleSilentIdle.Redraw()
+	}
+	ui.toggleSilentIdle := ui.gameSettingsGui.AddPicture("xs-60 y+45 w60 h25 section vSilentIdle " (r)),((cfg.SilentIdleEnabled ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor) ? (cfg.toggleOn) : (cfg.toggleOff)))
+	ui.toggleSilentIdle.OnEvent("Click", toggleChanged)
+	ui.toggleSilentIdle.ToolTip := "Minimizes Roblox Windows While Anti-Idling"
+	ui.labelSilentIdle:= ui.gameSettingsGui.AddText("xs-8 y+0 w80 center backgroundTrans","Silent AntiIdle")
+	
+	
+	
+	
+	drawGameTabs(tabNum := 1) {	
 	try	 
 		ui.gameTabGui.destroy()
 	ui.gameTabGui := gui()
@@ -521,7 +428,7 @@ drawGameTabs(tabNum := 1) {
 	ui.gameTabGui.addText("ys x+0  w2 h27 section background" cfg.themeBright1Color,"")
 	ui.gameTab2Skin := ui.gameTabGui.addText(
 		((tabNum == 2) 
-			? "ys-1 h26" 
+			? "ys-1 h27" 
 			: "ys+2 h25")
 		" x+0 w112 section center background" 
 		((tabNum == 2) 
@@ -547,13 +454,11 @@ drawGameTabs(tabNum := 1) {
 drawGameTabs(cfg.activeGameTab)
 ;gameTabChanged()
 
-	ToggleSilentIdle(*)
-	{
-		ui.toggleSilentIdle.Opt((cfg.SilentIdleEnabled := !cfg.SilentIdleEnabled) ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor))
-		ui.toggleSilentIdle.Redraw()
-	}
-	ui.toggleSilentIdle := ui.gameSettingsGui.AddPicture("xs-60 y+45 w60 h25 section vSilentIdle " (r)),((cfg.SilentIdleEnabled ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor) ? (cfg.toggleOn) : (cfg.toggleOff)))
-	ui.toggleSilentIdle.OnEvent("Click", toggleChanged)
-	ui.toggleSilentIdle.ToolTip := "Minimizes Roblox Windows While Anti-Idling"
-	ui.labelSilentIdle:= ui.gameSettingsGui.AddText("xs-8 y+0 w80 center backgroundTrans","Silent AntiIdle")
-	
+
+
+gameTabChanged(*) {
+	cfg.activeGameTab := ui.gametabs.value
+	drawGameTabs(ui.gameTabs.value)
+	guiVis(ui.gameTabGui,true)
+	controlFocus(ui.buttonDockAfk)
+}

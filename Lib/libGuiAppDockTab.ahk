@@ -51,9 +51,9 @@ GuiDockTab(&ui)
 	ui.MainGui.AddText("y84 x118 w68 h22 background" cfg.themeBackgroundColor,"  Upper")
 	
 	drawOutlineNamed("app1label",ui.mainGui,118,83,65,23,cfg.themeBorderLightColor,cfg.themeBorderDarkColor,1)
-	ui.SetWorkFileButton := ui.MainGui.AddPicture("x43 y77 w82 h35 section backgroundTrans", "./Img/Button_Select.png")
-	ui.SetWorkFileButton.OnEvent("Click", app1browse)
-	ui.SetWorkFileButton.ToolTip := "Assigns app to dock above taskbar"
+	ui.Setapp1Button := ui.MainGui.AddPicture("x43 y77 w82 h35 section backgroundTrans", "./Img/Button_Select.png")
+	ui.Setapp1Button.OnEvent("Click", app1browse)
+	ui.Setapp1Button.ToolTip := "Assigns app to dock above taskbar"
 	ui.MainGui.SetFont("s13 c" cfg.ThemeFont1Color,"Calibri")
 	ui.app1filename := ui.MainGui.AddText("x183 ys+7 w236 h22 Background" cfg.ThemeEditboxColor,"")
 	drawOutlineMainGui(183,83,237,23,cfg.themeBorderLightColor,cfg.themeBorderDarkColor,1)
@@ -67,9 +67,9 @@ GuiDockTab(&ui)
 	ui.MainGui.AddText("y141 x118 w68 h22 background" cfg.themeBackgroundColor,"  Lower")
 	ui.MainGui.SetFont("s14 c" cfg.ThemeFont1Color,"Calibri")
 	drawOutlineNamed("app1label",ui.mainGui,118,140,65,23,cfg.themeBorderLightColor,cfg.themeBorderDarkColor,1)
-	ui.SetDockFileButton := ui.MainGui.AddPicture("x43 y134 w82 h35 section backgroundTrans backgroundTrans", "./Img/Button_Select.png")
-	ui.SetDockFileButton.OnEvent("Click", app2browse)
-	ui.SetDockFileButton.ToolTip := "Assigns app to fill remainder of screen"
+	ui.Setapp2Button := ui.MainGui.AddPicture("x43 y134 w82 h35 section backgroundTrans backgroundTrans", "./Img/Button_Select.png")
+	ui.Setapp2Button.OnEvent("Click", app2browse)
+	ui.Setapp2Button.ToolTip := "Assigns app to fill remainder of screen"
 
 	ui.MainGui.SetFont("s12 c" cfg.ThemeFont1Color, "Calibri")
 	ui.app2filename := ui.MainGui.AddText("x183 ys+7 w236 h22 Background" cfg.ThemeEditboxColor,"")

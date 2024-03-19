@@ -251,12 +251,12 @@ preAutoExec(InstallDir,ConfigFileName) {
 			FileInstall("./Img/keyboard_key_up.png",InstallDir "/img/keyboard_key_up.png",1)
 			FileInstall("./Img/keyboard_key_down.png",InstallDir "/img/keyboard_key_down.png",1)
 			FileInstall("./nControl_updater.exe",InstallDir "/nControl_updater.exe",1)
-			; FileInstall("./Img/button_launchLightGG.png",InstallDir "/Img/button_launchLightGG.png",1)
-			; FileInstall("./Img/button_launchLightGG_down.png",InstallDir "/Img/button_launchLightGG_down.png",1)
-			; FileInstall("./Img/button_launchDIM.png",InstallDir "/Img/button_launchDIM.png",1)
-			; FileInstall("./Img/button_launchDIM_down.png",InstallDir "/Img/button_launchDIM_down.png",1)
-			; FileInstall("./Img/button_launchBlueberries.png",InstallDir "/Img/button_launchBlueberries.png",1)
-			; FileInstall("./Img/button_launchBlueberries_down.png",InstallDir "/Img/button_launchBlueBerries_down.png",1)
+			FileInstall("./Img/button_launchLightGG.png",InstallDir "/Img/button_launchLightGG.png",1)
+			FileInstall("./Img/button_launchLightGG_down.png",InstallDir "/Img/button_launchLightGG_down.png",1)
+			FileInstall("./Img/button_launchDIM.png",InstallDir "/Img/button_launchDIM.png",1)
+			FileInstall("./Img/button_launchDIM_down.png",InstallDir "/Img/button_launchDIM_down.png",1)
+			FileInstall("./Img/button_launchBlueberries.png",InstallDir "/Img/button_launchBlueberries.png",1)
+			FileInstall("./Img/button_launchBlueberries_down.png",InstallDir "/Img/button_launchBlueBerries_down.png",1)
 
 			fileInstall("./img/toggle_vertical_trans_on.png",installDir "/img/toggle_vertical_trans_on.png",1)
 			fileInstall("./img/toggle_vertical_trans_off.png",installDir "/img/toggle_vertical_trans_off.png",1)
@@ -286,7 +286,7 @@ preAutoExec(InstallDir,ConfigFileName) {
 			
 			
 			
-			;IMGv2 belowq
+			;IMGv2 below
 			fileInstall("./img2/button_power.png",installDir "/img2/button_power.png",1)
 			fileInstall("./img2/button_power_down.png",installDir "/img2/button_power_down.png",1)
 			pbConsole("`nINSTALL COMPLETED SUCCESSFULLY!")
@@ -314,15 +314,12 @@ createPbConsole(title) {
 	ui.pbConsole.backColor := transColor
 	ui.pbConsole.color := transColor
 	winSetTransColor(transColor,ui.pbConsole)
-	ui.pbConsoleTitle := ui.pbConsole.addText("x8 y4 w680 h35 section center background303530 c859585",title)
+	ui.pbConsoleTitle := ui.pbConsole.addText("x8 y4 w700 h35 section center background303530 c859585",title)
 	ui.pbConsoleTitle.setFont("s20","Verdana Bold")
-	ui.pbConsoleMinimize := ui.pbConsole.addText("x+-35 ys+7 w50 h35 backgroundTrans c35A535","HIDE")
+	ui.pbConsoleMinimize := ui.pbConsole.addText("x+-60 ys+7 w50 h35 backgroundTrans ca0ffa0","HIDE")
 	ui.pbConsoleMinimize.setFont("s10 Underline","Verdana Bold")
 	ui.pbConsoleMinimize.onEvent("click",hidePbConsole)
-	hidePbConsole(*) {
-		guiVis(ui.pbConsole,false)
-		guiVis(ui.pbConsoleBg,false)
-	}
+
 	drawOutlineNamed("pbConsoleTitle",ui.pbConsole,6,4,692,35,"253525","202520",2)
 	ui.pbConsoleData := ui.pbConsole.addText("xs+10 w680 h380 backgroundTrans cA5C5A5","")
 	ui.pbConsoleData.setFont("s16")
@@ -335,7 +332,18 @@ createPbConsole(title) {
 	OnMessage(0x47, WM_WINDOWPOSCHANGED)
 }
 
+hidePbConsole(*) {
+	guiVis(ui.pbConsole,false)
+	guiVis(ui.pbConsoleBg,false)
+}
+
+showPbConsole(*) {
+	guiVis(ui.pbConsole,false)
+	guiVis(ui.pbConsoleBg,false)
+}
 pbConsole(msg) {
+	if !hasProp(ui,"pbConsole")
+		createPbConsole("nControl Console")
 	ui.pbConsoleData.text := msg "`n" ui.pbConsoleData.text
 	;ui.pbConsoleData.text := msg "`n" subStr(ui.pbConsoleData.text, inStr(ui.pbConsoleData.text,"`n") - 10)
 }
@@ -421,7 +429,7 @@ CheckForUpdates(msg,*) {
 		} else {
 			 if(msg) {
 				ui.latestVersionText.text := "Latest:`t" ui.latestVersion
-				pbConsole("No upgraded needed`nCurrent Version: " ui.installedVersion "`nLatest Version: " ui.latestVersion)
+				notifyOSD("No upgraded needed`nCurrent Version: " ui.installedVersion "`nLatest Version: " ui.latestVersion)
 				setTimer () => ui.latestVersionText.text := "Latest:`t*****",-300000
 			 }
 		}
