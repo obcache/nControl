@@ -50,42 +50,43 @@ WM_LBUTTONDOWN_pBcallback(*) {
 
 WM_LBUTTONDOWN(wParam, lParam, msg, Hwnd) {
 	;ShowMouseClick()
-		try {
-			if (Hwnd = ui.MainGui.hwnd) 
-			PostMessage("0xA1",2)
-		}
-		try {	
-			if (Hwnd = ui.titleBarButtonGui.Hwnd) 
-			PostMessage("0xA1",2)
-		}
-		try {
-			if (hwnd == ui.dividerGui.hwnd) 
-			PostMessage("0xA1",2)
-		}
-		try {
-			if (hwnd == ui.afkGui.hwnd)
-			PostMessage("0xA1",2)
-		}
-		try {
-			if (hwnd == ui.pbConsole.hwnd)
-			PostMessage("0xA1",2)
-		}
-		try {
-			if (hwnd == ui.pbConsoleHandle.hwnd)
-			PostMessage("0xA1",2)
-		}
-		try {
-		if (hwnd == ui.dividerGui.hwnd)
-		{
-		keyWait("LButton")
-		MonitorGetWorkArea(cfg.nControlMonitor, &Left, &Top, &Right, &Bottom)
-		coordMode("mouse","screen")
-		MouseGetPos(&mX,&mY,&currWin)
-		winMove(,mY,,Bottom-mY+8,"ahk_exe " ui.app2filename.text)
-		winMove(,Top,,mY-Top,"ahk_exe " ui.app1filename.text)
-		winActivate(ui.dividerGui)
-		}
-		}
+	postMessage("0xA1",2)
+		; try {
+			; if (Hwnd = ui.MainGui.hwnd) 
+			; PostMessage("0xA1",2)
+		; }
+		; try {	
+			; if (Hwnd = ui.titleBarButtonGui.Hwnd) 
+			; PostMessage("0xA1",2)
+		; }
+		; try {
+			; if (hwnd == ui.dividerGui.hwnd) 
+			; PostMessage("0xA1",2)
+		; }
+		; try {
+			; if (hwnd == ui.afkGui.hwnd)
+			; PostMessage("0xA1",2)
+		; }
+		; try {
+			; if (hwnd == ui.pbConsole.hwnd)
+			; PostMessage("0xA1",2)
+		; }
+		; try {
+			; if (hwnd == ui.pbConsoleHandle.hwnd)
+			; PostMessage("0xA1",2)
+		; }
+		; try {
+		; if (hwnd == ui.dividerGui.hwnd)
+		; {
+		; keyWait("LButton")
+		; MonitorGetWorkArea(cfg.nControlMonitor, &Left, &Top, &Right, &Bottom)
+		; coordMode("mouse","screen")
+		; MouseGetPos(&mX,&mY,&currWin)
+		; winMove(,mY,,Bottom-mY+8,"ahk_exe " ui.app2filename.text)
+		; winMove(,Top,,mY-Top,"ahk_exe " ui.app1filename.text)
+		; winActivate(ui.dividerGui)
+		; }
+		; }
 }
 
 wm_mouseMove(wParam, lParam, msg, hwnd) {

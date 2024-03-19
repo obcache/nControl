@@ -72,7 +72,7 @@ preAutoExec(InstallDir,ConfigFileName) {
 
 			if (FileExist(InstallDir "/nControl.ini"))
 			{
-				msgBoxResult := MsgBox("Previous install detected. `nAttempt to preserve your existing settings?",, "Y/N T30")
+				msgBoxResult := MsgBox("Previous install detected. `nAttempt to preserve your existing settings?",, "Y/N T300")
 				
 				switch msgBoxResult {
 					case "No": 

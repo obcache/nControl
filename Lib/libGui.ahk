@@ -777,6 +777,7 @@ initConsole(&ui) {
 		drawOutlineNamed("opsClock",ui.mainGui,103,33,139,28,cfg.ThemeBorderDarkColor,cfg.ThemeBorderDarkColor,2)		;Ops Clock
 		drawOutlineNamed("opsClassDDL",ui.mainGui,325,33,138,28,cfg.ThemeBorderDarkColor,cfg.ThemeBorderDarkColor,1)		;Ops Clock
 		drawOutlineNamed("opsToolbarOutline2",ui.mainGui,36,33,494,30,cfg.ThemeBright1Color,cfg.ThemeBright1Color,1)	;Ops Toolbar Outline
+		drawOutlineNamed("opsToolbarCenter",ui.mainGui,269,34,29,30,cfg.ThemeBright1Color,cfg.ThemeBright1Color,1)	;Ops Toolbar Outline
 
 		drawOutlineNamed("opsMiddleColumnOutlineDark",ui.mainGui,257,62,53,139,cfg.themeBright1Color,cfg.themeBright1Color,2)	;Ops Toolbar Outline
 		drawOutlineNamed("opsMiddleColumnOutlineLight",ui.mainGui,259,63,49,137,cfg.themeDark1Color,cfg.themeDark1Color,1)		;Ops Toolbar

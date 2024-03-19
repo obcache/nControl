@@ -463,7 +463,7 @@ nControl(Status,&cfg)
 		Send "^+{PgDn}"
 		WinRedraw("ahk_exe " ui.app2filename.text)
 		WinMove(DockX,DockY-4,DockW,DockH+4, "ahk_exe " ui.app2filename.text)
-		drawDivider(DockY)
+		; drawDivider(DockY)
 	} else {
 		debugLog("Undocking Apps")
 		ui.dividerGui.hide()

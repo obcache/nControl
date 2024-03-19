@@ -156,7 +156,7 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 		ui.Win1HwndText := ui.MainGui.AddText("xs y+0 section w152 h14 Right Background" cfg.ThemePanel4Color,"Found  ")
 		ui.Win1HwndText.ToolTip := "Window ID for Game Window 1"
 		
-		ui.buttonSwapHwnd := ui.MainGui.AddPicture("ys-27 x+3 section w47 h45 Background" (cfg.HwndSwapEnabled ? cfg.ThemeButtonOnColor : cfg.ThemeDisabledColor), (cfg.HwndSwapEnabled ? "./Img/button_swapHwnd_enabled.png" : "./Img/button_swapHwnd_disabled.png"))
+		ui.buttonSwapHwnd := ui.MainGui.AddPicture("ys-27 x+3 section w47 h45 Background" (cfg.HwndSwapEnabled ? cfg.ThemeButtonOnColor : cfg.ThemeButtonReadyColor), (cfg.HwndSwapEnabled ? "./Img/button_swapHwnd_enabled.png" : "./Img/button_swapHwnd_disabled.png"))
 		ui.buttonSwapHwnd.OnEvent("Click",ToggleHwndSwap)
 		ui.buttonSwapHwnd.ToolTip := "Swap Windows"
 
@@ -182,7 +182,7 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 		ui.Win1ClassDDL.OnEvent("Change",opsWin1ClassChange)
 		PostMessage("0x153", -1, 20,, "AHK_ID " ui.Win1ClassDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153
 		PostMessage("0x153", 0, 23,, "AHK_ID " ui.Win1ClassDDL.Hwnd ) ; CB_SETITEMHEIGHT = 0x153	
-		ui.OpsAfkButton := ui.MainGui.AddPicture("ys+0 x+1 w47 h48 section Background" cfg.ThemeDisabledColor,"./Img/button_afk_ready.png")
+		ui.OpsAfkButton := ui.MainGui.AddPicture("ys+0 x+1 w47 h48 section Background" cfg.ThemeButtonReadyColor,"./Img/button_afk_ready.png")
 		ui.OpsAfkButton.OnEvent("Click",ToggleAFK)
 		ui.OpsAfkButton.ToolTip := "Toggle AFK"
 	
@@ -208,7 +208,7 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 		
 		ui.OpsProgress1 := ui.MainGui.AddProgress("ys+1 x+30 section w156 h30 c" cfg.ThemeFont1Color " Smooth Range0-" cfg.towerInterval " Background" cfg.ThemePanel1Color,0)	
 	
-		ui.OpsTowerButton := ui.MainGui.AddPicture("x+3 ys+22 w48 h45 section Background" cfg.ThemeDisabledColor,"./Img/button_tower_ready.png")
+		ui.OpsTowerButton := ui.MainGui.AddPicture("x+3 ys+22 w48 h45 section Background" cfg.ThemeButtonReadyColor,"./Img/button_tower_ready.png")
 		ui.OpsTowerButton.OnEvent("Click",ToggleTower)
 		ui.OpsTowerButton.ToolTip := "Toggle Tower Timer + AFK"
 	
@@ -731,7 +731,7 @@ refreshWin(winNumber) { ;Performs Window Discovery, Game Identification and Gui 
 			ui.win%winNumber%enabledToggle.value := cfg.toggleOn
 			ui.win%origWinNumber%enabledToggle.opt("background" cfg.themeButtonOnColor)
 		}	
-
+		ui.opsClockModeLabel.text := "  Clock"
 	} else { 
 		ui.win%winNumber%enabled == false
 		disableWin(winNumber)
