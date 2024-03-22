@@ -81,6 +81,7 @@ initGui(&cfg, &ui) {
 	ui.ExitButton.OnEvent("Click",ExitButtonPushed)
 	ui.ExitButton.ToolTip := "Terminates nControl App"
 
+	ui.rightPadding 	:= ui.titleBarButtonGui.addText("x+0 ys w2 h35 section background" cfg.themeBorderDarkColor," ")
 	ui.buttonUndockAfk := ui.titleBarButtonGui.AddPicture("x+6 ys w35 h35 hidden Background" cfg.ThemeButtonAlertColor,"./Img/button_dockright_ready.png")
 	ui.buttonUndockAfk.OnEvent("Click",ToggleAfkDock)
 	ui.buttonUndockAfk.ToolTip := "Undocks AFK Window"
@@ -99,7 +100,7 @@ initGui(&cfg, &ui) {
 
 
 	ui.MainGui.Show("x" cfg.GuiX " y" cfg.GuiY " w562 h214 NoActivate")
-	ui.titleBarButtonGui.Show("w71 h35 NoActivate")
+	ui.titleBarButtonGui.Show("w73 h35 NoActivate")
 	
 	
 	ui.MainGuiTabs.Choose(cfg.mainTabList[cfg.activeMainTab])

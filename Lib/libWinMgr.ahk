@@ -18,18 +18,14 @@ WM_WINDOWPOSCHANGED(wParam, lParam, msg, Hwnd) {
 			case ui.mainGui.hwnd:
 				if (!ui.afkDocked) {
 					winGetPos(&winX,&winY,,,ui.mainGui)
-					ui.AfkGui.Move((winX+40)/(A_ScreenDPI/96),(winY+50)/(A_ScreenDPI/96),,)
-					ui.titleBarButtonGui.Move((winX+457)*(A_ScreenDPI/96),(winY-3)*(A_ScreenDPI/96))
+					ui.mainGui.getPos(&dpiX,&gpiY,,,)
+					ui.AfkGui.Move((winX),(winY),,)
+					;msgBox(a_screenDpi)
+					ui.titleBarButtonGui.Move((winX+456)*(A_ScreenDPI/96),(winY-3)*(a_screenDpi/96))
 					ui.gameSettingsGui.move((winx+35)*(A_ScreenDPI/96),(winy+32)*(A_ScreenDPI/96))
 					ui.editorGui.move((winX+35)*(A_ScreenDPI/96),(winY+32)*(A_ScreenDPI/96))
 					ui.gameTabGui.move((winX+35)*(A_ScreenDPI/96),(winY+184)*(A_ScreenDPI/96))
 				}
-			case ui.dividerGui.hwnd:
-					MonitorGetWorkArea(cfg.nControlMonitor, &Left, &Top, &Right, &Bottom)
-					winGetPos(&divX,&divY,&divW,&divH,ui.dividerGui)
-					ui.dividerGui.move(Left,,Right-Left,)	
-					winMove(,,,divY,"ahk exe " ui.app1filename.text)
-					winMove(,divY,,,"ahk_exe " ui.app2filename.text)
 			case ui.pbConsoleBg.hwnd:
 				winGetPos(&winX,&winY,,,ui.pbConsoleBg.hwnd)
 				ui.pbConsole.move(winX,winY)
@@ -227,3 +223,4 @@ GetTaskbarHeight() {
 
 
 } ;end utility functions
+

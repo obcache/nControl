@@ -26,7 +26,7 @@ GuiGameTab(&ui,&cfg) {
 	ui.gameSettingsGui.MarginX := 5
 	ui.gameSettingsGui.Opt("-Caption -Border +AlwaysOnTop +ToolWindow +Owner" ui.MainGui.Hwnd)
 	ui.gameSettingsGui.SetFont("s14 c" cfg.ThemeFont1Color,"Calibri")
-	ui.gameTabs := ui.gameSettingsGui.addTab3("x-1 y-5 w497 h181 0x400 bottom c" cfg.themeFont1Color " choose" cfg.activeGameTab,cfg.gameModuleList)
+	ui.gameTabs := ui.gameSettingsGui.addTab3("x-1 y-5 w496 h181 0x400 bottom c" cfg.themeFont1Color " choose" cfg.activeGameTab,cfg.gameModuleList)
 	ui.gameTabs.choose(cfg.gameModuleList[cfg.activeGameTab])
 	ui.gameTabs.setFont("s10")
 	ui.gameTabs.onEvent("Change",gameTabChanged)
@@ -50,13 +50,13 @@ ui.gameTabs.useTab("Destiny2")
 
 	;UI.alwaysRunGb := ui.gameSettingsGui.addGroupbox("x10 y0 w270 h70","Always Run")
 	ui.gameSettingsGui.addText("x10 y7 w475 h65 background" cfg.themePanel1Color,"")
+	; ui.gameSettingsGui.addText("x54 y15 w425 h52 c" cfg.themePanel1Color " background" cfg.themePanel4Color)
 	drawOutlineNamed("d2AlwaysRunOutline",ui.gameSettingsGui,10,6,475,67,cfg.themeBright2Color,cfg.themeDark2Color,1)
 	drawOutlineNamed("d2AlwaysRunOutline",ui.gameSettingsGui,20,6,70,1,cfg.themeBackgroundColor,cfg.themeBackgroundColor,2)
 	drawOutlineNamed("d2AlwaysRunOutline",ui.gameSettingsGui,20,6,70,7,cfg.themeBackgroundColor,cfg.themeBright2Color,1)
 	ui.gameSettingsGui.addText("x21 y-2 w68 h14 c" cfg.themeFont1Color " background" cfg.themeBackgroundColor," Always Run")
 	drawOutlineNamed("d2AlwaysRunOutline",ui.gameSettingsGui,20,6,1,7,cfg.themeDark1Color,cfg.themeBright2Color,1)
-
-	ui.d2AlwaysRun := ui.gameSettingsGui.addPicture("x19 y18 w30 h45 section " 
+	ui.d2AlwaysRun := ui.gameSettingsGui.addPicture("x19 y18 w30 h48 section " 
 	((cfg.d2AlwaysRunEnabled) 
 		? ("Background" cfg.ThemeButtonOnColor) 
 			: ("Background" cfg.themeButtonReadyColor)),
@@ -78,7 +78,7 @@ ui.gameTabs.useTab("Destiny2")
 	ui.d2HoldWalkKey			:= ui.gameSettingsGui.addPicture("x+8 ys w100 h33 section backgroundTrans","./img/keyboard_key_up.png")
 	ui.d2HoldWalkKeyData 		:= ui.gameSettingsGui.addText("xs y+-28 w100 h25 center c" cfg.themeButtonAlertColor " backgroundTrans",subStr(strUpper(cfg.d2HoldWalkKey),1,8))
 	ui.d2HoldWalkKeyLabel		:= ui.gameSettingsGui.addText("xs-1 y+0 w100 h20 center c" cfg.themeFont1Color " backgroundTrans","Hold to Walk")
-	ui.d2LaunchDIMbutton		:= ui.gameSettingsGui.addPicture("xs-355 y+18 section w53 h53 backgroundTrans","./Img2/d2_button_DIM.png")
+	ui.d2LaunchDIMbutton		:= ui.gameSettingsGui.addPicture("xs-360 y+18 section w53 h53 backgroundTrans","./Img2/d2_button_DIM.png")
 	ui.d2LaunchLightGGbutton	:= ui.gameSettingsGui.addPicture("x+10 ys w53 h53 backgroundTrans","./Img2/d2_button_LightGG.png")
 	ui.d2LaunchBlueberriesButton := ui.gameSettingsGui.addPicture("x+10 ys w53 h53 backgroundTrans","./Img2/d2_button_bbgg.png")
 	ui.d2LaunchD2CheckListButton := ui.gameSettingsGui.addPicture("x+10 ys w53 h53 backgroundTrans","./Img2/d2_button_d2CheckList.png")
