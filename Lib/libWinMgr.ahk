@@ -18,14 +18,18 @@ WM_WINDOWPOSCHANGED(wParam, lParam, msg, Hwnd) {
 			case ui.mainGui.hwnd:
 				if (!ui.afkDocked) {
 					winGetPos(&winX,&winY,,,ui.mainGui)
-					ui.mainGui.getPos(&dpiX,&gpiY,,,)
-					ui.AfkGui.Move((winX),(winY),,)
-					;msgBox(a_screenDpi)
-					ui.titleBarButtonGui.Move((winX+456)*(A_ScreenDPI/96),(winY-3)*(a_screenDpi/96))
-					ui.gameSettingsGui.move((winx+35)*(A_ScreenDPI/96),(winy+32)*(A_ScreenDPI/96))
-					ui.editorGui.move((winX+35)*(A_ScreenDPI/96),(winY+32)*(A_ScreenDPI/96))
-					ui.gameTabGui.move((winX+35)*(A_ScreenDPI/96),(winY+184)*(A_ScreenDPI/96))
+					mainGuiX := winX
+					mainGuiY := winY
+					ui.AfkGui.Move((mainGuiX+45),(mainGuiY+50),270,)
+
+					ui.titleBarButtonGui.Move((mainGuiX+456)*(A_ScreenDPI/96),(mainGuiY-3)*(a_screenDpi/96))
+					ui.gameSettingsGui.move((mainGuiX+35)*(A_ScreenDPI/96),(mainGuiY+32)*(A_ScreenDPI/96))
+					ui.editorGui.move((mainGuiX+35)*(A_ScreenDPI/96),(mainGuiY+32)*(A_ScreenDPI/96))
+					ui.gameTabGui.move((mainGuiX+35)*(A_ScreenDPI/96),(mainGuiY+184)*(A_ScreenDPI/96))
 				}
+				
+
+
 			case ui.pbConsoleBg.hwnd:
 				winGetPos(&winX,&winY,,,ui.pbConsoleBg.hwnd)
 				ui.pbConsole.move(winX,winY)

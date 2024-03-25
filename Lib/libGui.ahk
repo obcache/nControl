@@ -483,6 +483,11 @@ afkPopoutButtonPushed(*) {
 	
 	afkPopOut() {
 		saveGuiPos()
+		winGetPos(&winX,&winY,,,ui.mainGui)
+		
+		ui.prevGuiX := winX
+		ui.prevGuiY := winY
+		
 		debugLog("PopOut of AFK Gui")
 		ui.AfkDocked := false
 		guiVis(ui.titleBarButtonGui,false)

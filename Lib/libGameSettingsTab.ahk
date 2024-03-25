@@ -82,6 +82,8 @@ ui.gameTabs.useTab("Destiny2")
 	ui.d2LaunchLightGGbutton	:= ui.gameSettingsGui.addPicture("x+10 ys w53 h53 backgroundTrans","./Img2/d2_button_LightGG.png")
 	ui.d2LaunchBlueberriesButton := ui.gameSettingsGui.addPicture("x+10 ys w53 h53 backgroundTrans","./Img2/d2_button_bbgg.png")
 	ui.d2LaunchD2CheckListButton := ui.gameSettingsGui.addPicture("x+10 ys w53 h53 backgroundTrans","./Img2/d2_button_d2CheckList.png")
+	ui.d2LaunchDestinyRecipesButton := ui.gameSettingsGui.addPicture("x+10 ys w53 h53 backgroundTrans","./Img2/d2_button_destinyrecipes.png")
+	ui.d2LaunchBrayTechButton := ui.gameSettingsGui.addPicture("x+10 ys w53 h53 backgroundTrans","./Img2/d2_button_braytech.png")
 
 	ui.d2AlwaysRun.ToolTip 			:= "Toggles holdToCrouch"
 	ui.d2SprintKey.ToolTip 			:= "Click to Assign"
@@ -100,6 +102,8 @@ ui.gameTabs.useTab("Destiny2")
 	ui.d2LaunchLightGGbutton.toolTip := "Launch Light.gg in Browser"
 	ui.d2LaunchBlueberriesButton.toolTip	:= "Launch Blueberries.gg in Browser"
 	ui.d2Launchd2CheckListButton.toolTip	:= "Launch D2Checklist.com in Browser"
+	ui.d2LaunchDestinyRecipesButton.toolTip	:= "Launch DestinyRecipes.com in Browser"
+	ui.d2LaunchBrayTechButton.toolTip	:= "Launch Bray.Tech in Browser"
 
 	ui.d2CrouchKeyData.setFont("s13")
 	ui.d2SprintKeyData.setFont("s13")
@@ -122,8 +126,9 @@ ui.gameTabs.useTab("Destiny2")
 	ui.d2LaunchDIMbutton.onEvent("click",d2launchDIMbuttonClicked)
 	ui.d2LaunchLightGGbutton.onEvent("click",d2launchLightGGbuttonClicked)
 	ui.d2LaunchD2checkListButton.onEvent("click",d2launchd2checklistButtonClicked)
-	ui.d2LaunchBlueberriesButton.onEvent("click",d2LaunchBlueBerriesButtonClicked
-)
+	ui.d2LaunchBlueberriesButton.onEvent("click",d2LaunchBlueBerriesButtonClicked)
+	ui.d2LaunchDestinyRecipesButton.onEvent("click",d2LaunchDestinyRecipesButtonClicked)
+	ui.d2LaunchBrayTechButton.onEvent("click",d2LaunchBrayTechButtonClicked)
 
 toggleAlwaysRun(*) {
 	(cfg.d2AlwaysRunEnabled := !cfg.d2AlwaysRunEnabled)
@@ -176,6 +181,18 @@ d2Launchd2CheckListButtonClicked(*) {
 	ui.d2Launchd2ChecklistButton.value := "./Img2/d2_button_d2Checklist_down.png"
 	setTimer () => ui.d2Launchd2ChecklistButton.value := "./Img2/d2_button_d2Checklist.png",-400
 	run("chrome.exe https://www.d2checklist.com")
+	}
+
+d2LaunchDestinyRecipesButtonClicked(*) {
+	ui.d2LaunchDestinyRecipesButton.value := "./Img2/d2_button_destinyrecipes_down.png"
+	setTimer () => ui.d2LaunchDestinyRecipesButton.value := "./Img2/d2_button_destinyrecipes.png",-400
+	run("chrome.exe https://www.destinyrecipes.com")
+	}
+
+d2LaunchBrayTechButtonClicked(*) {
+	ui.d2LaunchBrayTechButton.value := "./Img2/d2_button_braytech_down.png"
+	setTimer () => ui.d2LaunchBrayTechButton.value := "./Img2/d2_button_braytech.png",-400
+	run("chrome.exe https://www.bray.tech")
 	}
 
 d2SprintKeyClicked(*) {

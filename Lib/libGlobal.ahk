@@ -284,7 +284,11 @@ preAutoExec(InstallDir,ConfigFileName) {
 			fileInstall("./img2/d2_button_d2Checklist.png",installDir "/img2/d2_button_d2Checklist.png",1)
 			fileInstall("./img2/d2_button_d2Checklist_down.png",installDir "/img2/d2_button_d2Checklist_down.png",1)
 			
+			fileInstall("./img2/d2_button_braytech.png",installDir "/img2/d2_button_braytech.png",1)
+			fileInstall("./img2/d2_button_braytech_down.png",installDir "/img2/d2_button_braytech_down.png",1)
 			
+			fileInstall("./img2/d2_button_destinyrecipes.png",installDir "/img2/d2_button_destinyrecipes.png",1)
+			fileInstall("./img2/d2_button_destinyrecipes_down.png",installDir "/img2/d2_button_destinyrecipes_down.png",1)
 			
 			;IMGv2 below
 			fileInstall("./img2/button_power.png",installDir "/img2/button_power.png",1)

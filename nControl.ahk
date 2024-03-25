@@ -1,4 +1,4 @@
-A_FileVersion := "4.2.3.5"
+A_FileVersion := "4.2.3.6"
 ;@Ahk2Exe-Let FileVersion=%A_PriorLine~U)^(.+"){1}(.+)".*$~$2% 
 
 A_AppName := "nControl"
@@ -117,8 +117,7 @@ winSetTransparent(0,ui.gameSettingsGui)
 winSetTransparent(0,ui.afkGui)
 ui.gameSettingsGui.show("x" mainGuiX+35 " y" mainGuiY+32 " w495 h176 noActivate")
 drawAfkOutlines()
-ui.AfkGui.Show("x" mainGuiX+40 " y" mainGuiY+50 " w280 h140 NoActivate")
-
+ui.afkGui.show("x" mainGuiX+45 " y" mainGuiY+50 " w270 h140 noActivate")
 ui.MainGuiTabs.Choose(cfg.mainTabList[cfg.activeMainTab])
 fadeIn()
 
