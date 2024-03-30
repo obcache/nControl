@@ -275,6 +275,7 @@ preAutoExec(InstallDir,ConfigFileName) {
 			fileInstall("./img/icon_blueberries.png",installDir "/img/icon_blueberries.png",1)
 			fileInstall("./img/icon_lightgg.png",installDir "/img/icon_lightgg.png",1)
 			fileInstall("./img/icon_d2Checklist.png",installDir "/img/icon_d2Checklist.png",1)
+			fileInstall("./img/icon_steeringwheel.png",installDir "/img/icon_steeringwheel.png",1)
 			fileInstall("./img2/d2_button_dim.png",installDir "/img2/d2_button_dim.png",1)
 			fileInstall("./img2/d2_button_dim_down.png",installDir "/img2/d2_button_dim_down.png",1)
 			fileInstall("./img2/d2_button_bbgg.png",installDir "/img2/d2_button_bbgg.png",1)
@@ -612,11 +613,13 @@ cfgLoad(&cfg, &ui) {
 	
 	cfg.holdToCrouchEnabled 	:= IniRead(cfg.file,"game","HoldToCrouch",true)
 	cfg.cs2HoldToScopeEnabled	:= IniRead(cfg.file,"game","cs2HoldToScopeEnabled",true)
-	cfg.d2AlwaysRunEnabled		:= IniRead(cfg.file,"Game","d2AlwaysRunEnabled",false)
-	cfg.d2SprintKey				:= IniRead(cfg.file,"Game","d2SprintKey","<UNSET>")
-	cfg.d2CrouchKey				:= IniRead(cfg.file,"Game","d2CrouchKey","<UNSET>")
-	cfg.d2ToggleWalkKey			:= IniRead(cfg.file,"Game","d2ToggleWalkKey","<UNSET>")
-	cfg.d2HoldWalkKey			:= IniRead(cfg.file,"Game","d2HoldWalkKey","<UNSET>")
+	cfg.d2AlwaysRunEnabled		:= iniRead(cfg.file,"Game","d2AlwaysRunEnabled",false)
+	cfg.d2AppToggleSprintKey	:= IniRead(cfg.file,"Game","d2AppToggleSprintKey","<UNSET>")
+	cfg.d2AppHoldCrouchKey		:= IniRead(cfg.file,"Game","d2AppHoldCrouchKey","<UNSET>")
+	cfg.d2AppVehicleKey			:= IniRead(cfg.file,"Game","d2AppVehicleKey","<UNSET>")
+	cfg.d2gameHoldCrouchKey		:= IniRead(cfg.file,"Game","d2GameHoldCrouchKey","<UNSET>")
+	cfg.d2gameToggleSprintKey	:= IniRead(cfg.file,"Game","d2GameToggleSprintKey","<UNSET>")
+	cfg.d2gameHoldSprintKey		:= IniRead(cfg.file,"Game","d2GameHoldSprintKey","<UNSET>")
 	cfg.SLBHopKey				:= iniRead(cfg.file,"Game","ShatterLineBunnyHopKey","<UNSET>")
 }
 
@@ -711,11 +714,13 @@ WriteConfig() {
 		iniWrite(cfg.topDockEnabled,cfg.file,"Interface","TopDockEnabled")
 		
 		iniWrite(cfg.SLBHopKey,cfg.file,"Game","ShatterLineBunnyHopKey")
-		IniWrite(cfg.d2AlwaysRunEnabled,cfg.file,"Game","d2AlwaysRunEnabled")
-		IniWrite(cfg.d2SprintKey,cfg.file,"Game","d2SprintKey")
-		IniWrite(cfg.d2CrouchKey,cfg.file,"Game","d2CrouchKey")
-		IniWrite(cfg.d2ToggleWalkKey,cfg.file,"Game","d2ToggleWalkKey")
-		IniWrite(cfg.d2HoldWalkKey,cfg.file,"Game","d2HoldWalkKey")
+		IniWrite(cfg.d2GameToggleSprintKey,cfg.file,"Game","d2GameToggleSprintKey")
+		IniWrite(cfg.d2gameHoldSprintKey,cfg.file,"Game","d2gameHoldSprintKey")
+		IniWrite(cfg.d2gameHoldCrouchKey,cfg.file,"Game","d2gameHoldCrouchKey")
+		IniWrite(cfg.d2AppToggleSprintKey,cfg.file,"Game","d2AppToggleSprintKey")
+		IniWrite(cfg.d2AppHoldCrouchKey,cfg.file,"Game","d2AppHoldCrouchKey")
+		IniWrite(cfg.d2AppVehicleKey,cfg.file,"Game","d2AppVehicleKey")
+		
 
 		ui.mainTabListString := ""
 		loop cfg.mainTabList.length {

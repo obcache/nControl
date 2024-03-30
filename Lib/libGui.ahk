@@ -1020,6 +1020,9 @@ dockBarIcons(game,operation := "") {
 				ui.dockBarGui.addText("x+5 ys-2 w1 h32 section background" cfg.themeBright1Color,"")
 				ui.dockBarAfkButton 	:= ui.dockBarGui.addPicture("x+-2 ys-1 w32 h33 section background" cfg.themeButtonReadyColor,ui.buttonStartAfk.value)
 				ui.dockBarWidth 		+= 32
+				ui.dockBarD2Vehicle 	:= ui.dockBarGui.addPicture("x+-1 ys-1 w32 h33 section background" cfg.ThemeButtonReadyColor,"./img/icon_steeringwheel.png")	
+				ui.dockBarWidth 		+= 32
+				ui.dockBarD2Vehicle.onEvent("click",d2AppVehicleKeyClicked)				
 				ui.dockBarRunIcon 		:= ui.dockBarGui.addPicture("x+0 ys w32 h33 section background" cfg.themeDisabledColor, "./img/icon_running.png")
 				ui.dockBarWidth 		+= 32
 
@@ -1032,7 +1035,10 @@ dockBarIcons(game,operation := "") {
 					? ("./img/toggle_vertical_trans_on.png") 
 						: ("./img/toggle_vertical_trans_off.png")))			
 				ui.dockBarWidth 		+= 24
-				ui.dockBarD2AlwaysRun.onEvent("click",toggleAlwaysRun)
+				ui.dockBarD2AlwaysRun.onEvent("click",d2ToggleAlwaysRun)
+
+
+
 
 
 				ui.dockBarAfkButton.onEvent("click",dockToggleAfk)
