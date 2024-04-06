@@ -96,10 +96,13 @@ preAutoExec(InstallDir,ConfigFileName) {
 					}
 					case "Timeout":
 					{
-						sleep(1000)
-						pbNotify("Timed out waiting for your response. `nExiting program",5000)
-						Sleep(3000)
-						exitApp
+						setTimer () => pbNotify("Timed out waiting for your response.`Attempting to update using your exiting config files.`nIf you encounter issues, re-run the install `nselecting the option to replace your existing files.",5000),-100
+						if !fileExist("./nControl.ini")
+							fileInstall("./nControl.ini",installDir "/nControl.ini")
+						if !(FileExist(InstallDir "/AfkData.csv"))
+							FileInstall("./AfkData.csv",InstallDir "/AfkData.csv",1)
+						if !(FileExist(InstallDir "/nControl.themes"))
+							FileInstall("./nControl.themes",InstallDir "/nControl.themes",1)
 					}
 				}
 			} else {
