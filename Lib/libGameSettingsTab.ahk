@@ -68,7 +68,7 @@ if (InStr(A_LineFile,A_ScriptFullPath)) { ;run main app
 			((tabNum == 1) ? cfg.themeBackgroundColor : cfg.themePanel4Color) 
 			" c" ((tabNum == 1) ? cfg.themeFont1Color : cfg.themeFont4Color)
 			,"Destiny 2")
-		ui.gameTab1Skin.setFont((tabNum == 1 ? "s14" : "s12"),"Impact")
+		ui.gameTab1Skin.setFont((tabNum == 1 ? "s14" : "s11"),"Impact")
 		ui.gameTabGui.addText("ys x+0  w2 h27 section background" cfg.themeBright1Color,"")
 		ui.gameTab2Skin := ui.gameTabGui.addText(
 			((tabNum == 2) 
@@ -85,80 +85,107 @@ if (InStr(A_LineFile,A_ScriptFullPath)) { ;run main app
 		ui.gameTab2Skin.setFont(
 			((tabNum == 2)
 				? "s14" 
-				: "s12")
+				: "s11")
 			,"Impact")
 		ui.gameTabGui.addText("ys+0 x+0 w2 " (tabNum == 1 ? "h26" : "h27") " section background" cfg.themeBright1Color,"")
-		; ui.gameTabPadding := ui.gameTabGui.addText("x227 y1 w275 h28 section background" cfg.themeBackgroundColor)
-		; ui.gameTabPadding.setFont("s14")
 		guiVis(ui.gameTabGui,false)
 		winGetPos(&winX,&winY,,,ui.mainGui.hwnd)
 		ui.gameTabGui.show("w227 h29 x" winX+35 " y" winY+184 " noActivate")
 	}
 }
 
-{ ;d2 Logic	
-	HotIfWinActive("ahk_exe destiny2.exe")
-		;hotKey("~" cfg.d2holdWalkKey,holdToWalk)
-		hotKey(cfg.d2AppVehicleKey,d2MountVehicle)
-		hotKey(cfg.d2AppToggleSprintKey,d2ToggleAlwaysRun)
-		hotKey("r",d2reload)
-	HotIf()
-
-	HotIf(readyToRun)
-		hotKey("w",startRunning)
-	HotIf()
-
-	HotIf(d2IsSprinting)
-		hotKey("w up",stopRunning)
-	hotIf()
+{ ;d2 Logic
+	ui.d2IsReloading := false
+	ui.d2IsSprinting := false
 	
+	d2reload(*) {
+		send("{r}")
+		send("{r}")
+		send("{r}")
+		d2ToggleAlwaysRunOff()
+		setTimer () => d2ToggleAlwaysRunOn(), -2000
+	}
+
 	d2MountVehicle(*) {
 		send("{tab down}")
 		send("{e down}{e up}")
 		send("{tab}")
 	}
- 
-	readyToRun(*) {
-		if (winActive("ahk_exe destiny2.exe") && cfg.d2AlwaysRunEnabled && !(getKeyState("RButton")))
-			Return 1
+
+	hotIfWinActive("ahk_exe destiny2.exe")
+		hotKey(cfg.d2AppVehicleKey,d2MountVehicle)
+		hotKey(cfg.d2AppToggleSprintKey,d2ToggleAlwaysRun)
+		hotKey("*r",d2reload)
+	hotIf()
+
+	hotIf(d2ReadyToSprint)
+		hotKey("~*w",d2StartSprinting)
+	hotIf()
+
+	d2ReadyToSprint(*) {
+		if (winActive("ahk_exe destiny2.exe") && cfg.d2AlwaysRunEnabled && !d2IsSprinting())
+			return 1
 		else
-			Return 0
+			return 0
 	}
-
-	holdToWalk(*) {
-		if ui.d2Running 
-			send("{" strLower(cfg.d2SprintKey) " up}")
-		ui.dockBarWin1Cmd.text := strUpper(cfg.d2SprintKey)
-		send("{" cfg.d2holdWalkKey " Down}")
-		keyWait(cfg.d2HoldWalkKey,"L")
-		send("{" cfg.d2HoldWalkKey "}")
-
-		if ui.d2Running
-			send("{" strLower(cfg.d2SprintKey) " down}")
-		ui.d2cleanupNeeded := true
-	}
-
-	stopRunning(*) {
-		ui.d2Running := false
-		send("{" strLower(cfg.d2GameHoldSprintKey) " up}{w up}")
-			ui.dockBarWin1Cmd.text := "--"
-		ui.d2cleanupNeeded := true
-	}
-
-	startRunning(*) {
-		ui.d2Running := true
-		send("{w down}{" strLower(cfg.d2GameHoldSprintKey) " down}")
-		ui.d2cleanupNeeded := true
+	
+	d2startSprinting(*) {
+		send("{w down}")
+		if (cfg.d2AlwaysRunEnabled) {
+			send("{" strLower(cfg.d2GameToggleSprintKey) "}")
+		}
+		keyWait("w","L")
+		send("{w up}")
 	}
 
 	toggleToWalk(*) {
-		ui.d2AlwaysRun.value := 
+		ui.d2AlwaysSprint.value := 
 			(cfg.d2AlwaysRunEnabled := !cfg.d2AlwaysRunEnabled)
-				? (ui.d2AlwaysRun.opt("background" cfg.themeButtonOnColor),"./img/toggle_vertical_trans_on.png")
-				: (ui.d2AlwaysRun.opt("background" cfg.themeButtonReadyColor),"./img/toggle_vertical_trans_off.png")
-		ui.d2cleanupNeeded := true
+				? (ui.d2AlwaysSprint.opt("background" cfg.themeButtonOnColor),"./img/toggle_vertical_trans_on.png")
+				: (ui.d2AlwaysSprint.opt("background" cfg.themeButtonReadyColor),"./img/toggle_vertical_trans_off.png")
 	}
 
+	d2IsSprinting(*) {
+		return (ui.d2IsSprinting) ? 1 : 0
+			
+	}
+
+	d2ToggleAlwaysRun(*) {
+		(cfg.d2AlwaysRunEnabled := !cfg.d2AlwaysRunEnabled)
+			? d2ToggleAlwaysRunOn()
+			: d2ToggleAlwaysRunOff()
+	}
+
+	d2ToggleAlwaysRunOn() {
+		SetCapsLockState("Off")
+		cfg.d2AlwaysRunEnabled := true
+		;ui.d2Log.text := " start: SPRINT`n rcvd: " strUpper(subStr(cfg.d2AppToggleSprintKey,1,8)) "`n" ui.d2Log.text
+		ui.d2AlwaysSprint.Opt("Background" cfg.ThemeButtonOnColor)
+		ui.d2AlwaysSprint.value := "./img/toggle_vertical_trans_on.png"
+		try {
+			ui.dockBarD2AlwaysRun.Opt("Background" cfg.ThemeButtonOnColor)
+			ui.dockBarD2AlwaysRun.value := "./img/toggle_vertical_trans_on.png"
+		}
+	}
+
+	d2ToggleAlwaysRunOff() {
+		cfg.d2AlwaysRunEnabled := false
+		if ui.d2IsSprinting
+			send("{" cfg.d2GameToggleSprintKey "}")
+		SetCapsLockState("Off")
+		;ui.d2Log.text := " stop: SPRINT`n rcvd: " strUpper(subStr(cfg.d2AppToggleSprintKey,1,8)) "`n" ui.d2Log.text
+		ui.d2AlwaysSprint.opt("background" cfg.ThemeButtonReadyColor)
+		ui.d2AlwaysSprint.value := "./img/toggle_vertical_trans_off.png"
+		try {
+			ui.dockBarD2AlwaysRun.opt("background" cfg.ThemeButtonReadyColor)
+			ui.dockBarD2AlwaysRun.value := "./img/toggle_vertical_trans_off.png"
+		}
+	}
+
+	
+	
+	
+	
 	keyCleanUp(this,*) {
 		for keyForCleanup in 
 					[cfg.d2GameToggleSprintKey
@@ -173,52 +200,6 @@ if (InStr(A_LineFile,A_ScriptFullPath)) { ;run main app
 			d2cleanupNeeded := false
 	}
 
-	d2IsSprinting(*) {
-		if getKeyState(cfg.d2GameHoldSprintKey)
-			return 1
-		else
-			return 0
-	}
-
-	d2ToggleAlwaysRun(*) {
-		(cfg.d2AlwaysRunEnabled := !cfg.d2AlwaysRunEnabled)
-			? thisToggleOn()
-			: thisToggleOff()
-
-		thisToggleOn() {
-			send("{" cfg.d2AppToggleSprintKey " Up}")
-			send("{" cfg.d2AppHoldCrouchKey " Up}")
-			SetCapsLockState("Off")
-	
-			ui.d2Log.text := " start: SPRINT`n rcvd: " strUpper(subStr(cfg.d2AppToggleSprintKey,1,8)) "`n" ui.d2Log.text
-			ui.d2AlwaysRun.Opt("Background" cfg.ThemeButtonOnColor)
-			ui.d2AlwaysRun.value := "./img/toggle_vertical_trans_on.png"
-			try {
-				ui.dockBarD2AlwaysRun.Opt("Background" cfg.ThemeButtonOnColor)
-				ui.dockBarD2AlwaysRun.value := "./img/toggle_vertical_trans_on.png"
-			}
-		}
-	
-		thisToggleOff() {
-			send("{" cfg.d2AppToggleSprintKey " Up}")
-			send("{" cfg.d2AppHoldCrouchKey " Up}")
-			SetCapsLockState("Off")
-			ui.d2Log.text := " stop: SPRINT`n rcvd: " strUpper(subStr(cfg.d2AppToggleSprintKey,1,8)) "`n" ui.d2Log.text
-			ui.d2AlwaysRun.opt("background" cfg.ThemeButtonReadyColor)
-			ui.d2AlwaysRun.value := "./img/toggle_vertical_trans_off.png"
-			try {
-				ui.dockBarD2AlwaysRun.opt("background" cfg.ThemeButtonReadyColor)
-				ui.dockBarD2AlwaysRun.value := "./img/toggle_vertical_trans_off.png"
-			}
-		}
-	}
-	
-	d2reload(*) {
-		send("{r}")
-		ui.d2Reloading := true
-		setTimer () => ui.d2Reloading := false, -2000
-		ui.d2cleanupNeeded := true
-	}
 } ;END d2 Logic
 
 { ;d2 UI
@@ -229,71 +210,77 @@ if (InStr(A_LineFile,A_ScriptFullPath)) { ;run main app
 		ui.d2cleanupNeeded := false
 
 		ui.gameSettingsGui.setFont("s10")
-
-		;ui.gameSettingsGui.addText("x13 y15 w100 h70 background" cfg.themePanel2color,"")		;UI.alwaysRunGb := ui.gameSettingsGui.addGroupbox("x10 y0 w270 h70","Always Run")
 		ui.gameSettingsGui.addText("x6 y3 w480 h62 background" cfg.themePanel1Color,"")
-		ui.gameSettingsGui.addText("x6 y68 w480 h76 background" cfg.themePanel1Color,"")
-		 ui.gameSettingsGui.addText("x10 y72 w472 h68 c" cfg.themePanel1Color " background" cfg.themePanel4Color)
+		ui.gameSettingsGui.addText("x6 y68 w480 h79 background" cfg.themePanel1Color,"")
+
+		ui.gameSettingsGui.addText("x24 y74 w445 h64 c" cfg.themePanel1Color " background" cfg.themePanel2Color)
+		drawOutlineNamed("d2AlwaysRunOutline",ui.gameSettingsGui,22,72,447,67,cfg.themeBright2Color,cfg.themeBright1Color,1)
 		drawOutlineNamed("d2AlwaysRunOutline",ui.gameSettingsGui,6,3,480,62,cfg.themeBright2Color,cfg.themeDark2Color,1)
-		drawOutlineNamed("d2AlwaysRunOutline",ui.gameSettingsGui,6,67,480,78,cfg.themeBright2Color,cfg.themeDark1Color,1)
-		; drawOutlineNamed("d2AlwaysRunOutline2",ui.gameSettingsGui,15,6,70,1,cfg.themeBackgroundColor,cfg.themeBackgroundColor,2)
+		drawOutlineNamed("d2AlwaysRunOutline",ui.gameSettingsGui,6,66,480,80,cfg.themeBright2Color,cfg.themeBright2Color,1)
+
 
 		ui.gameSettingsGui.addText("hidden x19 y18 section")
-		ui.gameSettingsGui.addText("x41 y10 w258 h43 background" cfg.themePanel4color " c" cfg.themeFont4color,"")
-		drawOutlineNamed("gameSettings",ui.gameSettingsGui,41,11,258,42,cfg.themeDark1Color,cfg.themeBright1Color,1)
-		ui.gameSettingsGui.addText("x306 y10 w173 h43 background" cfg.themePanel4color " c" cfg.themeFont4color,"")		
+		ui.gameSettingsGui.addText("x40 y10 w260 h43 background" cfg.themePanel2color " c" cfg.themeFont4color,"")
+		drawOutlineNamed("gameSettings",ui.gameSettingsGui,40,11,260,42,cfg.themeDark1Color,cfg.themeBright1Color,1)
+		ui.gameSettingsGui.addText("x306 y10 w173 h43 background" cfg.themePanel2color " c" cfg.themeFont4color,"")		
 		drawOutlineNamed("appSettings",ui.gameSettingsGui,306,11,173,42,cfg.themeDark1Color,cfg.themeBright1Color,1)
 
-
-
-
+		ui.d2gameToggleSprintKey			:= ui.gameSettingsGui.addPicture("x43 y20 w84  h28 section backgroundTrans","./img/keyboard_key_up.png")
+		ui.d2gameToggleSprintKeyData 		:= ui.gameSettingsGui.addText("xs-3 y+-23 w84  h21 center c" cfg.themeButtonAlertColor " backgroundTrans",subStr(strUpper(cfg.d2gameToggleSprintKey),1,8))
+		ui.d2gameToggleSprintKeyLabel		:= ui.gameSettingsGui.addText("xs-1 y+-33 w84  h20 center c" cfg.themeFont1Color " backgroundTrans","Toggle Sprint")
+		ui.d2gameHoldCrouchKey				:= ui.gameSettingsGui.addPicture("x+2 ys w84  h28 section backgroundTrans","./img/keyboard_key_up.png")
+		ui.d2gameHoldCrouchKeyData 			:= ui.gameSettingsGui.addText("xs-3 y+-23 w84  h21 center c" cfg.themeButtonAlertColor " backgroundTrans",subStr(strUpper(cfg.d2gameHoldCrouchKey),1,8))
+		ui.d2gameHoldCrouchKeyLabel 		:= ui.gameSettingsGui.addText("xs-1 y+-33 w84  h20 center c" cfg.themeFont1Color " backgroundTrans","Hold to Crouch")
+		ui.d2gameHoldSprintKey				:= ui.gameSettingsGui.AddPicture("x+2 ys w84  h28 section backgroundTrans","./img/keyboard_key_up.png")
+		ui.d2gameHoldSprintKeyData 			:= ui.gameSettingsGui.addText("xs-3 y+-23 w84  h21 center c" cfg.themeButtonAlertColor " backgroundTrans",subStr(strUpper(cfg.d2gameHoldSprintKey),1,8))
+		ui.d2gameHoldSprintKeyLabel			:= ui.gameSettingsGui.addText("xs-1 y+-33 w84  h20 center c" cfg.themeFont1Color " backgroundTrans","Hold to Sprint")
 		
+		ui.d2AppToggleSprintKey				:= ui.gameSettingsGui.AddPicture("x309 y20 w84  h28 section backgroundTrans","./img/keyboard_key_up.png")
+		ui.d2AppToggleSprintKeyData 		:= ui.gameSettingsGui.addText("xs-3 y+-23 w84  h21 center c" cfg.themeButtonAlertColor " backgroundTrans",subStr(strUpper(cfg.d2AppToggleSprintKey),1,8))
+		ui.d2AppToggleSprintKeyLabel		:= ui.gameSettingsGui.addText("xs-1 y+-33 w84  h20 center c" cfg.themeFont1Color " backgroundTrans","Toggle Sprint")
+		ui.d2AppHoldCrouchKey				:= ui.gameSettingsGui.addPicture("x+2 ys w84  h28 section backgroundTrans","./img/keyboard_key_up.png")
+		ui.d2AppHoldCrouchKeyData 			:= ui.gameSettingsGui.addText("xs-3 y+-23 w84  h21 center c" cfg.themeButtonAlertColor " backgroundTrans",subStr(strUpper(cfg.d2AppHoldCrouchKey),1,8))
+		ui.d2AppHoldCrouchKeyLabel			:= ui.gameSettingsGui.addText("xs-1 y+-33 w84  h20 center c" cfg.themeFont1Color " backgroundTrans","Hold to Crouch")
+		ui.d2AppVehicleKey					:= ui.gameSettingsGui.addPicture("x15 y55 w84  h28 section hidden backgroundTrans","./img/keyboard_key_up.png")
+		ui.d2AppVehicleKeyData 				:= ui.gameSettingsGui.addText("xs y+-23 w84  h21 center c" cfg.themeButtonAlertColor " hidden backgroundTrans",subStr(strUpper(cfg.d2AppVehicleKey),1,8))
+		ui.d2AppVehicleKeyLabel 			:= ui.gameSettingsGui.addText("xs-1 y+-20 w84  h20 hidden center c" cfg.themeFont1Color " backgroundTrans","Mount Vehicle")
 
-					 
+		ui.d2LaunchDIMbutton				:= ui.gameSettingsGui.addPicture("xs+18 y+-5 section w60  h60 backgroundTrans","./Img2/d2_button_DIM.png")
+		ui.d2LaunchLightGGbutton			:= ui.gameSettingsGui.addPicture("x+13 ys w60  h60 backgroundTrans","./Img2/d2_button_LightGG.png")
+		ui.d2LaunchBlueberriesButton 		:= ui.gameSettingsGui.addPicture("x+13 ys w60  h60 backgroundTrans","./Img2/d2_button_bbgg.png")
+		ui.d2LaunchD2CheckListButton 		:= ui.gameSettingsGui.addPicture("x+13 ys w60  h60 backgroundTrans","./Img2/d2_button_d2CheckList.png")
+		ui.d2LaunchDestinyRecipesButton 	:= ui.gameSettingsGui.addPicture("x+13 ys w60  h60 backgroundTrans","./Img2/d2_button_destinyrecipes.png")
+		ui.d2LaunchBrayTechButton 			:= ui.gameSettingsGui.addPicture("x+13 ys w60  h60 backgroundTrans","./Img2/d2_button_braytech.png")
 
-
-		ui.d2gameToggleSprintKey			:= ui.gameSettingsGui.addPicture("x44 y20 w80 h28 section backgroundTrans","./img/keyboard_key_up.png")
-		ui.d2gameToggleSprintKeyData 		:= ui.gameSettingsGui.addText("xs y+-25 w80 h21 center c" cfg.themeButtonAlertColor " backgroundTrans",subStr(strUpper(cfg.d2gameToggleSprintKey),1,8))
-		ui.d2gameToggleSprintKeyLabel		:= ui.gameSettingsGui.addText("xs-1 y+-33 w80 h20 center c" cfg.themeFont1Color " backgroundTrans","Toggle Sprint")
-
-		ui.d2gameHoldCrouchKey				:= ui.gameSettingsGui.addPicture("ys w80 h28 section backgroundTrans","./img/keyboard_key_up.png")
-		ui.d2gameHoldCrouchKeyData 			:= ui.gameSettingsGui.addText("xs y+-25 w80 h21 center c" cfg.themeButtonAlertColor " backgroundTrans",subStr(strUpper(cfg.d2gameHoldCrouchKey),1,8))
-		ui.d2gameHoldCrouchKeyLabel 		:= ui.gameSettingsGui.addText("xs-1 y+-33 w80 h20 center c" cfg.themeFont1Color " backgroundTrans","Hold to Crouch")
-		ui.d2gameHoldSprintKey				:= ui.gameSettingsGui.AddPicture("ys w80 h28 section backgroundTrans","./img/keyboard_key_up.png")
-		ui.d2gameHoldSprintKeyData 			:= ui.gameSettingsGui.addText("xs y+-25 w80 h21 center c" cfg.themeButtonAlertColor " backgroundTrans",subStr(strUpper(cfg.d2gameHoldSprintKey),1,8))
-		ui.d2gameHoldSprintKeyLabel			:= ui.gameSettingsGui.addText("xs-1 y+-33 w80 h20 center c" cfg.themeFont1Color " backgroundTrans","Hold to Sprint")
+		drawPanelLabel(guiName,labelX,labelY,labelW := 100,labelH := 20,labelText := "needs value",backColor := "gray",outlineColor := "white",fontColor := "white") {
+			static labelName := array()
+			static labelNum := 0
+			labelNum +=1
+			labelName.push("labelName" labelNum)
+			labelName[labelNum] := guiName.addText("x" labelX " y" labelY " w" labelW " h" labelH/2-1 " background" outlineColor,"")
+			labelName[labelNum].setFont("s10")
+			labelNum +=1
+			labelName.push("labelName" labelNum)
+			labelName[labelNum] := guiName.addText("x" labelX+1 " y" labelY+1 " w" labelW-2 " h" labelH-2 " background" backColor " center c" fontColor) 
+			labelName[labelNum].setFont("s10")
+			labelName[labelNum] := guiName.addText("x" labelX+1 " y" labelY-1 " w" labelW-2 " h" labelH " backgroundTrans center c" fontColor, labelText) 
+			labelName[labelNum].setFont("s10")
+		}
 		
-		ui.d2AppToggleSprintKey			:= ui.gameSettingsGui.AddPicture("x309 y20 w80 h28 section backgroundTrans","./img/keyboard_key_up.png")
-		ui.d2AppToggleSprintKeyData 			:= ui.gameSettingsGui.addText("xs y+-25 w80 h21 center c" cfg.themeButtonAlertColor " backgroundTrans",subStr(strUpper(cfg.d2AppToggleSprintKey),1,8))
-		ui.d2AppToggleSprintKeyLabel			:= ui.gameSettingsGui.addText("xs-1 y+-33 w80 h20 center c" cfg.themeFont1Color " backgroundTrans","Toggle Sprint")
-		ui.d2AppHoldCrouchKey			:= ui.gameSettingsGui.addPicture("ys w80 h28 section backgroundTrans","./img/keyboard_key_up.png")
-		ui.d2AppHoldCrouchKeyData 		:= ui.gameSettingsGui.addText("xs y+-25 w80 h21 center c" cfg.themeButtonAlertColor " backgroundTrans",subStr(strUpper(cfg.d2AppHoldCrouchKey),1,8))
-		ui.d2AppHoldCrouchKeyLabel		:= ui.gameSettingsGui.addText("xs-1 y+-33 w80 h20 center c" cfg.themeFont1Color " backgroundTrans","Hold to Crouch")
-		ui.d2AppVehicleKey				:= ui.gameSettingsGui.addPicture("x15 y55 w80 h28 section hidden backgroundTrans","./img/keyboard_key_up.png")
-		ui.d2AppVehicleKeyData 		:= ui.gameSettingsGui.addText("xs y+-27 w80 h21 center c" cfg.themeButtonAlertColor " hidden backgroundTrans",subStr(strUpper(cfg.d2AppVehicleKey),1,8))
-		ui.d2AppVehicleKeyLabel 		:= ui.gameSettingsGui.addText("xs-1 y+-20 w80 h20 hidden center c" cfg.themeFont1Color " backgroundTrans","Mount Vehicle")
-
-
-		ui.d2LaunchDIMbutton		:= ui.gameSettingsGui.addPicture("xs+6 y+-4 section w65 h65 backgroundTrans","./Img2/d2_button_DIM.png")
-		ui.d2LaunchLightGGbutton	:= ui.gameSettingsGui.addPicture("x+12 ys w65 h65 backgroundTrans","./Img2/d2_button_LightGG.png")
-		ui.d2LaunchBlueberriesButton := ui.gameSettingsGui.addPicture("x+12 ys w65 h65 backgroundTrans","./Img2/d2_button_bbgg.png")
-		ui.d2LaunchD2CheckListButton := ui.gameSettingsGui.addPicture("x+12 ys w65 h65 backgroundTrans","./Img2/d2_button_d2CheckList.png")
-		ui.d2LaunchDestinyRecipesButton := ui.gameSettingsGui.addPicture("x+12 ys w65 h65 backgroundTrans","./Img2/d2_button_destinyrecipes.png")
-		ui.d2LaunchBrayTechButton 	:= ui.gameSettingsGui.addPicture("x+12 ys w65 h65  backgroundTrans","./Img2/d2_button_braytech.png")
-
-
-		drawOutlineNamed("d2AlwaysRunOutline3",ui.gameSettingsGui,121,47,90,5,cfg.themeBright1Color,cfg.themeBackgroundColor,1)		
-		ui.gameSettingsGui.addText("x122 y48 w88 h15 c" cfg.themeFont1Color " background" cfg.themePanel1Color,"  Game Settings")
-		drawOutlineNamed("d2AlwaysRunOutline4",ui.gameSettingsGui,210,47,1,5,cfg.themeBright1Color,cfg.themeBright1Color,1)						 
-
-
-		drawOutlineNamed("d2AlwaysRunOutline3",ui.gameSettingsGui,349,47,85,5,cfg.themeBright1Color,cfg.themeBackgroundColor,1)
+		drawPanelLabel(ui.gameSettingsGui,125,47,90,15,"Game Settings",cfg.themePanel1Color,cfg.themeBright1Color,cfg.themeFont1Color)
+		drawPanelLabel(ui.gameSettingsGui,349,47,80,15,"App Settings",cfg.themePanel1Color,cfg.themeBright1Color,cfg.themeFont1Color)
 		
-		ui.gameSettingsGui.addText("x350 y48 w83 h15 c" cfg.themeFont1Color " background" cfg.themePanel1Color,"   App Settings")
-		
-		drawOutlineNamed("d2AlwaysRunOutline4",ui.gameSettingsGui,433,47,1,6,cfg.themeBright1Color,cfg.themeBright1Color,1)	
-; ui.d2DestinySetupLabel 		:= ui.gameSettingsGui.addText("x15 y18 w80 h20  right section backgroundTrans","D2 Setup")
-		; ui.d2AppSetupLabel 			:= ui.gameSettingsGui.addText("xs+0 y+25  w80 h20 right backgroundTrans","Your Binds")
+		; drawOutlineNamed("d2AlwaysRunOutline3",ui.gameSettingsGui,121,47,90,5,cfg.themeBright1Color,cfg.themePanel1Color,1)		
+		; ui.gameSettingsGui.addText("x122 y48 w88 h15 c" cfg.themeFont1Color " background" cfg.themePanel1Color,"  Game Settings")
+		; drawOutlineNamed("d2AlwaysRunOutline4",ui.gameSettingsGui,210,47,1,5,cfg.themeBright1Color,cfg.themeBright1Color,1)						 
+			
+		; }
+
+		; drawOutlineNamed("d2AlwaysRunOutline3",ui.gameSettingsGui,349,47,85,5,cfg.themeBright1Color,cfg.themeBackgroundColor,1)		
+		; ui.gameSettingsGui.addText("x350 y48 w83 h15 c" cfg.themeFont1Color " background" cfg.themePanel1Color,"   App Settings")
+		; drawOutlineNamed("d2AlwaysRunOutline4",ui.gameSettingsGui,433,47,1,6,cfg.themeBright1Color,cfg.themeBright1Color,1)	
+; ui.d2DestinySetupLabel 		:= ui.gameSettingsGui.addText("x15 y18 w84  h20  right section backgroundTrans","D2 Setup")
+		; ui.d2AppSetupLabel 			:= ui.gameSettingsGui.addText("xs+0 y+25  w84  h20 right backgroundTrans","Your Binds")
 		; ui.d2AppSetupLabel.setFont("s13")
 		; ui.d2DestinySetupLabel.setFont("s13")
 
@@ -303,7 +290,7 @@ if (InStr(A_LineFile,A_ScriptFullPath)) { ;run main app
 		; ui.d2AppSetupLabelInfo.toolTip 		:= "Bind these to what you'd`nlike to use when playing."
 		; ui.d2DestinySetupLabelInfo.toolTip	:= "Bind these to whatever they're set to in Destiny 2."
 		
-		ui.d2AlwaysRun := ui.gameSettingsGui.addPicture("x12 y10 w25 h43 section "
+		ui.d2AlwaysSprint := ui.gameSettingsGui.addPicture("x12 y10 w25 h43 section "
 		((cfg.d2AlwaysRunEnabled) 
 			? ("Background" cfg.ThemeButtonOnColor) 
 				: ("Background" cfg.themeButtonReadyColor)),
@@ -313,8 +300,7 @@ if (InStr(A_LineFile,A_ScriptFullPath)) { ;run main app
 		ui.d2Log			:= ui.gameSettingsGui.addText("x405 y10 w68 h80 hidden background" cfg.themePanel3color " c" cfg.themeFont3color," Destiny 2`n Log Started`n Waiting for Input")
 		ui.d2Log.setFont("s7","ariel")
 
-
-		ui.d2AlwaysRun.ToolTip 			:= "Toggles holdToCrouch"
+		ui.d2AlwaysSprint.ToolTip 			:= "Toggles holdToCrouch"
 		ui.d2gameHoldSprintKey.ToolTip 			:= "Click to Assign"
 		ui.d2gameHoldSprintKeyData.ToolTip  	:= "Click to Assign"
 		ui.d2gameHoldSprintKeyLabel.ToolTip		:= "Click to Assign"
@@ -340,12 +326,12 @@ if (InStr(A_LineFile,A_ScriptFullPath)) { ;run main app
 		ui.d2LaunchDestinyRecipesButton.toolTip	:= "Launch DestinyRecipes.com in Browser"
 		ui.d2LaunchBrayTechButton.toolTip	:= "Launch Bray.Tech in Browser"
 
-		ui.d2gameHoldCrouchKeyData.setFont("s13")
-		ui.d2gameHoldSprintKeyData.setFont("s13")
-		ui.d2gameToggleSprintKeyData.setFont("s13")
-		ui.d2AppVehicleKeyData.setFont("s13")
-		ui.d2AppHoldCrouchKeyData.setFont("s13")
-		ui.d2AppToggleSprintKeyData.setFont("s13")
+		ui.d2gameHoldCrouchKeyData.setFont("s11")
+		ui.d2gameHoldSprintKeyData.setFont("s11")
+		ui.d2gameToggleSprintKeyData.setFont("s11")
+		ui.d2AppVehicleKeyData.setFont("s11")
+		ui.d2AppHoldCrouchKeyData.setFont("s11")
+		ui.d2AppToggleSprintKeyData.setFont("s11")
 
 		ui.d2gameHoldCrouchKeyLabel.setFont("s9")
 		ui.d2gameHoldSprintKeyLabel.setFont("s9")
@@ -355,7 +341,7 @@ if (InStr(A_LineFile,A_ScriptFullPath)) { ;run main app
 		ui.d2AppHoldCrouchKeylabel.setFont("s9")
 		ui.d2AppToggleSprintKeyLabel.setFont("s9")
 		
-		ui.d2AlwaysRun.OnEvent("Click", d2ToggleAlwaysRun)
+		ui.d2AlwaysSprint.OnEvent("Click", d2ToggleAlwaysRun)
 		
 		ui.d2gameHoldCrouchKey.onEvent("click",d2gameHoldCrouchKeyClicked)
 		ui.d2gameHoldSprintKey.onEvent("click",d2gameHoldSprintKeyClicked)
@@ -595,6 +581,6 @@ if (InStr(A_LineFile,A_ScriptFullPath)) { ;run main app
 	ui.toggleSilentIdle := ui.gameSettingsGui.AddPicture("xs-60 y+45 w60 h25 section vSilentIdle " (r)),((cfg.SilentIdleEnabled ? ("Background" cfg.ThemeButtonOnColor) : ("Background" cfg.ThemeButtonReadyColor) ? (cfg.toggleOn) : (cfg.toggleOff)))
 	ui.toggleSilentIdle.OnEvent("Click", toggleChanged)
 	ui.toggleSilentIdle.ToolTip := "Minimizes Roblox Windows While Anti-Idling"
-	ui.labelSilentIdle:= ui.gameSettingsGui.AddText("xs-8 y+0 w80 center backgroundTrans","Silent AntiIdle")
+	ui.labelSilentIdle:= ui.gameSettingsGui.AddText("xs-8 y+0 w82 center backgroundTrans","Silent AntiIdle")
 	
 } ;end w0 tab

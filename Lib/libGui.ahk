@@ -871,7 +871,7 @@ tabsChanged(*) {
 			guiVis(ui.afkGui,false)
 			guiVis(ui.editorGui,false)
 			guiVis(ui.gameTabGui,true)
-			controlFocus(ui.d2AlwaysRun,ui.gameSettingsGui)
+			controlFocus(ui.d2AlwaysSprint,ui.gameSettingsGui)
 			ui.previousTab := ui.activeTab
 		case "Editor":
 			if tabDisabled()

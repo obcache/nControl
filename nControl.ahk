@@ -1,4 +1,4 @@
-A_FileVersion := "4.2.4.0"
+A_FileVersion := "4.2.4.1"
 ;@Ahk2Exe-Let FileVersion=%A_PriorLine~U)^(.+"){1}(.+)".*$~$2% 
 
 A_AppName := "nControl"
@@ -12,21 +12,21 @@ if (fileExist("./nControl_currentBuild.dat"))
 #SingleInstance
 #Warn All, Off
 
-Persistent()
-InstallMouseHook()
-InstallKeybdHook()
-KeyHistory(10)
-SetWorkingDir(A_ScriptDir)
+persistent()
+installMouseHook()
+installKeybdHook()
+keyHistory(10)
+setWorkingDir(a_scriptDir)
 
 
 
-A_Restarted := 
-	(inStr(DllCall("GetCommandLine","Str"),"/restart"))
+a_restarted := 
+	(inStr(dllCall("GetCommandLine","Str"),"/restart"))
 		? true
 		: false
 
-OnMessage(0x0202, WM_LBUTTONDOWN)
-OnMessage(0x47, WM_WINDOWPOSCHANGED)
+onMessage(0x0202, WM_LBUTTONDOWN)
+onMessage(0x47, WM_WINDOWPOSCHANGED)
 
 
 installDir 		:= a_myDocuments "\nControl"
@@ -34,7 +34,7 @@ configFileName 	:= "nControl.ini"
 themeFileName	:= "nControl.themes"
 
 preAutoExec(InstallDir,ConfigFileName)
-InitTrayMenu()
+initTrayMenu()
 
 ; ui.AfkGui 		:= Gui()
 dockApp 		:= Object()
@@ -44,28 +44,28 @@ cfg.ThemeFile	:= "./" ThemeFileName
 ui.pinned 		:= 0
 ui.hidden 		:= 0
 ui.hwndAfkGui 	:= ""
-LogData 		:= ""
+logData 		:= ""
 ui.AfkHeight 	:= 170
 ui.latestVersion := ""
 ui.installedVersion := ""
 
-MonitorGet(MonitorGetPrimary(),
-	&PrimaryMonitorLeft,
-	&PrimaryMonitorTop,
-	&PrimaryMonitorRight,
-	&PrimaryMonitorBottom)
+MonitorGet(MonitorGetprimary(),
+	&primaryMonitorLeft,
+	&primaryMonitorTop,
+	&primaryMonitorRight,
+	&primaryMonitorBottom)
 
-MonitorGetWorkArea(MonitorGetPrimary(),
-	&PrimaryWorkAreaLeft,
-	&PrimaryWorkAreaTop,
-	&PrimaryWorkAreaRight,
-	&PrimaryWorkAreaBottom)
+MonitorGetWorkArea(MonitorGetprimary(),
+	&primaryWorkAreaLeft,
+	&primaryWorkAreaTop,
+	&primaryWorkAreaRight,
+	&primaryWorkAreaBottom)
 
-ui.TaskbarHeight := PrimaryMonitorBottom - PrimaryWorkAreaBottom
+ui.taskbarHeight := primaryMonitorBottom - primaryWorkAreaBottom
 
-CfgLoad(&cfg, &ui)
-InitGui(&cfg, &ui)
-InitConsole(&ui)
+cfgLoad(&cfg, &ui)
+initGui(&cfg, &ui)
+initConsole(&ui)
 
 #include <libGui>
 #include <libWinMgr>
@@ -84,27 +84,17 @@ InitConsole(&ui)
 #include <Class_SQLiteDB>
 #include <libThemeCreator>
 
-debugLog("Interface Initialized")
+
+	debugLog("Interface Initialized")
 
 OnExit(ExitFunc)
 
-debugLog("Console Initialized")
-; if (cfg.ConsoleVisible == true)
-; {
-	; toggleConsole()
-; }																																																				
 
-;setTimer(monitorGameWindows,2500)
-; refreshWinHwnd()
-; ui.gameTabs.choose(cfg.gameModuleList[1])
-;ui.mainGuiTabs.choose(cfg.mainTabList[cfg.activeMainTab])
+	debugLog("Console Initialized")
 
-; ui.gameTabs.choose(cfg.gameModuleList[2])
 ui.gameTabs.choose(cfg.gameModuleList[cfg.activeGameTab])
 
-
 autoUpdate()
-
 
 winGetPos(&MainGuiX,&MainGuiY,,,ui.mainGui)
 if cfg.startMinimizedEnabled
@@ -120,5 +110,4 @@ drawAfkOutlines()
 ui.afkGui.show("x" mainGuiX+45 " y" mainGuiY+50 " w270 h140 noActivate")
 ui.MainGuiTabs.Choose(cfg.mainTabList[cfg.activeMainTab])
 fadeIn()
-
 tabsChanged()

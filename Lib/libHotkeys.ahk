@@ -26,9 +26,9 @@ if (InStr(A_LineFile,A_ScriptFullPath))
 
 
 
-hotIf(SLCapsOn)
-	hotKey("w down",SLBHop)
-hotIf()
+; hotIf(SLCapsOn)
+	; hotKey("w down",SLBHop)
+; hotIf()
 
 SLCapsOn(*) {
 	if getKeyState("CapsLock","T") && winActive("ahk_exe shatterline.exe")
@@ -107,6 +107,45 @@ SLBHop(*) {
 	resetWindowPosition()
 }
 
+
+
+^+[:: {
+	static currOutputDeviceNum := 1
+	ui.audioDevices := array()
+	
+	; loop
+	; {
+		; try {
+			; ui.audioDevices.push(SoundGetName(, devIndex := A_Index))
+		; } catch
+			; break
+	; }
+	
+	; loop ui.audioDevices.length {
+		; audioListStr .= ui.audioDevices[a_index] "`n"
+	; }
+	;msgBox(audioListStr)
+
+audioOutputDevices := ["S2MASTER (Traktor Kontrol S2 MK3 WDM Audio)","Speakers (Logitech G432 Gaming Headset)","Realtek HD Audio 2nd output (Realtek(R) Audio)","Speakers (Yeti Classic)","Headphones (Tango TRX)"]
+
+audioDeviceName := regRead("HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\MMDevices\Audio\Render\{e4301939-df7b-41b3-81d5-a8930d8b94aa}\Properties","{b3f8fa53-0004-438e-9003-51a46e139bfc},6")
+
+
+Run("./Redist/nircmd.exe setdefaultsounddevice " audioOutputDevices[currOutputDeviceNum])
+debugLog("setting audio device: " audioOutputDevices[currOutputDeviceNum])
+
+
+if currOutputDeviceNum == 5
+	currOutputDeviceNum := 1
+else
+	currOutputDeviceNum += 1
+
+}
+
+
+^+]:: {
+	
+}
 
 ^Enter::
 {

@@ -450,7 +450,7 @@ cfgLoad(&cfg, &ui) {
 		
 	ui.gameWindowsList 		:= array()
 	cfg.gameWindowsList 	:= array()
-	ui.d2AlwaysRunPaused 	:= false
+	ui.d2AlwaysSprintPaused 	:= false
 	ui.d2Running			:= false
 	ui.d2Sliding			:= false
 	ui.d2Reloading			:= false

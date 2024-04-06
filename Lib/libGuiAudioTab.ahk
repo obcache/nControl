@@ -107,7 +107,7 @@ setVol(vol, audioIn := false) {
 setOutputVol(*) {
 	if (cfg.gameAudioEnabled)
 		setVol(ui.SpeakerVolumeSlider.value)
-		cfg.speakerVolume := ui.speakerVolumeSlider.value`
+		cfg.speakerVolume := ui.speakerVolumeSlider.value
 }
 
 setInputVol(*) {
@@ -144,24 +144,7 @@ audioInputSelected(obj,idx,*)
 	MsgBox("Mic set to: " cfg.MicName)
 }
 
-ChooseAudioOutput(*)
-{
-	global
-	scGui := Gui(, "Select audio output")
 
-
-	loop
-	{
-		; For each loop iteration, try to get the corresponding device.
-		try
-			devName := SoundGetName(, devIndex := A_Index)
-		catch
-			break
-
-		scGui.add("Button",,devName).OnEvent("Click", (*) => audioOutputSelected(A_Index, &audio, &scGui, &cfg,&ui))
-	}
-	scGui.Show("NoActivate")
-}
 
 audioOutputSelected(devName,&audio,&scGui,&cfg,&ui)
 {
