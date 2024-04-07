@@ -1,4 +1,4 @@
-A_FileVersion := "4.2.4.3"
+A_FileVersion := "4.2.4.4"
 ;@Ahk2Exe-Let FileVersion=%A_PriorLine~U)^(.+"){1}(.+)".*$~$2% 
 
 A_AppName := "nControl"

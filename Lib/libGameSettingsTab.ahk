@@ -99,11 +99,9 @@ if (InStr(A_LineFile,A_ScriptFullPath)) { ;run main app
 	ui.d2IsSprinting := false
 	
 	d2reload(*) {
-		send("{r}")
-		send("{r}")
-		send("{r}")
 		d2ToggleAlwaysRunOff()
-		setTimer () => d2ToggleAlwaysRunOn(), -2000
+		send("{r}")
+		setTimer () => d2ToggleAlwaysRunOn(), -2600
 	}
 
 	d2MountVehicle(*) {
