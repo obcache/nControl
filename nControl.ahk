@@ -1,4 +1,4 @@
-A_FileVersion := "4.2.4.4"
+A_FileVersion := "4.2.4.5"
 ;@Ahk2Exe-Let FileVersion=%A_PriorLine~U)^(.+"){1}(.+)".*$~$2% 
 
 A_AppName := "nControl"
@@ -111,3 +111,5 @@ ui.afkGui.show("x" mainGuiX+45 " y" mainGuiY+50 " w270 h140 noActivate")
 ui.MainGuiTabs.Choose(cfg.mainTabList[cfg.activeMainTab])
 fadeIn()
 tabsChanged()
+
+

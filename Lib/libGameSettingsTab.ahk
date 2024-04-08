@@ -99,9 +99,13 @@ if (InStr(A_LineFile,A_ScriptFullPath)) { ;run main app
 	ui.d2IsSprinting := false
 	
 	d2reload(*) {
-		d2ToggleAlwaysRunOff()
-		send("{r}")
-		setTimer () => d2ToggleAlwaysRunOn(), -2600
+		
+		if cfg.d2AlwaysRunEnabled {
+			d2ToggleAlwaysRunOff()
+			send("{r}")
+			setTimer () => d2ToggleAlwaysRunOn(),-2600
+		}	
+		;setTimer () => d2ToggleAlwaysRunOn(), -2600
 	}
 
 	d2MountVehicle(*) {
@@ -113,40 +117,40 @@ if (InStr(A_LineFile,A_ScriptFullPath)) { ;run main app
 	hotIfWinActive("ahk_exe destiny2.exe")
 		hotKey(cfg.d2AppVehicleKey,d2MountVehicle)
 		hotKey(cfg.d2AppToggleSprintKey,d2ToggleAlwaysRun)
-		hotKey("*r",d2reload)
+		hotKey("~*r",d2reload)
+		hotKey("LButton",d2FireButtonClicked)
 	hotIf()
 
 	hotIf(d2ReadyToSprint)
 		hotKey("~*w",d2StartSprinting)
 	hotIf()
 
+	d2FireButtonClicked(*) {
+	send("{LButton Down}")
+	keyWait("LButton")
+	if ui.d2IsSprinting
+		send("{" cfg.d2GameToggleSprintKey "}")
+	send("{LButton Up}")
+	}
+	
 	d2ReadyToSprint(*) {
-		if (winActive("ahk_exe destiny2.exe") && cfg.d2AlwaysRunEnabled && !d2IsSprinting())
+		if (winActive("ahk_exe destiny2.exe") && cfg.d2AlwaysRunEnabled )
 			return 1
 		else
 			return 0
 	}
 	
 	d2startSprinting(*) {
-		send("{w down}")
+		ui.d2IsSprinting := true
+		;send("{w down}")
 		if (cfg.d2AlwaysRunEnabled) {
 			send("{" strLower(cfg.d2GameToggleSprintKey) "}")
 		}
+		setCapsLockState("Off")
 		keyWait("w","L")
 		send("{w up}")
 	}
 
-	toggleToWalk(*) {
-		ui.d2AlwaysSprint.value := 
-			(cfg.d2AlwaysRunEnabled := !cfg.d2AlwaysRunEnabled)
-				? (ui.d2AlwaysSprint.opt("background" cfg.themeButtonOnColor),"./img/toggle_vertical_trans_on.png")
-				: (ui.d2AlwaysSprint.opt("background" cfg.themeButtonReadyColor),"./img/toggle_vertical_trans_off.png")
-	}
-
-	d2IsSprinting(*) {
-		return (ui.d2IsSprinting) ? 1 : 0
-			
-	}
 
 	d2ToggleAlwaysRun(*) {
 		(cfg.d2AlwaysRunEnabled := !cfg.d2AlwaysRunEnabled)
@@ -167,10 +171,13 @@ if (InStr(A_LineFile,A_ScriptFullPath)) { ;run main app
 	}
 
 	d2ToggleAlwaysRunOff() {
-		cfg.d2AlwaysRunEnabled := false
 		if ui.d2IsSprinting
-			send("{" cfg.d2GameToggleSprintKey "}")
+			send("{" cfg.d2AppToggleSprintKey "}")
+		ui.d2IsSprinting := false
 		SetCapsLockState("Off")
+		cfg.d2AlwaysRunEnabled := false
+		
+
 		;ui.d2Log.text := " stop: SPRINT`n rcvd: " strUpper(subStr(cfg.d2AppToggleSprintKey,1,8)) "`n" ui.d2Log.text
 		ui.d2AlwaysSprint.opt("background" cfg.ThemeButtonReadyColor)
 		ui.d2AlwaysSprint.value := "./img/toggle_vertical_trans_off.png"

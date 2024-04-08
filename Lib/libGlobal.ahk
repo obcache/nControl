@@ -8,6 +8,7 @@ if (InStr(A_LineFile,A_ScriptFullPath)){
 	Return
 }
 
+
 initTrayMenu(*) {
 	A_TrayMenu.Delete
 	A_TrayMenu.Add
@@ -23,8 +24,9 @@ initTrayMenu(*) {
 	Try
 		persistLog("Tray Initialized")
 }
-	OnMessage(0x0202, WM_LBUTTONDOWN)
-	OnMessage(0x47, WM_WINDOWPOSCHANGED)	
+OnMessage(0x0202, WM_LBUTTONDOWN)
+OnMessage(0x47, WM_WINDOWPOSCHANGED)	
+	
 preAutoExec(InstallDir,ConfigFileName) {
 	Global
 	cfg				:= object()
@@ -454,9 +456,9 @@ cfgLoad(&cfg, &ui) {
 	ui.gameWindowsList 		:= array()
 	cfg.gameWindowsList 	:= array()
 	ui.d2AlwaysSprintPaused 	:= false
-	ui.d2Running			:= false
-	ui.d2Sliding			:= false
-	ui.d2Reloading			:= false
+	ui.d2IsSprinting			:= false
+	ui.d2IsSliding				:= false
+	ui.d2IsReloading			:= false
 	ui.d2ToggleWalkEnabled	:= false
 	ui.clockTimerStarted 	:= false
 	ui.clockMode			:= "Clock"
@@ -535,6 +537,12 @@ cfgLoad(&cfg, &ui) {
 	cfg.GuiY 					:= IniRead(cfg.file,"Interface","GuiY",PrimaryWorkAreaTop + 200)
 	cfg.GuiW					:= IniRead(cfg.file,"Interface","GuiW",545)
 	cfg.GuiH					:= IniRead(cfg.file,"Interface","GuiH",210)
+	cfg.appGuiList				:= strSplit(iniRead(cfg.file,"Interface","AppGuiList","ui.mainGui,ui.afkGui,ui.gameSettingsGui,ui.titleBarButtonGui,ui.dockBarGui"),",")
+	cfg.gameProcessList			:= iniRead(cfg.file,"Interface","GameProcessList","destiny2.exe,shatterline.exe,rocketleague.exe,robloxPlayerBeta.exe")
+	cfg.nonGameProcessList		:= iniRead(cfg.file,"Interface","nonGameProcessList","foobar2000.exe,discord.exe,chrome.exe,edge.exe,firefox.exe,explorer.exe")
+
+
+
 
 	MonitorGet(MonitorGetPrimary(),&L,&T,&R,&B)
 	if (cfg.GuiX < L)
@@ -723,7 +731,12 @@ WriteConfig() {
 		IniWrite(cfg.d2AppToggleSprintKey,cfg.file,"Game","d2AppToggleSprintKey")
 		IniWrite(cfg.d2AppHoldCrouchKey,cfg.file,"Game","d2AppHoldCrouchKey")
 		IniWrite(cfg.d2AppVehicleKey,cfg.file,"Game","d2AppVehicleKey")
-		
+		for appGui in cfg.appGuiList {
+			appGuiListStr .= appGui ","
+		}
+		iniWrite(rtrim(appGuiListStr,","),cfg.file,"Interface","AppGuiList")
+		iniWrite(cfg.gameProcessList,cfg.file,"Interface","GameProcessList")
+		iniWrite(cfg.nonGameProcessList,cfg.file,"Interface","NonGameProcessList")
 
 		ui.mainTabListString := ""
 		loop cfg.mainTabList.length {
@@ -1045,4 +1058,54 @@ resetKeyStates() {
 		if getKeyState(key := format("vk{:x}",a_index))
 		sendInput("{%key% up}")
 	}	
+}
+
+
+; setTimer(winActiveMonitor,1000)
+; ui.lastWinHwnd := ""
+; winActiveMonitor(*) {
+	; try
+		; ui.currWinProcessName := winGetProcessName(ui.currWinHwnd := winExist("A"))
+	; catch
+		; return
+
+	; if ui.currWinHwnd == ui.lastWinHwnd
+		; return
+	; else {
+		
+		; ui.lastWinHwnd := ui.currWinHwnd 
+		
+		; if inStr("chrome.exe",ui.currWinProcessName) {
+				; winGetPos(&dockX,,,,ui.dockBarGui)
+				; if dockX != primaryWorkAreaRight-ui.dockBarWidth-160 {
+					; try {
+						; if (cfg.animationsEnabled) {
+							; while dockX < primaryWorkAreaRight-ui.dockBarWidth-160 {
+								; ui.dockBarGui.move(dockX,0)
+								; dockX += 15
+							; }
+						; }
+						; ui.dockBarGui.move(primaryWorkAreaRight-ui.dockBarWidth-160,0)
+					; }
+				; }	
+		; } else {
+			; winGetPos(&dockX,,,,ui.dockBarGui)
+			; if dockX != (a_screenWidth/2)-(ui.dockBarWidth/2) {
+			; try {
+					; if (cfg.animationsEnabled) {
+						; while dockX > (a_screenWidth/2)-(ui.dockBarWidth/2) {
+							; ui.dockBarGui.move(dockX,0)
+							; dockX -= 15
+						; }
+					; }
+					; ui.dockBarGui.move((a_screenWidth/2)-(ui.dockBarWidth/2),0)
+				; }
+			; }
+		; }		
+	; }
+; }
+
+appChangeTrans(transLevel) {
+	try
+		winSetTransparent(transLevel,ui.dockBarGui.hwnd)
 }
