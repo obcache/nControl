@@ -102,8 +102,7 @@ if (InStr(A_LineFile,A_ScriptFullPath)) { ;run main app
 		
 		if cfg.d2AlwaysRunEnabled {
 			d2ToggleAlwaysRunOff()
-			send("{r}")
-			setTimer () => d2ToggleAlwaysRunOn(),-2600
+			setTimer () => (ui.d2IsReloading := false,d2ToggleAlwaysRunOn()),-3000
 		}	
 		;setTimer () => d2ToggleAlwaysRunOn(), -2600
 	}
@@ -118,9 +117,12 @@ if (InStr(A_LineFile,A_ScriptFullPath)) { ;run main app
 		hotKey(cfg.d2AppVehicleKey,d2MountVehicle)
 		hotKey(cfg.d2AppToggleSprintKey,d2ToggleAlwaysRun)
 		hotKey("~*r",d2reload)
-		hotKey("LButton",d2FireButtonClicked)
 	hotIf()
 
+	hotIf(d2ReadyToReload)
+		hotKey("~*r",d2reload)
+	hotIf()
+	
 	hotIf(d2ReadyToSprint)
 		hotKey("~*w",d2StartSprinting)
 	hotIf()
@@ -128,13 +130,20 @@ if (InStr(A_LineFile,A_ScriptFullPath)) { ;run main app
 	d2FireButtonClicked(*) {
 	send("{LButton Down}")
 	keyWait("LButton")
+
+	send("{LButton Up}")
 	if ui.d2IsSprinting
 		send("{" cfg.d2GameToggleSprintKey "}")
-	send("{LButton Up}")
+}
+	d2ReadyToReload(*) {
+		if winActive("ahk_exe destiny2.exe") && !ui.d2IsReloading	
+			return 1
+		else
+			return 0	
 	}
 	
 	d2ReadyToSprint(*) {
-		if (winActive("ahk_exe destiny2.exe") && cfg.d2AlwaysRunEnabled )
+		if (winActive("ahk_exe destiny2.exe") && cfg.d2AlwaysRunEnabled && !getKeyState("RButton"))
 			return 1
 		else
 			return 0
