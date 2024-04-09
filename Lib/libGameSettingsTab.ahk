@@ -101,6 +101,7 @@ if (InStr(A_LineFile,A_ScriptFullPath)) { ;run main app
 	d2reload(*) {
 		
 		if cfg.d2AlwaysRunEnabled {
+			ui.d2IsReloading := true
 			d2ToggleAlwaysRunOff()
 			setTimer () => (ui.d2IsReloading := false,d2ToggleAlwaysRunOn()),-3000
 		}	
@@ -116,7 +117,7 @@ if (InStr(A_LineFile,A_ScriptFullPath)) { ;run main app
 	hotIfWinActive("ahk_exe destiny2.exe")
 		hotKey(cfg.d2AppVehicleKey,d2MountVehicle)
 		hotKey(cfg.d2AppToggleSprintKey,d2ToggleAlwaysRun)
-		hotKey("~*r",d2reload)
+;		hotKey("~*r",d2reload)
 	hotIf()
 
 	hotIf(d2ReadyToReload)
