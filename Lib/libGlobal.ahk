@@ -626,11 +626,10 @@ cfgLoad(&cfg, &ui) {
 	cfg.cs2HoldToScopeEnabled	:= IniRead(cfg.file,"game","cs2HoldToScopeEnabled",true)
 	cfg.d2AlwaysRunEnabled		:= iniRead(cfg.file,"Game","d2AlwaysRunEnabled",false)
 	cfg.d2AppToggleSprintKey	:= IniRead(cfg.file,"Game","d2AppToggleSprintKey","<UNSET>")
-	cfg.d2AppHoldCrouchKey		:= IniRead(cfg.file,"Game","d2AppHoldCrouchKey","<UNSET>")
+	cfg.d2GameReloadKey		:= IniRead(cfg.file,"Game","d2GameReloadKey","<UNSET>")
 	cfg.d2AppVehicleKey			:= IniRead(cfg.file,"Game","d2AppVehicleKey","<UNSET>")
-	cfg.d2gameHoldCrouchKey		:= IniRead(cfg.file,"Game","d2GameHoldCrouchKey","<UNSET>")
-	cfg.d2gameToggleSprintKey	:= IniRead(cfg.file,"Game","d2GameToggleSprintKey","<UNSET>")
-	cfg.d2gameHoldSprintKey		:= IniRead(cfg.file,"Game","d2GameHoldSprintKey","<UNSET>")
+	cfg.d2AppLoadoutKey		:= IniRead(cfg.file,"Game","d2AppLoadoutKey","<UNSET>")
+	cfg.d2GameToggleSprintKey	:= IniRead(cfg.file,"Game","d2GameToggleSprintKey","<UNSET>")
 	cfg.SLBHopKey				:= iniRead(cfg.file,"Game","ShatterLineBunnyHopKey","<UNSET>")
 }
 
@@ -726,10 +725,10 @@ WriteConfig() {
 		
 		iniWrite(cfg.SLBHopKey,cfg.file,"Game","ShatterLineBunnyHopKey")
 		IniWrite(cfg.d2GameToggleSprintKey,cfg.file,"Game","d2GameToggleSprintKey")
-		IniWrite(cfg.d2gameHoldSprintKey,cfg.file,"Game","d2gameHoldSprintKey")
-		IniWrite(cfg.d2gameHoldCrouchKey,cfg.file,"Game","d2gameHoldCrouchKey")
+		IniWrite(cfg.d2AppVehicleKey,cfg.file,"Game","d2AppVehicleKey")
+		IniWrite(cfg.d2AppLoadoutKey,cfg.file,"Game","d2AppLoadoutKey")
 		IniWrite(cfg.d2AppToggleSprintKey,cfg.file,"Game","d2AppToggleSprintKey")
-		IniWrite(cfg.d2AppHoldCrouchKey,cfg.file,"Game","d2AppHoldCrouchKey")
+		IniWrite(cfg.d2GameReloadKey,cfg.file,"Game","d2GameReloadKey")
 		IniWrite(cfg.d2AppVehicleKey,cfg.file,"Game","d2AppVehicleKey")
 		for appGui in cfg.appGuiList {
 			appGuiListStr .= appGui ","
@@ -835,7 +834,7 @@ debugLog(LogMsg) {
 }
 
 
-DialogBox(Msg,Alignment := "Left")
+DialogBox(Msg,Alignment := "Center")
 {
 	Global
 	if !InStr("LeftRightCenter",Alignment)
@@ -862,19 +861,21 @@ DialogBox(Msg,Alignment := "Left")
 	drawOutlineNotifyGui(2,2,w-2,h-2,cfg.ThemeBright2Color,cfg.ThemeBright2Color,1)
 	
 	Transparency := 0
-	
-	While Transparency < 253
+	guiVis("all",false)	
+While Transparency < 253
 	{
 		Transparency += 5
 		WinSetTransparent(Round(Transparency),ui.notifyGui)
 	}
 }
 
+
 DialogBoxClose(*)
 {
 	Global
 	Try
 		ui.notifyGui.Destroy()
+	guiVis("all",true)
 }
 
 NotifyOSD(NotifyMsg,Duration := 10,Alignment := "Left",YN := "")

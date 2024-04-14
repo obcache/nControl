@@ -1,5 +1,6 @@
 [Interface]
-ThemeList=Modern Class,Cold Steel,Militarized,Neon,Ocean,Alien
+ThemeList=Modern Class,Cold Steel,Militarized,Neon,Ocean,Alien,tmp
+
 [Modern Class]
 ThemeBorderLightColor=C0C0C0
 ThemeBorderDarkColor=454545
@@ -20,6 +21,7 @@ ThemeButtonAlertColor=FFAF09
 ThemeFont2Color=FFFF80
 ThemeFont3Color=1F2527
 ThemeFont4Color=FFB366
+
 [Cold Steel]
 ThemeBorderLightColor=B2B2B2
 ThemeBorderDarkColor=ACACAC
@@ -43,6 +45,7 @@ ThemeProgressColor=B9B9BC
 ThemeDark1Color=292929
 ThemeFont4Color=1E2020
 ThemeDark2Color=414141
+
 [Militarized]
 ThemeBorderLightColor=888888
 ThemeBorderDarkColor=333333
@@ -61,6 +64,7 @@ ThemeButtonOnColor=01FE80
 ThemeButtonReadyColor=CFA645
 ThemeButtonAlertColor=FFCC00
 ThemeFont2Color=ADBAC9
+
 [Ocean]
 ThemeBorderLightColor=AAC5C6
 ThemeBorderDarkColor=333333
@@ -79,6 +83,7 @@ ThemeButtonOnColor=FEF329
 ThemeButtonReadyColor=DF9A5B
 ThemeButtonAlertColor=FFCC00
 ThemeFont2Color=D5EAFF
+
 [LCD]
 ThemeBackgroundColor=B0C6B6
 ThemeBorderLightColor=5B8471
@@ -96,6 +101,7 @@ ThemeDisabledColor=212121
 ThemeButtonOnColor=FF01FF
 ThemeButtonReadyColor=D7FF82
 ThemeButtonAlertColor=FFCC00
+
 [Neon]
 ThemeBackgroundColor=202020
 ThemeBorderLightColor=FF0180
@@ -117,6 +123,7 @@ ThemeFont2Color=98FE33
 ThemeDark2Color=C40089
 ThemeFont3Color=FF0180
 ThemeProgressColor=FFFF01
+
 [Custom]
 ThemeBright2Color=606060
 ThemeBright1Color=B5B5B5
@@ -140,6 +147,7 @@ ThemeButtonOnColor=BFFF01
 ThemeButtonReadyColor=AAAAAA
 ThemeButtonAlertColor=FFFF01
 ThemeFont4Color=292929
+
 [Alien]
 ThemeButtonReadyColor=AAAAAA
 ThemeFont1Color=D6D6D6
@@ -162,3 +170,26 @@ ThemeDisabledColor=292929
 ThemeBright2Color=606060
 ThemeDark2Color=141414
 ThemeFont2Color=C0C0C0
+
+[tmp]
+ThemeButtonReadyColor=838383
+ThemeFont1Color=D3D3D3
+ThemePanel1Color=4F4F4F
+ThemePanel4Color=777777
+ThemeFont4Color=3A3A3A
+ThemePanel3Color=408080
+ThemeFont3Color=FAFDEE
+ThemeButtonOnColor=FFFFFF
+ThemeButtonAlertColor=FFBF01
+ThemePanel2Color=2D2D2D
+ThemeBackgroundColor=354A4A
+ThemeBorderDarkColor=888888
+ThemeBorderLightColor=444444
+ThemeEditboxColor=444444
+ThemeProgressColor=FFFFFF
+ThemeBright1Color=D7D7D7
+ThemeDark1Color=111111
+ThemeDisabledColor=555555
+ThemeBright2Color=AAAAAA
+ThemeDark2Color=000000
+ThemeFont2Color=BFD5D5

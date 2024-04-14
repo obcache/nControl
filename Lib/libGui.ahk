@@ -906,11 +906,37 @@ tabDisabled() {
 
 guiVis(guiName,isVisible:= true) {
 	if (isVisible) {
-		WinSetTransparent(255,guiName)
-		WinSetTransparent("Off",guiName)
-		WinSetTransColor(ui.TransparentColor,guiName)
+		if guiName != "all" {
+			WinSetTransparent(255,guiName)
+			WinSetTransparent("Off",guiName)
+			WinSetTransColor(ui.TransparentColor,guiName)
+		} else {
+			try 
+				winSetTransparent(255,ui.mainGui)
+			try 
+				winSetTransparent(255,ui.titleBarButtonGui)
+			try 
+				winSetTransparent(255,ui.afkGui)
+			try 
+				winSetTransparent(255,ui.gameSettingsGui)
+			try
+				winSetTransparent(255,ui.gameTabGui)
+		}
 	} else {
-		WinSetTransparent(0,guiName)
+		if guiName != "all" {
+			WinSetTransparent(0,guiName)
+		} else {
+			try 
+				winSetTransparent(0,ui.mainGui)
+			try 
+				winSetTransparent(0,ui.titleBarButtonGui)
+			try 
+				winSetTransparent(0,ui.afkGui)
+			try 
+				winSetTransparent(0,ui.gameSettingsGui)
+			try
+				winSetTransparent(0,ui.gameTabGui)
+		}
 	}
 }
 

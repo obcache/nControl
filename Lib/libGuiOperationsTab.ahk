@@ -104,18 +104,18 @@ GuiOperationsTab(&ui,&cfg,&afk) { ;libGuiOperationsTab
 	ui.ButtonDebug := ui.MainGui.AddPicture( 
 	(cfg.consoleVisible) 
 		? "x+2 ys-3 w27 h27 section Background" cfg.ThemeButtonOnColor 
-		: "x+2 ys-3 w27 h27 section Background" cfg.ThemeDisabledColor,
+		: "x+2 ys-3 w27 h27 section Background" cfg.ThemeButtonReadyColor,
 	(cfg.consoleVisible) 
 		? "./Img/button_console_ready.png" 
 		: "./Img/button_console_ready.png")
 	
 	ui.ButtonDebug.OnEvent("Click",toggleConsole)		
 
-	ui.RefreshWindowHandlesButton := ui.MainGui.AddPicture("x+1 ys section w27 h27 Background" cfg.ThemeDisabledColor, "./Img/button_refresh.png")	
+	ui.RefreshWindowHandlesButton := ui.MainGui.AddPicture("x+1 ys section w27 h27 Background" cfg.ThemeButtonReadyColor, "./Img/button_refresh.png")	
 	ui.RefreshWindowHandlesButton.OnEvent("Click",refreshWinHwnd)
 	ui.RefreshWindowHandlesButton.ToolTip := "Rescan for windows matching the selected game profile."
 
-	ui.ButtonHelp := ui.MainGui.AddPicture("x+1 ys w27 h27 section Background" cfg.ThemeDisabledColor,"./Img/button_help_ready.png")
+	ui.ButtonHelp := ui.MainGui.AddPicture("x+1 ys w27 h27 section Background" cfg.ThemeButtonReadyColor,"./Img/button_help_ready.png")
 	ui.ButtonHelp.OnEvent("Click",ToggleHelp)
 
 
@@ -645,7 +645,7 @@ updateWin(winNumber) {
 refreshWinHwnd(*) {
 	ui.RefreshWindowHandlesButton.opt("background" cfg.themeButtonAlertColor)
 	ui.refreshWindowHandlesButton.redraw()
-	setTimer () => 	(ui.RefreshWindowHandlesButton.opt("background" cfg.themeDisabledColor),ui.refreshWindowHandlesButton.redraw()),-1250
+	setTimer () => 	(ui.RefreshWindowHandlesButton.opt("background" cfg.themeButtonReadyColor),ui.refreshWindowHandlesButton.redraw()),-1250
 	refreshWin(1)
 	refreshWin(2)
 

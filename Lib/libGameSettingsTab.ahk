@@ -9,7 +9,7 @@ if (InStr(A_LineFile,A_ScriptFullPath)) { ;run main app
 }
 
 { ;global UI
-	inputHookAllowedKeys := "{All}{LControl}{RControl}{LAlt}{RAlt}{LShift}{RShift}{LWin}{RWin}{AppsKey}{F1}{F2}{F3}{F4}{F5}{F6}{F7}{F8}{F9}{F10}{F11}{F12}{Home}{End}{PgUp}{PgDn}{Del}{Ins}{Left}{Right}{Up}{Down}{BS}{CapsLock}{NumLock}{PrintScreen}{Pause}{Tab}{Enter}{ScrollLock}"	
+	inputHookAllowedKeys := "{All}{LControl}{RControl}{LAlt}{RAlt}{LShift}{RShift}{LWin}{RWin}{AppsKey}{F1}{F2}{F3}{F4}{F5}{F6}{F7}{F8}{F9}{F10}{F11}{F12}{Home}{End}{PgUp}{PgDn}{Del}{Ins}{Left}{Right}{Up}{Down}{BS}{CapsLock}{NumLock}{PrintScreen}{Pause}{Tab}{Enter}{ScrollLock}{LButton}{MButton}{RButton}"	
 	GuiGameTab(&ui,&cfg) {
 		global	
 		loop cfg.gameModuleList.length {
@@ -95,6 +95,13 @@ if (InStr(A_LineFile,A_ScriptFullPath)) { ;run main app
 }
 
 { ;d2 Logic
+
+	cfg.d2LoadoutCoords := strSplit(iniRead(cfg.file,"Game","d2LoadoutCoords","636:512,760:512,636:640,760:640,636:770,760:770,636:900,760:900,636:1030,760:1030"),",")
+	loop cfg.d2LoadoutCoords.length {
+		d2LoadOutCoordsStr .= cfg.d2LoadoutCoords[a_index] ","
+	}
+	iniWrite(rtrim(d2LoadoutCoordsStr,","),cfg.file,"Game","d2LoadoutCoords")
+
 	ui.d2IsReloading := false
 	ui.d2IsSprinting := false
 	
@@ -115,7 +122,12 @@ if (InStr(A_LineFile,A_ScriptFullPath)) { ;run main app
 	}
 
 	hotIfWinActive("ahk_exe destiny2.exe")
-		hotKey(cfg.d2AppVehicleKey,d2MountVehicle)
+	loop cfg.d2LoadoutCoords.length {
+		hotKey(cfg.d2AppLoadoutKey " & " substr(a_index,-1),d2LoadoutModifier)
+	}
+	hotKey(cfg.d2AppLoadoutKey " down",d2LoadoutModifier)
+
+	hotKey(cfg.d2AppVehicleKey,d2MountVehicle)
 		hotKey(cfg.d2AppToggleSprintKey,d2ToggleAlwaysRun)
 ;		hotKey("~*r",d2reload)
 	hotIf()
@@ -127,6 +139,7 @@ if (InStr(A_LineFile,A_ScriptFullPath)) { ;run main app
 	hotIf(d2ReadyToSprint)
 		hotKey("~*w",d2StartSprinting)
 	hotIf()
+
 
 	d2FireButtonClicked(*) {
 	send("{LButton Down}")
@@ -161,7 +174,26 @@ if (InStr(A_LineFile,A_ScriptFullPath)) { ;run main app
 		send("{w up}")
 	}
 
+	d2LoadoutModifier(hotKeyName) {
 
+		loadoutX := strSplit(cfg.d2LoadoutCoords[subStr(hotKeyName,-1)],":")[1]
+		loadoutY := strSplit(cfg.d2LoadoutCoords[subStr(hotKeyName,-1)],":")[2]
+		
+		if !(loadoutX || loadoutY)
+		return
+		
+		send("{F1}")
+		sleep(650)
+		send("{Left}")
+		sleep(150)
+		coordMode("mouse","client")
+		click(loadoutX,loadoutY,0)
+		sleep(650)
+		send("{LButton}")
+		sleep(450)
+		send("{F1}")
+	}
+	
 	d2ToggleAlwaysRun(*) {
 		(cfg.d2AlwaysRunEnabled := !cfg.d2AlwaysRunEnabled)
 			? d2ToggleAlwaysRunOn()
@@ -204,9 +236,9 @@ if (InStr(A_LineFile,A_ScriptFullPath)) { ;run main app
 	keyCleanUp(this,*) {
 		for keyForCleanup in 
 					[cfg.d2GameToggleSprintKey
-					,cfg.d2GameHoldSprintKey
+					,cfg.d2AppVehicleKey
 					,cfg.d2AppToggleSprintKey
-					,cfg.d2GameHoldCrouchKey
+					,cfg.d2AppLoadoutKey
 					,"Shift"
 					,"Ctrl"
 					,"Alt"]
@@ -240,32 +272,36 @@ if (InStr(A_LineFile,A_ScriptFullPath)) { ;run main app
 		ui.gameSettingsGui.addText("x306 y10 w173 h43 background" cfg.themePanel2color " c" cfg.themeFont4color,"")		
 		drawOutlineNamed("appSettings",ui.gameSettingsGui,306,11,173,42,cfg.themeDark1Color,cfg.themeBright1Color,1)
 
-		ui.d2gameToggleSprintKey			:= ui.gameSettingsGui.addPicture("x43 y20 w84  h28 section backgroundTrans","./img/keyboard_key_up.png")
-		ui.d2gameToggleSprintKeyData 		:= ui.gameSettingsGui.addText("xs-3 y+-23 w84  h21 center c" cfg.themeButtonAlertColor " backgroundTrans",subStr(strUpper(cfg.d2gameToggleSprintKey),1,8))
-		ui.d2gameToggleSprintKeyLabel		:= ui.gameSettingsGui.addText("xs-1 y+-33 w84  h20 center c" cfg.themeFont1Color " backgroundTrans","Toggle Sprint")
-		ui.d2gameHoldCrouchKey				:= ui.gameSettingsGui.addPicture("x+2 ys w84  h28 section backgroundTrans","./img/keyboard_key_up.png")
-		ui.d2gameHoldCrouchKeyData 			:= ui.gameSettingsGui.addText("xs-3 y+-23 w84  h21 center c" cfg.themeButtonAlertColor " backgroundTrans",subStr(strUpper(cfg.d2gameHoldCrouchKey),1,8))
-		ui.d2gameHoldCrouchKeyLabel 		:= ui.gameSettingsGui.addText("xs-1 y+-33 w84  h20 center c" cfg.themeFont1Color " backgroundTrans","Hold to Crouch")
-		ui.d2gameHoldSprintKey				:= ui.gameSettingsGui.AddPicture("x+2 ys w84  h28 section backgroundTrans","./img/keyboard_key_up.png")
-		ui.d2gameHoldSprintKeyData 			:= ui.gameSettingsGui.addText("xs-3 y+-23 w84  h21 center c" cfg.themeButtonAlertColor " backgroundTrans",subStr(strUpper(cfg.d2gameHoldSprintKey),1,8))
-		ui.d2gameHoldSprintKeyLabel			:= ui.gameSettingsGui.addText("xs-1 y+-33 w84  h20 center c" cfg.themeFont1Color " backgroundTrans","Hold to Sprint")
-		
-		ui.d2AppToggleSprintKey				:= ui.gameSettingsGui.AddPicture("x309 y20 w84  h28 section backgroundTrans","./img/keyboard_key_up.png")
+		ui.d2AppToggleSprintKey			:= ui.gameSettingsGui.addPicture("x43 y20 w84  h28 section backgroundTrans","./img/keyboard_key_up.png")
 		ui.d2AppToggleSprintKeyData 		:= ui.gameSettingsGui.addText("xs-3 y+-23 w84  h21 center c" cfg.themeButtonAlertColor " backgroundTrans",subStr(strUpper(cfg.d2AppToggleSprintKey),1,8))
 		ui.d2AppToggleSprintKeyLabel		:= ui.gameSettingsGui.addText("xs-1 y+-33 w84  h20 center c" cfg.themeFont1Color " backgroundTrans","Toggle Sprint")
-		ui.d2AppHoldCrouchKey				:= ui.gameSettingsGui.addPicture("x+2 ys w84  h28 section backgroundTrans","./img/keyboard_key_up.png")
-		ui.d2AppHoldCrouchKeyData 			:= ui.gameSettingsGui.addText("xs-3 y+-23 w84  h21 center c" cfg.themeButtonAlertColor " backgroundTrans",subStr(strUpper(cfg.d2AppHoldCrouchKey),1,8))
-		ui.d2AppHoldCrouchKeyLabel			:= ui.gameSettingsGui.addText("xs-1 y+-33 w84  h20 center c" cfg.themeFont1Color " backgroundTrans","Hold to Crouch")
-		ui.d2AppVehicleKey					:= ui.gameSettingsGui.addPicture("x15 y55 w84  h28 section hidden backgroundTrans","./img/keyboard_key_up.png")
-		ui.d2AppVehicleKeyData 				:= ui.gameSettingsGui.addText("xs y+-23 w84  h21 center c" cfg.themeButtonAlertColor " hidden backgroundTrans",subStr(strUpper(cfg.d2AppVehicleKey),1,8))
-		ui.d2AppVehicleKeyLabel 			:= ui.gameSettingsGui.addText("xs-1 y+-20 w84  h20 hidden center c" cfg.themeFont1Color " backgroundTrans","Mount Vehicle")
-
-		ui.d2LaunchDIMbutton				:= ui.gameSettingsGui.addPicture("xs+18 y+-5 section w60  h60 backgroundTrans","./Img2/d2_button_DIM.png")
+		ui.d2AppLoadoutKey				:= ui.gameSettingsGui.addPicture("x+2 ys w84  h28 section backgroundTrans","./img/keyboard_key_up.png")
+		ui.d2AppLoadoutKeyData 			:= ui.gameSettingsGui.addText("xs-3 y+-23 w84  h21 center c" cfg.themeButtonAlertColor " backgroundTrans",subStr(strUpper(cfg.d2AppLoadoutKey),1,8))
+		ui.d2AppLoadoutKeyLabel 		:= ui.gameSettingsGui.addText("xs-1 y+-33 w84  h20 center c" cfg.themeFont1Color " backgroundTrans","Loadout")
+		ui.d2AppVehicleKey				:= ui.gameSettingsGui.AddPicture("x+2 ys w84  h28 section backgroundTrans","./img/keyboard_key_up.png")
+		ui.d2AppVehicleKeyData 			:= ui.gameSettingsGui.addText("xs-3 y+-23 w84  h21 center c" cfg.themeButtonAlertColor " backgroundTrans",subStr(strUpper(cfg.d2AppVehicleKey),1,8))
+		ui.d2AppVehicleKeyLabel			:= ui.gameSettingsGui.addText("xs-1 y+-33 w84  h20 center c" cfg.themeFont1Color " backgroundTrans","Vehicle")
+		
+		ui.d2GameToggleSprintKey				:= ui.gameSettingsGui.AddPicture("x309 y20 w84  h28 section backgroundTrans","./img/keyboard_key_up.png")
+		ui.d2GameToggleSprintKeyData 		:= ui.gameSettingsGui.addText("xs-3 y+-23 w84  h21 center c" cfg.themeButtonAlertColor " backgroundTrans",subStr(strUpper(cfg.d2GameToggleSprintKey),1,8))
+		ui.d2GameToggleSprintKeyLabel		:= ui.gameSettingsGui.addText("xs-1 y+-33 w84  h20 center c" cfg.themeFont1Color " backgroundTrans","Toggle Sprint")
+		ui.d2GameReloadKey				:= ui.gameSettingsGui.addPicture("x+2 ys w84  h28 section backgroundTrans","./img/keyboard_key_up.png")
+		ui.d2GameReloadKeyData 			:= ui.gameSettingsGui.addText("xs-3 y+-23 w84  h21 center c" cfg.themeButtonAlertColor " backgroundTrans",subStr(strUpper(cfg.d2GameReloadKey),1,8))
+		ui.d2GameReloadKeyLabel			:= ui.gameSettingsGui.addText("xs-1 y+-33 w84  h20 center c" cfg.themeFont1Color " backgroundTrans","Reload")
+		; ui.d2GameVehicleKey					:= ui.gameSettingsGui.addPicture("x15 y55 w84  h28 section hidden backgroundTrans","./img/keyboard_key_up.png")
+		; ui.d2AppVehicleKeyData 				:= ui.gameSettingsGui.addText("xs y+-23 w84  h21 center c" cfg.themeButtonAlertColor " hidden backgroundTrans",subStr(strUpper(cfg.d2AppVehicleKey),1,8))
+		; ui.d2AppVehicleKeyLabel 			:= ui.gameSettingsGui.addText("xs-1 y+-20 w84  h20 hidden center c" cfg.themeFont1Color " backgroundTrans","Mount Vehicle")
+		
+		ui.d2LaunchDIMbutton				:= ui.gameSettingsGui.addPicture("x33 y+43 section w60  h60 backgroundTrans","./Img2/d2_button_DIM.png")
 		ui.d2LaunchLightGGbutton			:= ui.gameSettingsGui.addPicture("x+13 ys w60  h60 backgroundTrans","./Img2/d2_button_LightGG.png")
 		ui.d2LaunchBlueberriesButton 		:= ui.gameSettingsGui.addPicture("x+13 ys w60  h60 backgroundTrans","./Img2/d2_button_bbgg.png")
 		ui.d2LaunchD2CheckListButton 		:= ui.gameSettingsGui.addPicture("x+13 ys w60  h60 backgroundTrans","./Img2/d2_button_d2CheckList.png")
 		ui.d2LaunchDestinyRecipesButton 	:= ui.gameSettingsGui.addPicture("x+13 ys w60  h60 backgroundTrans","./Img2/d2_button_destinyrecipes.png")
 		ui.d2LaunchBrayTechButton 			:= ui.gameSettingsGui.addPicture("x+13 ys w60  h60 backgroundTrans","./Img2/d2_button_braytech.png")
+
+		drawPanelLabel(ui.gameSettingsGui,125,47,90,15,"App Settings",cfg.themePanel1Color,cfg.themeBright1Color,cfg.themeFont1Color)
+		
+		drawPanelLabel(ui.gameSettingsGui,349,47,80,15,"Game Settings",cfg.themePanel1Color,cfg.themeBright1Color,cfg.themeFont1Color)
 
 		drawPanelLabel(guiName,labelX,labelY,labelW := 100,labelH := 20,labelText := "needs value",backColor := "gray",outlineColor := "white",fontColor := "white") {
 			static labelName := array()
@@ -282,8 +318,7 @@ if (InStr(A_LineFile,A_ScriptFullPath)) { ;run main app
 			labelName[labelNum].setFont("s10")
 		}
 		
-		drawPanelLabel(ui.gameSettingsGui,125,47,90,15,"Game Settings",cfg.themePanel1Color,cfg.themeBright1Color,cfg.themeFont1Color)
-		drawPanelLabel(ui.gameSettingsGui,349,47,80,15,"App Settings",cfg.themePanel1Color,cfg.themeBright1Color,cfg.themeFont1Color)
+
 		
 		; drawOutlineNamed("d2AlwaysRunOutline3",ui.gameSettingsGui,121,47,90,5,cfg.themeBright1Color,cfg.themePanel1Color,1)		
 		; ui.gameSettingsGui.addText("x122 y48 w88 h15 c" cfg.themeFont1Color " background" cfg.themePanel1Color,"  Game Settings")
@@ -316,12 +351,12 @@ if (InStr(A_LineFile,A_ScriptFullPath)) { ;run main app
 		ui.d2Log.setFont("s7","ariel")
 
 		ui.d2AlwaysSprint.ToolTip 			:= "Toggles holdToCrouch"
-		ui.d2gameHoldSprintKey.ToolTip 			:= "Click to Assign"
-		ui.d2gameHoldSprintKeyData.ToolTip  	:= "Click to Assign"
-		ui.d2gameHoldSprintKeyLabel.ToolTip		:= "Click to Assign"
-		ui.d2gameHoldCrouchKey.ToolTip			:= "Click to Assign"
-		ui.d2gameHoldCrouchKeyData.ToolTip  	:= "Click to Assign"
-		ui.d2gameHoldCrouchKeyLabel.ToolTip		:= "Click to Assign"
+		ui.d2AppVehicleKey.ToolTip 			:= "Click to Assign"
+		ui.d2AppVehicleKeyData.ToolTip  	:= "Click to Assign"
+		ui.d2AppVehicleKeyLabel.ToolTip		:= "Click to Assign"
+		ui.d2AppLoadoutKey.ToolTip			:= "Click to Assign"
+		ui.d2AppLoadoutKeyData.ToolTip  	:= "Click to Assign"
+		ui.d2AppLoadoutKeyLabel.ToolTip		:= "Click to Assign"
 		ui.d2gameToggleSprintKey.ToolTip		:= "Click to Assign"
 		ui.d2gameToggleSprintKeyData.ToolTip  := "Click to Assign"
 		ui.d2gameToggleSprintKeyLabel.ToolTip	:= "Click to Assign"
@@ -331,9 +366,9 @@ if (InStr(A_LineFile,A_ScriptFullPath)) { ;run main app
 		ui.d2AppVehicleKey.ToolTip		:= "Click to Assign"
 		ui.d2AppVehicleKeyData.ToolTip  	:= "Click to Assign"
 		ui.d2AppVehicleKeyLabel.ToolTip	:= "Click to Assign"
-		ui.d2AppHoldCrouchKey.ToolTip		:= "Click to Assign"
-		ui.d2AppHoldCrouchKeyData.ToolTip  	:= "Click to Assign"
-		ui.d2AppHoldCrouchKeyLabel.ToolTip	:= "Click to Assign"
+		ui.d2GameReloadKey.ToolTip		:= "Click to Assign"
+		ui.d2GameReloadKeyData.ToolTip  	:= "Click to Assign"
+		ui.d2GameReloadKeyLabel.ToolTip	:= "Click to Assign"
 		ui.d2LaunchDIMbutton.ToolTip	:= "Launch DIM in Browser"
 		ui.d2LaunchLightGGbutton.toolTip := "Launch Light.gg in Browser"
 		ui.d2LaunchBlueberriesButton.toolTip	:= "Launch Blueberries.gg in Browser"
@@ -341,37 +376,37 @@ if (InStr(A_LineFile,A_ScriptFullPath)) { ;run main app
 		ui.d2LaunchDestinyRecipesButton.toolTip	:= "Launch DestinyRecipes.com in Browser"
 		ui.d2LaunchBrayTechButton.toolTip	:= "Launch Bray.Tech in Browser"
 
-		ui.d2gameHoldCrouchKeyData.setFont("s11")
-		ui.d2gameHoldSprintKeyData.setFont("s11")
+		ui.d2AppLoadoutKeyData.setFont("s11")
+		ui.d2AppVehicleKeyData.setFont("s11")
 		ui.d2gameToggleSprintKeyData.setFont("s11")
 		ui.d2AppVehicleKeyData.setFont("s11")
-		ui.d2AppHoldCrouchKeyData.setFont("s11")
+		ui.d2GameReloadKeyData.setFont("s11")
 		ui.d2AppToggleSprintKeyData.setFont("s11")
 
-		ui.d2gameHoldCrouchKeyLabel.setFont("s9")
-		ui.d2gameHoldSprintKeyLabel.setFont("s9")
+		ui.d2AppLoadoutKeyLabel.setFont("s9")
+		ui.d2AppVehicleKeyLabel.setFont("s9")
 		ui.d2gameToggleSprintKeyLabel.setFont("s9")
 		
 		ui.d2AppVehicleKeyLabel.setFont("s9")
-		ui.d2AppHoldCrouchKeylabel.setFont("s9")
+		ui.d2GameReloadKeylabel.setFont("s9")
 		ui.d2AppToggleSprintKeyLabel.setFont("s9")
 		
 		ui.d2AlwaysSprint.OnEvent("Click", d2ToggleAlwaysRun)
 		
-		ui.d2gameHoldCrouchKey.onEvent("click",d2gameHoldCrouchKeyClicked)
-		ui.d2gameHoldSprintKey.onEvent("click",d2gameHoldSprintKeyClicked)
+		ui.d2AppLoadoutKey.onEvent("click",d2AppLoadoutKeyClicked)
+		ui.d2AppVehicleKey.onEvent("click",d2AppVehicleKeyClicked)
 		ui.d2gameToggleSprintKey.onEvent("click",d2gameToggleSprintKeyClicked)
 		
-		ui.d2gameHoldCrouchKeyData.onEvent("click",d2gameHoldCrouchKeyClicked)
-		ui.d2gameHoldSprintKeyData.onEvent("click",d2gameHoldSprintKeyClicked)
+		ui.d2AppLoadoutKeyData.onEvent("click",d2AppLoadoutKeyClicked)
+		ui.d2AppVehicleKeyData.onEvent("click",d2AppVehicleKeyClicked)
 		ui.d2gameToggleSprintKeyData.onEvent("click",d2gameToggleSprintKeyClicked)
 		
 		ui.d2AppVehicleKey.onEvent("click",d2AppVehicleKeyClicked)
-		ui.d2AppHoldCrouchKey.onEvent("click",d2AppHoldCrouchKeyClicked)
+		ui.d2GameReloadKey.onEvent("click",d2GameReloadKeyClicked)
 		ui.d2AppToggleSprintKey.onEvent("click",d2AppToggleSprintKeyClicked)
 		
 		ui.d2AppVehicleKeyData.onEvent("click",d2AppVehicleKeyClicked)
-		ui.d2AppHoldCrouchKeyData.onEvent("click",d2AppHoldCrouchKeyClicked)
+		ui.d2GameReloadKeyData.onEvent("click",d2GameReloadKeyClicked)
 		ui.d2AppToggleSprintKeyData.onEvent("click",d2AppToggleSprintKeyClicked)
 		
 		ui.d2LaunchDIMbutton.onEvent("click",d2launchDIMbuttonClicked)
@@ -421,45 +456,45 @@ if (InStr(A_LineFile,A_ScriptFullPath)) { ;run main app
 		run("chrome.exe https://www.bray.tech")
 		}
 
-	d2GameHoldSprintKeyClicked(*) {
-		DialogBox('Press "Hold to Sprint" Key`n Bound in Destiny 2',"Center")
+	d2AppVehicleKeyClicked(*) {
+		DialogBox('Press key for Vehicle',"Center")
 		Sleep(100)
-		d2GameHoldSprintKeyInput := InputHook("L1 T6",inputHookAllowedKeys,"+V")
-		d2GameHoldSprintKeyInput.start()
-		d2GameHoldSprintKeyInput.wait()
-		if (d2GameHoldSprintKeyInput.endKey == "" && d2GameHoldSprintKeyInput.input =="") {
+		d2AppVehicleKeyInput := InputHook("L1 T6",inputHookAllowedKeys,"+V")
+		d2AppVehicleKeyInput.start()
+		d2AppVehicleKeyInput.wait()
+		if (d2AppVehicleKeyInput.endKey == "" && d2AppVehicleKeyInput.input =="") {
 			DialogBoxClose()
 			notifyOSD('No Key Detected.`nPlease Try Again.',2000,"Center")
 		} else {
-			if (d2GameHoldSprintKeyInput.input)
+			if (d2AppVehicleKeyInput.input)
 			{
-				cfg.d2GameHoldSprintKey := d2GameHoldSprintKeyInput.input
+				cfg.d2AppVehicleKey := d2AppVehicleKeyInput.input
 			} else {
-				cfg.d2GameHoldSprintKey := d2GameHoldSprintKeyInput.endKey
+				cfg.d2AppVehicleKey := d2AppVehicleKeyInput.endKey
 			}
-			ui.d2GameHoldSprintKeyData.text := subStr(strUpper(cfg.d2GameHoldSprintKey),1,8)
+			ui.d2AppVehicleKeyData.text := subStr(strUpper(cfg.d2AppVehicleKey),1,8)
 		}
 
 		DialogBoxClose()
 	}
 
-	d2gameHoldCrouchKeyClicked(*) {
-		DialogBox('Press "Hold to Crouch" Key`nBound in Destiny 2',"Center")
+	d2AppLoadoutKeyClicked(*) {
+		DialogBox('Press Key for Loadout Modifier `n(Used in conjunction with number key of loadout desired)',"Center")
 		Sleep(100)
-		d2GameHoldCrouchKeyInput := InputHook("L1 T6", inputHookAllowedKeys,"+V")
-		d2GameHoldCrouchKeyInput.start()
-		d2GameHoldCrouchKeyInput.wait()
-		if (d2GameHoldCrouchKeyInput.endKey == "" && d2GameHoldCrouchKeyInput.input == "") {
+		d2AppLoadoutKeyInput := InputHook("L1 T6", inputHookAllowedKeys,"+V")
+		d2AppLoadoutKeyInput.start()
+		d2AppLoadoutKeyInput.wait()
+		if (d2AppLoadoutKeyInput.endKey == "" && d2AppLoadoutKeyInput.input == "") {
 			DialogBoxClose()
 			notifyOSD('No Key Detected.`nPlease Try Again.',2000,"Center")
 		} else {
-			if (d2GameHoldCrouchKeyInput.input)
+			if (d2AppLoadoutKeyInput.input)
 			{
-				cfg.d2GameHoldCrouchKey := d2GameHoldCrouchKeyInput.input
+				cfg.d2AppLoadoutKey := d2AppLoadoutKeyInput.input
 			} else {
-				cfg.d2GameHoldCrouchKey := d2GameHoldCrouchKeyInput.endKey
+				cfg.d2AppLoadoutKey := d2AppLoadoutKeyInput.endKey
 			}
-			ui.d2GameHoldCrouchKeyData.text := subStr(strUpper(cfg.d2GameHoldCrouchKey),1,8)
+			ui.d2AppLoadoutKeyData.text := subStr(strUpper(cfg.d2AppLoadoutKey),1,8)
 		}
 		DialogBoxClose()
 	}
@@ -509,44 +544,44 @@ if (InStr(A_LineFile,A_ScriptFullPath)) { ;run main app
 	}
 
 
-	d2AppVehicleKeyClicked(*) {
-		DialogBox('Press Key to Assign to: `n"Toggle Walk"',"Center")
-		Sleep(100)
-		d2AppVehicleKeyInput := InputHook("L1 T6", inputHookAllowedKeys,"+V")
-		d2AppVehicleKeyInput.start()
-		d2AppVehicleKeyInput.wait()
-		if (d2AppVehicleKeyInput.endKey == "" && d2AppVehicleKeyInput.input == "") {
-			DialogBoxClose()
-			notifyOSD('No Key Detected.`nPlease Try Again.',2000,"Center")
-		} else {
-			if (d2AppVehicleKeyInput.input)
-			{
-				cfg.d2AppVehicleKey := d2AppVehicleKeyInput.input
-			} else {
-				cfg.d2AppVehicleKey := d2AppVehicleKeyInput.endKey
-			}
-			ui.d2AppVehicleKeyData.text := subStr(strUpper(cfg.d2AppVehicleKey),1,8)
-		}
-		DialogBoxClose()
-	}
+	; d2AppVehicleKeyClicked(*) {
+		; DialogBox('Press Key to Assign to: `n"Toggle Walk"',"Center")
+		; Sleep(100)
+		; d2AppVehicleKeyInput := InputHook("L1 T6", inputHookAllowedKeys,"+V")
+		; d2AppVehicleKeyInput.start()
+		; d2AppVehicleKeyInput.wait()
+		; if (d2AppVehicleKeyInput.endKey == "" && d2AppVehicleKeyInput.input == "") {
+			; DialogBoxClose()
+			; notifyOSD('No Key Detected.`nPlease Try Again.',2000,"Center")
+		; } else {
+			; if (d2AppVehicleKeyInput.input)
+			; {
+				; cfg.d2AppVehicleKey := d2AppVehicleKeyInput.input
+			; } else {
+				; cfg.d2AppVehicleKey := d2AppVehicleKeyInput.endKey
+			; }
+			; ui.d2AppVehicleKeyData.text := subStr(strUpper(cfg.d2AppVehicleKey),1,8)
+		; }
+		; DialogBoxClose()
+	; }
 
-	d2AppHoldCrouchKeyClicked(*) {
+	d2GameReloadKeyClicked(*) {
 		DialogBox('Press Key to Assign to: `n"Mount Vehicle"',"Center")
 		Sleep(100)
-		d2AppHoldCrouchKeyInput := InputHook("L1 T6", inputHookAllowedKeys,"+V")
-		d2AppHoldCrouchKeyInput.start()
-		d2AppHoldCrouchKeyInput.wait()
-		if (d2AppHoldCrouchKeyInput.endKey == "" && d2AppHoldCrouchKeyInput.input == "") {
+		d2GameReloadKeyInput := InputHook("L1 T6", inputHookAllowedKeys,"+V")
+		d2GameReloadKeyInput.start()
+		d2GameReloadKeyInput.wait()
+		if (d2GameReloadKeyInput.endKey == "" && d2GameReloadKeyInput.input == "") {
 			DialogBoxClose()
 			notifyOSD('No Key Detected.`nPlease Try Again.',2000,"Center")
 		} else {
-			if (d2AppHoldCrouchKeyInput.input)
+			if (d2GameReloadKeyInput.input)
 			{
-				cfg.d2AppHoldCrouchKey := d2AppHoldCrouchKeyInput.input
+				cfg.d2GameReloadKey := d2GameReloadKeyInput.input
 			} else {
-				cfg.d2AppHoldCrouchKey := d2AppHoldCrouchKeyInput.endKey
+				cfg.d2GameReloadKey := d2GameReloadKeyInput.endKey
 			}
-			ui.d2AppHoldCrouchKeyData.text := subStr(strUpper(cfg.d2AppHoldCrouchKey),1,8)
+			ui.d2GameReloadKeyData.text := subStr(strUpper(cfg.d2GameReloadKey),1,8)
 		}
 		DialogBoxClose()
 	}
