@@ -175,7 +175,7 @@ if (InStr(A_LineFile,A_ScriptFullPath)) { ;run main app
 	}
 
 	d2LoadoutModifier(hotKeyName) {
-
+		if (cfg.d2AlwaysRunEnabled) {
 		loadoutX := strSplit(cfg.d2LoadoutCoords[subStr(hotKeyName,-1)],":")[1]
 		loadoutY := strSplit(cfg.d2LoadoutCoords[subStr(hotKeyName,-1)],":")[2]
 		
@@ -192,8 +192,8 @@ if (InStr(A_LineFile,A_ScriptFullPath)) { ;run main app
 		send("{LButton}")
 		sleep(450)
 		send("{F1}")
+		}
 	}
-	
 	d2ToggleAlwaysRun(*) {
 		(cfg.d2AlwaysRunEnabled := !cfg.d2AlwaysRunEnabled)
 			? d2ToggleAlwaysRunOn()
