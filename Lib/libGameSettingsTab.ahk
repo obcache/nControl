@@ -299,9 +299,9 @@ if (InStr(A_LineFile,A_ScriptFullPath)) { ;run main app
 		ui.d2LaunchDestinyRecipesButton 	:= ui.gameSettingsGui.addPicture("x+13 ys w60  h60 backgroundTrans","./Img2/d2_button_destinyrecipes.png")
 		ui.d2LaunchBrayTechButton 			:= ui.gameSettingsGui.addPicture("x+13 ys w60  h60 backgroundTrans","./Img2/d2_button_braytech.png")
 
-		drawPanelLabel(ui.gameSettingsGui,125,47,90,15,"App Settings",cfg.themePanel1Color,cfg.themeBright1Color,cfg.themeFont1Color)
+		drawPanelLabel(ui.gameSettingsGui,130,47,80,15,"App Settings",cfg.themePanel1Color,cfg.themeBright1Color,cfg.themeFont1Color)
 		
-		drawPanelLabel(ui.gameSettingsGui,349,47,80,15,"Game Settings",cfg.themePanel1Color,cfg.themeBright1Color,cfg.themeFont1Color)
+		drawPanelLabel(ui.gameSettingsGui,344,47,90,15,"Game Settings",cfg.themePanel1Color,cfg.themeBright1Color,cfg.themeFont1Color)
 
 		drawPanelLabel(guiName,labelX,labelY,labelW := 100,labelH := 20,labelText := "needs value",backColor := "gray",outlineColor := "white",fontColor := "white") {
 			static labelName := array()
