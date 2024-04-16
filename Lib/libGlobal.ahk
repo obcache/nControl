@@ -435,7 +435,7 @@ CheckForUpdates(msg,*) {
 				guiVis(ui.gameTabGui,false)
 				
 			sleep(2500)
-			runWait("cmd /C start /b /wait curl.exe https://raw.githubusercontent.com/obcache/cacheApp/main/Bin/cacheApp_" latestVersion ".exe -o " A_ScriptDir  "/versions/cacheApp_" latestVersion ".exe")
+			runWait("cmd /C start /b /wait curl.exe https://raw.githubusercontent.com/obcache/cacheApp/main/Bin/cacheApp_" latestVersion ".exe -o " A_ScriptDir  "/versions/cacheApp_" ui.latestVersion ".exe")
 			sleep(3000)
 			if winExist("ahk_exe cacheApp.exe")
 			{
