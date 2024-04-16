@@ -442,8 +442,8 @@ CheckForUpdates(msg,*) {
 				processClose("cacheApp.exe") 
 				sleep(2000)
 			}			
-			if fileExist("./versions/cacheApp_" latestVersion ".exe")
-				run("./versions/cacheApp_" latestVersion ".exe")
+			if fileExist("./versions/cacheApp_" ui.latestVersion ".exe")
+				run("./versions/cacheApp_" ui.latestVersion ".exe")
 			exitApp()
 		} else {
 			 if(msg) {
