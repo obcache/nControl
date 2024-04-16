@@ -435,7 +435,16 @@ CheckForUpdates(msg,*) {
 				guiVis(ui.gameTabGui,false)
 				
 			sleep(2500)
-			run("./nControl_updater.exe")
+			runWait("cmd /C start /b /wait curl.exe https://raw.githubusercontent.com/obcache/cacheApp/main/Bin/cacheApp_" latestVersion ".exe -o " A_ScriptDir  "/versions/cacheApp_" latestVersion ".exe")
+			sleep(3000)
+			if winExist("ahk_exe cacheApp.exe")
+			{
+				processClose("cacheApp.exe") 
+				sleep(2000)
+			}			
+			if fileExist("./versions/cacheApp_" latestVersion ".exe")
+				run("./versions/cacheApp_" latestVersion ".exe")
+			exitApp()
 		} else {
 			 if(msg) {
 				ui.latestVersionText.text := "Latest:`t" ui.latestVersion
